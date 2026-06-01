@@ -1,11 +1,16 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
   // Final deployed URL — used for canonical URLs and the sitemap.
   site: 'https://rsicarelli.com',
+
+  // React powers interactive shadcn/ui components as islands only — the site stays
+  // zero-JS by default; islands hydrate per-component via client:* directives.
+  integrations: [react()],
 
   vite: {
     // Tailwind CSS v4 is wired through its Vite plugin (CSS-first, no config file).
