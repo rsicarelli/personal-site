@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📋 Project roadmap
+    url: https://github.com/users/rsicarelli/projects
+    about: See the rsicarelli.com Roadmap board for status across epics and tasks.
+  - name: 📚 Research foundation
+    url: https://github.com/rsicarelli/personal-site/blob/main/research/SUMMARY.md
+    about: The consolidated research and the decided stack live here.

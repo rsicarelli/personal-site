@@ -1,0 +1,50 @@
+name: "🎯 Epic"
+description: "A large body of work in one area, broken into task sub-issues."
+title: "[Epic] "
+labels: ["epic"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What outcome does this epic deliver, and why does it matter?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What's in scope. Tasks are tracked as sub-issues of this epic.
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope / non-goals
+      description: Explicitly what this epic does NOT cover.
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Foundation
+        - DevEx
+        - i18n
+        - Content
+        - Design
+        - SEO
+        - Infra
+        - Analytics
+        - Security
+        - Payments
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Definition of Done
+      description: How we know this epic is complete.
+    validations:
+      required: false
