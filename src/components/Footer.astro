@@ -1,0 +1,34 @@
+---
+/**
+ * Footer — secondary links from research §05 (Photos, Uses, Now, Materials).
+ * Stub: routes are placeholders until later content epics. The dynamic year is computed
+ * at build time (static site), which is fine for a personal site.
+ */
+const secondary = [
+  { label: 'Photos', href: '/photos' },
+  { label: 'Uses', href: '/uses' },
+  { label: 'Now', href: '/now' },
+  { label: 'Materials', href: '/materials' },
+];
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-border mt-16 border-t">
+  <div
+    class="text-muted-foreground mx-auto flex max-w-3xl flex-col gap-2 px-6 py-8 text-sm sm:flex-row sm:items-center sm:justify-between"
+  >
+    <p>© {year} Rodrigo Sicarelli</p>
+    <ul class="flex items-center gap-4">
+      {
+        secondary.map((item) => (
+          <li>
+            <a href={item.href} class="hover:text-foreground transition-colors">
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</footer>
