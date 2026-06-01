@@ -1,15 +1,10 @@
 ---
 /**
- * Footer — secondary links from research §05 (Photos, Uses, Now, Materials).
+ * Footer — secondary links from the central config (src/config/site.ts), per §05.
  * Stub: routes are placeholders until later content epics. The dynamic year is computed
  * at build time (static site), which is fine for a personal site.
  */
-const secondary = [
-  { label: 'Photos', href: '/photos' },
-  { label: 'Uses', href: '/uses' },
-  { label: 'Now', href: '/now' },
-  { label: 'Materials', href: '/materials' },
-];
+import { FOOTER_LINKS } from '@/config/site';
 
 const year = new Date().getFullYear();
 ---
@@ -21,7 +16,7 @@ const year = new Date().getFullYear();
     <p>© {year} Rodrigo Sicarelli</p>
     <ul class="flex items-center gap-4">
       {
-        secondary.map((item) => (
+        FOOTER_LINKS.map((item) => (
           <li>
             <a href={item.href} class="hover:text-foreground transition-colors">
               {item.label}

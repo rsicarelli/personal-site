@@ -28,9 +28,29 @@ Full rationale, alternatives, and costs live in [`research/SUMMARY.md`](research
 ## Repository layout
 
 ```
-research/   # Deep-research foundation (8 reports + consolidated SUMMARY.md)
-            # → app code (Astro) lands here next
+src/
+  pages/            # Routes (Astro)
+  layouts/          # BaseLayout shell
+  components/       # Header, Footer + ui/ (shadcn/ui)
+  content/          # Content collections — blog, portfolio, events, pages, cv
+  config/           # site.ts — site constants, locales, nav
+  styles/           # global.css — Tailwind v4 + Oklch design tokens
+content.config.ts   # Collection schemas (Zod)  ·  astro.config.mjs  ·  Taskfile.yml
+research/           # Deep-research foundation (8 reports + consolidated SUMMARY.md)
 ```
+
+## Local development
+
+Toolchain is pinned with [mise](https://mise.jdx.dev) (`.tool-versions`: Node, pnpm, go-task).
+
+```
+mise install      # provision Node + pnpm + task
+task install      # install dependencies
+task dev          # start the dev server
+task dod          # format + typecheck + lint + build (run before committing)
+```
+
+`task --list` shows everything. Hooks: `task hooks:install` enables the pre-commit DOD gate.
 
 ## Foundation docs
 

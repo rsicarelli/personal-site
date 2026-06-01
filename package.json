@@ -14,13 +14,14 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "typecheck": "astro check",
+    "typecheck": "astro check --minimumSeverity warning",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@astrojs/mdx": "^6.0.1",
     "@astrojs/react": "^5.0.6",
     "@types/react": "^19.2.16",
     "@types/react-dom": "^19.2.3",

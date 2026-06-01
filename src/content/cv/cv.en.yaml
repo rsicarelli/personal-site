@@ -1,0 +1,21 @@
+# Sample CV (English) — validates the `cv` schema. Real data lands with the About/CV page.
+name: Rodrigo Sicarelli
+headline: Staff Software Engineer · Kotlin Multiplatform
+location: São Paulo, Brazil
+summary: >-
+  Staff Software Engineer on Mobile Platform, Kotlin Multiplatform authority, conference
+  speaker and OSS maintainer.
+knowsAbout:
+  - Kotlin
+  - Kotlin Multiplatform
+  - Swift
+  - TypeScript
+  - Gradle
+profiles:
+  - network: GitHub
+    url: https://github.com/rsicarelli
+work:
+  - company: Stone
+    role: Staff Software Engineer (Mobile Platform)
+    startDate: '2021'
+    summary: Mobile platform engineering and Kotlin Multiplatform enablement.
