@@ -1,7 +1,7 @@
-name: "🎯 Epic"
-description: "A large body of work in one area, broken into task sub-issues."
-title: "[Epic] "
-labels: ["epic"]
+name: '🎯 Epic'
+description: 'A large body of work in one area, broken into task sub-issues.'
+title: '[Epic] '
+labels: ['epic']
 body:
   - type: textarea
     id: goal

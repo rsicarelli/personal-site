@@ -1,0 +1,82 @@
+# Task runner for rsicarelli.com (https://taskfile.dev).
+# Thin, discoverable wrappers around the pnpm scripts so day-to-day commands and the
+# Definition of Done are one `task <name>` away. Node/pnpm/task are pinned in .tool-versions
+# (mise) — run `mise install` once, then `task --list`.
+version: '3'
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list
+
+  install:
+    desc: Install dependencies from the frozen lockfile
+    cmds:
+      - pnpm install --frozen-lockfile
+
+  dev:
+    desc: Start the Astro dev server
+    cmds:
+      - pnpm dev
+
+  build:
+    desc: Build the production site to dist/
+    cmds:
+      - pnpm build
+
+  preview:
+    desc: Preview the production build locally
+    cmds:
+      - pnpm preview
+
+  typecheck:
+    desc: Type-check Astro + TypeScript (astro check)
+    cmds:
+      - pnpm typecheck
+
+  lint:
+    desc: Lint with ESLint
+    cmds:
+      - pnpm lint
+
+  lint:fix:
+    desc: Lint and auto-fix
+    cmds:
+      - pnpm lint:fix
+
+  fmt:
+    desc: Format the whole repo with Prettier
+    cmds:
+      - pnpm format
+
+  fmt:check:
+    desc: Check formatting without writing (read-only)
+    cmds:
+      - pnpm format:check
+
+  check:
+    desc: All quality gates — typecheck + lint + format check
+    cmds:
+      - task: typecheck
+      - task: lint
+      - task: fmt:check
+
+  dod:
+    desc: Definition of Done — format, run every gate, then build (run before committing)
+    cmds:
+      - task: fmt
+      - task: check
+      - task: build
+
+  hooks:install:
+    desc: Enable the version-controlled .githooks/ directory (pre-commit DOD gate)
+    cmds:
+      - git config core.hooksPath .githooks
+      - echo "✓ git hooks enabled (.githooks/). Skip once with 'git commit --no-verify'."
+
+  hooks:uninstall:
+    desc: Restore Git's default .git/hooks/ directory
+    cmds:
+      - git config --unset core.hooksPath
+      - echo "✓ git hooks disabled (back to .git/hooks/)."

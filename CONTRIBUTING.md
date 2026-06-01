@@ -39,6 +39,6 @@ The board's fields, items, and automation seed are created by
 [`scripts/bootstrap-project.sh`](scripts/bootstrap-project.sh). Two things must be set in the GitHub
 UI (the `gh` CLI can't):
 
-1. **Saved views:** (a) *Board* grouped by Status; (b) *By Area* (table) grouped by Area;
-   (c) *By Phase* (table) grouped by Milestone.
-2. **Built-in workflows:** enable *Auto-add to project* (repo issues) and *Item closed → Status: Done*.
+1. **Saved views:** (a) _Board_ grouped by Status; (b) _By Area_ (table) grouped by Area;
+   (c) _By Phase_ (table) grouped by Milestone.
+2. **Built-in workflows:** enable _Auto-add to project_ (repo issues) and _Item closed → Status: Done_.

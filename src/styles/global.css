@@ -1,0 +1,7 @@
+/*
+ * Global stylesheet — Tailwind CSS v4 (CSS-first).
+ *
+ * The design-token skeleton (Oklch ramps + semantic tokens, dark mode) lands in the
+ * design-token PR (#7). For now this just pulls in Tailwind so the scaffold is runnable.
+ */
+@import 'tailwindcss';

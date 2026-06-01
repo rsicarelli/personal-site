@@ -1,14 +1,14 @@
-name: "✅ Task"
-description: "A single, shippable unit of work — usually a sub-issue of an epic."
-title: ""
+name: '✅ Task'
+description: 'A single, shippable unit of work — usually a sub-issue of an epic.'
+title: ''
 labels: []
 body:
   - type: input
     id: parent
     attributes:
       label: Parent epic
-      description: "The epic this belongs to, e.g. #12"
-      placeholder: "#"
+      description: 'The epic this belongs to, e.g. #12'
+      placeholder: '#'
     validations:
       required: false
   - type: textarea
