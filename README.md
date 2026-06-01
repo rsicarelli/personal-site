@@ -14,14 +14,14 @@ first-class goals, built on free / open-source tooling.
 
 ## Decided stack (at a glance)
 
-| Layer | Choice |
-|-------|--------|
-| Framework | **Astro** (SSG + islands, zero-JS by default) |
-| Hosting | **Cloudflare Pages** (git push → auto-deploy) |
-| DNS / media | **Cloudflare** DNS + **R2** for photos & downloads |
-| Styling | **Tailwind CSS v4** + shadcn/ui |
-| i18n | Subdirectory URLs `/en/` + `/pt-br/`, browser-locale default |
-| Analytics | **Umami** + Cloudflare Web Analytics (cookieless, no banner) |
+| Layer       | Choice                                                       |
+| ----------- | ------------------------------------------------------------ |
+| Framework   | **Astro** (SSG + islands, zero-JS by default)                |
+| Hosting     | **Cloudflare Pages** (git push → auto-deploy)                |
+| DNS / media | **Cloudflare** DNS + **R2** for photos & downloads           |
+| Styling     | **Tailwind CSS v4** + shadcn/ui                              |
+| i18n        | Subdirectory URLs `/en/` + `/pt-br/`, browser-locale default |
+| Analytics   | **Umami** + Cloudflare Web Analytics (cookieless, no banner) |
 
 Full rationale, alternatives, and costs live in [`research/SUMMARY.md`](research/SUMMARY.md).
 

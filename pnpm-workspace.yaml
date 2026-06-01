@@ -1,0 +1,6 @@
+# pnpm settings (pnpm 11 reads project settings from here, not package.json).
+# Allow the postinstall build scripts we trust — Astro's image pipeline (sharp)
+# and the esbuild native binary. Everything else stays blocked by default.
+allowBuilds:
+  esbuild: true
+  sharp: true

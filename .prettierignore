@@ -1,0 +1,11 @@
+# Generated / vendored
+node_modules/
+dist/
+.astro/
+pnpm-lock.yaml
+
+# Durable research foundation — hand-formatted, not ours to reflow
+research/
+
+# Agent skill files (managed by skills-lock.json)
+.agents/
