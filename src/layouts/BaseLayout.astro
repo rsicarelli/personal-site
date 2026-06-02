@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { Font } from 'astro:assets';
+import { ClientRouter } from 'astro:transitions';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import { LOCALES, DEFAULT_LOCALE, type Locale } from '@/config/site';
@@ -46,23 +47,34 @@ const alternates = [
 
     {
       /* Theme bootstrap (#42) — runs before first paint to set the persisted/system theme on
-      <html>, so there is no flash of the wrong theme (FOUC). The visible toggle (ThemeToggle
-      island in the Header) keeps localStorage in sync; this just replays the choice on load. */
+      <html>, so there is no flash of the wrong theme (FOUC). Re-applied on `astro:after-swap`
+      (#49) because View Transitions morph <html> from the next page and would otherwise drop the
+      `.dark` class mid-navigation. The ThemeToggle island keeps localStorage in sync. */
     }
     <script is:inline>
       (() => {
-        try {
-          const stored = localStorage.getItem('theme');
-          const dark = stored
-            ? stored === 'dark'
-            : matchMedia('(prefers-color-scheme: dark)').matches;
-          document.documentElement.classList.toggle('dark', dark);
-          document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-        } catch {
-          /* storage/matchMedia unavailable — fall back to the default (light) theme */
+        const applyTheme = () => {
+          try {
+            const stored = localStorage.getItem('theme');
+            const dark = stored
+              ? stored === 'dark'
+              : matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.classList.toggle('dark', dark);
+            document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+          } catch {
+            /* storage/matchMedia unavailable — fall back to the default (light) theme */
+          }
+        };
+        applyTheme();
+        if (!window.__themeSwapBound) {
+          window.__themeSwapBound = true;
+          document.addEventListener('astro:after-swap', applyTheme);
         }
       })();
     </script>
+
+    {/* Same-document View Transitions (#49); reduced-motion is honoured by Astro + global.css. */}
+    <ClientRouter />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 

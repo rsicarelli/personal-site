@@ -143,6 +143,29 @@
   :target {
     scroll-margin-top: 5rem;
   }
+
+  /*
+   * Reduced motion (#49) — honour `prefers-reduced-motion` for ALL motion: near-instant any
+   * transition/animation (e.g. hover, theme, the play-button scale) and disable the View
+   * Transition cross-fades. Astro's ClientRouter already skips its default animation under this
+   * preference; this also covers our own CSS so the whole site is motion-safe.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation: none !important;
+    }
+  }
 }
 
 /*

@@ -151,8 +151,12 @@ const { name, headline, location, email, summary, knowsAbout, profiles, work } =
   </section>
 </BaseLayout>
 
-<script is:inline>
-  document.getElementById('print-cv')?.addEventListener('click', () => window.print());
+<script>
+  // Bind on astro:page-load (fires on first load AND after each View Transition swap, #49) so the
+  // print button keeps working across client-side navigation. Runs once; rebinds the fresh button.
+  document.addEventListener('astro:page-load', () => {
+    document.getElementById('print-cv')?.addEventListener('click', () => window.print());
+  });
 </script>
 
 <style is:global>
