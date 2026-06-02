@@ -1,0 +1,9 @@
+# Sample downloads (English) — validates the `materials` schema. `file` paths are resolved at
+# render by mediaUrl(); the binaries live in R2/public/media, never in git.
+title: Slides & materials
+description: Downloadable slide decks and materials from talks and workshops.
+items:
+  - file: materials/kotlinconf-2025-kmp.pdf
+    title: 'KotlinConf 2025 — Kotlin Multiplatform in production (slides)'
+    description: Slide deck from the KotlinConf 2025 talk.
+    kind: pdf

@@ -57,8 +57,14 @@ const events = defineCollection({
     startDate: z.coerce.date(),
     endDate: z.coerce.date().optional(),
     location: z.string().optional(),
-    /** Talk/event page, slides, or recording. */
+    /** Talk/event landing page. */
     url: z.url().optional(),
+    /** Kind of appearance → maps to a schema.org Event subtype later (#52). */
+    kind: z.enum(['talk', 'workshop', 'panel', 'conference']).default('talk'),
+    /** Slide deck URL (Speaker Deck / Google Slides / PDF). */
+    slides: z.url().optional(),
+    /** Recording URL (a YouTube watch URL → rendered through a facade, #34). */
+    video: z.url().optional(),
   }),
 });
 
@@ -94,4 +100,50 @@ const cv = defineCollection({
   }),
 });
 
-export const collections = { blog, portfolio, events, pages, cv };
+/**
+ * Photo galleries (#36) and downloadable materials (#37). The binaries live in Cloudflare R2 (or
+ * the local `public/media/` placeholder), resolved at render via `mediaUrl()` — only this metadata
+ * lives in git. Modeled as per-locale YAML collections (not config arrays) so the locale-completeness
+ * guardrail enforces both-locale captions/titles for free.
+ */
+const photos = defineCollection({
+  loader: glob({ pattern: '**/*.{yaml,yml}', base: './src/content/photos' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    items: z
+      .array(
+        z.object({
+          /** Media path resolved by `mediaUrl()` — NOT an astro:assets import. */
+          src: z.string(),
+          alt: z.string(),
+          /** Intrinsic dimensions, when known, to reserve space and avoid CLS. */
+          width: z.number().optional(),
+          height: z.number().optional(),
+        }),
+      )
+      .default([]),
+  }),
+});
+
+const materials = defineCollection({
+  loader: glob({ pattern: '**/*.{yaml,yml}', base: './src/content/materials' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    items: z
+      .array(
+        z.object({
+          /** Media path resolved by `mediaUrl()`. */
+          file: z.string(),
+          title: z.string(),
+          description: z.string().optional(),
+          /** Free-form badge (`pdf`, `slides`, `zip`, …). */
+          kind: z.string().optional(),
+        }),
+      )
+      .default([]),
+  }),
+});
+
+export const collections = { blog, portfolio, events, pages, cv, photos, materials };

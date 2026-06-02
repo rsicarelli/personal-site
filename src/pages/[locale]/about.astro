@@ -7,18 +7,19 @@
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { LOCALES, type Locale } from '@/config/site';
-import { contentSuffix } from '@/i18n/utils';
-import { getCollection, render } from 'astro:content';
+import { getLocalizedEntry } from '@/lib/content';
+import { render } from 'astro:content';
 
 export async function getStaticPaths() {
-  const pages = await getCollection('pages');
-  // The glob loader slugifies entry ids (dropping dots: `about.en` → `abouten`), so match on
-  // `filePath` — the real filename — which reliably carries the `.<suffix>.mdx` locale marker.
-  return LOCALES.map((locale) => {
-    const suffix = contentSuffix(locale);
-    const entry = pages.find((p) => p.filePath?.endsWith(`/about.${suffix}.mdx`));
-    return { params: { locale }, props: { entry } };
-  });
+  // The `about` prose comes from the `pages` collection via the content spine, which keys off
+  // `filePath` (the glob loader slugifies ids and drops dots). Richer CV/Person data + print
+  // export are layered on this route in #30.
+  return Promise.all(
+    LOCALES.map(async (locale) => ({
+      params: { locale },
+      props: { entry: (await getLocalizedEntry('pages', locale, 'about'))?.entry },
+    })),
+  );
 }
 
 const { entry } = Astro.props;

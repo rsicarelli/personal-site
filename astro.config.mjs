@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -32,6 +33,13 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
+  // Blog reading time (#31): a remark plugin computes `minutesRead` from each post's prose and
+  // exposes it on `render()`'s remarkPluginFrontmatter. MDX inherits the markdown remark plugins
+  // by default, so blog .mdx posts get it too.
+  markdown: {
+    remarkPlugins: [remarkReadingTime],
+  },
+
   // Typed runtime configuration (astro:env). Import these from `astro:env/client` (or
   // `astro:env/server` for secrets) instead of reading import.meta.env directly, so missing
   // or malformed values fail the build. Real values live in an untracked .env — see
@@ -48,6 +56,14 @@ export default defineConfig({
         context: 'client',
         access: 'public',
         optional: true,
+      }),
+      // Base URL for photos/downloads (#36/#37). Defaults to the local `public/media/` dir so dev
+      // works with placeholder assets; flips to the Cloudflare R2 public base in the Hosting epic
+      // (#67) via .env — no code change. Media itself never lives in git (we avoid Git LFS).
+      PUBLIC_MEDIA_BASE_URL: envField.string({
+        context: 'client',
+        access: 'public',
+        default: '/media',
       }),
     },
   },
