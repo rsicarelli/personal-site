@@ -59,10 +59,13 @@ const next = idx >= 0 && idx < seriesPosts.length - 1 ? seriesPosts[idx + 1] : u
 // present) becomes both the OG image and BlogPosting.image; dates reuse the same UTC source as the
 // visible <time> elements. Author is name-only here; the rich Person node lives on /about.
 const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
-// OG/JSON-LD image must be self-hosted (the metadata suite asserts the rsicarelli.com origin), so we
-// use only the local optimized `cover`. Mirrored posts have none yet → BaseLayout's default brand
-// card; their remote dev.to `coverUrl` powers just the visible spotlight thumbnails until R2 (#R2).
-const ogImage = cover ? new URL(cover.src, Astro.site).href : undefined;
+// OG/JSON-LD image must be self-hosted (the metadata suite asserts the rsicarelli.com origin). Use
+// the local optimized `cover` when present; otherwise a per-post generated card (#148) on our own
+// origin. (The remote dev.to `coverUrl` stays off-origin — it powers only the visible spotlight
+// thumbnails until R2 (#144).)
+const ogImage = cover
+  ? new URL(cover.src, Astro.site).href
+  : new URL(`/og/${locale}/blog/${slug}.png`, Astro.site).href;
 const seriesUrl = series ? canonicalUrl(`/series/${series}`, locale, Astro.site) : undefined;
 const jsonLd = [
   blogPostingLd(entry.data, {
