@@ -35,7 +35,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      # Reuses the mise-pinned toolchain (Node/pnpm/go-task from .tool-versions).
+      # Reuses the mise-pinned toolchain (Node/pnpm/go-task from mise.toml).
       - uses: ./.github/actions/setup
       - run: task build
       - run: pnpm test:i18n
