@@ -23,7 +23,8 @@
     "test": "vitest run",
     "test:i18n": "vitest run tests/i18n",
     "test:seo": "vitest run tests/seo",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "deploy": "wrangler pages deploy dist --project-name personal-site"
   },
   "dependencies": {
     "@astrojs/mdx": "^6.0.1",
@@ -61,6 +62,7 @@
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.60.0",
-    "vitest": "^4.1.7"
+    "vitest": "^4.1.7",
+    "wrangler": "^4.95.0"
   }
 }

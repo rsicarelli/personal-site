@@ -8,6 +8,11 @@ import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 
 // https://astro.build/config
 export default defineConfig({
+  // Static output (Astro's default with no `output` key and no adapter): the build emits a fully
+  // prebuilt `dist/` that Cloudflare Pages serves directly — zero-JS by default, no server runtime.
+  // Deploy is Pages' native Git integration (push to `main` → build → deploy; PR previews); the
+  // build output dir is pinned in wrangler.jsonc. See docs/deploy-runbook.md (Hosting epic #60).
+
   // Final deployed URL — used for canonical URLs and the sitemap.
   site: 'https://rsicarelli.com',
 
