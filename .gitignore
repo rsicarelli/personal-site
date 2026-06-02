@@ -10,6 +10,7 @@ dist/
 .wrangler/
 .vercel/
 .netlify/
+.lighthouseci/
 .cache/
 
 # Env & secrets

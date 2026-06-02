@@ -1,0 +1,55 @@
+name: Lighthouse CI
+
+# Core Web Vitals budget (#58): build the static site, serve dist via `astro preview`, and run
+# Lighthouse against representative pages. The hard gates are the CWV lab metrics (LCP < 2.5s,
+# CLS < 0.1, TBT < 200ms as the INP lab proxy) plus accessibility/SEO >= 0.95; the aggregate
+# performance score is a *warning* because lab perf scores carry real run-to-run variance in CI.
+#
+# This is the LAB budget. Field/RUM monitoring (PageSpeed CrUX, real INP) needs a production URL
+# and lands with the Hosting epic (#60). Standalone workflow (not part of the required CI Summary),
+# mirroring the i18n/seo test workflows.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'astro.config.mjs'
+      - 'lighthouserc.json'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/lighthouse.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'lighthouserc.json'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    name: Core Web Vitals budget
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      # Reuses the mise-pinned toolchain (Node/pnpm/go-task from .tool-versions).
+      - uses: ./.github/actions/setup
+      - run: task build
+      # ubuntu-latest ships google-chrome-stable, which @lhci/cli's chrome-launcher auto-detects.
+      - run: pnpm exec lhci autorun
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: ./.lighthouseci
+          if-no-files-found: ignore
