@@ -3,6 +3,7 @@ import { defineConfig, envField } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,7 +13,19 @@ export default defineConfig({
   // React powers interactive shadcn/ui components as islands only — the site stays
   // zero-JS by default; islands hydrate per-component via client:* directives.
   // MDX backs the content collections (blog/portfolio/events/pages).
-  integrations: [react(), mdx()],
+  // Sitemap (#25) is locale-aware: the `i18n` option emits per-URL <xhtml:link hreflang>
+  // alternates mirroring the in-page tags. Map key = URL slug (`pt-br`), value = hreflang
+  // code (`pt-BR`) — same lowercase-slug / uppercase-region split as the rest of the site.
+  integrations: [
+    react(),
+    mdx(),
+    sitemap({
+      i18n: {
+        defaultLocale: 'en',
+        locales: { en: 'en', 'pt-br': 'pt-BR' },
+      },
+    }),
+  ],
 
   vite: {
     // Tailwind CSS v4 is wired through its Vite plugin (CSS-first, no config file).

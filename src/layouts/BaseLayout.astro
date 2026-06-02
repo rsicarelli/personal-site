@@ -2,8 +2,8 @@
 import '../styles/global.css';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
-import { DEFAULT_LOCALE, type Locale } from '@/config/site';
-import { hreflangOf } from '@/i18n/utils';
+import { LOCALES, DEFAULT_LOCALE, type Locale } from '@/config/site';
+import { hreflangOf, stripLocale } from '@/i18n/utils';
 
 interface Props {
   /** Page <title>. Per-locale title/description templating lands in the SEO epic (#51). */
@@ -18,7 +18,23 @@ const { title, description } = Astro.props;
 const locale = (Astro.currentLocale ?? DEFAULT_LOCALE) as Locale;
 const htmlLang = hreflangOf(locale);
 
-const canonical = new URL(Astro.url.pathname, Astro.site);
+// Reciprocal hreflang (#23). Build every alternate from the same locale-stripped logical path so
+// the set is identical on `/en/…` and `/pt-br/…` (reciprocity) and the self-canonical is byte-for-
+// byte the self-hreflang (no trailing-slash drift). `pt-BR` is uppercase in the attribute; the URL
+// slug stays lowercase `/pt-br/`.
+const logical = stripLocale(Astro.url.pathname, LOCALES);
+const localeUrl = (loc: Locale) =>
+  new URL(`/${loc}${logical === '/' ? '' : logical}`, Astro.site).href;
+
+const canonical = localeUrl(locale);
+const alternates = [
+  ...LOCALES.map((loc) => ({ hreflang: hreflangOf(loc), href: localeUrl(loc) })),
+  {
+    hreflang: 'x-default',
+    // Home → the neutral gateway (the language-selection page); deeper pages → the default locale.
+    href: logical === '/' ? new URL('/', Astro.site).href : localeUrl(DEFAULT_LOCALE),
+  },
+];
 ---
 
 <!doctype html>
@@ -31,10 +47,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     {description && <meta name="description" content={description} />}
     <link rel="canonical" href={canonical} />
 
+    {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
+
     {
-      /* SEO epic (#51/#23): reciprocal hreflang alternates (en / pt-br / x-default) +
-        OpenGraph / Twitter cards are emitted here once i18n routing exists. Never a hard
-        IP/locale redirect — detect at `/` only, keep a visible switcher. */
+      /* OpenGraph / Twitter cards are emitted here in the SEO epic (#51). hreflang above is the
+        i18n epic's (#23) responsibility; detect at `/` only, keep the visible switcher. */
     }
 
     <slot name="head" />

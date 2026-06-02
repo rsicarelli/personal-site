@@ -9,10 +9,17 @@
  *  2. The only client JS is a tiny inline soft-redirect that runs in real browsers to send a
  *     visitor to their best-guess locale. Crawlers that don't execute JS simply see the links.
  *
- * Reciprocal hreflang for this gateway is added in PR3 (#23).
+ * The gateway advertises both locales + x-default via reciprocal hreflang (#23) so search
+ * engines discover the localized roots from `/` itself.
  */
 import '../styles/global.css';
 import { SITE } from '@/config/site';
+
+const alternates = [
+  { hreflang: 'en', href: new URL('/en', Astro.site).href },
+  { hreflang: 'pt-BR', href: new URL('/pt-br', Astro.site).href },
+  { hreflang: 'x-default', href: new URL('/', Astro.site).href },
+];
 ---
 
 <!doctype html>
@@ -23,6 +30,8 @@ import { SITE } from '@/config/site';
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>rsicarelli.com</title>
     <meta name="description" content={SITE.description} />
+    <link rel="canonical" href={new URL('/', Astro.site).href} />
+    {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
   </head>
   <body class="min-h-dvh antialiased">
     <main class="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center px-6 py-16">
