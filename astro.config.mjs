@@ -39,14 +39,20 @@ export default defineConfig({
     },
   },
 
-  // i18n routing is owned by the dedicated i18n epic (#19). The layout and content
-  // schemas already leave room for it; enabling it here is intentionally deferred.
-  // Planned shape — subdirectory URLs /en/ + /pt-br/, browser-locale detect at `/` only,
-  // never a hard IP/locale redirect:
-  //
-  // i18n: {
-  //   locales: ['en', 'pt-br'],
-  //   defaultLocale: 'en',
-  //   routing: { prefixDefaultLocale: true },
-  // },
+  // i18n routing (#20). Subdirectory URLs /en/ + /pt-br/ (never ccTLD/subdomain/?lang=).
+  // `prefixDefaultLocale: true` prefixes English too, so `/` is a neutral, crawlable gateway.
+  // `redirectToDefaultLocale: false` keeps `/` from issuing a hard 301 to /en/ — Googlebot
+  // crawls from US IPs with no Accept-Language and must reach both languages. Browser-locale
+  // detection happens client-side at `/` only (see src/pages/index.astro), never server-side.
+  i18n: {
+    locales: ['en', 'pt-br'],
+    defaultLocale: 'en',
+    routing: {
+      prefixDefaultLocale: true,
+      redirectToDefaultLocale: false,
+    },
+  },
+
+  // Keep generated URLs (routes, hreflang, sitemap) in agreement on trailing slashes.
+  trailingSlash: 'ignore',
 });

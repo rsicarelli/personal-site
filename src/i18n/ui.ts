@@ -1,0 +1,57 @@
+import type { Locale } from '@/config/site';
+
+/**
+ * Per-locale UI string dictionary (#26) — nav labels, footer labels, button/CTA text, and the
+ * small handful of layout strings. Content prose lives in `src/content/**`; this file is ONLY
+ * for chrome strings that aren't part of a content collection.
+ *
+ * `en` is the canonical key set. The `satisfies Record<Locale, …>` makes a missing *locale* a
+ * typecheck error, and deriving `UIKey` from `en` (consumed by `useTranslations`) makes a key
+ * present in one locale but missing in another a typecheck error too. That compile-time guard
+ * covers UI strings; the runtime CI guardrail (#24) covers content files.
+ */
+export const ui = {
+  en: {
+    'site.title': 'rsicarelli.com',
+    'site.description':
+      'Rodrigo Sicarelli — Staff Software Engineer, Kotlin Multiplatform authority, speaker and OSS maintainer.',
+    'home.heading': 'rsicarelli.com',
+    'home.intro':
+      'Staff Software Engineer (Mobile Platform) at Stone, Kotlin Multiplatform authority, KotlinConf speaker and OSS maintainer. Writing, talks, projects and CV — in English and Portuguese.',
+    'nav.home': 'Home',
+    'nav.blog': 'Blog',
+    'nav.projects': 'Projects',
+    'nav.talks': 'Talks',
+    'nav.about': 'About',
+    'nav.contact': 'Contact',
+    'footer.photos': 'Photos',
+    'footer.uses': 'Uses',
+    'footer.now': 'Now',
+    'footer.materials': 'Materials',
+    'lang.switchTo': 'Português',
+    'lang.label': 'Switch language',
+  },
+  'pt-br': {
+    'site.title': 'rsicarelli.com',
+    'site.description':
+      'Rodrigo Sicarelli — Engenheiro de Software Staff, autoridade em Kotlin Multiplatform, palestrante e mantenedor de OSS.',
+    'home.heading': 'rsicarelli.com',
+    'home.intro':
+      'Engenheiro de Software Staff (Mobile Platform) na Stone, autoridade em Kotlin Multiplatform, palestrante na KotlinConf e mantenedor de OSS. Artigos, palestras, projetos e currículo — em inglês e português.',
+    'nav.home': 'Início',
+    'nav.blog': 'Blog',
+    'nav.projects': 'Projetos',
+    'nav.talks': 'Palestras',
+    'nav.about': 'Sobre',
+    'nav.contact': 'Contato',
+    'footer.photos': 'Fotos',
+    'footer.uses': 'Ferramentas',
+    'footer.now': 'Agora',
+    'footer.materials': 'Materiais',
+    'lang.switchTo': 'English',
+    'lang.label': 'Trocar idioma',
+  },
+} as const satisfies Record<Locale, Record<string, string>>;
+
+/** Translation keys — derived from the canonical (`en`) locale so drift fails typecheck. */
+export type UIKey = keyof (typeof ui)['en'];

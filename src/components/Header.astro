@@ -1,21 +1,35 @@
 ---
 /**
- * Primary navigation — labels/hrefs from the central config (src/config/site.ts).
- * Stub: routes are placeholders until the Content Architecture epic (#27) builds the pages,
- * and the language switcher + locale-prefixed hrefs arrive with the i18n epic (#22).
+ * Primary navigation — labels come from the i18n dictionary (src/i18n/ui.ts), hrefs from the
+ * central config (src/config/site.ts) and gain a `/<locale>` prefix at render. The locale is
+ * passed down from BaseLayout (derived from the route). The language switcher (#22) is wired
+ * in PR2. Routes other than Home/About are placeholders until the Content epic (#27).
  */
-import { NAV } from '@/config/site';
+import { NAV, type Locale } from '@/config/site';
+import { useTranslations } from '@/i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+/** Prefix a logical href with the current locale: `/` → `/en`, `/blog` → `/en/blog`. */
+const localized = (href: string) => `/${locale}${href === '/' ? '' : href}`;
 ---
 
 <header class="border-border border-b">
   <nav aria-label="Primary" class="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
-    <a href="/" class="font-mono text-sm font-semibold tracking-tight">rsicarelli.com</a>
+    <a href={localized('/')} class="font-mono text-sm font-semibold tracking-tight">
+      rsicarelli.com
+    </a>
     <ul class="text-muted-foreground flex items-center gap-4 text-sm">
       {
         NAV.slice(1).map((item) => (
           <li>
-            <a href={item.href} class="hover:text-foreground transition-colors">
-              {item.label}
+            <a href={localized(item.href)} class="hover:text-foreground transition-colors">
+              {t(item.key)}
             </a>
           </li>
         ))

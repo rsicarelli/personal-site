@@ -1,0 +1,25 @@
+---
+/**
+ * Localized home page — one static route per locale (`/en/`, `/pt-br/`). `getStaticPaths`
+ * enumerates LOCALES, so the `[locale]` param is always a valid locale at build time and any
+ * other segment 404s. Strings come from the i18n dictionary (#26); real content sections land
+ * with the Content epic (#27).
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { LOCALES, type Locale } from '@/config/site';
+import { useTranslations } from '@/i18n/utils';
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const locale = Astro.params.locale as Locale;
+const t = useTranslations(locale);
+---
+
+<BaseLayout title={t('site.title')} description={t('site.description')}>
+  <section class="mx-auto max-w-3xl px-6 py-16">
+    <h1 class="text-3xl font-bold tracking-tight">{t('home.heading')}</h1>
+    <p class="text-muted-foreground mt-3 max-w-prose">{t('home.intro')}</p>
+  </section>
+</BaseLayout>
