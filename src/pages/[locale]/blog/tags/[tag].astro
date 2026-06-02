@@ -1,0 +1,89 @@
+---
+/**
+ * Tag archive (#31) — `/<locale>/blog/tags/<tag>`. Built ONLY for tags present in published posts
+ * of both locales (`commonBlogTagSlugs`), so the reciprocal hreflang emitted by BaseLayout always
+ * has a real sibling on the other locale. Tags are language-neutral and shown verbatim.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { LOCALES, type Locale } from '@/config/site';
+import { useTranslations, hreflangOf } from '@/i18n/utils';
+import { getLocalizedEntries, commonBlogTagSlugs, slugifyTag } from '@/lib/content';
+
+interface PostRef {
+  slug: string;
+  title: string;
+  description: string;
+  pubDate: Date;
+}
+
+export async function getStaticPaths() {
+  const tagSlugs = await commonBlogTagSlugs();
+  const paths: {
+    params: { locale: Locale; tag: string };
+    props: { label: string; posts: PostRef[] };
+  }[] = [];
+  for (const locale of LOCALES) {
+    const posts = await getLocalizedEntries('blog', locale);
+    for (const tagSlug of tagSlugs) {
+      const matching = posts.filter(({ entry }) =>
+        entry.data.tags.some((tg) => slugifyTag(tg) === tagSlug),
+      );
+      if (matching.length === 0) continue;
+      const label = matching[0].entry.data.tags.find((tg) => slugifyTag(tg) === tagSlug) ?? tagSlug;
+      paths.push({
+        params: { locale, tag: tagSlug },
+        props: {
+          label,
+          posts: matching.map(({ slug, entry }) => ({
+            slug,
+            title: entry.data.title,
+            description: entry.data.description,
+            pubDate: entry.data.pubDate,
+          })),
+        },
+      });
+    }
+  }
+  return paths;
+}
+
+const locale = Astro.params.locale as Locale;
+const { label, posts } = Astro.props;
+const t = useTranslations(locale);
+const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long' });
+---
+
+<BaseLayout
+  title={`${t('blog.taggedWith')} ${label} · ${t('site.title')}`}
+  description={`${t('blog.taggedWith')} ${label}`}
+>
+  <section class="mx-auto max-w-3xl px-6 py-16">
+    <a
+      href={`/${locale}/blog`}
+      class="text-muted-foreground hover:text-foreground font-mono text-xs"
+    >
+      ← {t('blog.allPosts')}
+    </a>
+    <h1 class="mt-6 text-3xl font-bold tracking-tight">
+      {t('blog.taggedWith')}
+      <span class="text-primary">{label}</span>
+    </h1>
+    <ul class="mt-10 space-y-8">
+      {
+        posts.map((post) => (
+          <li class="border-border border-b pb-8 last:border-0">
+            <h2 class="text-lg font-semibold tracking-tight">
+              <a href={`/${locale}/blog/${post.slug}`} class="hover:text-primary transition-colors">
+                {post.title}
+              </a>
+            </h2>
+            <p class="text-muted-foreground mt-1 font-mono text-xs">
+              <time datetime={post.pubDate.toISOString()}>{df.format(post.pubDate)}</time>
+            </p>
+            <p class="text-muted-foreground mt-2 max-w-prose">{post.description}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>

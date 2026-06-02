@@ -92,6 +92,30 @@ export async function getLocalizedEntry<C extends CollectionKey>(
   return (await getLocalizedEntries(collection, locale)).find((e) => e.slug === slug);
 }
 
+/** URL-safe tag slug. Tags are free-text in frontmatter; this normalizes them for routing. */
+export function slugifyTag(tag: string): string {
+  return tag
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Tag slugs present in published blog posts of EVERY locale. Only these get a tag-archive page, so
+ * `BaseLayout`'s reciprocal hreflang never points at a `/pt-br/` (or `/en/`) tag page that 404s.
+ * Tags are language-neutral technical terms (`kotlin`, `kmp`) displayed verbatim — not translated.
+ */
+export async function commonBlogTagSlugs(): Promise<Set<string>> {
+  const perLocale = await Promise.all(
+    LOCALES.map(async (locale) => {
+      const posts = await getLocalizedEntries('blog', locale);
+      return new Set(posts.flatMap(({ entry }) => entry.data.tags.map(slugifyTag)));
+    }),
+  );
+  return new Set([...perLocale[0]].filter((slug) => perLocale.every((set) => set.has(slug))));
+}
+
 /** `getStaticPaths` builder: the (locale × slug) product for a `[locale]/.../[...slug]` route. */
 export async function localizedPaths<C extends CollectionKey>(
   collection: C,
