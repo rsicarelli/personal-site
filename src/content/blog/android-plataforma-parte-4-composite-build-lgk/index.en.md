@@ -1,7 +1,7 @@
 ---
-title: 'Android Plataforma - Parte 4: Composite Build'
-description: 'Nos artigos anteriores, compreendemos a importância da modularidade e como os Composite Builds são a escolha certa para escalar projetos Kotlin.'
-summary: 'Nos artigos anteriores, compreendemos a importância da modularidade e como os Composite Builds são a escolha certa para escalar projetos Kotlin.'
+title: 'Android Plataforma - Part 4: Composite Build'
+description: 'In the previous articles we saw why modularity matters and why Composite Builds are the right choice for scaling Kotlin projects.'
+summary: 'In the previous articles we saw why modularity matters and why Composite Builds are the right choice for scaling Kotlin projects.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -11,38 +11,36 @@ tags:
 series: 'android-plataforma'
 seriesOrder: 4
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fh5b4mdf2bo8tj31ylvtz.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-4-composite-build-lgk'
-  devtoId: 1609512
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/3-4/composite-build'
   reactions: 3
 ---
 
-Incrementaremos o projeto inicial com a criação e inclusão de um composite build.
+We'll build on the initial project by creating and including a composite build.
 
 ---
 
-**Primeiro passo** é criar uma pasta para declarar os plugins e funcionalidades.
+**The first step** is to create a folder to declare the plugins and features.
 
-A nomenclatura mais adotada para essa pasta é `build-logic`, e é comum encontrar vários projetos do Google, Jetbrains e Gradle que seguem essa convenção.
+The most widely adopted name for this folder is `build-logic`, and you'll find plenty of projects from Google, JetBrains, and Gradle that follow this convention.
 
-Alguns projetos optam por `conventions` ou `plugins`.
+Some projects go with `conventions` or `plugins`.
 
-Prefiro seguir padrões reconhecidos pela comunidade, então usaremos o nome mais popular: `build-logic`.
+I prefer to follow patterns the community already recognizes, so we'll use the most popular name: `build-logic`.
 
-## Passo a passo
+## Step by step
 
-**1 -** Crie uma pasta na raiz do projeto:
+**1 -** Create a folder at the root of the project:
 
 ```shell
 mkdir build-logic
 ```
 
-**2 -** Entre nesta pasta e execute o comando `gradle init`. Este script do Gradle inicializa um projeto Gradle na raiz, acompanhado do Gradlew Wrapper (`gradlew`) e outros arquivos úteis.
+**2 -** Go into this folder and run `gradle init`. This Gradle script initializes a Gradle project at the root, along with the Gradle Wrapper (`gradlew`) and other useful files.
 
-Certifique-se de ter o Gradle instalado. Se estiver usando o homebrew:
+Make sure you have Gradle installed. If you're using Homebrew:
 
 ```shell
 brew install gradle
@@ -53,9 +51,9 @@ cd build-logic
 gradle init
 ```
 
-**3 -** Após alguns instantes, a mensagem a seguir surgirá no console:
+**3 -** After a moment, the following message will show up in the console:
 
-Digite **4** para escolher o tipo gradle plugin e confirme com enter.
+Type **4** to choose the Gradle plugin type and confirm with enter.
 
 ```shell
 Select type of project to generate:
@@ -66,7 +64,7 @@ Select type of project to generate:
 Enter selection (default: basic) [1..4] 4
 ```
 
-**4 -** Outra solicitação aparecerá para escolher a linguagem. Digite **"3"** para Kotlin:
+**4 -** Another prompt will appear asking you to choose the language. Type **"3"** for Kotlin:
 
 ```
 Select implementation language:
@@ -76,7 +74,7 @@ Select implementation language:
 Enter selection (default: Java) [1..3] 3
 ```
 
-**5 -** Em seguida, será pedido para escolher a DSL (domain specific language) dos scripts. Selecione **"2"** para Kotlin:
+**5 -** Next, you'll be asked to choose the DSL (domain specific language) for the scripts. Select **"2"** for Kotlin:
 
 ```shell
 Select build script DSL:
@@ -85,27 +83,27 @@ Select build script DSL:
 Enter selection (default: Kotlin) [1..2] 2
 ```
 
-**6 -** Depois, o nome do projeto será solicitado. Como já estamos na pasta `build-logic`, simplesmente confirme com enter:
+**6 -** After that, you'll be asked for the project name. Since we're already inside the `build-logic` folder, just confirm with enter:
 
 ```shell
-Project name (default: build-logic): // Apenas pressione enter
+Project name (default: build-logic): // Just press enter
 ```
 
-**7 -** A próxima etapa solicita o source package. Mantenha o padrão:
+**7 -** The next step asks for the source package. Keep the default:
 
 ```shell
-Source package (default: build.logic):  // Apenas pressione enter
+Source package (default: build.logic):  // Just press enter
 ```
 
-**8 -** Por fim, a opção para gerar utilizando novas API's. Escolha **"yes"** e confirme:
+**8 -** Finally, the option to generate using the new APIs. Choose **"yes"** and confirm:
 
 ```shell
 Generate build using new APIs and behavior (some features may change in the next minor release)? (default: no) [yes, no] yes
 ```
 
-### Arquivos gerados
+### Generated files
 
-Concluindo o passo a passo, observe os arquivos gerados:
+With the step-by-step done, take a look at the generated files:
 
 ```shell
 A  .gitattributes
@@ -119,17 +117,17 @@ A  plugin/build.gradle.kts
 A  settings.gradle.kts
 ```
 
-Vamos nos concentrar nos mais relevantes:
+Let's focus on the most relevant ones:
 
 ### settings.gradle.kts
 
-A presença deste arquivo permite que este módulo seja tratado como um **Composite Build**.
+The presence of this file is what lets this module be treated as a **Composite Build**.
 
-Note que é um arquivo simples. Por enquanto, não precisamos adicionar nada.
+Notice it's a simple file. For now, we don't need to add anything.
 
 ### build.gradle.kts
 
-Esse arquivo gerado contém algumas várias configurações, mas vamos focar nas mais importantes:
+This generated file has several settings, but let's focus on the most important ones:
 
 ```kotlin
 plugins {
@@ -149,22 +147,22 @@ gradlePlugin {
 
 #### `java-gradle-plugin`
 
-Esse plugin traz uma extensão chamada `gradlePlugin`. É com ela que iremos realizar as declarações dos nossos plugins.
+This plugin brings in an extension called `gradlePlugin`. That's what we use to declare our plugins.
 
-Por debaixo dos panos, esse plugin aplica algumas decorações na hora de compilar o `jar` desse módulo, além de adicionar metadata do seu artefato, e a criação de um arquivo de propriedade do Gradle que serve como referencia nossa classe de implementação.
+Under the hood, this plugin applies some decorations when compiling the module's `jar`, adds metadata to its artifact, and creates a Gradle properties file that points to our implementation class.
 
-Basicamente, estamos registrando um plugin com o id `build.logic.greeting` no projeto, e, ao aplica-lo, a classe de implementaçào `BuildLogicPlugin` estará disponível, pré-compilada para uso.
+Essentially, we're registering a plugin with the id `build.logic.greeting` in the project, and when it's applied, the `BuildLogicPlugin` implementation class becomes available, pre-compiled and ready to use.
 
 ### `BuildLogicPlugin.kt`
 
-Esse arquivo é a declaração do nosso plugin, utilizando a api `Plugin<Project>`.
+This file is the declaration of our plugin, using the `Plugin<Project>` API.
 
-Graças ao Kotlin DSL, é bem fácil de entender o que estamos fazendo:
+Thanks to the Kotlin DSL, it's easy to follow what we're doing:
 
-Registrando uma task chamada `greetings` no projeto que está aplicando esse `Plugin`
+Registering a task called `greetings` in the project that applies this `Plugin`
 
 ```kotlin
-@Supress("unused") // invocado por reflexão
+@Supress("unused") // invoked by reflection
 class BuildLogicPlugin: Plugin<Project> {
     override fun apply(project: Project) {
         // Register a task
@@ -177,16 +175,16 @@ class BuildLogicPlugin: Plugin<Project> {
 }
 ```
 
-## Incluindo nosso `build-logic` no projeto raiz
+## Including our `build-logic` in the root project
 
-Chegou a hora de conectarmos os dois mundos.
+Now it's time to connect the two worlds.
 
-Para incluir composite builds em nosso projeto, precisamos utilizar uma função especial chamada `includeBuild()`. O único requisito para utilizar essa função, é que o módulo tenha um arquivo `settings.gradle.kts` em sua raiz.
+To include composite builds in our project, we use a special function called `includeBuild()`. The only requirement for using it is that the module has a `settings.gradle.kts` file at its root.
 
-Como nosso `build-logic` está pronto pra uso, vamos apenas navegar até o nosso `settings.gradle.kts` e incluir esse módulo:
+Since our `build-logic` is ready to use, we just need to open our `settings.gradle.kts` and include this module:
 
 ```kotlin
-// settings.gradle.kts da raiz
+// root settings.gradle.kts
 pluginManagement {
     includeBuild("build-logic")
     repositories {
@@ -197,29 +195,29 @@ pluginManagement {
 }
 ```
 
-Basicamente, estamos instruindo o Gradle a utilizar nosso `build-logic` como Composite Build, e incluindo nosso plugin pre-compilado `BuildLogicPlugin` no classpath do projeto.
+Essentially, we're telling Gradle to use our `build-logic` as a Composite Build, and adding our pre-compiled `BuildLogicPlugin` plugin to the project's classpath.
 
-### Aplicando o plugin no `build.gradle.kts`
+### Applying the plugin in `build.gradle.kts`
 
-Finalmente, iremos aplicar nosso plugin ao projeto principal.
+Finally, we'll apply our plugin to the main project.
 
-Tenha certeza de que você sincronizou seus arquivos Gradle ("Reload all gradle projects") e navegue até o arquivo `build.gradle.kts` da raiz do projeto:
+Make sure you've synced your Gradle files ("Reload all gradle projects") and open the `build.gradle.kts` file at the root of the project:
 
 ```kotlin
-//build.gradle.kts da raiz
+//root build.gradle.kts
 
 plugins {
-    // Plugin do android
-    // Plugin do Kotlin
+    // Android plugin
+    // Kotlin plugin
     id("build.logic.greeting")
 }
 ```
 
-## Utilizando nossa task "greeting"
+## Using our "greeting" task
 
-Após sincronizar os arquivos Gradle do projeto, vá até o console e execute o seguinte comando:
+Once the project's Gradle files are synced, head to the console and run the following command:
 
-Garanta que você esteja na pasta raiz do projeto, e não dentro `build-logic`:
+Make sure you're in the project's root folder, not inside `build-logic`:
 
 ```shell
 pwd
@@ -238,8 +236,8 @@ Hello from plugin 'build.logic.greeting'
 BUILD SUCCESSFUL in 518ms
 ```
 
-## Sucesso!
+## Success!
 
-Já temos nosso esqueleto para compor nossa plataforma, e incrementar nosso `build-logic` com outras funcionalidades.
+We now have our skeleton in place to compose our platform and grow our `build-logic` with more features.
 
-No próximo artigo, vamos dar uma "limpada" nesses arquivos auto gerados pelo `gradle init`, e dar continuidade aos trabalhos.
+In the next article, we'll do some cleanup on these files auto-generated by `gradle init` and carry on with the work.

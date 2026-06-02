@@ -1,7 +1,7 @@
 ---
-title: "Android Plataforma - Parte 8: Decorando os módulos 'library'"
-description: 'No último post, apresentamos a primeira decoração na Plataforma e fizemos toda a configuração do nosso módulo app usando Kotlin DSL.'
-summary: 'No último post, apresentamos a primeira decoração na Plataforma e fizemos toda a configuração do nosso módulo app usando Kotlin DSL.'
+title: "Android Plataforma - Part 8: Decorating the 'library' modules"
+description: 'In the last post, we introduced the first decoration in the Platform and set up our entire app module using the Kotlin DSL.'
+summary: 'In the last post, we introduced the first decoration in the Platform and set up our entire app module using the Kotlin DSL.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -11,28 +11,26 @@ tags:
 series: 'android-plataforma'
 seriesOrder: 8
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F9jgi6gklng4hp7izrvot.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-8-decorando-os-modulo-library-4mm0'
-  devtoId: 1610075
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/8/decorating-android-library'
   reactions: 3
 ---
 
-Agora, vamos estender essa configuração para os módulos designsystem, home e details.
+Now let's extend that setup to the designsystem, home, and details modules.
 
-Adotaremos exatamente a mesma estratégia para essa decoração:
+We'll follow exactly the same strategy for this decoration:
 
-1. Expor e implementar a função `internal fun applyAndroidLibrary()` no arquivo `decorations/android.kt`.
-2. Tornar nossa API acessível para os demais módulos no arquivo `KPlatformPlugin.kt` através da função `fun androidLibrary()`.
-3. Substituir as configurações do módulo por essa nova função.
+1. Expose and implement the `internal fun applyAndroidLibrary()` function in the `decorations/android.kt` file.
+2. Make our API available to the other modules in the `KPlatformPlugin.kt` file through the `fun androidLibrary()` function.
+3. Replace the module configuration with this new function.
 
 ---
 
-## Passo a passo
+## Step by step
 
-**1 -** Crie uma nova função `internal fun applyAndroidLibrary()` em `build-logic/decorations`. Em seguida, recupere as extensões registradas no `Project` para configurar o `LibraryExtension`:
+**1 -** Create a new `internal fun applyAndroidLibrary()` function in `build-logic/decorations`. Then, retrieve the extensions registered on the `Project` to configure the `LibraryExtension`:
 
 ```kotlin
 import com.android.build.api.dsl.LibraryExtension
@@ -46,9 +44,9 @@ internal fun Project.applyAndroidLibrary() {
 }
 ```
 
-**2 -** Transfira o conteúdo do bloco `android {}` de qualquer módulo (`designsystem`, `home`, `details`) para a configuração do `LibraryExtension`.
+**2 -** Move the contents of the `android {}` block from any of the modules (`designsystem`, `home`, `details`) into the `LibraryExtension` configuration.
 
-Neste passo, vamos também reutilizar o `applyKotlinOptions()` da solução anterior e a configuração do compilador Compose:
+In this step, we'll also reuse `applyKotlinOptions()` from the previous solution along with the Compose compiler configuration:
 
 ```kotlin
 import com.android.build.api.dsl.LibraryExtension
@@ -98,7 +96,7 @@ internal fun Project.applyAndroidLibrary() {
 }
 ```
 
-**3 -** É hora de tornar esta decoração acessível aos nossos projetos. No `KPlatformPlugin.kt`, declare a função `fun androidLibrary()`:
+**3 -** It's time to make this decoration available to our projects. In `KPlatformPlugin.kt`, declare the `fun androidLibrary()` function:
 
 ```kotlin
 import com.rsicarelli.kplatform.decorations.applyAndroidApp
@@ -116,7 +114,7 @@ fun Project.androidApp() = applyAndroidApp()
 fun Project.androidLibrary() = applyAndroidLibrary()
 ```
 
-**4 -** Sincronize o projeto. Depois, acesse cada `build.gradle.kts` dos módulos e aplique a decoração `androidLibrary()`:
+**4 -** Sync the project. Then go into each module's `build.gradle.kts` and apply the `androidLibrary()` decoration:
 
 ```kotlin
 // core/designsystem/build.gradle.kts
@@ -174,12 +172,12 @@ dependencies {
 }
 ```
 
-## Sucesso!
+## Success!
 
-E aí, o que achou dessa mudança? Olha a quantidade de código e repetição que conseguimos reduzir!
+So, what do you think of this change? Look at how much code and repetition we managed to cut!
 
-Com isso, a escalabilidade dos nossos módulos em desenvolvimentos futuros se torna muito mais viável.
+With this, scaling our modules in future development becomes far more viable.
 
-No entanto, ainda existem oportunidades significativas para otimização e robustez na nossa plataforma.
+That said, there are still significant opportunities to make our platform more optimized and robust.
 
-No próximo post, vamos analisar o código redundante nas funções `applyAndroidApp()` e `applyAndroidLibrary()`. Além disso, exploraremos mais sobre `ApplicationExtension` e `LibraryExtension`.
+In the next post, we'll look at the redundant code in the `applyAndroidApp()` and `applyAndroidLibrary()` functions. We'll also dig deeper into `ApplicationExtension` and `LibraryExtension`.

@@ -1,6 +1,6 @@
 ---
-title: 'Android Plataforma - Parte 12: Otimizando tempo de compilação para bibliotecas Android'
-description: '🌱 Branch: 12/improving-android-library-build-time 🔗 Repositório:...'
+title: 'Android Plataforma - Part 12: Optimizing build time for Android libraries'
+description: '🌱 Branch: 12/improving-android-library-build-time 🔗 Repository:...'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -10,10 +10,8 @@ tags:
 series: 'android-plataforma'
 seriesOrder: 12
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F95wf01w1l93eqd5slfhg.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-12-otimizando-tempo-de-compilacao-para-bibliotecas-android-3g36'
-  devtoId: 1611061
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/12/improving-android-library-build-time'
   reactions: 2
@@ -21,39 +19,39 @@ provenance:
 
 --
 
-No último post, construímos uma DSL robusta que nos permite ter um ajuste fino das nossas decorações.
+In the last post, we built a robust DSL that lets us fine-tune our decorations.
 
-Agora, vamos entender como podemos reduzir o tempo de compilação das nossas nossas android `library` configurando as **"build features"**
+Now, let's understand how we can reduce the build time of our Android `library` modules by configuring **"build features"**.
 
 ---
 
-## "Build features" do Android Gradle Plugin (AGP)
+## Android Gradle Plugin (AGP) "build features"
 
-A classe [`BuildFeatures`](https://developer.android.com/reference/tools/gradle-api/7.0/com/android/build/api/dsl/BuildFeatures) é uma interface que define uma lista de características de "build" que podem ser habilitadas ou desabilitadas em um projeto Android.
+The [`BuildFeatures`](https://developer.android.com/reference/tools/gradle-api/7.0/com/android/build/api/dsl/BuildFeatures) class is an interface that defines a list of "build" features you can enable or disable in an Android project.
 
-É por meio dessas funcionalidades que classes como `R` e `BuildConfig` são geradas, ou que as pastas `res` e `resource` são reconhecidas e incluídas no projeto.
+These features are what generate classes like `R` and `BuildConfig`, or make the `res` and `resource` folders recognized and included in the project.
 
-### Funções e suas responsabilidades
+### Features and their responsibilities
 
-1. **aidl**: AIDL (Android Interface Definition Language) permite definir as interfaces de comunicação que os componentes de um IPC (Inter-Process Communication) usarão. Em outras palavras, é uma forma de determinar como diferentes processos (ou apps) irão se comunicar.
+1. **aidl**: AIDL (Android Interface Definition Language) lets you define the communication interfaces that the components of an IPC (Inter-Process Communication) will use. In other words, it's a way to define how different processes (or apps) will talk to each other.
 
-2. **buildConfig**: Esta funcionalidade gera automaticamente uma classe `BuildConfig` com informações meta sobre o aplicativo, como sua versão e se é `debug`.
+2. **buildConfig**: This feature automatically generates a `BuildConfig` class with meta information about the app, such as its version and whether it's a `debug` build.
 
-3. **compose**: Compose é uma toolkit de UI moderna nativa do Android para criação de interfaces.
+3. **compose**: Compose is Android's modern native UI toolkit for building interfaces.
 
-4. **prefab**: Prefab permite a importação de bibliotecas C e C++ como módulos em projetos Android. Essas bibliotecas são empacotadas como AARs (Android ARchive) e facilitam a integração de código nativo nos projetos Android.
+4. **prefab**: Prefab lets you import C and C++ libraries as modules in Android projects. These libraries are packaged as AARs (Android ARchive) and make it easier to integrate native code into Android projects.
 
-5. **renderScript**: RenderScript é uma API do Android para execução de computações de alto desempenho, útil para apps que processam gráficos ou realizam cálculos intensivos.
+5. **renderScript**: RenderScript is an Android API for running high-performance computations, useful for apps that process graphics or do intensive calculations.
 
-6. **resValues**: Facilita a geração de Valores de Recurso, que são constantes colocadas em um arquivo XML para uso no aplicativo.
+6. **resValues**: Makes it easier to generate Resource Values, which are constants placed in an XML file for use in the app.
 
-7. **shaders**: Shaders são programas especializados usados para renderizar gráficos, frequentemente empregados em jogos e outras aplicações gráficas intensivas.
+7. **shaders**: Shaders are specialized programs used to render graphics, often used in games and other graphics-intensive applications.
 
-8. **viewBinding**: O View Binding gera automaticamente um código de vinculação de dados para suas views, melhorando a eficiência e segurança da programação da UI no Android.
+8. **viewBinding**: View Binding automatically generates data-binding code for your views, improving the efficiency and safety of UI programming on Android.
 
-### Comportamento padrão
+### Default behavior
 
-Por padrão, tanto o módulo `app` quanto `library` terão estas funcionalidades habilitadas:
+By default, both the `app` and `library` modules have these features enabled:
 
 - aidl
 - buildConfig
@@ -61,21 +59,21 @@ Por padrão, tanto o módulo `app` quanto `library` terão estas funcionalidades
 - resValues
 - shaders
 
-**Funcionalidades desabilitadas por padrão (valor `false`):**
+**Features disabled by default (value `false`):**
 
 - compose
 - prefab
 - viewBinding
 
-## Delegando o controle de build features para nossa Plataforma
+## Delegating build feature control to our Platform
 
-Sabendo que essas funcionalidades adicionam tempo de compilação, podemos torná-las `false` por padrão e delegar essa configuração para nossa Plataforma.
+Knowing that these features add to build time, we can set them to `false` by default and delegate that configuration to our Platform.
 
-### Definindo `BuildFeatures` e `BuildFeaturesBuilder`
+### Defining `BuildFeatures` and `BuildFeaturesBuilder`
 
-**1 -** Crie um novo modelo e builder para expressar as opções customizadas.
+**1 -** Create a new model and builder to express the custom options.
 
-Note que apenas o `AndroidLibraryOptions` irá receber essas opções. O motivo é que um `app` precisa de todos esses recursos habilitados, então nem damos trabalho de expor essa api no `AndroidAppOptions` também.
+Note that only `AndroidLibraryOptions` will receive these options. The reason is that an `app` needs all of these features enabled, so we don't even bother exposing this API on `AndroidAppOptions` as well.
 
 ```kotlin
 data class AndroidLibraryOptions(
@@ -108,7 +106,7 @@ class AndroidLibraryOptionsBuilder : AndroidOptionsBuilder() {
 }
 ```
 
-**2 -** Vamos atualizar nossa função `applyAndroidLibrary()` para aplicar a decoração a partir do modelo:
+**2 -** Let's update our `applyAndroidLibrary()` function to apply the decoration from the model:
 
 ```kotlin
 internal fun Project.applyAndroidLibrary(androidLibraryOptions: AndroidLibraryOptions) {
@@ -126,7 +124,7 @@ internal fun Project.applyAndroidLibrary(androidLibraryOptions: AndroidLibraryOp
 }
 ```
 
-**3 -** Nos passos a seguir, vamos desligar a geração do `BuildConfig` por completo, incluindo o módulo `app`. Já que é comum precisar do `BuildConfig` no `app`, vamos adaptar nossos modelos para trazer essa opção:
+**3 -** In the following steps, we'll turn off `BuildConfig` generation entirely, including the `app` module. Since it's common to need `BuildConfig` in the `app`, let's adapt our models to bring that option back:
 
 ```kotlin
 data class AndroidAppOptions(
@@ -151,7 +149,7 @@ class AndroidAppOptionsBuilder : AndroidOptionsBuilder() {
 }
 ```
 
-**4 -** Vamos adaptar o `applyAndroidApp()` para que possa gerar o `BuildConfig`:
+**4 -** Let's adapt `applyAndroidApp()` so it can generate `BuildConfig`:
 
 ```kotlin
 internal fun Project.applyAndroidApp(androidAppOptions: AndroidAppOptions) {
@@ -166,24 +164,24 @@ internal fun Project.applyAndroidApp(androidAppOptions: AndroidAppOptions) {
 }
 ```
 
-### Adaptando `build.gradle.kts` dos módulos
+### Adapting the modules' `build.gradle.kts`
 
-Iremos precisar atualizar o módulo `designsystem`, já que temos uma pasta `res` com os assets da aplicação.
+We'll need to update the `designsystem` module, since it has a `res` folder with the application's assets.
 
-Navegue até `designsystem/build.gradle.kts` e inclua a geração dos recursos do Android:
+Go to `designsystem/build.gradle.kts` and enable Android resource generation:
 
 ```kotlin
 androidLibrary {
     buildFeatures {
-        // Isso irá identificar a pasta "res" e adicionar no classpath
+        // This will pick up the "res" folder and add it to the classpath
         generateAndroidResources = true
     }
 }
 ```
 
-### Desligando as funcionalidades no `gradle.properties`
+### Turning the features off in `gradle.properties`
 
-**1 -** Vamos atualizar nosso `gradle.properties`. Abra o arquivo e adicione as seguintes linhas:
+**1 -** Let's update our `gradle.properties`. Open the file and add the following lines:
 
 ```kotlin
 android.library.defaults.buildfeatures.androidresources=false
@@ -195,77 +193,77 @@ android.defaults.buildfeatures.resValues=false
 android.defaults.buildfeatures.viewBinding=false
 ```
 
-**2 -** Já que estamos aqui, vamos aproveitar e aplicar outras configurações para otimizar nosso desenvolvimento com múltiplos módulos:
+**2 -** While we're here, let's take the opportunity to apply some other settings to optimize our multi-module development:
 
 ```properties
 # -------Gradle--------
 
-# Configurações de argumentos da JVM para a execução do Gradle.
-# - Opções de desempenho e limites de memória.
+# JVM argument settings for the Gradle run.
+# - Performance options and memory limits.
 org.gradle.jvmargs=-XX:+UseCompressedOops -XX:G1HeapRegionSize=16M -XX:MinHeapFreeRatio=10 -XX:MaxHeapFreeRatio=20 -XX:GCTimeLimit=20 -Xmx30g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8 -Djava.awt.headless=true
 
-# Executa tarefas em paralelo para melhorar o desempenho.
+# Runs tasks in parallel to improve performance.
 org.gradle.parallel=true
 
-# Habilita o cache de tarefas do Gradle para reutilizar resultados de tarefas entre builds.
+# Enables the Gradle task cache to reuse task outputs across builds.
 org.gradle.caching=true
 
-# Configura o projeto apenas quando é necessário, melhorando os tempos de build.
+# Configures the project only when needed, improving build times.
 org.gradle.configureondemand=true
 
 # -------Kotlin--------
 
-# Define o estilo de código Kotlin como o estilo oficial.
+# Sets the Kotlin code style to the official style.
 kotlin.code.style=official
 
 # -------Android-------
 
-# Habilita a utilização das bibliotecas AndroidX em vez das bibliotecas de suporte legadas.
+# Enables the use of AndroidX libraries instead of the legacy support libraries.
 android.useAndroidX=true
 
-# Se verdadeiro, Jetifier converterá bibliotecas que não usam AndroidX para usá-lo.
-# Não estamos utilizando nenhuma biblioteca de suporte, então podemos desligar esse passo
+# If true, Jetifier will convert non-AndroidX libraries to use it.
+# We're not using any support libraries, so we can turn this step off.
 android.enableJetifier=false
 
-# Habilita a geração da classe R em tempo de compilação para módulos de aplicativos.
+# Enables compile-time generation of the R class for application modules.
 android.enableAppCompileTimeRClass=true
 
-# Desabilita a geração de recursos Android para bibliotecas.
+# Disables Android resource generation for libraries.
 android.library.defaults.buildfeatures.androidresources=false
 
-# Desabilita a geração da classe BuildConfig.
+# Disables BuildConfig class generation.
 android.defaults.buildfeatures.buildConfig=false
 
-# Desabilita a compilação de AIDL.
+# Disables AIDL compilation.
 android.defaults.buildfeatures.aidl=false
 
-# Desabilita a compilação de RenderScript.
+# Disables RenderScript compilation.
 android.defaults.buildfeatures.renderScript=false
 
-# Desabilita a funcionalidade Compose.
+# Disables the Compose feature.
 android.defaults.buildfeatures.compose=false
 
-# Desabilita a geração de Valores de Recurso.
+# Disables Resource Values generation.
 android.defaults.buildfeatures.resValues=false
 
-# Desabilita a funcionalidade de View Binding.
+# Disables the View Binding feature.
 android.defaults.buildfeatures.viewBinding=false
 
-# Suprime os avisos de opções não suportadas.
+# Suppresses warnings about unsupported options.
 android.suppressUnsupportedOptionWarnings=android.suppressUnsupportedOptionWarnings,android.enableAppCompileTimeRClass
 
-# Habilita otimizações de recursos no projeto Android.
+# Enables resource optimizations in the Android project.
 android.enableResourceOptimizations=true
 ```
 
-**3 -** :warning: Importante: precisamos garantir que nosso `gradle.properties` do Composite Builds estejam compartilhando a mesma configuração.
+**3 -** :warning: Important: we need to make sure the `gradle.properties` of our Composite Builds shares the same configuration.
 
-Caso o conteúdo do `gradle.properties` do `build-logic` seja diferente, o Gradle não compartilha os `deamons` entre compilações.
+If the contents of `build-logic`'s `gradle.properties` differ, Gradle won't share `deamons` across builds.
 
-Copie o conteúdo acima, e simplesmente cole no `build-logic/gradle.properties`
+Copy the contents above and simply paste them into `build-logic/gradle.properties`.
 
-## Sucesso!
+## Success!
 
-Agora, nosso projeto assume que os módulos não terão nenhum recurso extra de compilação. Contudo, nossa plataforma se mantém flexível para atender módulos que necessitem de features específicas.
+Now our project assumes that modules won't have any extra build features. Still, our platform stays flexible enough to serve modules that need specific features.
 
-No próximo artigo, daremos um passo adicional na manutenção dos módulos, permitindo que nossa plataforma decore módulos "puro JVM", otimizando ainda mais o tempo de compilação quando possível.
+In the next article, we'll take an additional step in maintaining our modules, letting our platform decorate "pure JVM" modules, optimizing build time even further when possible.
