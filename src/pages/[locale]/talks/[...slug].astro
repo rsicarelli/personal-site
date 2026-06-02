@@ -24,6 +24,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const locale = Astro.params.locale as Locale;
+const slug = Astro.params.slug as string;
 const t = useTranslations(locale);
 const { Content } = await render(entry);
 const { title, description, startDate, endDate, location, url, slides, video } = entry.data;
@@ -35,6 +36,8 @@ const dateLabel =
 
 // Structured data (#52): Event (Offline when a venue is set, else VirtualLocation) + breadcrumb.
 const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
+// Talks have no image field → a per-page generated OG card (#148), self-hosted on our origin.
+const ogImage = new URL(`/og/${locale}/events/${slug}.png`, Astro.site).href;
 const jsonLd = [
   eventLd(entry.data, { url: pageUrl, locale, performerName: SITE.name }),
   breadcrumbLd([
@@ -45,7 +48,12 @@ const jsonLd = [
 ];
 ---
 
-<BaseLayout title={`${title} · ${t('site.title')}`} description={description} ogType="article">
+<BaseLayout
+  title={`${title} · ${t('site.title')}`}
+  description={description}
+  ogType="article"
+  image={ogImage}
+>
   <JsonLd slot="head" schema={jsonLd} />
   <Container as="article" class="py-16">
     <a

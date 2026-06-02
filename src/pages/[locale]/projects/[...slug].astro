@@ -20,15 +20,20 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const locale = Astro.params.locale as Locale;
+const slug = Astro.params.slug as string;
 const t = useTranslations(locale);
 const { Content } = await render(entry);
 const { title, description, tech, repo, cover } = entry.data;
 
 // Structured data (#52): SoftwareSourceCode (repo present) or CreativeWork, plus a breadcrumb.
+// OG/JSON-LD image: the local cover when present, else a per-page generated card (#148) — both
+// self-hosted (the metadata suite asserts the rsicarelli.com origin).
 const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
-const coverUrl = cover ? new URL(cover.src, Astro.site).href : undefined;
+const ogImage = cover
+  ? new URL(cover.src, Astro.site).href
+  : new URL(`/og/${locale}/portfolio/${slug}.png`, Astro.site).href;
 const jsonLd = [
-  creativeWorkLd(entry.data, { url: pageUrl, locale, authorName: SITE.name, image: coverUrl }),
+  creativeWorkLd(entry.data, { url: pageUrl, locale, authorName: SITE.name, image: ogImage }),
   breadcrumbLd([
     { name: t('nav.home'), url: canonicalUrl('/', locale, Astro.site) },
     { name: t('nav.projects'), url: canonicalUrl('/projects', locale, Astro.site) },
@@ -41,7 +46,7 @@ const jsonLd = [
   title={`${title} · ${t('site.title')}`}
   description={description}
   ogType="article"
-  image={coverUrl}
+  image={ogImage}
 >
   <JsonLd slot="head" schema={jsonLd} />
   <Container as="article" class="py-16">
