@@ -59,6 +59,16 @@ const jsonLd = [
     </a>
     <h1 class="mt-6 text-3xl font-bold tracking-tight text-balance">{title}</h1>
     <p class="text-muted-foreground mt-3 font-mono text-xs">
+      {/* Visible byline (#59) — pairs with the BlogPosting.author Person ref; links to /about. */}
+      {t('blog.by')}{' '}
+      <a
+        href={`/${locale}/about`}
+        rel="author"
+        class="hover:text-foreground underline underline-offset-4"
+      >
+        {SITE.name}
+      </a>
+      <span aria-hidden="true"> · </span>
       <time datetime={isoDate(pubDate)}>{formatDate(pubDate, locale)}</time>
       <span aria-hidden="true"> · </span>{minutes}
       {t('blog.minRead')}
