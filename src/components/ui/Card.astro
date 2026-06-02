@@ -1,0 +1,35 @@
+---
+/**
+ * Card (#44) — a surface primitive for OSS / talk / post listings. Renders a bordered, elevated
+ * `card` surface. Pass `href` to make the whole card a link: it then gains hover + keyboard
+ * focus-visible affordances (accent border + focus ring) and renders as an `<a>`. Otherwise it
+ * renders as `as` (default `div`). Content composition (title, meta, badges) is left to the
+ * caller via the default slot, so the same primitive serves every listing.
+ */
+import type { HTMLTag } from 'astro/types';
+
+interface Props {
+  /** Make the whole card a link to this href (renders as `<a>` with hover/focus affordances). */
+  href?: string;
+  /** Element to render as when not a link (default `div`). */
+  as?: HTMLTag;
+  /** Extra classes merged after the base card styles. */
+  class?: string;
+}
+
+const { href, as: Tag = 'div', class: className } = Astro.props;
+const isLink = href !== undefined;
+const Element = isLink ? 'a' : Tag;
+---
+
+<Element
+  href={href}
+  class:list={[
+    'border-border bg-card text-card-foreground block rounded-lg border p-5',
+    isLink &&
+      'hover:border-primary/50 hover:bg-secondary/40 focus-visible:border-primary focus-visible:ring-ring/50 transition-colors focus-visible:ring-[3px] focus-visible:outline-none',
+    className,
+  ]}
+>
+  <slot />
+</Element>
