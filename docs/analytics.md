@@ -15,7 +15,7 @@ data flows are **owner-only** steps tied to Hosting (#60). See the public-facing
 
 Both are cookieless and store no personal data, so **no consent banner** is required (LGPD Art. 12 /
 ANPD legitimate interest Art. 7 IX; GDPR/PECR — no device storage → no consent). PostHog is **not**
-part of this layer (future product analytics, tracked in #75 → Monetization #83).
+part of this layer (future product analytics — see "PostHog" below).
 
 ## Umami (#71) — already shipped
 
@@ -66,3 +66,17 @@ The SEO go-live (#146) flags a possible `web-vitals` RUM beacon for real-field I
 INP) via the Performance API, cookieless and with zero extra client JS — that is the intended source,
 so we avoid double-instrumenting. Revisit only if Cloudflare's RUM proves insufficient, as part of
 #146 / #60.
+
+## PostHog (#75) — deferred to Monetization (#83)
+
+PostHog (conversion funnels, retention cohorts, Stripe revenue, feature-flag gating of paid content)
+is **deferred to the Monetization epic (#83)** and intentionally **not** implemented here:
+
+- Its value — multi-step funnels and gating paid content — only matters once paid content launches.
+- It is a heavier script than Umami, working against the Core Web Vitals budget for a launch site.
+- In identified-user mode it requires a **consent mechanism**, which conflicts with this epic's
+  cookieless / no-banner constraint.
+
+Plan: keep Umami for general traffic; add PostHog **alongside** it when courses/paid content land,
+adding consent only for the identified flows it introduces. Research basis:
+`07-analytics-metrics.result.md` (Stage 2) in the private repo.
