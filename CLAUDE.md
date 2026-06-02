@@ -1,7 +1,9 @@
 # CLAUDE.md — project north star
 
 > Read this first. It captures what we're building and the decisions already made, so we don't
-> re-litigate them. Deep detail lives in `research/` (start with `research/SUMMARY.md`).
+> re-litigate them. Deep detail lives in the private research repo
+> **rsicarelli/personal-site-private** (start with `SUMMARY.md`):
+> <https://github.com/rsicarelli/personal-site-private>.
 
 ## What we're building
 
@@ -21,7 +23,7 @@ repo personally — developer-author ergonomics matter.
 
 ## Status
 
-🚧 **Bootstrapping.** Research is complete (`research/` — 8 deep-research reports + `SUMMARY.md`).
+🚧 **Bootstrapping.** Research is complete (private repo **rsicarelli/personal-site-private** — 8 deep-research reports + `SUMMARY.md`).
 App scaffold (Astro) is the next step. No app code yet.
 
 ## Firm constraints
@@ -32,7 +34,7 @@ App scaffold (Astro) is the next step. No app code yet.
 4. **Performance + Google SEO + AI/LLM discoverability (GEO/AEO)** are all first-class.
 5. **Free / open-source-first** where viable.
 
-## Decided stack (research convergence — see `research/SUMMARY.md`)
+## Decided stack (research convergence — see `SUMMARY.md` in **rsicarelli/personal-site-private**)
 
 - **Framework:** Astro (SSG + islands, zero-JS by default), Content Layer + Zod schemas.
 - **Hosting:** Cloudflare Pages (native git auto-deploy from GitHub; PR previews).
@@ -62,8 +64,8 @@ App scaffold (Astro) is the next step. No app code yet.
 
 ## Conventions
 
-- Keep `research/` as the durable foundation; revisit `SUMMARY.md` before big decisions.
-- Planned content structure follows `research/04-content-architecture-repo.result.md` (§04).
+- Keep the private research repo **rsicarelli/personal-site-private** as the durable foundation; revisit `SUMMARY.md` there before big decisions.
+- Planned content structure follows `04-content-architecture-repo.result.md` (§04) in **rsicarelli/personal-site-private**.
 - **Work tracking:** GitHub Projects (to be set up).
 
 > The global `~/.claude/CLAUDE.md` (RTK) still applies; this file is additive and project-scoped.
