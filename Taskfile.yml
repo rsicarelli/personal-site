@@ -55,6 +55,11 @@ tasks:
     cmds:
       - pnpm format:check
 
+  i18n:check:
+    desc: Fail if any content entry is missing a locale (.en + .pt) — scripts/check-locale-completeness.mjs
+    cmds:
+      - pnpm check:i18n
+
   check:
     desc: All quality gates — typecheck + lint + format check
     cmds:
@@ -63,10 +68,11 @@ tasks:
       - task: fmt:check
 
   dod:
-    desc: Definition of Done — format, run every gate, then build (run before committing)
+    desc: Definition of Done — format, run every gate + i18n completeness, then build (run before committing)
     cmds:
       - task: fmt
       - task: check
+      - task: i18n:check
       - task: build
 
   hooks:install:
