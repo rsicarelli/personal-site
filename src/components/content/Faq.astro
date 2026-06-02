@@ -1,0 +1,38 @@
+---
+/**
+ * Answer-first FAQ (#56). Use inside MDX content:
+ *
+ *   import Faq from '@/components/content/Faq.astro';
+ *   <Faq title="FAQ" items={[{ q: 'Question?', a: 'Direct answer.' }]} />
+ *
+ * Renders an accessible `<dl>` AND emits FAQPage structured data. The JSON-LD is emitted IN-BODY
+ * (not via the head slot) on purpose: MDX content renders into the default slot and can't reach
+ * BaseLayout's `head` slot — and Google accepts `application/ld+json` anywhere in the document.
+ * Questions/answers are authored per locale in the MDX, so the FAQ is bilingual for free.
+ */
+import JsonLd from './JsonLd.astro';
+import { faqPageLd } from '@/lib/jsonld';
+
+interface Props {
+  items: { q: string; a: string }[];
+  /** Optional heading rendered above the list. */
+  title?: string;
+}
+
+const { items, title } = Astro.props;
+---
+
+<section class="not-prose border-border mt-12 border-t pt-8">
+  {title && <h2 class="text-xl font-semibold tracking-tight">{title}</h2>}
+  <dl class="mt-6 space-y-6">
+    {
+      items.map((it) => (
+        <div>
+          <dt class="text-foreground font-semibold">{it.q}</dt>
+          <dd class="text-muted-foreground mt-1 max-w-prose">{it.a}</dd>
+        </div>
+      ))
+    }
+  </dl>
+  <JsonLd schema={faqPageLd(items.map((it) => ({ question: it.q, answer: it.a })))} />
+</section>
