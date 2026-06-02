@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { collectLocalePages, DIST, LOCALES, type RenderedPage } from '../i18n/_helpers';
 import { hreflangOf } from '@/i18n/utils';
+import { placeholderBlogPaths } from '../../scripts/placeholder-posts.mjs';
 
 /**
  * hreflang CI validation (#57).
@@ -116,8 +117,10 @@ describe('hreflang reciprocity across the whole page graph', () => {
 
 describe('sitemap hreflang validity', () => {
   let sitemap: string;
+  let placeholders: Set<string>;
   beforeAll(async () => {
     sitemap = await readFile(join(DIST, 'sitemap-0.xml'), 'utf8');
+    placeholders = await placeholderBlogPaths(); // `/en/blog/<slug>`, excluded from the sitemap (#173)
   });
 
   it('every sitemap xhtml:link uses a valid hreflang code', () => {
@@ -134,6 +137,9 @@ describe('sitemap hreflang validity', () => {
   it('every localized page canonical appears as a sitemap <loc>', () => {
     const locs = new Set([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]));
     for (const p of pages) {
+      // `translated: false` placeholders are noindex and intentionally absent from the sitemap
+      // (#173); their canonical still resolves, just not as a <loc>. Skip them here.
+      if (placeholders.has(`/${p.locale}${p.logicalPath}`)) continue;
       const canonical = canonicalOf(p.html);
       // Sitemap <loc>s carry a trailing slash (`trailingSlash: 'ignore'` emits the dir form);
       // canonicals are slash-agnostic. Compare on the normalized (trailing-slash-stripped) form.

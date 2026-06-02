@@ -1,9 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { parseHTML } from 'linkedom';
-import { readFile, readdir } from 'node:fs/promises';
-import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { collectLocalePages, type RenderedPage } from '../i18n/_helpers';
+import { placeholderBlogPosts } from '../../scripts/placeholder-posts.mjs';
 
 /**
  * noindex for placeholder posts (#152). The mirror emits both locales for every post; when one
@@ -11,28 +9,16 @@ import { collectLocalePages, type RenderedPage } from '../i18n/_helpers';
  * `translated: false`. Those wrong-language pages must NOT be indexed (they'd be thin, duplicate,
  * wrong-language content) — they get `robots: noindex, follow`. Everything else stays indexable.
  *
- * The expected set is derived from the source frontmatter (not hardcoded), so it stays correct as
- * translations land (#143): flipping a file to `translated: true` removes it from this set.
+ * The expected set is derived from the source frontmatter (not hardcoded) via the shared
+ * placeholder scan — the same source of truth the sitemap exclusion uses (#173) — so it stays
+ * correct as translations land (#143): flipping a file to `translated: true` removes it.
  */
-
-const BLOG = fileURLToPath(new URL('../../src/content/blog/', import.meta.url));
-const SUFFIX_TO_LOCALE: Record<string, string> = { en: 'en', pt: 'pt-br' };
-const LOCALE_FILE = /^(?<slug>.+)\.(?<suffix>en|pt)\.(?:mdx?)$/;
 
 /** Logical keys (`<locale> blog/<slug>`) of every `translated: false` placeholder in source. */
 async function placeholderKeys(): Promise<Set<string>> {
-  const set = new Set<string>();
-  for (const entry of await readdir(BLOG, { recursive: true })) {
-    const rel = entry.split(/[\\/]/).join('/');
-    const m = rel.match(LOCALE_FILE);
-    if (!m?.groups) continue;
-    const fm =
-      (await readFile(resolve(BLOG, entry), 'utf8')).match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
-    if (!/^translated:\s*false\s*$/m.test(fm)) continue;
-    const slug = m.groups.slug.replace(/\/index$/, '');
-    set.add(`${SUFFIX_TO_LOCALE[m.groups.suffix]} blog/${slug}`);
-  }
-  return set;
+  return new Set(
+    (await placeholderBlogPosts()).map(({ locale, slug }) => `${locale} blog/${slug}`),
+  );
 }
 
 function robots(html: string): string {
