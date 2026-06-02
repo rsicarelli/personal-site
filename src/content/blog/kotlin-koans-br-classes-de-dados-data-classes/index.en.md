@@ -1,6 +1,6 @@
 ---
-title: 'Kotlin Koans BR: Classes de dados (Data Classes)'
-description: 'Reescreva o seguinte código para Kotlin: <details> <summary>Java</summary>'
+title: 'Kotlin Koans BR: Data Classes'
+description: 'Rewrite the following code in Kotlin, then add the data modifier. A beginner-friendly look at Kotlin classes and data classes.'
 pubDate: 2024-03-07
 tags:
   - 'kotlin'
@@ -8,17 +8,15 @@ tags:
 series: 'kotlin-koans-br'
 seriesOrder: 9
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F337vd4c2gz7beq7st1ow.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-classes-de-dados-data-classes-2h9b'
-  devtoId: 1783184
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
-## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Classes/Data%20classes/Task.kt)
+## 🔗 [Task](https://play.kotlinlang.org/koans/Classes/Data%20classes/Task.kt)
 
-Reescreva o seguinte código para Kotlin:
+Rewrite the following code in Kotlin:
 
 <details>
   <summary>Java</summary>
@@ -190,247 +188,247 @@ public class Person
 
 </details>
 
-Em seguida, adicione o modificador `data` à classe resultante.
+Then add the `data` modifier to the resulting class.
 
-## Introdução às Classes em Kotlin
+## Introduction to Classes in Kotlin
 
-Em programação, uma **classe** é um modelo a partir do qual os objetos são criados, gerando uma **instância** daquela classe. As classes encapsulam dados para o objeto e métodos para manipular esses dados.
+In programming, a **class** is a blueprint from which objects are created, producing an **instance** of that class. Classes bundle together the data for an object and the methods that work on that data.
 
-Kotlin, como uma linguagem de programação orientada a objetos, permite a definição e uso de classes, com algumas particularidades:
+Kotlin, as an object-oriented programming language, lets you define and use classes, with a few particularities:
 
-### 1. Classes Simples
+### 1. Simple Classes
 
-Uma classe em Kotlin pode ser declarada usando a palavra-chave `class`. Se uma classe não tiver corpo, você pode omitir as chaves `{ }`.
+A class in Kotlin can be declared using the `class` keyword. If a class has no body, you can leave out the braces `{ }`.
 
 ```kotlin
-class Carro
+class Car
 ```
 
-### 2. Métodos
+### 2. Methods
 
-São funções definidas em uma classe que operam sobre os dados da classe.
+These are functions defined inside a class that operate on the class's data.
 
 ```kotlin
-class Calculadora {
-    fun somar(a: Int, b: Int): Int {
+class Calculator {
+    fun add(a: Int, b: Int): Int {
         return a + b
     }
 }
 ```
 
-### 3. Construtores
+### 3. Constructors
 
-Kotlin tem uma sintaxe concisa para declarar construtores diretamente nos cabeçalhos das classes. O código abaixo declara uma classe com um construtor primário, mas os parâmetros deste construtor **não** são automaticamente transformados em propriedades da classe:
+Kotlin has a concise syntax for declaring constructors right in the class header. The code below declares a class with a primary constructor, but the parameters of this constructor are **not** automatically turned into properties of the class:
 
 ```kotlin
-class Pessoa(nome: String, idade: Int) {
-    fun imprimirIdade() {
-        // Não é possível, já que "idade" não é atributo de class
-        // println("Idade: $idade")
+class Person(name: String, age: Int) {
+    fun printAge() {
+        // Not possible, since "age" is not a class property
+        // println("Age: $age")
     }
 }
 ```
 
-### 4. Propriedades
+### 4. Properties
 
-Podemos declarar propriedades diretamente no construtor primário, usando os modificadores `val` e `var`.
-Quando fazemos isso, estamos não apenas declarando um construtor, mas também definindo propriedades para a classe:
+We can declare properties directly in the primary constructor using the `val` and `var` modifiers.
+When we do this, we're not just declaring a constructor, but also defining properties for the class:
 
 ```kotlin
-class Pessoa(val nome: String, var idade: Int) {
-    fun imprimeNome() {
-        println(nome)
+class Person(val name: String, var age: Int) {
+    fun printName() {
+        println(name)
     }
 }
 ```
 
-### 5. Modificadores de acesso
+### 5. Access Modifiers
 
-Em Kotlin, classes, objetos, propriedades e funções têm um modificador de acesso `public` por padrão, o que significa que podem ser acessados a partir de qualquer outro código. Porém, é possível limitar o acesso utilizando as seguintes palavras reservadas:
+In Kotlin, classes, objects, properties, and functions are `public` by default, which means they can be accessed from any other code. However, you can limit access using the following keywords:
 
-- `private`: visível apenas dentro do arquivo Kotlin onde está declarado.
-- `protected`: não é permitido para classes de nível superior, mas para propriedades/métodos, eles são visíveis na classe e em suas
+- `private`: visible only inside the Kotlin file where it's declared.
+- `protected`: not allowed for top-level classes, but for properties/methods it makes them visible in the class and its
   subclasses.
-- `internal`: visível em todos os arquivos no mesmo módulo.
+- `internal`: visible in all files within the same module.
 
-### 6. Especialidades de classes
+### 6. Special Kinds of Classes
 
-- **Classes Internas (`inner`)**: são classes definidas dentro de outra classe com acesso aos membros da classe externa.
-- **Classes Abertas (`open`)**: Em Kotlin, por padrão, todas as classes são finais (não podem ser herdadas). Se você quiser permitir que uma classe seja herdada, você deve marcar a classe com `open`.
-- **Classes Abstratas (`abstract`)**: São classes que não podem ser instanciadas direta e geralmente servem como base para outras classes.
-- **Classes Seladas (`sealed`)**: Iremos aprender no próximo modulo 🔗 [Classes seladas (Sealed classes)](https://github.com/rsicarelli/kotlin-koans-edu-br/blob/main/koans/src/commonMain/kotlin/com/rsicarelli/koansbr/classes/sealedClasses/README.md)
-- **Data Classes**: Classes otimizadas para armazenar dados, que serão mais exploradas no decorrer desse texto.
+- **Inner Classes (`inner`)**: classes defined inside another class with access to the members of the outer class.
+- **Open Classes (`open`)**: In Kotlin, by default, all classes are final (they can't be inherited from). If you want to allow a class to be inherited from, you have to mark the class with `open`.
+- **Abstract Classes (`abstract`)**: These are classes that can't be instantiated directly and usually serve as a base for other classes.
+- **Sealed Classes (`sealed`)**: We'll learn about these in the next module 🔗 [Sealed classes](https://github.com/rsicarelli/kotlin-koans-edu-br/blob/main/koans/src/commonMain/kotlin/com/rsicarelli/koansbr/classes/sealedClasses/README.md)
+- **Data Classes**: Classes optimized for holding data, which we'll explore further throughout this text.
 
-🚫 **Nota Importante**: As `data classes` em Kotlin **não podem** ser marcadas como abertas (`open`), abstratas (`abstract`), seladas (`sealed`) ou internas (`inner`).
+🚫 **Important Note**: `data classes` in Kotlin **cannot** be marked as open (`open`), abstract (`abstract`), sealed (`sealed`), or inner (`inner`).
 
 ---
 
-Dado esse contexto, podemos explorar mais sobre as **Data Classes** em Kotlin 🧵👇
+With that context in place, we can dig deeper into **Data Classes** in Kotlin 🧵👇
 
-## Caso de uso
+## Use Case
 
-As [Data Classes](https://kotlinlang.org/docs/data-classes.html) no Kotlin são uma maneira concisa de criar classes que apenas mantêm dados. Elas automaticamente fornecem métodos úteis, como `equals()`, `hashCode()`, `toString()`, `copy()` e `.componentN()`. Isso ajuda a reduzir a verbosidade do código
+[Data Classes](https://kotlinlang.org/docs/data-classes.html) in Kotlin are a concise way to create classes that only hold data. They automatically provide useful methods such as `equals()`, `hashCode()`, `toString()`, `copy()`, and `.componentN()`. This helps cut down on verbose code.
 
-As data classes são uma parte muito útil e poderosa do Kotlin, sendo usadas frequentemente para casos em que você precisa armazenar dados, mas não precisa de muita lógica ou comportamento adicional na classe.
+Data classes are a very useful and powerful part of Kotlin, and they're used often for cases where you need to store data but don't need much extra logic or behavior in the class.
 
 ```kotlin
-data class Pessoa(
-    val nome: String,
-    val idade: Int,
+data class Person(
+    val name: String,
+    val age: Int,
 )
 ```
 
-### Funções Especiais das Data Classes
+### Special Functions of Data Classes
 
-Apenas adicionando a palavra reservada `data` logo antes de `class`, as seguintes funções especiais são automaticamente disponíveis
+Just by adding the `data` keyword right before `class`, the following special functions become automatically available:
 
 #### 1. **`equals()`**
 
-Esta função verifica a igualdade estrutural dos dados na classe. No exemplo, `carlo == luiza` usa internamente a
-função `equals()` e retorna `false` porque Carlo e Luiza têm dados diferentes, mesmo que tenham a mesma idade.
+This function checks the structural equality of the data in the class. In the example, `personA == personC` uses the
+`equals()` function under the hood and returns `false` because `personA` ("Ricardo", 35) and `personC` ("Carla", 28) have different names and ages.
 
 ```kotlin
-val pessoaA = Pessoa("Ricardo", 35)
-val pessoaB = Pessoa("Ricardo", 35)
-val pessoaC = Pessoa("Carla", 28)
+val personA = Person("Ricardo", 35)
+val personB = Person("Ricardo", 35)
+val personC = Person("Carla", 28)
 
-println(pessoaA == pessoaB)  // true, pois têm o mesmo nome e a mesma idade
-println(pessoaA == pessoaC)  // false, pois os nomes e idades são diferentes
+println(personA == personB)  // true, because they have the same name and the same age
+println(personA == personC)  // false, because the names and ages are different
 ```
 
 #### 2. **`hashCode()`**
 
-Fornece um valor de código hash para os dados armazenados na classe, ajudando na eficiência de estruturas de dados como `HashSet` e `HashMap`.
+Provides a hash code value for the data stored in the class, helping with the efficiency of data structures like `HashSet` and `HashMap`.
 
 ```kotlin
-fun adicionaPessoas() {
-    val conjuntoPessoas = hashSetOf<Pessoa>()
+fun addPeople() {
+    val peopleSet = hashSetOf<Person>()
 
-    val pessoaA = Pessoa("Guilherme", 18)
-    val pessoaB = Pessoa("Guilherme", 18) // Mesmos dados que pessoaA
+    val personA = Person("Guilherme", 18)
+    val personB = Person("Guilherme", 18) // Same data as personA
 
-    conjuntoPessoas.add(pessoaA)
-    conjuntoPessoas.add(pessoaB) // Tentativa de adicionar uma "duplicata"
+    peopleSet.add(personA)
+    peopleSet.add(personB) // Trying to add a "duplicate"
 
-    println(conjuntoPessoas.size) // Imprime 1, pois pessoaA e pessoaB são consideradas iguais graças ao método equals() e têm o mesmo hashCode()
+    println(peopleSet.size) // Prints 1, because personA and personB are considered equal thanks to the equals() method and they have the same hashCode()
 }
 ```
 
-> 💡 Normalmente, não se lida diretamente com esse método, mas ele opera nos bastidores para garantir a correta operação de algumas coleções.
+> 💡 You usually don't deal with this method directly, but it works behind the scenes to make sure certain collections operate correctly.
 
 #### 3. **`toString()`**
 
-Converte os dados da classe para uma representação em string de forma legível e estruturada. Por padrão, ele exibe o nome da classe seguido por seus campos (nomes e valores) em ordem de declaração
+Converts the class's data into a readable, structured string representation. By default, it shows the class name followed by its fields (names and values) in declaration order.
 
 ```kotlin
-val juliana = Pessoa("Juliana", 16)
+val juliana = Person("Juliana", 16)
 
-println(juliana)  // Imprime "Pessoa(nome=Juliana, idade=16)"
+println(juliana)  // Prints "Person(name=Juliana, age=16)"
 // println(juliana.toString())
 ```
 
-> 💡No Kotlin, e também em muitas outras linguagens de programação, ao imprimir um objeto diretamente (como usando `println(juliana)`), o método `toString()` daquele objeto é chamado implicitamente.
+> 💡 In Kotlin, and also in many other programming languages, when you print an object directly (like with `println(juliana)`), that object's `toString()` method is called implicitly.
 
 #### 4. **`copy()`**
 
-Cria uma cópia superficial do objeto. Pode-se também modificar alguns dos valores ao copiar.
+Creates a shallow copy of the object. You can also change some of the values while copying.
 
 ```kotlin
-val pessoaOriginal = Pessoa("Tiago", 33)
-val pessoaModificada = pessoaOriginal.copy(idade = 34)
+val originalPerson = Person("Tiago", 33)
+val modifiedPerson = originalPerson.copy(age = 34)
 
-println(pessoaOriginal)      // Imprime "Pessoa(nome=Tiago, idade=33)"
-println(pessoaModificada)    // Imprime "Pessoa(nome=Tiago, idade=34)"
+println(originalPerson)      // Prints "Person(name=Tiago, age=33)"
+println(modifiedPerson)      // Prints "Person(name=Tiago, age=34)"
 ```
 
 #### 5. **`componentN()`**
 
-Essas funções fornecem uma maneira direta de acessar os atributos do objeto, onde `N` é a ordem do atributo na declaração da classe.
+These functions provide a direct way to access the object's properties, where `N` is the position of the property in the class declaration.
 
 ```kotlin
-val ana = Pessoa("Ana", 28)
-println(ana.component1())  // Saída: Ana
-println(ana.component2())  // Saída: 28
-//println(ana.component3()) // Se existesse um 3 atributo de classe...
+val ana = Person("Ana", 28)
+println(ana.component1())  // Output: Ana
+println(ana.component2())  // Output: 28
+//println(ana.component3()) // If there were a 3rd class property...
 ```
 
-### Desconstrução de objetos
+### Destructuring Objects
 
-A desconstrução é um recurso que permite decompor um objeto em várias variáveis. É uma prática super comum em outras linguagens, como JavaScript.
+Destructuring is a feature that lets you break an object down into several variables. It's a very common practice in other languages, like JavaScript.
 
-Isso é especialmente útil quando se quer trabalhar com
-partes específicas de um objeto sem a necessidade de acessar individualmente os seus atributos.
+This is especially handy when you want to work with
+specific parts of an object without having to access each of its properties individually.
 
-Graças a função `componentN()`, nós podemos usufruir dessa praticidade no Kotlin:
+Thanks to the `componentN()` function, we can enjoy this convenience in Kotlin:
 
 ```kotlin
-val jonas = Pessoa("Jonas", 42)
-// Desconstruíndo...
-val (nomeJonas, idadeJonas) = jonas
+val jonas = Person("Jonas", 42)
+// Destructuring...
+val (jonasName, jonasAge) = jonas
 
-println(nomeJonas)  // Saída: Jonas
-println(idadeJonas)  // Saída: 42
+println(jonasName)  // Output: Jonas
+println(jonasAge)  // Output: 42
 ```
 
-#### Desconstruíndo parâmetros de um lambda
+#### Destructuring the parameters of a lambda
 
-A desconstrução também é útil quando trabalhamos com lambdas, especialmente quando se lida com pares ou trios:
+Destructuring is also useful when we work with lambdas, especially when dealing with pairs or triples:
 
 ```kotlin
-val listaPessoas = listOf(Pessoa("Carlos", 32), Pessoa("Marta", 29))
+val peopleList = listOf(Person("Carlos", 32), Person("Marta", 29))
 
-listaPessoas.forEach { (nome, idade) ->
-    println("$nome tem $idade anos.")
+peopleList.forEach { (name, age) ->
+    println("$name is $age years old.")
 }
 ```
 
-#### Desconstruíndo objetos em classes "normais"
+#### Destructuring objects in "regular" classes
 
-É possível desconstruir uma classe em Kotlin mesmo que ela não seja uma `data class`.
+You can destructure a class in Kotlin even if it isn't a `data class`.
 
-Porém, para fazer isso, você precisa definir manualmente as funções `componentN()` para cada propriedade que deseja desconstruir:
+However, to do this, you need to manually define the `componentN()` functions for each property you want to destructure:
 
 ```kotlin
-class Livro(val titulo: String, val autor: String) {
-    operator fun component1() = titulo
-    operator fun component2() = autor
+class Book(val title: String, val author: String) {
+    operator fun component1() = title
+    operator fun component2() = author
 }
 
-val meuLivro = Livro("O Grande Livro", "João Silva")
-val (tituloDoLivro, autorDoLivro) = meuLivro
+val myBook = Book("The Great Book", "João Silva")
+val (bookTitle, bookAuthor) = myBook
 
-println(tituloDoLivro)  // Saída: O Grande Livro
-println(autorDoLivro)   // Saída: João Silva
+println(bookTitle)  // Output: The Great Book
+println(bookAuthor) // Output: João Silva
 ```
 
-> ℹ️ Essa prática não é comum e raramente é necessária, porém possível
+> ℹ️ This practice isn't common and is rarely needed, but it's possible.
 
-> 💡 Em Kotlin, a palavra-chave "operator" permite que funções se comportem como operadores tradicionais (como +, -, \*, etc.) ou permita operações específicas (como a desconstrução de objetos).
+> 💡 In Kotlin, the "operator" keyword lets functions behave like traditional operators (such as +, -, \*, etc.) or enables specific operations (such as destructuring objects).
 
-### Data Classes e a Imutabilidade
+### Data Classes and Immutability
 
-A imutabilidade se refere à impossibilidade de um objeto ter seu estado alterado após sua criação. Em outras palavras, uma vez que um objeto imutável é inicializado, seus dados não podem ser modificados.
+Immutability refers to the impossibility of an object having its state changed after it's created. In other words, once an immutable object is initialized, its data can't be modified.
 
-No Kotlin, as `data classes` são frequentemente usadas em conjunção com a imutabilidade. Ao usar `val` em vez de `var`, a propriedade torna-se somente de leitura, garantindo que, uma vez criado um objeto `Pessoa`, seu nome e idade não possam ser alterados.
+In Kotlin, `data classes` are often used together with immutability. By using `val` instead of `var`, a property becomes read-only, making sure that once a `Person` object is created, its name and age can't be changed.
 
 ```kotlin
-data class Pessoa(val nome: String, val idade: Int)
+data class Person(val name: String, val age: Int)
 ```
 
-#### Vantagens da Imutabilidade com Data Classes
+#### Advantages of Immutability with Data Classes
 
-1. **Menos erros em tempo de execução**: como o estado de um objeto imutável não muda, a possibilidade de efeitos colaterais inesperados que podem levar a erros é reduzida.
+1. **Fewer runtime errors**: since the state of an immutable object doesn't change, the chance of unexpected side effects that could lead to errors is reduced.
 
-2. **Concorrência segura**: objetos imutáveis são naturalmente seguros para serem usados em ambientes concorrentes, pois não há risco dealteração simultânea por múltiplas threads.
+2. **Safe concurrency**: immutable objects are naturally safe to use in concurrent environments, since there's no risk of simultaneous changes by multiple threads.
 
-3. **Expressividade**: `data classes` imutáveis simplificam a lógica, pois é possível assumir que o estado do objeto permanecerá constante.
+3. **Expressiveness**: immutable `data classes` simplify your logic, because you can assume the object's state will stay constant.
 
-4. **Uso eficaz com coleções imutáveis**: em Kotlin, existem coleções imutáveis (como `listOf`, `setOf`), e o uso de `data classes` imutáveis com essas coleções torna o código ainda mais robusto.
+4. **Effective use with immutable collections**: in Kotlin, there are immutable collections (such as `listOf`, `setOf`), and using immutable `data classes` with these collections makes your code even more robust.
 
-#### Benefícios de desempenho
+#### Performance Benefits
 
-1. **Otimização do compilador** mais facilidade em realizar otimizações porque pode supor sobre o comportamento do código.
+1. **Compiler optimization**: it's easier to perform optimizations because the compiler can make assumptions about how the code behaves.
 
-2. **Garbage collection**: como os objetos imutáveis não são modificados, eles podem ser reutilizados em vez de criados novamente, podendo reduzir a pressão sobre o garbage collector.
+2. **Garbage collection**: since immutable objects aren't modified, they can be reused instead of created again, which can reduce pressure on the garbage collector.
 
-3. **Previsibilidade e cache**: como objetos imutáveis não mudam seu estado, eles são mais previsíveis. Isso pode permitir otimizações de cache mais eficientes tanto no nível do compilador quanto em tempo de execução.
+3. **Predictability and caching**: since immutable objects don't change their state, they're more predictable. This can enable more efficient caching optimizations both at the compiler level and at runtime.

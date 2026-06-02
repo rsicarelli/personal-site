@@ -1,6 +1,6 @@
 ---
-title: 'Kotlin Koans BR: Argumentos nomeados'
-description: 'Faça com que a função joinOptions() retorne a lista em formato JSON (por exemplo, [a, b, c]) especificando apenas dois argumentos.'
+title: 'Kotlin Koans BR: Named arguments'
+description: 'Make the joinOptions() function return the list in JSON format (for example, [a, b, c]) by specifying only two arguments.'
 pubDate: 2024-03-07
 tags:
   - 'kotlin'
@@ -8,19 +8,17 @@ tags:
 series: 'kotlin-koans-br'
 seriesOrder: 2
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Faz2qasjvjtsxm21xkaju.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-argumentos-nomeados-1ace'
-  devtoId: 1783114
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
-## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Introduction/Named%20arguments/Task.kt)
+## 🔗 [Task](https://play.kotlinlang.org/koans/Introduction/Named%20arguments/Task.kt)
 
-Faça com que a função `joinOptions()` retorne a lista em formato [JSON](https://pt.wikipedia.org/wiki/JSON) (por exemplo, `[a, b, c]`) especificando apenas dois argumentos.
+Make the `joinOptions()` function return the list in [JSON](https://en.wikipedia.org/wiki/JSON) format (for example, `[a, b, c]`) by specifying only two arguments.
 
-Você pode utilizar a função [`joinToString`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/join-to-string.html) disponível na [stdlib (https://kotlinlang.org/api/latest/jvm/stdlib/):
+You can use the [`joinToString`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/join-to-string.html) function available in the [stdlib](https://kotlinlang.org/api/latest/jvm/stdlib/):
 
 ```kotlin
 fun joinToString(
@@ -31,72 +29,72 @@ fun joinToString(
 ): String
 ```
 
-## Caso de uso
+## Use case
 
-Ao se deparar com [Argumentos nomeados](https://kotlinlang.org/docs/kotlin-tour-functions.html#named-arguments) em Kotlin, é possível imaginar colocando marcadores ou etiquetas em valores enviados para funções, tornando tudo mais compreensível e minimizando equívocos.
+When you come across [Named arguments](https://kotlinlang.org/docs/kotlin-tour-functions.html#named-arguments) in Kotlin, you can picture them as putting labels or tags on the values you pass to functions, making everything easier to understand and reducing mistakes.
 
 ```kotlin
-fun enviarEmail(
-    de: String,
-    para: String,
-    assunto: String,
+fun sendEmail(
+    from: String,
+    to: String,
+    subject: String,
 ) = Unit
 ```
 
-Normalmente, a função seria usada da seguinte maneira:
+Normally, the function would be used like this:
 
 ```kotlin
-enviarEmail(
-    "remetente@exemplo.com",
-    "destinatario@exemplo.com",
-    "Sobre a Reunião"
+sendEmail(
+    "sender@example.com",
+    "recipient@example.com",
+    "About the Meeting"
 )
 ```
 
-Mas quando nomeamos os argumentos, cada valor é especificado de maneira clara:
+But when we name the arguments, each value is spelled out clearly:
 
 ```kotlin
-enviarEmail(
-    de = "remetente@exemplo.com",
-    para = "destinataria@exemplo.com",
-    assunto = "Sobre a Reunião"
+sendEmail(
+    from = "sender@example.com",
+    to = "recipient@example.com",
+    subject = "About the Meeting"
 )
 ```
 
-### Definindo apenas o necessário
+### Setting only what you need
 
-Digamos que só o assunto precisa ser definido, deixando o resto como padrão:
+Let's say you only need to set the subject and leave the rest as defaults:
 
 ```kotlin
-enviarEmail(assunto = "Cancelamento da Reunião")
+sendEmail(subject = "Meeting Cancelled")
 ```
 
-### Flexibilidade na organização
+### Flexibility in ordering
 
-Mudar a ordem dos valores? Sem problemas, tudo continua entendível:
+Want to change the order of the values? No problem, everything is still clear:
 
 ```kotlin
-enviarEmail(
-    assunto = "Lembrete",
-    para = "area@example.com",
-    de = "equipe@example.com"
+sendEmail(
+    subject = "Reminder",
+    to = "team@example.com",
+    from = "staff@example.com"
 )
 ```
 
-### Vantagens
+### Advantages
 
-- **Clareza nas chamadas de funções**: nomear argumentos elimina qualquer dúvida sobre a correspondência entre os valores fornecidos e os parâmetros da função.
-- **Flexibilidade**: não há necessidade de seguir a ordem padrão dos parâmetros, permitindo focar apenas nos argumentos relevantes.
-- **Redução e prevenção de erros**: Ao nomear argumentos, se reduz a chance de passar acidentalmente um valor errado para um parâmetro.
-- **Documentação implícita**: o código se torna auto explicativo, reduzindo a necessidade de comentários adicionais para explicar a finalidade de cada valor.
+- **Clarity in function calls**: naming arguments removes any doubt about how the values you provide map to the function's parameters.
+- **Flexibility**: there's no need to follow the default parameter order, so you can focus only on the arguments that matter.
+- **Error reduction and prevention**: by naming arguments, you reduce the chance of accidentally passing the wrong value to a parameter.
+- **Implicit documentation**: the code becomes self-explanatory, reducing the need for extra comments to explain what each value is for.
 
-### Desvantagens
+### Disadvantages
 
-- **Manutenção de Nomeação**: quando um nome de um parâmetro é alterado na definição da função, todos os argumentos que utilizam esse parâmetro precisam ser atualizados.
-- **Verbosidade nas chamadas**: em funções com muitos argumentos, nomear cada um pode tornar a chamada da função extensa e poluída.
+- **Maintaining names**: when a parameter name changes in the function definition, every argument that uses that parameter needs to be updated.
+- **Verbose calls**: in functions with many arguments, naming each one can make the function call long and cluttered.
 
-## Analogia
+## Analogy
 
-Imagine entrar em uma biblioteca cheia de livros, todos com a mesma capa e sem títulos na lombada. Você sabe que ali está o livro que você quer, mas como encontrar ele no meio de tantos iguais?
+Imagine walking into a library full of books, all with the same cover and no titles on the spine. You know the book you want is in there, but how do you find it among so many identical ones?
 
-Isso é similar aos `named arguments` em Kotlin. Sem identificar bem os argumentos, a pessoa pode facilmente se perder, mesmo sabendo o que quer fazer. No entanto, com named arguments, tudo fica mais claro, como se cada livro tivesse sua própria capa e título.
+This is similar to `named arguments` in Kotlin. Without clearly identifying the arguments, you can easily get lost, even when you know what you want to do. With named arguments, though, everything becomes clearer, as if each book had its own cover and title.
