@@ -4,5 +4,5 @@ dist/
 .astro/
 pnpm-lock.yaml
 
-# Agent skill files (managed by skills-lock.json)
-.agents/
+# Claude Code skills (externally-sourced ones tracked in skills-lock.json; keep verbatim)
+.claude/skills/
