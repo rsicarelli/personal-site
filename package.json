@@ -19,7 +19,10 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check:i18n": "node scripts/check-locale-completeness.mjs"
+    "check:i18n": "node scripts/check-locale-completeness.mjs",
+    "test": "vitest run",
+    "test:i18n": "vitest run tests/i18n",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@astrojs/mdx": "^6.0.1",
@@ -45,11 +48,13 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-astro": "^1.7.0",
     "globals": "^17.6.0",
+    "linkedom": "^0.18.12",
     "prettier": "^3.8.3",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.60.0"
+    "typescript-eslint": "^8.60.0",
+    "vitest": "^4.1.7"
   }
 }
