@@ -1,6 +1,6 @@
 ---
-title: 'KMP-102 - Características do XCFramework no KMP'
-description: 'No post anterior, aprendemos sobre como o Kotlin/Native exporta uma coleção de .frameworks no formato XCFramework.'
+title: 'KMP-102 - Characteristics of the XCFramework in KMP'
+description: 'In the previous post, we learned how Kotlin/Native exports a collection of .frameworks in the XCFramework format.'
 pubDate: 2024-07-21
 updatedDate: 2024-07-25
 tags:
@@ -11,52 +11,50 @@ tags:
 series: 'kmp-102'
 seriesOrder: 2
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fgvs6z4hfiqdph7rc8zdt.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-102-caracteristicas-do-xcframework-no-kmp-3162'
-  devtoId: 1930624
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 12
 ---
 
-No post anterior, aprendemos sobre como o Kotlin/Native exporta uma coleção de `.frameworks` no formato XCFramework.
+In the previous post, we learned how Kotlin/Native exports a collection of `.frameworks` in the XCFramework format.
 
-Agora, vamos entender as características desse XCFramework.
+Now, let's understand the characteristics of this XCFramework.
 
-## Como utilizar um XCFramework no iOS
+## How to use an XCFramework on iOS
 
-O pacote XCFramework irá oferecer um `.framework` para cada Kotlin Native target. Lá dentro, alvos como o device físico (`iosArm64`), simulador (`iosSimulatorArm64`) e simuladores para processadores intel (`iosX64`) estarão presentes.
+The XCFramework package gives you one `.framework` for each Kotlin/Native target. Inside it, you'll find targets like the physical device (`iosArm64`), the simulator (`iosSimulatorArm64`), and simulators for Intel processors (`iosX64`).
 
-Consumir um `.framework` varia conforme o ambiente e o codebase existente, mas de forma geral, basta criar um _build phase_ no projeto Xcode para conseguir utilizar o import das classes exportadas pelo Kotlin/Native.
+Consuming a `.framework` varies depending on the environment and the existing codebase, but in general you just create a _build phase_ in the Xcode project to import the classes exported by Kotlin/Native.
 
-- :link: [Utilizando o Swift Package Manager](https://kotlinlang.org/docs/native-spm.html)
+- :link: [Using the Swift Package Manager](https://kotlinlang.org/docs/native-spm.html)
 - :link: [CocoaPods overview and setup](https://kotlinlang.org/docs/native-cocoapods.html)
 - :link: [Kotlin/Native as an Apple framework – tutorial](https://kotlinlang.org/docs/apple-framework.html)
 
-Existem diversas formas que podemos utilizar para importar no projeto.
+There are several ways we can import it into the project.
 
-Todos esses modelos possuem características importantes a serem exploradas.
+All of these approaches have important characteristics worth exploring.
 
-## Entendendo como o XCFramework é gerado
+## Understanding how the XCFramework is generated
 
-No KMP, o `.framework` é do tipo "Fat". Isso significa que ele inclui não apenas seu código, mas também todas as dependências necessárias. Isso difere de outros tipos, que podem incluir menos conteúdo:
+In KMP, the `.framework` is of the "Fat" type. That means it includes not only your code, but also every dependency it needs. This differs from other types, which may include less content:
 
-- **Skinny**: Contém apenas o seu código, sem nenhuma dependência externa.
-- **Thin**: Inclui seu código e suas dependências diretas.
-- **Hollow**: O oposto do Thin, contendo apenas as dependências, sem seu código.
-- **Fat**: Inclui tudo: seu código, dependências diretas e tudo o necessário para funcionar de forma independente.
+- **Skinny**: Contains only your code, with no external dependencies.
+- **Thin**: Includes your code and its direct dependencies.
+- **Hollow**: The opposite of Thin, containing only the dependencies, without your code.
+- **Fat**: Includes everything: your code, direct dependencies, and everything needed to work on its own.
 
-Essa abordagem "Fat" tem implicações importantes para a modularização e o gerenciamento de dependências, como discutiremos a seguir.
+This "Fat" approach has important implications for modularization and dependency management, as we'll discuss next.
 
-A natureza "Fat" dos frameworks no KMP cria um desafio técnico para modularizar nossas distribuições. Isso ocorre porque todas as dependências são empacotadas juntas, forçando-nos a consolidar todo o código do KMP em uma única exportação. Esse modelo pode levar a duplicações de dependências e aumento do tamanho do pacote final, complicando a gestão do projeto, especialmente em ambientes de desenvolvimento colaborativos.
+The "Fat" nature of frameworks in KMP creates a technical challenge when we want to modularize our distributions. This happens because all dependencies are bundled together, forcing us to consolidate all of the KMP code into a single export. This model can lead to duplicated dependencies and a larger final package size, complicating project management, especially in collaborative development environments.
 
-## Contexto sobre aplicações Kotlin
+## Context about Kotlin applications
 
-Projetos Kotlin possuem uma natureza multi modular para reutilização de cache e desempenho de build. Modularizar projetos influenciam positivamente a experiência de desenvolvimento em projetos Kotlin que utilizam o Gradle.
+Kotlin projects have a multi-modular nature for cache reuse and build performance. Modularizing projects has a positive influence on the development experience in Kotlin projects that use Gradle.
 
-[Nesse artigo](https://dev.to/rsicarelli/android-plataforma-parte-1-modularizacao-2016) eu exploro um pouco mais sobre modularização em projetos Android, que também se aplicam para projetos KMP.
+[In this article](https://dev.to/rsicarelli/android-plataforma-parte-1-modularizacao-2016) I dig a bit deeper into modularization in Android projects, which also applies to KMP projects.
 
-Projetos Kotlin costumam a ter múltiplos módulos como:
+Kotlin projects usually have multiple modules, such as:
 
 ```
 - legado
@@ -67,11 +65,11 @@ Projetos Kotlin costumam a ter múltiplos módulos como:
 - feature2
 ```
 
-Esses módulos podem ser utilizados individualmente em projetos Kotlin, mas isso não significa que podemos ter um `.framework` para correspondente.
+These modules can be used individually in Kotlin projects, but that doesn't mean we can have a corresponding `.framework` for each one.
 
-Quer dizer, até podemos, porém, tem uma característica a ser observada.
+Well, we actually can, but there's a characteristic to keep in mind.
 
-Considere que a `feature1` e `feature2` utilizam as seguintes dependências em KMP:
+Consider that `feature1` and `feature2` use the following KMP dependencies:
 
 ```kotlin
 // feature1
@@ -83,24 +81,24 @@ kotlinx-serialization
 kotlinx-coroutines
 ```
 
-Ao exportar o XCFramework, as dependencias do `kotlinx-serialization` e `kotlinx-coroutines` **estariam duplicadas em cada `.framework`**, causando:
+When you export the XCFramework, the `kotlinx-serialization` and `kotlinx-coroutines` dependencies **would be duplicated in each `.framework`**, causing:
 
-- Aumento do pacote final (`.ipa`);
-- Aumento de tempo de build, considerando uma escala de módulos.
+- A larger final package (`.ipa`);
+- Increased build time, considering a scale of modules.
 
-Isso acontece por uma característica imposta pelo `.framework` no iOS: um `.framework` não consegue se comunicar com o outro.
+This happens because of a characteristic imposed by the `.framework` on iOS: one `.framework` cannot communicate with another.
 
-Em um cenário ideal, o `kotlinx-serialization` seria um `.framework` isolado e nosso `.framework` se comunicasse com esse `.framework`.
+In an ideal scenario, `kotlinx-serialization` would be an isolated `.framework` and our `.framework` would communicate with that `.framework`.
 
-Então, esse modelo "fat" se torna uma característica adotada em projetos KMP, como uma forma de otimização do uso e redução do tamanho final do aplicativo.
+So this "fat" model becomes a characteristic adopted in KMP projects, as a way to optimize usage and reduce the app's final size.
 
-Com isso, vamos avançar e entender melhor quais desafios esse modelo impõe.
+With that, let's move forward and better understand the challenges this model imposes.
 
-## Utilizando um "fat" KMP no iOS
+## Using a "fat" KMP on iOS
 
-Consideremos um cenário onde temos um projeto iOS existente e desejamos integrar código KMP. Para ilustrar, vamos supor que fizemos uma alteração em um módulo, como adicionar um novo parâmetro a uma função. Esta mudança, embora pareça simples, pode quebrar o código no iOS, pois o projeto iOS espera a versão anterior da função. Aqui está um exemplo passo a passo:
+Let's consider a scenario where we have an existing iOS project and want to integrate KMP code. To illustrate, let's assume we made a change to a module, such as adding a new parameter to a function. This change, however simple it may seem, can break the iOS code, because the iOS project expects the previous version of the function. Here's a step-by-step example:
 
-Primeiro, vamos assumir o seguinte `build.gradle.kts`:
+First, let's assume the following `build.gradle.kts`:
 
 ```kotlin
 kotlin {
@@ -126,15 +124,15 @@ kotlin {
 }
 ```
 
-Ao executar a task `assembleKotlinSharedXCFramework`, teremos um pacotão com todos os módulos exportados.
+When you run the `assembleKotlinSharedXCFramework` task, you'll get one big bundle with all the exported modules.
 
-Para projetos KMP, é essencial ter um módulo central, muitas vezes chamado de `ios-interop`. Esse módulo funciona como um ponto de integração que agrupa e exporta todas as dependências necessárias para serem usadas no Xcode. Esse método centraliza a gestão das dependências e facilita a manutenção e atualização do projeto.
+For KMP projects, it's essential to have a central module, often called `ios-interop`. This module acts as an integration point that groups and exports all the dependencies needed for use in Xcode. This method centralizes dependency management and makes maintaining and updating the project easier.
 
-## Desafios para modularizar o KMP
+## Challenges in modularizing KMP
 
-Como discutimos anteriormente, a natureza "fat" dos frameworks XCFramework no KMP implica que cada módulo exportado inclui todas as suas dependências. Isso resulta em duplicação de dependências comuns entre módulos e um aumento geral no tamanho do pacote final. Além disso, essa abordagem gera desafios significativos na modularização, que são especialmente evidentes em projetos que integram o SwiftUI como interface de usuário no iOS. Vejamos esses desafios mais detalhadamente.
+As we discussed earlier, the "fat" nature of XCFramework frameworks in KMP means that every exported module includes all of its dependencies. This results in duplication of dependencies shared across modules and an overall increase in the final package size. On top of that, this approach creates significant challenges for modularization, which are especially evident in projects that integrate SwiftUI as the iOS user interface. Let's look at these challenges in more detail.
 
-Vamos assumir que a `feature1` e `feature2` expõem as seguintes classes Kotlin a serem consumidas no iOS:
+Let's assume that `feature1` and `feature2` expose the following Kotlin classes to be consumed on iOS:
 
 ```kotlin
 class Feature1ViewModel(
@@ -150,7 +148,7 @@ class Feature2ViewModel(
 }
 ```
 
-Ao exportar o XCFramework, todas as classes de `feature1` e `feature2` estarão presentes no `.framework`, ou seja, conseguimos utilizar ambas `Feature1ViewModel` e `Feature2ViewModel` no iOS:
+When you export the XCFramework, all of the `feature1` and `feature2` classes will be present in the `.framework`, meaning we can use both `Feature1ViewModel` and `Feature2ViewModel` on iOS:
 
 ```swift
 import KotlinShared
@@ -180,7 +178,7 @@ class Feature2ViewModelWrapper {
 }
 ```
 
-Até aqui, tudo certo. Nosso código KMP foi integrado no iOS com sucesso e vamos assumir que esse código já está até em produção. Agora, vamos adicionar um novo parâmetro no `Feature1ViewModel`:
+So far, so good. Our KMP code was integrated into iOS successfully, and let's assume this code is even already in production. Now, let's add a new parameter to `Feature1ViewModel`:
 
 ```kotlin
 class Feature1ViewModel(
@@ -192,20 +190,20 @@ class Feature1ViewModel(
 }
 ```
 
-Ao exportar o XCFramework, **o código no iOS irá quebrar**, pois a classe `Feature1ViewModelWrapper` não possui o novo parâmetro `repository2`:
+When you export the XCFramework, **the iOS code will break**, because the `Feature1ViewModelWrapper` class doesn't have the new `repository2` parameter:
 
 ```swift
 class Feature1ViewModelWrapper {
     private let viewModel: KotlinSharedFeature1ViewModel
 
     init(repository: Feature1Repository) {
-        //irá quebrar, `repository2` não está sendo enviado
+        // will break, `repository2` is not being passed
         self.viewModel = KotlinSharedFeature1ViewModel(repository: repository)
     }
 }
 ```
 
-Agora, vamos assumir que esse XCFramework já foi gerado e exportado, porém, ainda não foi integrado no repositório do iOS. O time responsável pela `feature2` precisa de uma nova funcionalidade e também precisa realizar uma alteração na `Feature2ViewModel`:
+Now, let's assume this XCFramework has already been generated and exported, but it hasn't been integrated into the iOS repository yet. The team responsible for `feature2` needs a new feature and also needs to make a change to `Feature2ViewModel`:
 
 ```kotlin
 class Feature2ViewModel(
@@ -216,14 +214,14 @@ class Feature2ViewModel(
 }
 ```
 
-Ao exportar o XCFramework, **o código no iOS irá quebrar**, pelo mesmo motivo acima, já que a classe `Feature2ViewModelWrapper` não possui o novo parâmetro `repository2`:
+When you export the XCFramework, **the iOS code will break**, for the same reason as above, since the `Feature2ViewModelWrapper` class doesn't have the new `repository2` parameter:
 
 ```swift
 class Feature2ViewModelWrapper {
     private let viewModel: KotlinSharedFeature2ViewModel
 
     init(repository: Feature2Repository) {
-        self.viewModel = KotlinSharedFeature2ViewModel(repository: repository) //irá quebrar, `repository2` não foi passado como parametro
+        self.viewModel = KotlinSharedFeature2ViewModel(repository: repository) // will break, `repository2` was not passed as a parameter
     }
 
     func fetch() {
@@ -232,65 +230,65 @@ class Feature2ViewModelWrapper {
 }
 ```
 
-**Agregando esse cenário acima, temos a seguinte linha do tempo:**
+**Putting the scenario above together, we have the following timeline:**
 
-1. `Feature1ViewModel` e `Feature2ViewModel` são integradas ao projeto iOS.
-2. `Feature1ViewModel` é atualizada para incluir um novo parâmetro, causando uma quebra no iOS.
-3. Após o merge das alterações, uma nova versão do `XCFramework` é gerada e publicada através de ferramentas como Swift Package Manager, CocoaPods, controle de versão, etc.
-4. Essa versão, contendo as mudanças em `Feature1ViewModel`, resulta em quebras no iOS.
-5. Antes que essa versão seja integrada ao projeto iOS (corrigindo a quebra), o time de `feature2` realiza alterações no `Feature2ViewModel`.
-6. Uma versão subsequente do `XCFramework` é gerada e publicada, incluindo as novas alterações em `Feature2ViewModel` que também resultam em quebras no iOS.
+1. `Feature1ViewModel` and `Feature2ViewModel` are integrated into the iOS project.
+2. `Feature1ViewModel` is updated to include a new parameter, causing a break on iOS.
+3. After the changes are merged, a new version of the `XCFramework` is generated and published through tools like Swift Package Manager, CocoaPods, version control, etc.
+4. This version, containing the changes in `Feature1ViewModel`, results in breaks on iOS.
+5. Before this version is integrated into the iOS project (fixing the break), the `feature2` team makes changes to `Feature2ViewModel`.
+6. A subsequent version of the `XCFramework` is generated and published, including the new changes in `Feature2ViewModel` that also result in breaks on iOS.
 
-**Neste cenário complexo:**
+**In this complex scenario:**
 
-- O time responsável por `feature2` precisa esperar que o time de `feature1` corrija as quebras no iOS antes de poder integrar a correção da `feature2`. Este processo pode criar um ciclo de espera e correção que retarda a entrega de novas funcionalidades.
+- The team responsible for `feature2` needs to wait for the `feature1` team to fix the breaks on iOS before they can integrate the `feature2` fix. This process can create a cycle of waiting and fixing that slows down the delivery of new features.
 
-**Para resumir e simplificar a compreensão:**
+**To summarize and make it easier to understand:**
 
-1. A versão 1.0.0 do XCFramework, já integrada no iOS, funciona sem problemas.
-2. A versão 1.1.0 introduz uma mudança significativa (`breaking change`) em `feature1`, causando problemas.
-3. A versão 1.2.0 traz uma mudança significativa em `feature2`.
-4. A versão 1.2.0 só pode ser integrada ao iOS depois que as correções de `feature1` na versão 1.1.0 forem integradas e validadas.
+1. Version 1.0.0 of the XCFramework, already integrated into iOS, works without issues.
+2. Version 1.1.0 introduces a `breaking change` in `feature1`, causing problems.
+3. Version 1.2.0 brings a breaking change in `feature2`.
+4. Version 1.2.0 can only be integrated into iOS after the `feature1` fixes in version 1.1.0 are integrated and validated.
 
 ![Timeline of KMP breaking changes](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/timeline-kmp-breaking-changes.png?raw=true)
 
-## Dores do desenvolvimento KMP
+## The pains of KMP development
 
-Integrar código KMP em projetos iOS existentes, especialmente aqueles desenvolvidos com SwiftUI, apresenta desafios únicos devido à necessidade de uma comunicação direta entre módulos. Este desafio é menos intenso em projetos que utilizam Compose Multiplatform (CMP), onde a comunicação entre módulos ocorre de forma mais indireta e desacoplada.
+Integrating KMP code into existing iOS projects, especially those built with SwiftUI, presents unique challenges due to the need for direct communication between modules. This challenge is less intense in projects that use Compose Multiplatform (CMP), where communication between modules happens in a more indirect and decoupled way.
 
-O modelo "fat" de frameworks impõe várias complicações no desenvolvimento com KMP, entre elas:
+The "fat" framework model imposes several complications on KMP development, among them:
 
-- **Gestão de Dependências:** É necessário seguir uma linha do tempo específica para incorporar mudanças no código KMP ao repositório iOS, garantindo que todas as dependências estejam sincronizadas.
-- **Sensibilidade a Mudanças:** Qualquer alteração em atributos, parâmetros ou funções pode resultar em quebras no projeto iOS, exigindo correções imediatas para manter a estabilidade do projeto.
-- **Dependência entre times**: Devs frequentemente precisam esperar que outras times corrijam quebras no iOS antes de poderem avançar com a integração de novas funcionalidades do KMP.
+- **Dependency Management:** You need to follow a specific timeline to bring KMP code changes into the iOS repository, making sure all dependencies are in sync.
+- **Sensitivity to Changes:** Any change to attributes, parameters, or functions can result in breaks in the iOS project, requiring immediate fixes to keep the project stable.
+- **Cross-team dependency**: Devs frequently have to wait for other teams to fix breaks on iOS before they can move forward with integrating new KMP features.
 
-## Impacto no ciclo de desenvolvimento diário
+## Impact on the day-to-day development cycle
 
-No dia a dia, esses desafios tornam-se ainda mais evidentes. Por exemplo, ao integrar novas funcionalidades na branch principal (`main`) do projeto KMP — geralmente associada ao desenvolvimento Android — e tentar testá-las no iOS, frequentemente nos deparamos com quebras devido a mudanças que ainda não foram integradas ao projeto iOS.
+In daily work, these challenges become even more evident. For example, when integrating new features into the main branch (`main`) of the KMP project — usually associated with Android development — and trying to test them on iOS, we frequently run into breaks caused by changes that haven't been integrated into the iOS project yet.
 
-Para mitigar esse problema, geralmente geramos um XCFramework localmente para testes no iOS. No entanto, essa abordagem ainda sofre com o risco de quebras se a branch main contiver alterações não sincronizadas com o iOS, criando um ciclo contínuo de identificação e correção de quebras, o que atrasa significativamente o desenvolvimento.
+To mitigate this problem, we usually generate an XCFramework locally to test on iOS. However, this approach still suffers from the risk of breaks if the main branch contains changes that aren't in sync with iOS, creating a continuous cycle of identifying and fixing breaks, which significantly delays development.
 
-Isso gera um gargalo enorme no dia a dia, pois temos um desafio enorme de identificar qual time responsável pela quebra e, consequentemente, aguardar a correção para então integrar o código KMP no iOS.
+This creates a huge bottleneck in daily work, because we face the enormous challenge of identifying which team is responsible for the break and, consequently, waiting for the fix before we can integrate the KMP code into iOS.
 
-Em times pequenos ou projetos pessoais isso não é um problema, mas isso em escala é definitivamente o maior gargalo do desenvolvimento KMP atualmente.
+On small teams or personal projects this isn't a problem, but at scale it's definitely the biggest bottleneck in KMP development today.
 
-## Como contornar esse problema
+## How to work around this problem
 
-- **Melhoria na Comunicação**: Reforçar a comunicação entre as times de desenvolvimento para planejar e sincronizar mudanças pode reduzir a frequência de quebras inesperadas.
-- **Automação de Testes**: Implementar testes automatizados e processos de integração contínua para detectar e corrigir quebras antes que elas impactem outros desenvolvedores ou o projeto principal.
+- **Better Communication**: Strengthening communication between development teams to plan and synchronize changes can reduce the frequency of unexpected breaks.
+- **Test Automation**: Implementing automated tests and continuous integration processes to detect and fix breaks before they impact other developers or the main project.
 
-Existe uma estratégia que podemos adotar, porém, ficará para um artigo futuro. Primeiro, precisamos subir a escadinha de conhecimento em KMP em outros conceitos para conseguirmos compreender melhor essa estratégia alternativa.
+There's a strategy we can adopt, but it'll have to wait for a future article. First, we need to climb a few more steps on the KMP knowledge ladder through other concepts so we can better understand this alternative strategy.
 
-## Conclusão
+## Conclusion
 
-É importante sermos realistas e encararmos os problemas reais de uma tecnologia. Às vezes, no calor do "boom" de uma nova tecnologia, deixamos passar alguns aspectos cruciais para escalarmos uma solução, e se não tratarmos esses problemas, podemos ter (teremos!) um gargalo enorme no desenvolvimento. Isso pode gerar um barulho interno no seu time, como pessoas não adotando a tecnologia devido a má experiência de desenvolvimento, e constantes quebras no código causados por outros times em outros contextos.
+It's important to be realistic and face the real problems of a technology. Sometimes, in the heat of the "boom" of a new technology, we overlook some crucial aspects for scaling a solution, and if we don't address these problems, we can (and will!) end up with a huge bottleneck in development. This can create internal friction within your team, like people not adopting the technology due to a poor development experience, and constant code breaks caused by other teams in other contexts.
 
-Entender a natureza do XCFramework é crucial para termos um projeto escalável e saudável, com uma experiência de desenvolvimento de ponta a ponta sem gargalos.
+Understanding the nature of the XCFramework is crucial for having a scalable and healthy project, with an end-to-end development experience free of bottlenecks.
 
-Nos próximos artigos, vamos entender melhor sobre o código que que é exportado para o iOS, algumas características e limitações do código Kotlin > Objective-C e Objective-C > Swift, como escrever nosso código Kotlin para ser idiomático em Swift, e algumas abordagens para melhorarmos a integração Kotlin <--> Swift.
+In the next articles, we'll better understand the code that gets exported to iOS, some characteristics and limitations of Kotlin > Objective-C and Objective-C > Swift code, how to write our Kotlin code to be idiomatic in Swift, and some approaches to improve the Kotlin <--> Swift integration.
 
-Nos vemos na próxima, tchau!
+See you next time, bye!
 
-### Referências
+### References
 
 > https://dzone.com/articles/the-skinny-on-fat-thin-hollow-and-uber

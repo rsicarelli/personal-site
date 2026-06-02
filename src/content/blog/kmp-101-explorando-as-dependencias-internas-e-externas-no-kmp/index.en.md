@@ -1,7 +1,7 @@
 ---
-title: 'KMP 101: Explorando as dependências internas e externas no KMP (fim da série)'
-description: 'Nos artigos anteriores, estabelecemos uma base sobre o Kotlin Multiplatform (KMP) e como ele compila para múltiplas plataformas.'
-summary: 'Nos artigos anteriores, estabelecemos uma base sobre o Kotlin Multiplatform (KMP) e como ele compila para múltiplas plataformas.'
+title: 'KMP 101: Exploring internal and external dependencies in KMP (end of the series)'
+description: 'In previous articles, we established a foundation in Kotlin Multiplatform (KMP) and how it compiles to multiple platforms.'
+summary: 'In previous articles, we established a foundation in Kotlin Multiplatform (KMP) and how it compiles to multiple platforms.'
 pubDate: 2024-01-27
 tags:
   - 'kmp'
@@ -10,48 +10,46 @@ tags:
 series: 'kmp-101'
 seriesOrder: 8
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F9b8bngm68nc16vd2gsny.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-101-explorando-as-dependencias-internas-e-externas-no-kmp-4j76'
-  devtoId: 1743038
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 8
 ---
 
-Neste artigo, vamos explorar o uso de bibliotecas _open-source_, compreender sua aplicabilidade em nossos projetos e, por fim, sua implementação.
+In this article, we'll explore how to use _open-source_ libraries, understand when they fit our projects, and finally how to implement them.
 
 ---
 
-## Depêndencias e os Source Sets
+## Dependencies and source sets
 
-Descobrimos que o Kotlin utiliza uma estrutura de _source sets_ para gerenciar as compilações distintas.
+We discovered that Kotlin uses a structure of _source sets_ to manage its distinct compilations.
 
-Cada _source set_ no Kotlin, seja `commonMain` ou específicos como `androidMain`, `native/ios`, `desktop`, `js`, pode declarar dependências usadas exclusivamente nesse contexto.
+Each Kotlin _source set_, whether `commonMain` or specific ones like `androidMain`, `native/ios`, `desktop`, `js`, can declare dependencies that are used exclusively in that context.
 
-Exemplo:
+Example:
 
 ```kotlin
 commonMain.dependencies {
-    // compartilhado por todos os source sets
+    // shared by all source sets
 }
 androidMain.dependencies {
     // common + Android
 }
 appleMain.dependencies {
-    // common + família Apple
+    // common + Apple family
 }
 iosMain.dependencies {
     // common + apple + iOS
 }
 ```
 
-### Source Set é um ambiente único
+### A source set is a unique environment
 
-Cada _source set_ do Kotlin se torna um ambiente isolado, com acesso a APIs e SDKs específicos da plataforma.
+Each Kotlin _source set_ becomes an isolated environment, with access to platform-specific APIs and SDKs.
 
-Por exemplo, no _source set_ do Android, você tem acesso ao Android SDK; no iOS, ao DarwinOS e ao SDK da Apple como `platform.UiKit` e componentes do `platform.Foundation`.
+For example, in the Android _source set_ you have access to the Android SDK; on iOS, to DarwinOS and Apple's SDK such as `platform.UiKit` and components of `platform.Foundation`.
 
-Implementamos abaixo um Logger em KMP de forma totalmente nativa, sem dependências externas, usando apenas os SDKs nativos:
+Below we implement a Logger in KMP in a fully native way, with no external dependencies, using only the native SDKs:
 
 ```kotlin
 // src/commonMain/Logger.kt
@@ -97,9 +95,9 @@ class DarwinLogger : Logger {
 }
 ```
 
-## Entendendo como as depêndencias no KMP funcionam
+## Understanding how dependencies work in KMP
 
-Considere o `build.gradle.kts` com o [ktor-client](https://ktor.io/docs/getting-started-ktor-client-multiplatform-mobile.html) aplicado e dependências declaradas. Ao sincronizar o projeto, dependências são incluídas conforme os _targets_ especificados.
+Consider a `build.gradle.kts` with [ktor-client](https://ktor.io/docs/getting-started-ktor-client-multiplatform-mobile.html) applied and dependencies declared. When you sync the project, dependencies are pulled in according to the _targets_ you specified.
 
 ```kotlin
 kotlin {
@@ -124,16 +122,16 @@ kotlin {
 }
 ```
 
-A imagem a seguir representa apenas uma parte dessas depêndencias:
+The following image shows only a portion of those dependencies:
 
-![Dependencia com todos os source sets](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-all-targets-imported.png?raw=true)
+![Dependency with all source sets](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-all-targets-imported.png?raw=true)
 
-Ao declarar os _targets_ e importar uma depêndencia no `commonMain` todas essas depêndencias são importadas no projeto.
+By declaring the _targets_ and importing a dependency in `commonMain`, all of those dependencies get imported into the project.
 
-Se removêssemos alguns _targets_ do nosso `build.gradle.kts` e sincronizar o projeto, observamos que as depêndencias específicas de cada source set sumiram:
+If we removed some _targets_ from our `build.gradle.kts` and synced the project, we'd notice that the dependencies specific to each source set disappeared:
 
 ```kotlin
-// removidos:
+// removed:
 watchosArm32()
 watchosArm64()
 watchosSimulatorArm64()
@@ -141,105 +139,105 @@ macosArm64()
 tvosArm64()
 ```
 
-![Dependencia com alguns dos source sets](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-limited-imports.png?raw=true)
+![Dependency with some of the source sets](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-limited-imports.png?raw=true)
 
-Ou seja, cada target declarado espera que uma depêndencia exista, seja ela publicada em algum artefato como Maven, ou depêndencia de um módulo interno.
+In other words, each declared target expects a dependency to exist for it, whether it's published as an artifact somewhere like Maven, or it's a dependency on an internal module.
 
-### Relação entre depêndencias externas e os targets do módulo
+### The relationship between external dependencies and a module's targets
 
-Para utilizar uma depêndencia um source set, é obrigatório que essa depêndencia exista para o target em específico.
+To use a dependency in a source set, that dependency must exist for the specific target.
 
-Por exemplo, para você declarar depêndencias no `commonMain`, um artefato (interno ou externo) específico para o common main deve existir.
+For example, to declare dependencies in `commonMain`, an artifact (internal or external) specific to common main must exist.
 
-O mesmo se aplica para os outros targets. Por exemplo, se você declara o `watchosArm32()` como target, e seu módulo interno ou biblioteca não possuem esses alvos declarados, você recebe um erro.
+The same applies to the other targets. For instance, if you declare `watchosArm32()` as a target, and your internal module or library doesn't declare those targets, you get an error.
 
-### Dissecando a depêndencia `commonMain`
+### Dissecting the `commonMain` dependency
 
-A `commonMain` funciona de forma singular em relação aos outros Source Sets. No momento da compilação, ela funciona apenas como `metadata`, ou seja, não é compilado diretamente em código executável para uma plataforma específica, mas sim em um formato intermediário que contém metadados.
+`commonMain` works in a unique way compared to the other source sets. At compile time, it acts only as `metadata` — that is, it isn't compiled directly into executable code for a specific platform, but rather into an intermediate format that contains metadata.
 
-Estes metadados são então usados pelos backends do Kotlin específica para gerar o código executável correspondente para cada plataforma.
+This metadata is then used by the platform-specific Kotlin backends to generate the corresponding executable code for each platform.
 
-Ao explorar o conteúdo dessa depêndencia, notamos uma extensão especial do KMP: a `.klib`.
+When we explore the contents of this dependency, we notice a special KMP extension: the `.klib`.
 
-![Dependencia do ktor client common](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-common-klib.png?raw=true)
+![ktor client common dependency](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-common-klib.png?raw=true)
 
-O arquivo `.klib` no KMP é uma biblioteca que contém código compartilhável entre diferentes plataformas.
+In KMP, the `.klib` file is a library that contains code shareable across different platforms.
 
-No contexto do `commonMain`, o `.klib` funciona como uma coleção de código-fonte e recursos que podem ser compilados para várias plataformas utilizando os diferentes backends.
+In the context of `commonMain`, the `.klib` works as a collection of source code and resources that can be compiled for multiple platforms using the different backends.
 
-Se expandirmos a pasta `linkdata`, vamos nos deparar com outro formato de arquivo especial do KMP: `.knm`
+If we expand the `linkdata` folder, we run into another special KMP file format: `.knm`
 
-![Dependencia do ktor client common](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-common-knm.png?raw=true)
+![ktor client common dependency](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-common-knm.png?raw=true)
 
-O formato de arquivo `.knm` é um formato binário utilizado internamente pelas bibliotecas `klib` do Kotlin/Native, especialmente em conjunto com a ferramenta `cinterop`.
+The `.knm` file format is a binary format used internally by Kotlin/Native's `klib` libraries, especially together with the `cinterop` tool.
 
-Esse formato contém metadados e informações que o compilador do Kotlin usa para compilar e interligar bibliotecas nativas. Os arquivos `.knm` são detalhes de implementação para facilitar a interoperabilidade e a criação de bibliotecas no contexto do Kotlin/Native.
+This format holds metadata and information that the Kotlin compiler uses to compile and link native libraries. The `.knm` files are implementation details that make interoperability and library creation in the Kotlin/Native context easier.
 
-O último arquivo é o `manifest`. Esse arquivo contém metadados sobre a própria biblioteca. Isso inclui informações como a versão da biblioteca, dependências necessárias, e outros metadados usados pelo sistema de build e pelo compilador para entender como integrar e usar a biblioteca no projeto. Cada `.klib` tem um manifesto que descreve seu conteúdo e como ele deve ser tratado durante a compilação e o link de execução.
+The last file is the `manifest`. This file contains metadata about the library itself. That includes information like the library version, required dependencies, and other metadata the build system and the compiler use to understand how to integrate and use the library in the project. Every `.klib` has a manifest that describes its contents and how it should be handled during compilation and runtime linking.
 
-### Dissecando a depêndencia do iOS
+### Dissecting the iOS dependency
 
-Dependendo de quais plataforma Apple você inclui no seu Source Set, uma depêndencia diferente é importada no projeto.
+Depending on which Apple platforms you include in your source set, a different dependency gets imported into the project.
 
-Note que, além dos Source Sets declarados no nosso `build.gradle.kts`, também existe a depêndencia `posix`.
+Note that, besides the source sets declared in our `build.gradle.kts`, there's also the `posix` dependency.
 
-A dependência "posix" em um contexto de Kotlin Multiplatform para iOS se refere a interfaces de programação de aplicativos para sistemas operacionais compatíveis com POSIX (Portable Operating System Interface),
+The "posix" dependency in a Kotlin Multiplatform context for iOS refers to application programming interfaces for operating systems compatible with POSIX (Portable Operating System Interface).
 
-No caso de iOS, `posixMain` indica que essa biblioteca está usando APIs POSIX, comuns em sistemas baseados em Unix, como o iOS.
+In the iOS case, `posixMain` indicates that this library is using POSIX APIs, common in Unix-based systems like iOS.
 
-![Dependencia do iOS no projeto](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-ios-imports.png?raw=true)
+![iOS dependency in the project](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-ios-imports.png?raw=true)
 
-#### Explorando arquivos do `.klib` do iOS
+#### Exploring the iOS `.klib` files
 
-Ao analisarmos o conteúdo da `.klib` de um target iOS, verificamos uma estrutura similar ao `commonMain`, porém com uma pasta `ir` e outra `targets.ios_X`.
+When we analyze the contents of an iOS target's `.klib`, we find a structure similar to `commonMain`, but with an `ir` folder and a `targets.ios_X` folder.
 
-A pasta `ir` representa diferentes componentes do código e metadados compilados:
+The `ir` folder represents different compiled code components and metadata:
 
-- `bodies.knb`: Contém os corpos das funções compiladas.
-- `debugInfo.knd`: Informações de depuração que permitem o rastreamento de erros e a inspeção do código durante o desenvolvimento e a depuração.
-- `files.knf`: Lista dos arquivos de origem compilados na biblioteca.
-- `irDeclarations.knd`: Declarações intermediárias da Representação Intermediária (IR) que o compilador utiliza para compilar o código Kotlin.
-- `signatures.knt`: Assinaturas das funções e tipos na biblioteca, usadas para identificação única dentro do código compilado.
-- `strings.knt`: Strings literais usadas no código da biblioteca.
-- `types.knt`: Informações sobre os tipos usados na biblioteca, como classes, interfaces e tipos primitivos.
+- `bodies.knb`: Contains the bodies of the compiled functions.
+- `debugInfo.knd`: Debug information that enables error tracing and code inspection during development and debugging.
+- `files.knf`: List of the source files compiled into the library.
+- `irDeclarations.knd`: Intermediate declarations of the Intermediate Representation (IR) that the compiler uses to compile the Kotlin code.
+- `signatures.knt`: Signatures of the functions and types in the library, used for unique identification within the compiled code.
+- `strings.knt`: String literals used in the library's code.
+- `types.knt`: Information about the types used in the library, such as classes, interfaces, and primitive types.
 
-A pasta `targets.ios_X` não possuí nenhum conteúdo nesse caso. Mas, nessa pasta reside arquivos de "bitcode" LLVM, que contém código intermediário utilizado pelo compilador LLVM.
+The `targets.ios_X` folder has no content in this case. But this folder is where LLVM "bitcode" files live, containing the intermediate code used by the LLVM compiler.
 
-![Dependencia do iosarm64 no projeto](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-iosarm64-klib.png?raw=true)
+![iosarm64 dependency in the project](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-iosarm64-klib.png?raw=true)
 
-### Dissecando a depêndencia do JS
+### Dissecting the JS dependency
 
-Para o _target_ JS, ainda temos um arquivo `.klib`, mas acompanhado de um `package.json`.
+For the JS _target_, we still have a `.klib` file, but accompanied by a `package.json`.
 
-![Dependencia do JS](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-js-include-klib.png?raw=true)
+![JS dependency](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-js-include-klib.png?raw=true)
 
-### Dissecando a depêndencia do Android
+### Dissecting the Android dependency
 
-No caso do Android e JVM, a depêndencia não é um `.klib`, mas sim um `.jar` convencional do mundo JVM.
+In the case of Android and JVM, the dependency isn't a `.klib`, but rather a conventional `.jar` from the JVM world.
 
-Nesse caso, observamos um formato de `.jar` normal de qualquer programa em Java/Kotlin.
+In this case, we see a normal `.jar` format, like any Java/Kotlin program.
 
-Note que essa depêndencia é utilizada tanto pelo Source Set `android` quanto ao `desktop`:
+Note that this dependency is used by both the `android` and `desktop` source sets:
 
-![Dependencia do Android e JVM](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-jvm-jar.png?raw=true)
+![Android and JVM dependency](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-jvm-jar.png?raw=true)
 
-## Como descobrir se uma biblioteca open-source é compatível com meu target?
+## How do I find out whether an open-source library is compatible with my target?
 
-Para verificar a compatibilidade de uma biblioteca _open-source_ com um _target_, é recomendável consultar onde a biblioteca está hospedada e quais artefatos estão disponíveis. Você também pode analisar o `build.gradle.kts` da biblioteca, e verificar quais _targets_ aquela biblioteca compila.
+To check whether an _open-source_ library is compatible with a _target_, it's a good idea to look at where the library is hosted and which artifacts are available. You can also inspect the library's `build.gradle.kts` and check which _targets_ that library compiles for.
 
-No caso do `ktor-client-core`, ao acessar o [Maven Central](https://mvnrepository.com/search?q=ktor-client-core) e pesquisar pelo grupo, encontramos uma lista de artefatos para cada source set.
+In the case of `ktor-client-core`, going to [Maven Central](https://mvnrepository.com/search?q=ktor-client-core) and searching for the group, we find a list of artifacts for each source set.
 
-![Demo em todas as plataformas](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-maven-ktor-ezgif.com-video-to-gif-converter.gif?raw=true)
+![Demo across all platforms](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-maven-ktor-ezgif.com-video-to-gif-converter.gif?raw=true)
 
-## Depêndencias de módulos internos
+## Internal module dependencies
 
-Para módulos internos, é essencial que o módulo consumidor tenha _targets_ compatíveis com o módulo consumido.
+For internal modules, it's essential that the consuming module has _targets_ compatible with the consumed module.
 
-Vamos supor que o módulo `:shared1` quer consumir o módulo `:shared2`. Note que o módulo `:shared2` possuí os mesmos targets do `:shared1` + o `js()`.
+Let's say the `:shared1` module wants to consume the `:shared2` module. Note that the `:shared2` module has the same targets as `:shared1` plus `js()`.
 
-Nesse caso, o `:shared1` consegue consumir o `:shared2` já que o `:shared2` compila para o target que o `:shared1` precisa.
+In this case, `:shared1` can consume `:shared2`, since `:shared2` compiles for the target that `:shared1` needs.
 
-Agora, o contrário já não é possível: o módulo `:shared2` espera um target `js()` que o módulo `:shared1` não oferece! Nesse caso, há um erro de compilação.
+Now, the reverse isn't possible: the `:shared2` module expects a `js()` target that the `:shared1` module doesn't offer! In that case, you get a compilation error.
 
 ```kotlin
 // :shared1 build.gradle.kts
@@ -256,33 +254,33 @@ kotlin {
 }
 ```
 
-## Conclusões
+## Conclusions
 
-Compreender o funcionamento das dependências internas e externas no Kotlin Multiplatform (KMP) é crucial, pois isso nos ajuda a selecionar bibliotecas que atendam às necessidades de nossos projetos.
+Understanding how internal and external dependencies work in Kotlin Multiplatform (KMP) is crucial, because it helps us pick libraries that meet our projects' needs.
 
-Neste artigo, exploramos mais profundamente as "entranhas" dessas dependências e como a declaração dos _targets_ em nossa aplicação influencia as dependências incluídas no projeto.
+In this article, we explored the "guts" of these dependencies more deeply, and how declaring the _targets_ in our application influences which dependencies get included in the project.
 
-Além disso, aprofundamo-nos nos conceitos de `.klib` e `.knm`. Embora não afetem nosso dia a dia de desenvolvimento de forma significativa, essas peças são essenciais para entender como o KMP realiza sua "mágica".
+We also dug into the concepts of `.klib` and `.knm`. While they don't significantly affect our day-to-day development, these pieces are essential to understanding how KMP works its "magic".
 
-## Fim da série KMP101!
+## End of the KMP101 series!
 
-É com grande satisfação que concluímos esta fundação no KMP!
+It's with great satisfaction that we wrap up this foundation in KMP!
 
-Espero que o conhecimento adquirido sirva como um trampolim para que você possa explorar e navegar pelo mundo do KMP com confiança.
+I hope the knowledge you've gained serves as a springboard so you can explore and navigate the world of KMP with confidence.
 
-Fique atento para a série KMP102, onde mergulharemos ainda mais em implementações, arquitetura, testes, interoperabilidade com Swift e outras linguagens, e muito mais!
+Stay tuned for the KMP102 series, where we'll dive even deeper into implementations, architecture, testing, interoperability with Swift and other languages, and much more!
 
-Um abraço e até a próxima!
-
----
-
-> 🤖 Artigo foi escrito com o auxílio do ChatGPT 4, utilizando o plugin Web.
->
-> As fontes e o conteúdo são revisados para garantir a relevância das informações fornecidas, assim como as fontes utilizadas em cada prompt.
->
-> No entanto, caso encontre alguma informação incorreta ou acredite que algum crédito está faltando, por favor, entre em contato!
+A hug, and see you next time!
 
 ---
 
-> Referências
-> [Discussão sobre o KNM no KotlinLang](https://slack-chats.kotlinlang.org/t/5013792/u02k3a6e6kd-i-have-some-questions-about-the-knm-kotlin-nativ)
+> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
+>
+> The sources and content are reviewed to ensure the relevance of the information provided, as well as the sources used in each prompt.
+>
+> That said, if you find any incorrect information or believe some credit is missing, please reach out!
+
+---
+
+> References
+> [Discussion about KNM on KotlinLang](https://slack-chats.kotlinlang.org/t/5013792/u02k3a6e6kd-i-have-some-questions-about-the-knm-kotlin-nativ)
