@@ -54,6 +54,9 @@ export const ui = {
     'cv.elsewhere': 'Elsewhere',
     'cv.present': 'Present',
     'cv.print': 'Print / Save as PDF',
+    'photos.empty': 'No photos yet.',
+    'materials.empty': 'No materials yet.',
+    'materials.download': 'Download',
   },
   'pt-br': {
     'site.title': 'rsicarelli.com',
@@ -98,6 +101,9 @@ export const ui = {
     'cv.elsewhere': 'Em outros lugares',
     'cv.present': 'Atual',
     'cv.print': 'Imprimir / Salvar em PDF',
+    'photos.empty': 'Nenhuma foto ainda.',
+    'materials.empty': 'Nenhum material ainda.',
+    'materials.download': 'Baixar',
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 

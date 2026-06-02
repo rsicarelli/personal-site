@@ -1,0 +1,64 @@
+---
+/**
+ * Materials / downloads (#37). Items + titles come from the `materials` collection (per-locale
+ * YAML); the files are resolved at render by `mediaUrl()` against PUBLIC_MEDIA_BASE_URL — local
+ * placeholders now, Cloudflare R2 later (#67), no code change. The binaries never live in git.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { LOCALES, type Locale } from '@/config/site';
+import { useTranslations } from '@/i18n/utils';
+import { getLocalizedEntries } from '@/lib/content';
+import { mediaUrl } from '@/lib/media';
+
+export async function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const locale = Astro.params.locale as Locale;
+const t = useTranslations(locale);
+const groups = await getLocalizedEntries('materials', locale);
+const total = groups.reduce((n, g) => n + g.entry.data.items.length, 0);
+---
+
+<BaseLayout
+  title={`${t('footer.materials')} · ${t('site.title')}`}
+  description={t('site.description')}
+>
+  <section class="mx-auto max-w-3xl px-6 py-16">
+    <h1 class="text-3xl font-bold tracking-tight">{t('footer.materials')}</h1>
+
+    {total === 0 && <p class="text-muted-foreground mt-6">{t('materials.empty')}</p>}
+
+    {
+      groups.map(({ entry }) => (
+        <div class="mt-12">
+          <h2 class="text-xl font-semibold tracking-tight">{entry.data.title}</h2>
+          {entry.data.description && (
+            <p class="text-muted-foreground mt-1 max-w-prose">{entry.data.description}</p>
+          )}
+          <ul class="mt-6 space-y-3">
+            {entry.data.items.map((item) => (
+              <li class="border-border bg-card flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
+                <div>
+                  <p class="font-medium">{item.title}</p>
+                  {item.description && (
+                    <p class="text-muted-foreground mt-0.5 text-sm">{item.description}</p>
+                  )}
+                </div>
+                <a
+                  href={mediaUrl(item.file)}
+                  download
+                  rel="noopener"
+                  class="border-border hover:bg-muted inline-flex shrink-0 items-center gap-1 rounded-md border px-3 py-1.5 font-mono text-xs transition-colors"
+                >
+                  {t('materials.download')}
+                  {item.kind && <span class="text-muted-foreground uppercase">· {item.kind}</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </section>
+</BaseLayout>
