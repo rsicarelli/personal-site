@@ -8,8 +8,9 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Prose from '@/components/ui/Prose.astro';
 import { type Locale } from '@/config/site';
-import { useTranslations, hreflangOf } from '@/i18n/utils';
+import { useTranslations } from '@/i18n/utils';
 import { localizedPaths, commonBlogTagSlugs, slugifyTag } from '@/lib/content';
+import { formatDate, isoDate } from '@/lib/datetime';
 import { render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -22,9 +23,6 @@ const t = useTranslations(locale);
 const { Content, remarkPluginFrontmatter } = await render(entry);
 const minutes = remarkPluginFrontmatter.minutesRead as number;
 const tagPages = await commonBlogTagSlugs();
-// timeZone UTC: content dates are date-only (UTC midnight); local-zone formatting would shift the
-// calendar day.
-const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long', timeZone: 'UTC' });
 const { title, description, pubDate, updatedDate, tags } = entry.data;
 ---
 
@@ -38,7 +36,7 @@ const { title, description, pubDate, updatedDate, tags } = entry.data;
     </a>
     <h1 class="mt-6 text-3xl font-bold tracking-tight text-balance">{title}</h1>
     <p class="text-muted-foreground mt-3 font-mono text-xs">
-      <time datetime={pubDate.toISOString()}>{df.format(pubDate)}</time>
+      <time datetime={isoDate(pubDate)}>{formatDate(pubDate, locale)}</time>
       <span aria-hidden="true"> · </span>{minutes}
       {t('blog.minRead')}
       {
@@ -46,7 +44,7 @@ const { title, description, pubDate, updatedDate, tags } = entry.data;
           <>
             <span aria-hidden="true"> · </span>
             {t('blog.updated')}{' '}
-            <time datetime={updatedDate.toISOString()}>{df.format(updatedDate)}</time>
+            <time datetime={isoDate(updatedDate)}>{formatDate(updatedDate, locale)}</time>
           </>
         )
       }

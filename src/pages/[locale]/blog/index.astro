@@ -9,8 +9,9 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import RssLinks from '@/components/content/RssLinks.astro';
 import { LOCALES, type Locale } from '@/config/site';
-import { useTranslations, hreflangOf } from '@/i18n/utils';
+import { useTranslations } from '@/i18n/utils';
 import { getLocalizedEntries, commonBlogTagSlugs, slugifyTag } from '@/lib/content';
+import { formatDate, isoDate } from '@/lib/datetime';
 
 export async function getStaticPaths() {
   return LOCALES.map((locale) => ({ params: { locale } }));
@@ -20,9 +21,6 @@ const locale = Astro.params.locale as Locale;
 const t = useTranslations(locale);
 const posts = await getLocalizedEntries('blog', locale);
 const tagPages = await commonBlogTagSlugs();
-// timeZone UTC: content dates are date-only (UTC midnight); local-zone formatting would shift the
-// calendar day.
-const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long', timeZone: 'UTC' });
 ---
 
 <BaseLayout title={`${t('nav.blog')} · ${t('site.title')}`} description={t('site.description')}>
@@ -42,8 +40,8 @@ const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long', time
               </a>
             </h2>
             <p class="text-muted-foreground mt-1 font-mono text-xs">
-              <time datetime={entry.data.pubDate.toISOString()}>
-                {df.format(entry.data.pubDate)}
+              <time datetime={isoDate(entry.data.pubDate)}>
+                {formatDate(entry.data.pubDate, locale)}
               </time>
             </p>
             <p class="text-muted-foreground mt-3 max-w-prose">{entry.data.description}</p>

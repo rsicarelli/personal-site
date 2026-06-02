@@ -81,6 +81,12 @@ App scaffold (Astro) is the next step. No app code yet.
 - **Routing** keys off `entry.filePath`, never the slugified `id` (the glob loader drops dots).
   All listing/detail routes go through the `src/lib/content.ts` helpers (`getLocalizedEntries`,
   `getLocalizedEntry`, `localizedPaths`). Drafts (`draft: true`) are hidden in prod, shown in dev.
+- **Dates** are date-only, authored as `YYYY-MM-DD` (parsed as UTC midnight by `z.coerce.date()`).
+  Always render them through `src/lib/datetime.ts` (`formatDate` for the human label, `isoDate` for
+  the `<time datetime>`) — both format in **UTC** so the calendar day never shifts by one in a
+  negative-offset timezone. Don't build a `new Intl.DateTimeFormat` inline. (`new Date()` for
+  "now"/the footer year is build-time and fine.) CV work dates stay free-text strings (`2021`,
+  `Present`), not parsed.
 - **Media** (photos/downloads) lives in Cloudflare R2 / the local `public/media/` placeholder —
   never in git (no Git LFS). Only metadata lives in `src/content/{photos,materials}`; resolve URLs
   with `mediaUrl()` (`src/lib/media.ts`) against `PUBLIC_MEDIA_BASE_URL`.

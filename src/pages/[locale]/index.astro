@@ -10,8 +10,9 @@ import Container from '@/components/ui/Container.astro';
 import Card from '@/components/ui/Card.astro';
 import RssLinks from '@/components/content/RssLinks.astro';
 import { LOCALES, type Locale } from '@/config/site';
-import { useTranslations, hreflangOf } from '@/i18n/utils';
+import { useTranslations } from '@/i18n/utils';
 import { getLocalizedEntries } from '@/lib/content';
+import { formatDate, isoDate } from '@/lib/datetime';
 
 export function getStaticPaths() {
   return LOCALES.map((locale) => ({ params: { locale } }));
@@ -19,9 +20,6 @@ export function getStaticPaths() {
 
 const locale = Astro.params.locale as Locale;
 const t = useTranslations(locale);
-// timeZone UTC: content dates are date-only (stored as UTC midnight); formatting in the local
-// zone would shift them a day (e.g. a 2024-07-29 talk showing as Jul 28). Keep the calendar day.
-const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'medium', timeZone: 'UTC' });
 
 const posts = (await getLocalizedEntries('blog', locale)).slice(0, 3);
 const projects = (await getLocalizedEntries('portfolio', locale))
@@ -63,8 +61,8 @@ const upcoming = (await getLocalizedEntries('events', locale))
                   </a>
                 </h3>
                 <p class="text-muted-foreground mt-1 font-mono text-xs">
-                  <time datetime={entry.data.pubDate.toISOString()}>
-                    {df.format(entry.data.pubDate)}
+                  <time datetime={isoDate(entry.data.pubDate)}>
+                    {formatDate(entry.data.pubDate, locale, 'medium')}
                   </time>
                 </p>
                 <p class="text-muted-foreground mt-2 max-w-prose text-sm">
@@ -129,8 +127,8 @@ const upcoming = (await getLocalizedEntries('events', locale))
                   </a>
                 </h3>
                 <p class="text-muted-foreground mt-1 font-mono text-xs">
-                  <time datetime={entry.data.startDate.toISOString()}>
-                    {df.format(entry.data.startDate)}
+                  <time datetime={isoDate(entry.data.startDate)}>
+                    {formatDate(entry.data.startDate, locale, 'medium')}
                   </time>
                   {entry.data.location && <span> · {entry.data.location}</span>}
                 </p>

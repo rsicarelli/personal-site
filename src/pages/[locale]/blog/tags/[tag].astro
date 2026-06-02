@@ -7,8 +7,9 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import { LOCALES, type Locale } from '@/config/site';
-import { useTranslations, hreflangOf } from '@/i18n/utils';
+import { useTranslations } from '@/i18n/utils';
 import { getLocalizedEntries, commonBlogTagSlugs, slugifyTag } from '@/lib/content';
+import { formatDate, isoDate } from '@/lib/datetime';
 
 interface PostRef {
   slug: string;
@@ -51,9 +52,6 @@ export async function getStaticPaths() {
 const locale = Astro.params.locale as Locale;
 const { label, posts } = Astro.props;
 const t = useTranslations(locale);
-// timeZone UTC: content dates are date-only (UTC midnight); local-zone formatting would shift the
-// calendar day.
-const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long', timeZone: 'UTC' });
 ---
 
 <BaseLayout
@@ -81,7 +79,7 @@ const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long', time
               </a>
             </h2>
             <p class="text-muted-foreground mt-1 font-mono text-xs">
-              <time datetime={post.pubDate.toISOString()}>{df.format(post.pubDate)}</time>
+              <time datetime={isoDate(post.pubDate)}>{formatDate(post.pubDate, locale)}</time>
             </p>
             <p class="text-muted-foreground mt-2 max-w-prose">{post.description}</p>
           </li>
