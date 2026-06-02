@@ -1,0 +1,9 @@
+# Downloads de exemplo (Português) — valida o schema `materials`. Os caminhos em `file` são
+# resolvidos no render por mediaUrl(); os binários ficam no R2/public/media, nunca no git.
+title: Slides e materiais
+description: Slides e materiais para download de palestras e workshops.
+items:
+  - file: materials/kotlinconf-2025-kmp.pdf
+    title: 'KotlinConf 2025 — Kotlin Multiplatform em produção (slides)'
+    description: Slides da palestra na KotlinConf 2025.
+    kind: pdf

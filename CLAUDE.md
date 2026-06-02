@@ -68,4 +68,24 @@ App scaffold (Astro) is the next step. No app code yet.
 - Planned content structure follows `04-content-architecture-repo.result.md` (§04) in **rsicarelli/personal-site-private**.
 - **Work tracking:** GitHub Projects (to be set up).
 
+### Content authoring (Epic 4)
+
+- **Bilingual is mandatory.** Every content entry exists in both locales: parallel files
+  `<slug>.en.<ext>` + `<slug>.pt.<ext>`. The CI guardrail (`scripts/check-locale-completeness.mjs`)
+  fails the build on a missing locale OR any content file lacking an `.en`/`.pt` suffix. (On disk
+  the suffix is `.pt`; the URL locale is `/pt-br/`.)
+- **File layout:** `blog`, `portfolio`, `events` use **page bundles** (`<slug>/index.en.mdx` +
+  co-located `cover.jpg`); `pages`, `cv` (+ `uses`/`now`/`contact` under `pages`) stay **flat**
+  (`<slug>.en.mdx`). Never mix a flat file and a bundle for the same slug — `src/lib/content.ts`
+  throws on the resulting slug collision.
+- **Routing** keys off `entry.filePath`, never the slugified `id` (the glob loader drops dots).
+  All listing/detail routes go through the `src/lib/content.ts` helpers (`getLocalizedEntries`,
+  `getLocalizedEntry`, `localizedPaths`). Drafts (`draft: true`) are hidden in prod, shown in dev.
+- **Media** (photos/downloads) lives in Cloudflare R2 / the local `public/media/` placeholder —
+  never in git (no Git LFS). Only metadata lives in `src/content/{photos,materials}`; resolve URLs
+  with `mediaUrl()` (`src/lib/media.ts`) against `PUBLIC_MEDIA_BASE_URL`.
+- **Visual layer is Epic 5's** (`src/styles/**`, `src/components/ui/**`, the layout shell, fonts,
+  `Image`/`lite-youtube`). Pages consume semantic token classes and those components — never add
+  tokens or duplicate them.
+
 > The global `~/.claude/CLAUDE.md` (RTK) still applies; this file is additive and project-scoped.
