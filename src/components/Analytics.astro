@@ -1,0 +1,46 @@
+---
+/**
+ * Privacy-first analytics surface (#71) — Umami, cookieless, no consent banner.
+ *
+ * Rendered once in BaseLayout's <head>. Gated on BOTH env vars: when either is unset (dev/local,
+ * and CI which builds from the blank `.env.example`) this component emits NOTHING, so the site
+ * ships zero analytics JS. The vars are validated client/public/optional by astro:env
+ * (astro.config.mjs).
+ *
+ * Page views: the tracker is loaded with `data-auto-track="false"` and we call `umami.track()`
+ * ourselves on `astro:page-load` — which fires on the initial load AND after every View Transition
+ * swap (#49), giving exactly one pageview per navigation. Auto-track is disabled so we don't depend
+ * on Umami's history patch catching `<ClientRouter />` navigations, and so any head-script
+ * re-execution across transitions stays harmless (a re-boot fires no pageview).
+ *
+ * The `defer` script executes before `astro:page-load` on first load, so `window.umami` is defined
+ * by the time we call it; the `?.` is belt-and-suspenders. The binding is guarded once with the
+ * `window.__umamiBound` flag (mirrors the BaseLayout theme script's `__themeSwapBound`) because
+ * inline scripts can re-run on swap. The body is injected with `set:html` (like JsonLd.astro) so it
+ * ships verbatim as client JS — emitted only when analytics is enabled.
+ */
+import { PUBLIC_UMAMI_SRC, PUBLIC_UMAMI_WEBSITE_ID } from 'astro:env/client';
+
+const enabled = Boolean(PUBLIC_UMAMI_SRC && PUBLIC_UMAMI_WEBSITE_ID);
+
+const trackerJs = `(() => {
+  if (window.__umamiBound) return;
+  window.__umamiBound = true;
+  document.addEventListener('astro:page-load', () => window.umami?.track());
+})();`;
+---
+
+{
+  enabled && (
+    <>
+      <script
+        is:inline
+        defer
+        src={PUBLIC_UMAMI_SRC}
+        data-website-id={PUBLIC_UMAMI_WEBSITE_ID}
+        data-auto-track="false"
+      />
+      <script is:inline set:html={trackerJs} />
+    </>
+  )
+}
