@@ -77,6 +77,11 @@ tasks:
       - task: build
       - pnpm lighthouse
 
+  devto:canonical:
+    desc: 'Dry-run the dev.to canonical_url write-back (#151). Add `-- --apply` (with DEV_TO_API_KEY) to write.'
+    cmds:
+      - node scripts/devto-canonical-writeback.mjs {{.CLI_ARGS}}
+
   check:
     desc: All quality gates — typecheck + lint + format check
     cmds:
