@@ -1,0 +1,30 @@
+---
+/**
+ * Container (#45) — the site's horizontal layout primitive. Centers content and applies the
+ * responsive gutter at one of two widths: the editorial reading measure (default, ~65ch) or a
+ * wider track for galleries and wide media. Backed by the `container-content` / `container-wide`
+ * @utility classes in global.css (single source of truth), so the same widths are available
+ * as plain classes in MDX/pages where importing a component is awkward.
+ *
+ * It owns only width + gutter — keep vertical rhythm (padding/margin block) and any flex/grid
+ * layout on the consuming element via `class`.
+ *
+ *   <Container>…</Container>                              editorial reading column
+ *   <Container width="wide" as="section">…</Container>    wide track, custom element
+ */
+import type { HTMLTag } from 'astro/types';
+
+interface Props {
+  /** Layout width. `content` = editorial reading measure (default); `wide` = galleries/wide media. */
+  width?: 'content' | 'wide';
+  /** Element/tag to render as, for semantic flexibility (defaults to a neutral div). */
+  as?: HTMLTag;
+  /** Extra classes merged after the width utility (layout, spacing, etc.). */
+  class?: string;
+}
+
+const { width = 'content', as: Tag = 'div', class: className } = Astro.props;
+const widthClass = width === 'wide' ? 'container-wide' : 'container-content';
+---
+
+<Tag class:list={[widthClass, className]}><slot /></Tag>

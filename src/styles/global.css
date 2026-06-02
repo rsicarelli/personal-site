@@ -126,3 +126,36 @@
     font-family: var(--font-sans);
   }
 }
+
+/*
+ * Layout tracks (#45). Two centered widths with a responsive gutter: `container-content` is the
+ * editorial reading measure (~65ch, the site default) and `container-wide` is for galleries and
+ * wide media. The names are hyphenated on purpose so Tailwind's built-in utility of the same
+ * stem is never emitted. Both are @utility classes — usable directly in .astro, pages, and MDX
+ * with no import — and are wrapped by Container.astro for ergonomics. Each owns only horizontal
+ * width + gutter; vertical rhythm (py-*) stays on the consuming element.
+ */
+:root {
+  --measure-content: 48rem; /* editorial reading column (was the repeated max-w-3xl) */
+  --measure-wide: 72rem; /* galleries, wide media, multi-column layouts */
+}
+
+@utility container-content {
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--measure-content);
+  padding-inline: 1.5rem;
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility container-wide {
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--measure-wide);
+  padding-inline: 1.5rem;
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+}
