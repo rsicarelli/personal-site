@@ -40,7 +40,7 @@ const isActive = (href: string) =>
             <a
               href={localized(item.href)}
               aria-current={isActive(item.href) ? 'page' : undefined}
-              class="hover:text-foreground aria-[current=page]:text-primary transition-colors aria-[current=page]:font-medium"
+              class="hover:text-foreground aria-[current=page]:text-primary inline-flex min-h-6 items-center transition-colors aria-[current=page]:font-medium"
             >
               {t(item.key)}
             </a>
