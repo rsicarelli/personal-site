@@ -5,48 +5,47 @@ IndexNow. The sitemap itself is already emitted (locale-aware, via `@astrojs/sit
 `/sitemap-index.xml`, and `robots.txt` advertises it — so this is about **submission**, not
 generation.
 
-> ⚠️ **Most steps need a LIVE origin and are deferred to the Hosting epic (#60).** They're listed
-> here so they're ready the moment the site is deployed. What ships in-repo today: the IndexNow
-> verification key file (`public/<key>.txt`), the `scripts/indexnow-submit.mjs` helper, and this
-> runbook.
+> ✅ **The origin is LIVE** (`https://rsicarelli.com`, Hosting #60). IndexNow is **automated** (the
+> `IndexNow` GitHub Action pings on every content push). The steps below that still need **your
+> Google / Microsoft accounts** (GSC + Bing verification/submission) are **owner-only** — run them
+> once, from the live site.
 
-## 1. Google Search Console — _after deploy (#60)_
+## 1. Google Search Console (owner-only, one-time)
 
-1. Add the property at <https://search.google.com/search-console> (Domain property → DNS TXT, or
-   URL-prefix → verify via the Cloudflare-served site).
-2. Submit the sitemap: **Sitemaps → enter `sitemap-index.xml` → Submit.**
-3. Confirm `https://rsicarelli.com/robots.txt` resolves and lists the `Sitemap:` line (it does).
+1. Open <https://search.google.com/search-console>, **Add property → Domain → `rsicarelli.com`**.
+   Google shows a **TXT** value like `google-site-verification=XXXXXXXX`.
+2. In **Cloudflare → DNS → Records → Add record**: Type **TXT**, Name **`@`** (apex), Content the
+   full `google-site-verification=…` string, TTL Auto. Save, then click **Verify** in GSC.
+   - ⚠️ Do **not** edit or remove the existing `_maven-central-verification.fakt` TXT record.
+3. **Sitemaps → add `sitemap-index.xml` → Submit.** (`robots.txt` already advertises it.)
+4. Spot-check **URL Inspection** on a mirrored post — after the dev.to write-back (§4) it should
+   report **our** URL as the Google-selected canonical, not the dev.to one.
 
-## 2. Bing Webmaster Tools — _after deploy (#60)_
+## 2. Bing Webmaster Tools (owner-only, one-time)
 
 Bing matters for GEO: **ChatGPT search uses Bing's index.**
 
-1. Add the site at <https://www.bing.com/webmasters> (you can import from Search Console).
-2. Submit `https://rsicarelli.com/sitemap-index.xml`.
-3. IndexNow is enabled in Bing Webmaster Tools by default once the key is verified (next section).
+1. Open <https://www.bing.com/webmasters> → **Import from Google Search Console** (one click, reuses
+   the GSC verification) — or add the site and verify with the Bing TXT/meta.
+2. **Sitemaps → submit `https://rsicarelli.com/sitemap-index.xml`.**
+3. IndexNow shows up automatically once Bing sees pings from the key below — nothing to enable.
 
-## 3. IndexNow — key ships now, ping after deploy (#60)
+## 3. IndexNow — automated
 
-IndexNow lets us notify Bing/Yandex/etc. of changed URLs instantly instead of waiting for a crawl.
+The `.github/workflows/indexnow.yml` workflow pings IndexNow on every push to `main` that changes
+content (and can be re-run via **Actions → IndexNow → Run workflow**). No account or secret needed —
+the served `public/<key>.txt` verifies ownership (filename stem **is** the key; the body must equal
+it, enforced by a CI test; rotate by adding a new `public/<newkey>.txt` and deleting the old one).
 
-- **Verification key (in-repo):** `public/<key>.txt` — a single line containing the key, served at
-  `https://rsicarelli.com/<key>.txt`. The filename stem **is** the key; the file body must equal it
-  (a CI test enforces this). To rotate, drop in a new `public/<newkey>.txt` and delete the old one.
-- **Submit after each deploy** (needs the live origin):
+Manual one-off (rarely needed):
 
-  ```bash
-  mise exec -- task build                       # produce dist/ + the sitemap
-  node scripts/indexnow-submit.mjs --dry-run     # inspect the payload (no network)
-  SITE_URL=https://rsicarelli.com node scripts/indexnow-submit.mjs   # POST to IndexNow
-  ```
+```bash
+mise exec -- task build                                            # dist/ + the sitemap
+node scripts/indexnow-submit.mjs --dry-run                          # inspect the payload (no network)
+SITE_URL=https://rsicarelli.com node scripts/indexnow-submit.mjs    # POST to api.indexnow.org (200/202 = ok)
+```
 
-  The script reads every `<loc>` from `dist/sitemap-0.xml` and POSTs `{host, key, keyLocation,
-urlList}` to `https://api.indexnow.org/indexnow` (200/202 = accepted). It's safe to re-run.
-
-- **Automate later (#60):** once Cloudflare Pages auto-deploys, wire `scripts/indexnow-submit.mjs`
-  into a post-deploy hook / GitHub Action so every push that changes content pings IndexNow.
-
-## 4. Canonical write-back to dev.to (#151) — _run after deploy (#60)_
+## 4. Canonical write-back to dev.to (#151) — _owner-only, run now_
 
 49 blog posts are mirrored from dev.to. Each is **self-canonical** to `rsicarelli.com`, but the
 dev.to originals (DA ~90) will win as canonical unless **they** point back to us. `scripts/devto-canonical-writeback.mjs`
@@ -70,8 +69,11 @@ SITE_URL=https://rsicarelli.com DEV_TO_API_KEY=xxxx \
 
 ## 5. One-time + recurring
 
-- **Once:** verify GSC + Bing, submit the sitemap to both.
-- **Each deploy:** sitemaps refresh automatically; run the IndexNow ping (or let the #60 automation
-  do it) so Bing/ChatGPT re-crawl changed pages fast.
+- **Once (owner):** verify GSC + Bing (§1–2), submit the sitemap to both, and run the dev.to
+  canonical write-back (§4).
+- **Each deploy:** sitemaps refresh automatically; the `IndexNow` Action pings Bing/IndexNow so
+  changed pages re-crawl fast — no manual step.
+- **Weekly (automated):** the `Production CWV monitoring` Action runs Lighthouse against the live
+  origin and flags any Core Web Vitals regression.
 - **Monthly (free):** spot-check 20–30 target queries in Google, Bing, ChatGPT, Perplexity to track
   AI/search visibility — paid trackers only become worth it once paid content launches.
