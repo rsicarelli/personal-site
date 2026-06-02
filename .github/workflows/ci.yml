@@ -1,0 +1,76 @@
+name: CI
+
+# PR validation gate: format + typecheck + lint + build — the same checks as `task dod`,
+# run as parallel jobs and joined by a single `CI Summary` status check that branch
+# protection on `main` requires.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Cancel superseded runs for the same ref (e.g. on rapid pushes to a PR branch).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: these jobs only read the repository.
+permissions:
+  contents: read
+
+jobs:
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: task fmt:check
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: task typecheck
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: task lint
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: task build
+
+  ci-summary:
+    name: CI Summary
+    if: always()
+    needs: [format, typecheck, lint, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Verify all checks passed
+        run: |
+          results="${{ needs.format.result }} ${{ needs.typecheck.result }} ${{ needs.lint.result }} ${{ needs.build.result }}"
+          echo "Gate results: $results"
+          for r in $results; do
+            if [ "$r" != "success" ]; then
+              echo "::error::A required check did not succeed ($r)."
+              exit 1
+            fi
+          done
+          echo "All checks passed."

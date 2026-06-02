@@ -1,0 +1,32 @@
+name: Setup toolchain
+description: >-
+  Install the mise-pinned toolchain (Node, pnpm, go-task from .tool-versions) and the project
+  dependencies, with caching for both the mise tools and the pnpm store. Mirrors the local
+  `mise` setup so CI runs the same `task` commands developers run.
+
+runs:
+  using: composite
+  steps:
+    - name: Install mise toolchain
+      uses: jdx/mise-action@v2
+      with:
+        # Reads .tool-versions; caches the installed tools and activates them for later steps,
+        # so `node`, `pnpm`, and `task` are on PATH without a `mise exec --` prefix.
+        cache: true
+
+    - name: Resolve pnpm store path
+      id: pnpm-store
+      shell: bash
+      run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+    - name: Cache pnpm store
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.pnpm-store.outputs.path }}
+        key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-
+
+    - name: Install dependencies (frozen lockfile)
+      shell: bash
+      run: pnpm install --frozen-lockfile
