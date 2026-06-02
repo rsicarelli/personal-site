@@ -1,0 +1,47 @@
+---
+title: Privacy
+description: How rsicarelli.com handles analytics — privacy-first, cookieless, no consent banner.
+draft: false
+---
+
+This site uses privacy-first, cookieless analytics. It sets **no cookies**, collects **no personal
+data**, and therefore shows **no consent banner**. The numbers exist only so I can see which writing,
+talks and projects are useful — never to identify or profile you.
+
+## What's measured
+
+Only aggregate, anonymous signals:
+
+- Page views and visitor counts per page.
+- A few interaction events — material downloads, outbound link clicks, and talk-video plays — counted
+  as totals, never tied to a person.
+- Approximate, coarse location (country) and referrer, derived without storing your IP address.
+
+## The tools
+
+- **[Umami](https://umami.is)** — an open-source, cookieless analytics tool. It identifies a visit
+  with a daily-rotating salted hash of your IP address and user-agent; the **IP address itself is
+  never stored**, and the hash resets every day, so visits can't be linked across days or sites.
+- **Cloudflare Web Analytics** — a cookieless baseline measured through the browser's Performance API.
+  It uses no cookies, no client-side storage, and no fingerprinting.
+
+## What is _not_ collected
+
+- No cookies and no `localStorage` for tracking.
+- No cross-site or cross-device tracking.
+- No personally identifiable information (name, email, precise location).
+- No behavioural profiles, and no advertising or data sale of any kind.
+
+## Why there's no consent banner
+
+Because the analytics here are genuinely anonymous and cookieless, no consent banner is required:
+
+- **Brazil (LGPD):** anonymized data falls outside the law's definition of personal data
+  (Art. 12). Brazil's data-protection authority (ANPD), in its _Guia Orientativo sobre Cookies_,
+  also recognises aggregate audience measurement as a legitimate interest of the site operator
+  (Art. 7, IX) — and cookieless tools sidestep the cookie question entirely.
+- **EU/UK (GDPR & ePrivacy/PECR):** storing no information on your device and processing no personal
+  data means there is no cookie or consent obligation to satisfy.
+
+If this ever changes — for example, if paid content later needs account-based analytics — this page
+will be updated first, and any consent mechanism will be added before such tracking begins.

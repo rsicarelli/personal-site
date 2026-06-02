@@ -1,0 +1,51 @@
+---
+title: Privacidade
+description: Como o rsicarelli.com lida com analytics — focado em privacidade, sem cookies e sem banner de consentimento.
+draft: false
+---
+
+Este site usa analytics focado em privacidade e sem cookies. Ele **não usa cookies**, **não coleta
+dados pessoais** e, por isso, **não exibe banner de consentimento**. Os números existem apenas para
+eu saber quais textos, palestras e projetos são úteis — nunca para identificar ou criar um perfil de
+você.
+
+## O que é medido
+
+Apenas sinais agregados e anônimos:
+
+- Visualizações de página e contagem de visitantes por página.
+- Alguns eventos de interação — downloads de materiais, cliques em links externos e reproduções de
+  vídeos de palestras — contados como totais, nunca associados a uma pessoa.
+- Localização aproximada e genérica (país) e referenciador, obtidos sem armazenar seu endereço IP.
+
+## As ferramentas
+
+- **[Umami](https://umami.is)** — uma ferramenta de analytics open-source e sem cookies. Ela
+  identifica uma visita com um hash salgado e rotacionado diariamente do seu endereço IP e
+  user-agent; o **endereço IP em si nunca é armazenado**, e o hash é redefinido todos os dias, de
+  modo que visitas não podem ser ligadas entre dias ou sites.
+- **Cloudflare Web Analytics** — uma base sem cookies, medida pela Performance API do navegador. Não
+  usa cookies, nem armazenamento no cliente, nem fingerprinting.
+
+## O que _não_ é coletado
+
+- Sem cookies e sem `localStorage` para rastreamento.
+- Sem rastreamento entre sites ou entre dispositivos.
+- Sem informações que identifiquem você (nome, email, localização precisa).
+- Sem perfis comportamentais e sem qualquer venda de dados ou uso publicitário.
+
+## Por que não há banner de consentimento
+
+Como o analytics aqui é genuinamente anônimo e sem cookies, nenhum banner de consentimento é
+necessário:
+
+- **Brasil (LGPD):** dados anonimizados ficam fora da definição de dado pessoal da lei (Art. 12). A
+  Autoridade Nacional de Proteção de Dados (ANPD), em seu _Guia Orientativo sobre Cookies_, também
+  reconhece a medição de audiência agregada como um legítimo interesse do controlador (Art. 7º, IX)
+  — e ferramentas sem cookies dispensam a questão dos cookies por completo.
+- **UE/Reino Unido (GDPR & ePrivacy/PECR):** não armazenar nenhuma informação no seu dispositivo e
+  não tratar dados pessoais significa que não há obrigação de cookie ou consentimento a cumprir.
+
+Se isso algum dia mudar — por exemplo, se conteúdo pago precisar futuramente de analytics por conta
+— esta página será atualizada primeiro, e qualquer mecanismo de consentimento será adicionado antes
+de tal rastreamento começar.
