@@ -1,0 +1,12 @@
+# Cloudflare Pages response headers — CACHING ONLY.
+#
+# Security headers (Content-Security-Policy, HSTS, X-Frame-Options, etc.) are intentionally
+# NOT set here — they belong to the Security epic (#76). Keep this file scoped to caching so
+# the two concerns stay reviewable in isolation.
+#
+# Everything Astro emits under /_astro/* (JS, CSS, optimized images AND the self-hosted fonts
+# in /_astro/fonts/) is content-hashed, so the URL changes whenever the bytes change — it is
+# safe to cache forever. Cloudflare Pages already sets strong defaults for hashed assets; this
+# makes the policy explicit and portable if the host ever changes.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
