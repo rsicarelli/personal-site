@@ -1,0 +1,46 @@
+name: CodeQL
+
+# Static security analysis (CodeQL) for the site's JavaScript/TypeScript — Astro components, React
+# islands, and the Node build/CI scripts (#81). Runs on pushes and PRs to main and on a weekly
+# schedule so newly disclosed query patterns catch regressions even when the code is quiet. Results
+# surface under the repo's Security → Code scanning tab.
+#
+# Standalone workflow (not part of the required CI Summary). No build step is needed: JS/TS uses
+# CodeQL's `none` build mode (analysis straight from source).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Mondays 05:30 UTC — staggered off the other scheduled jobs.
+    - cron: '30 5 * * 1'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze (javascript-typescript)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      # Required for CodeQL to upload its SARIF results to code scanning.
+      security-events: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v6
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          build-mode: none
+          # Default + security-extended for broader coverage on a small, low-dependency codebase.
+          queries: security-extended
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:javascript-typescript'
