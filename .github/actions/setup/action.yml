@@ -8,7 +8,7 @@ runs:
   using: composite
   steps:
     - name: Install mise toolchain
-      uses: jdx/mise-action@v2
+      uses: jdx/mise-action@v4
       with:
         # Reads mise.toml; caches the installed tools and activates them for later steps,
         # so `node`, `pnpm`, and `task` are on PATH without a `mise exec --` prefix.
@@ -20,7 +20,7 @@ runs:
       run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
 
     - name: Cache pnpm store
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ${{ steps.pnpm-store.outputs.path }}
         key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
