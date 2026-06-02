@@ -13,13 +13,27 @@
  * engines discover the localized roots from `/` itself.
  */
 import '../styles/global.css';
-import { SITE } from '@/config/site';
+import { SITE, DEFAULT_LOCALE } from '@/config/site';
+import { buildSeoMeta } from '@/lib/seo';
 
+const canonical = new URL('/', Astro.site).href;
 const alternates = [
   { hreflang: 'en', href: new URL('/en', Astro.site).href },
   { hreflang: 'pt-BR', href: new URL('/pt-br', Astro.site).href },
-  { hreflang: 'x-default', href: new URL('/', Astro.site).href },
+  { hreflang: 'x-default', href: canonical },
 ];
+
+// The gateway can't use BaseLayout (its Header is locale-bound), so it calls the SAME OG/Twitter
+// builder (#51) directly — no drift with the localized pages. Default locale, website type.
+const seoMeta = buildSeoMeta({
+  title: SITE.title,
+  description: SITE.description,
+  canonical,
+  locale: DEFAULT_LOCALE,
+  image: new URL('/og-default.png', Astro.site).href,
+  type: 'website',
+  siteName: SITE.title,
+});
 ---
 
 <!doctype html>
@@ -30,8 +44,9 @@ const alternates = [
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>rsicarelli.com</title>
     <meta name="description" content={SITE.description} />
-    <link rel="canonical" href={new URL('/', Astro.site).href} />
+    <link rel="canonical" href={canonical} />
     {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
+    {seoMeta.map((m) => <meta property={m.property} name={m.name} content={m.content} />)}
   </head>
   <body class="min-h-dvh antialiased">
     <main class="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center px-6 py-16">

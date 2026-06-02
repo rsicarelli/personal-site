@@ -4,16 +4,23 @@ import { Font } from 'astro:assets';
 import { ClientRouter } from 'astro:transitions';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
-import { LOCALES, DEFAULT_LOCALE, type Locale } from '@/config/site';
+import { LOCALES, DEFAULT_LOCALE, SITE, type Locale } from '@/config/site';
 import { hreflangOf, stripLocale } from '@/i18n/utils';
+import { buildSeoMeta, canonicalUrl } from '@/lib/seo';
 
 interface Props {
-  /** Page <title>. Per-locale title/description templating lands in the SEO epic (#51). */
+  /** Page <title>, already composed by the page (e.g. `About · rsicarelli.com`). */
   title: string;
   description?: string;
+  /** OG/Twitter image (#51) — absolute or root-relative; defaults to the static brand card. */
+  image?: string;
+  /** OpenGraph type (#51) — `article` for posts/talks/projects, else `website`. */
+  ogType?: 'website' | 'article';
+  /** Override the social-card title; defaults to `title` minus the ` · {site}` brand suffix. */
+  ogTitle?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, image, ogType, ogTitle } = Astro.props;
 
 // Locale is derived from the route (`/en/…` → `en`, `/pt-br/…` → `pt-br`, bare `/` → default).
 // `<html lang>` needs the RFC-5646 form (`pt-BR`), while URLs keep the lowercase slug (`pt-br`).
@@ -25,8 +32,8 @@ const htmlLang = hreflangOf(locale);
 // byte the self-hreflang (no trailing-slash drift). `pt-BR` is uppercase in the attribute; the URL
 // slug stays lowercase `/pt-br/`.
 const logical = stripLocale(Astro.url.pathname, LOCALES);
-const localeUrl = (loc: Locale) =>
-  new URL(`/${loc}${logical === '/' ? '' : logical}`, Astro.site).href;
+// Shared canonical builder (#51) — the same definition pages use for JSON-LD, so they never drift.
+const localeUrl = (loc: Locale) => canonicalUrl(Astro.url.pathname, loc, Astro.site);
 
 const canonical = localeUrl(locale);
 const alternates = [
@@ -37,6 +44,21 @@ const alternates = [
     href: logical === '/' ? new URL('/', Astro.site).href : localeUrl(DEFAULT_LOCALE),
   },
 ];
+
+// OpenGraph / Twitter cards (#51). og:url reuses `canonical` (no re-derivation); the image
+// resolves to an absolute URL (per-page/post override or the static brand card). Copy stays
+// driven by the page's title/description — no hardcoded strings here.
+const ogImage = new URL(image ?? '/og-default.png', Astro.site).href;
+const seoMeta = buildSeoMeta({
+  title,
+  description,
+  canonical,
+  locale,
+  image: ogImage,
+  type: ogType ?? 'website',
+  siteName: SITE.title,
+  ogTitle,
+});
 ---
 
 <!doctype html>
@@ -93,9 +115,11 @@ const alternates = [
     {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
 
     {
-      /* OpenGraph / Twitter cards are emitted here in the SEO epic (#51). hreflang above is the
-        i18n epic's (#23) responsibility; detect at `/` only, keep the visible switcher. */
+      /* OpenGraph / Twitter cards (#51). hreflang above is the i18n epic's (#23) responsibility;
+        detect at `/` only, keep the visible switcher. Per-page JSON-LD (#52) goes through the
+        head slot below. */
     }
+    {seoMeta.map((m) => <meta property={m.property} name={m.name} content={m.content} />)}
 
     <slot name="head" />
   </head>
