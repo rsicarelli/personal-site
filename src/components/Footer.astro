@@ -1,10 +1,20 @@
 ---
 /**
- * Footer — secondary links from the central config (src/config/site.ts), per §05.
- * Stub: routes are placeholders until later content epics. The dynamic year is computed
- * at build time (static site), which is fine for a personal site.
+ * Footer — secondary links: labels from the i18n dictionary (src/i18n/ui.ts), hrefs from the
+ * central config (src/config/site.ts), locale-prefixed at render. The dynamic year is computed
+ * at build time (static site), which is fine for a personal site. Routes are placeholders until
+ * later content epics.
  */
-import { FOOTER_LINKS } from '@/config/site';
+import { FOOTER_LINKS, type Locale } from '@/config/site';
+import { useTranslations } from '@/i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const localized = (href: string) => `/${locale}${href === '/' ? '' : href}`;
 
 const year = new Date().getFullYear();
 ---
@@ -18,8 +28,8 @@ const year = new Date().getFullYear();
       {
         FOOTER_LINKS.map((item) => (
           <li>
-            <a href={item.href} class="hover:text-foreground transition-colors">
-              {item.label}
+            <a href={localized(item.href)} class="hover:text-foreground transition-colors">
+              {t(item.key)}
             </a>
           </li>
         ))
