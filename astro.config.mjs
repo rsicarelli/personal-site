@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig, envField } from 'astro/config';
+import { defineConfig, envField, fontProviders } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
@@ -67,6 +67,36 @@ export default defineConfig({
       }),
     },
   },
+
+  // Self-hosted variable fonts (#43). Astro's Fonts API downloads the woff2 at build via the
+  // Google provider and serves them from our own origin (NO runtime font CDN), generating the
+  // @font-face rules, fallback-metric overrides (cuts CLS), and the preload links emitted by the
+  // <Font> component in BaseLayout. Inter is the editorial body face; JetBrains Mono is the
+  // "monospace accent" (brand, nav labels, code). Both subset to Latin + Latin-Extended so the
+  // full pt-BR diacritics (ã õ á é ç …) render. `weights` are variable-font ranges (one file
+  // each), `display: swap` avoids invisible text. Wired to --font-sans / --font-mono in global.css.
+  fonts: [
+    {
+      provider: fontProviders.google(),
+      name: 'Inter',
+      cssVariable: '--font-inter',
+      weights: ['100 900'],
+      styles: ['normal', 'italic'],
+      subsets: ['latin', 'latin-ext'],
+      display: 'swap',
+      fallbacks: ['system-ui', 'sans-serif'],
+    },
+    {
+      provider: fontProviders.google(),
+      name: 'JetBrains Mono',
+      cssVariable: '--font-jetbrains-mono',
+      weights: ['400 700'],
+      styles: ['normal'],
+      subsets: ['latin', 'latin-ext'],
+      display: 'swap',
+      fallbacks: ['ui-monospace', 'monospace'],
+    },
+  ],
 
   // i18n routing (#20). Subdirectory URLs /en/ + /pt-br/ (never ccTLD/subdomain/?lang=).
   // `prefixDefaultLocale: true` prefixes English too, so `/` is a neutral, crawlable gateway.

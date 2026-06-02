@@ -79,12 +79,17 @@
 }
 
 @theme inline {
-  /* Font seams — system stack now; self-hosted variable fonts arrive in #43. */
+  /*
+   * Font seams (#43) — self-hosted variable fonts via Astro's Fonts API. The --font-inter /
+   * --font-jetbrains-mono vars are registered in astro.config.mjs and already resolve to the
+   * family name + metric-matched fallbacks; the trailing system stacks are a final safety net.
+   */
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
+    var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-mono:
-    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+    var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
