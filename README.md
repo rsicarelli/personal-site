@@ -23,7 +23,8 @@ first-class goals, built on free / open-source tooling.
 | i18n        | Subdirectory URLs `/en/` + `/pt-br/`, browser-locale default |
 | Analytics   | **Umami** + Cloudflare Web Analytics (cookieless, no banner) |
 
-Full rationale, alternatives, and costs live in [`research/SUMMARY.md`](research/SUMMARY.md).
+Full rationale, alternatives, and costs live in the private research repo
+[**rsicarelli/personal-site-private**](https://github.com/rsicarelli/personal-site-private) (`SUMMARY.md`).
 
 ## Repository layout
 
@@ -36,7 +37,6 @@ src/
   config/           # site.ts — site constants, locales, nav
   styles/           # global.css — Tailwind v4 + Oklch design tokens
 content.config.ts   # Collection schemas (Zod)  ·  astro.config.mjs  ·  Taskfile.yml
-research/           # Deep-research foundation (8 reports + consolidated SUMMARY.md)
 ```
 
 ## Local development
@@ -54,5 +54,8 @@ task dod          # format + typecheck + lint + build (run before committing)
 
 ## Foundation docs
 
-- [`research/SUMMARY.md`](research/SUMMARY.md) — consolidated digest + the unified recommended stack.
-- [`research/README.md`](research/README.md) — index of the 8 research prompts and their results.
+The research foundation lives in the private repo
+[**rsicarelli/personal-site-private**](https://github.com/rsicarelli/personal-site-private):
+
+- [`SUMMARY.md`](https://github.com/rsicarelli/personal-site-private/blob/main/SUMMARY.md) — consolidated digest + the unified recommended stack.
+- [`RESEARCH-INDEX.md`](https://github.com/rsicarelli/personal-site-private/blob/main/RESEARCH-INDEX.md) — index of the 8 research prompts and their results.

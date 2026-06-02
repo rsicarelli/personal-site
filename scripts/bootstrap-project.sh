@@ -103,7 +103,7 @@ task(){ # title  [priority-override]
   local lbl="area:$(echo "$CUR_AREA" | tr '[:upper:]' '[:lower:]')"
   local body="Part of #$CUR_EPIC_NUM — **$CUR_EPIC_TITLE**.
 
-See \`research/SUMMARY.md\` for rationale."
+See the private research repo (rsicarelli/personal-site-private) for rationale."
   ensure_issue "$title" "$body" "$CUR_MS" "$lbl"
   link_sub "$CUR_EPIC_NODE" "$RET_NODE"
   add_to_board "$RET_NUM"

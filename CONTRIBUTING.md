@@ -1,8 +1,8 @@
 # Contributing & workflow
 
 This is a solo project, but it runs with light, real governance so the work stays organized and the
-roadmap stays honest. See the north star in [`CLAUDE.md`](CLAUDE.md) and the research in
-[`research/SUMMARY.md`](research/SUMMARY.md).
+roadmap stays honest. See the north star in [`CLAUDE.md`](CLAUDE.md) and the research in the private
+repo [**rsicarelli/personal-site-private**](https://github.com/rsicarelli/personal-site-private) (`SUMMARY.md`).
 
 ## Planning model
 
