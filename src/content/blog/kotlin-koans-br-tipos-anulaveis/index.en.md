@@ -1,6 +1,6 @@
 ---
-title: 'Kotlin Koans BR: Tipos anuláveis'
-description: 'Reescreva o código a seguir para que ele tenha apenas uma expressão if: <details> <summary>Java</summary>'
+title: 'Kotlin Koans BR: Nullable types'
+description: 'Rewrite the following code so that it uses only a single if expression, and learn how Kotlin handles nullable types safely.'
 pubDate: 2024-03-07
 tags:
   - 'kotlin'
@@ -8,17 +8,15 @@ tags:
 series: 'kotlin-koans-br'
 seriesOrder: 6
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fggj8j1wgvcmgw1oql67g.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-tipos-anulaveis-3mg'
-  devtoId: 1783123
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
-## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Introduction/Nullable%20types/Task.kt)
+## 🔗 [Task](https://play.kotlinlang.org/koans/Introduction/Nullable%20types/Task.kt)
 
-Reescreva o código a seguir para que ele tenha apenas uma expressão `if`:
+Rewrite the following code so that it uses only a single `if` expression:
 
 <details>
   <summary>Java</summary>
@@ -228,7 +226,7 @@ func (pi *PersonalInfo) getEmail() string {
 type Mailer struct{}
 
 func (m *Mailer) sendMessage(email string, message string) {
-	// lógica de envio de mensagem
+	// message-sending logic
 }
 
 ```
@@ -258,88 +256,88 @@ public void SendMessageToClient(
 
 </details>
 
-## Caso de uso
+## Use case
 
-No mundo da programação, é comum encontrar situações em que variáveis não possuem um valor atribuído, sendo identificadas como "nulas".
+In the world of programming, it's common to run into situations where variables don't have a value assigned to them, and are treated as "null".
 
-No Kotlin, o tipo nulo assegura que variáveis tenham ou não um valor, proporcionando uma camada extra de segurança ao código. Assim, quando um valor pode ser nulo, isso é claramente indicado.
+In Kotlin, the nullable type makes it explicit whether a variable holds a value or not, adding an extra layer of safety to your code. So whenever a value can be null, that's clearly indicated.
 
-### Variáveis que podem ser nulas
+### Variables that can be null
 
-Sempre que uma variável pode ser nula, a linguagem permite adicionar um `?` logo após o tipo da variável:
+Whenever a variable can be null, the language lets you add a `?` right after the variable's type:
 
-Para acessar os atributos desse tipo nulo de forma segura, podemos utilizar a operação `?.`
+To safely access the members of such a nullable type, we can use the `?.` operation:
 
 ```kotlin
-val textoNulo: String? = null
-val tamanho: Int? = textoNulo?.length
-println(tamanho == null) //Saída: true
+val nullText: String? = null
+val length: Int? = nullText?.length
+println(length == null) //Output: true
 ```
 
-### O operador Elvis `?:`
+### The Elvis operator `?:`
 
-O operador Elvis entrega um valor substituto ou padrão quando o valor à sua esquerda é `null`.
+The Elvis operator returns a fallback or default value when the value on its left is `null`.
 
-Note que com o operador Elvis, podemos remover o tipo nulo do `Int`:
+Notice that with the Elvis operator, we can drop the nullable type from `Int`:
 
 ```kotlin
-val textoNulo: String? = null
-val tamanho: Int = textoNulo?.length ?: 0
-println(tamanho == null) //Saída: false
+val nullText: String? = null
+val length: Int = nullText?.length ?: 0
+println(length == null) //Output: false
 ```
 
-> Inclinando a cabeça para o lado esquerdo, nota-se que o símbolo `?:` lembra os olhos e a mecha de cabelo típica de Elvis Presley.
+> If you tilt your head to the left, the `?:` symbol looks like the eyes and signature hair curl of Elvis Presley.
 
-### Burlando a Nulabilidade em Kotlin
+### Bypassing nullability in Kotlin
 
-Embora Kotlin trate nulabilidade de maneira segura, existem situações que exigem um contorno dessa proteção.
+Even though Kotlin handles nullability safely, there are situations that call for working around that protection.
 
-#### Operador `!!`
+#### The `!!` operator
 
-Ao ter certeza de que uma variável nullable não está nula, é possível utilizar o operador `!!` para tratá-la como se não fosse nula.
+When you're certain that a nullable variable isn't null, you can use the `!!` operator to treat it as if it were non-null.
 
-❗❗️No entanto, se a variável for realmente nula, o programa lançará uma `NullPointerException`.
+❗❗️However, if the variable really is null, the program will throw a `NullPointerException`.
 
 ```kotlin
-val nome: String? = null
-val tamanho = nome!!.length  // NullPointerException
+val name: String? = null
+val length = name!!.length  // NullPointerException
 ```
 
-#### Utilizando `lateinit`
+#### Using `lateinit`
 
-No Kotlin, as variáveis devem ser inicializadas com um valor.
+In Kotlin, variables must be initialized with a value.
 
-É comum utilizar o tipo nulo para representar o estado de uma variável não inicializada.
+It's common to use the nullable type to represent the state of a variable that hasn't been initialized yet.
 
-Para esses casos, podemos utilizar o modificador `lateinit`, que informa ao compilador que essa variável será inicializada antes de seu acesso, evitando a necessidade de torná-la nullable.
+For these cases, we can use the `lateinit` modifier, which tells the compiler that the variable will be initialized before it's accessed, removing the need to make it nullable.
 
-No entanto, se tentarem acessá-la antes da sua inicialização, ocorrerá uma `UninitializedPropertyAccessException`.
+However, if you try to access it before it's initialized, an `UninitializedPropertyAccessException` will occur.
 
 ```kotlin
-lateinit var nome: String
-println(nome) // UninitializedPropertyAccessException
-nome = "Kotlin"
+lateinit var name: String
+println(name) // UninitializedPropertyAccessException
+name = "Kotlin"
 ```
 
-## Boas práticas
+## Best practices
 
-1. **Minimizar o uso:** se há certeza de que uma variável nunca será nula, é aconselhável defini-la como não anulável. Isso simplifica o código e minimiza possíveis erros.
-2. **Prudência no uso do Elvis `?:`** é crucial. o valor padrão precisa ser apropriado para o contexto da expressão.
-3. **Evitar burlar os tipos nulos**: ao invés de forçar uma variável a ser tratada como não nula com `!!`, é benéfico optar pelo `?.` e modelar seu código com uma tipagem segura.
-4. **Cuidado ao utilizar `lateinit`**: seu uso imprudente pode ser arriscado. É vital garantir a inicialização da variável antes de acessá-la, além de poder violar princípios de imutabilidade.
-5. **Realize testes rigorosos**: quando criar testes, é fundamental abordar cenários onde variáveis possam estar nulas.
+1. **Minimize their use:** if you're certain a variable will never be null, it's best to define it as non-nullable. This simplifies your code and reduces possible errors.
+2. **Be careful with the Elvis operator `?:`** — the default value needs to be appropriate for the context of the expression.
+3. **Avoid bypassing nullable types**: instead of forcing a variable to be treated as non-null with `!!`, it's better to reach for `?.` and model your code with safe typing.
+4. **Be careful with `lateinit`**: using it carelessly can be risky. It's vital to make sure the variable is initialized before accessing it, and it can also break immutability principles.
+5. **Test thoroughly**: when you write tests, it's essential to cover scenarios where variables might be null.
 
-## Analogia
+## Analogy
 
-Uma caixa de correio pode ter ou não encomendas em seu interior, semelhante a uma variável no Kotlin. Em certos momentos, ela pode conter uma encomenda (um valor), enquanto em outros, está vazia (nula).
+A mailbox may or may not have packages inside it, much like a variable in Kotlin. At some moments it might hold a package (a value), while at others it's empty (null).
 
-Assim como alguém checa a caixa antes de retirar uma encomenda, no Kotlin o `?` indica que essa "caixa" pode estar vazia.
+Just as someone checks the mailbox before taking out a package, in Kotlin the `?` indicates that this "box" might be empty.
 
 ```kotlin
-val encomenda: Encomenda? = checarCaixaDeCorreio()
-val remetente: String? = encomenda?.remetente
+val parcel: Parcel? = checkMailbox()
+val sender: String? = parcel?.sender
 
-if (remetente == null || encomenda == null) {
-    println("Ainda não chegou")
+if (sender == null || parcel == null) {
+    println("It hasn't arrived yet")
 }
 ```

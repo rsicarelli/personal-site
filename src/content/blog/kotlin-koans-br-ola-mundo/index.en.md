@@ -1,6 +1,6 @@
 ---
-title: 'Kotlin Koans BR: Olá, mundo!'
-description: 'Altere o código para que a função start retorne a string "OK".'
+title: 'Kotlin Koans BR: Hello, world!'
+description: 'Change the code so that the start function returns the string "OK".'
 pubDate: 2024-03-07
 tags:
   - 'kotlin'
@@ -8,221 +8,219 @@ tags:
 series: 'kotlin-koans-br'
 seriesOrder: 1
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F0kuchkfp7latpkvmkj89.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-ola-mundo-2dpf'
-  devtoId: 1783049
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
-## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Introduction/Hello,%20world!/Task.kt)
+## 🔗 [Task](https://play.kotlinlang.org/koans/Introduction/Hello,%20world!/Task.kt)
 
-Altere o código para que a função `start` retorne a string `"OK"`.
+Change the code so that the `start` function returns the string `"OK"`.
 
-Nas tarefas do Kotlin Koans, a função `TODO()` lançará uma exceção.
+In the Kotlin Koans tasks, the `TODO()` function will throw an exception.
 
-Para concluir o Kotlin Koans, a invocação de função deve ser substituída por um código significativo conforme o problema.
+To complete a Kotlin Koan, you need to replace that function call with meaningful code that solves the problem.
 
-## Casos de uso
+## How functions work
 
-No Kotlin, funções são blocos de código designados para tarefas específicas. Funções são fundamentais na linguagem, ajudando na organização, reutilização e execução eficiente de ações.
+In Kotlin, functions are blocks of code designed for specific tasks. Functions are fundamental to the language, helping you organize, reuse, and run actions efficiently.
 
 ```kotlin
-fun nomeDaFuncao(
-    argumento1: Tipo,
-    argumento2: Tipo,
-): TipoDeRetorno {
-    return valorDeRetorno
+fun functionName(
+    argument1: Type,
+    argument2: Type,
+): ReturnType {
+    return returnValue
 }
 ```
 
-- `fun` palavra-chave reservada para declarar uma função.
-- `nomeDaFuncao` indica e declara a função de forma clara e específica.
-- `(argumento1: Tipo, argumento2: Tipo)` especifica os parâmetros que a função irá receber, separados por `,`. Obrigatóriamente, todo
-  parâmetro precisa ter um nome que fica à esquerda do símbolo `:`, e à direita o seu tipo.
-- `: TipoDeRetorno` após o símbolo `:`, indica o tipo de valor que a função vai retornar após sua execução.
-- `{}` representa o corpo da função, onde estão as instruções a serem executadas.
+- `fun` is the reserved keyword used to declare a function.
+- `functionName` names and declares the function in a clear, specific way.
+- `(argument1: Type, argument2: Type)` lists the parameters the function will receive, separated by `,`. Every
+  parameter must have a name on the left of the `:` symbol, and its type on the right.
+- `: ReturnType` after the `:` symbol indicates the type of value the function returns once it finishes running.
+- `{}` is the body of the function, where the instructions to be executed live.
 
-### Função simples
+### A simple function
 
-A seguir temos uma função simples que soma dois números inteiros e retorna o resultado
+Here is a simple function that adds two integers and returns the result.
 
 ```kotlin
-fun somar(a: Int, b: Int): Int {
-    val resultado = a + b
-    return resultado
+fun add(a: Int, b: Int): Int {
+    val result = a + b
+    return result
 }
 
-val resultadoSoma = somar(3, 5)
-println(resultadoSoma) // Resultado: 8
+val sumResult = add(3, 5)
+println(sumResult) // Result: 8
 ```
 
-### Funções em uma linha
+### Single-expression functions
 
-Em Kotlin, quando a função tem só uma expressão depois do símbolo `=`, e o tipo de retorno é claro ou pode ser inferido, o compilador sabe que o resultado dessa expressão é o retorno da função.
+In Kotlin, when a function has only one expression after the `=` symbol, and the return type is clear or can be inferred, the compiler knows that the result of that expression is the function's return value.
 
-Isso possibilita remover o corpo `{}` e utilizar como expressão `=`.
+This lets you drop the `{}` body and use the `=` expression instead.
 
-Ou seja, ela é transformada de **block body** (corpo em block) para **expression body** (corpo como expressão):
+In other words, it goes from a **block body** to an **expression body**:
 
 ```kotlin
-fun dobrar(numero: Int): Int = numero * 2
+fun double(number: Int): Int = number * 2
 
-val numeroDobrado = dobrar(7)
-println(numeroDobrado) // Resultado: 14
+val doubledNumber = double(7)
+println(doubledNumber) // Result: 14
 ```
 
-> 💡 Em Kotlin, ao ter uma função que avalia uma expressão simples, a prática convencional é utilizar o corpo como expressão (expression
-> body) em vez do corpo em bloco (block body). Geralmente, funções mais curtas são mais fáceis de serem compreendidas.
+> 💡 In Kotlin, when a function evaluates a simple expression, the conventional practice is to use an expression
+> body instead of a block body. Shorter functions are usually easier to understand.
 
-### Função sem retorno
+### Functions with no return value
 
-Quando uma função não tem um valor de retorno definido, ela é entendida como `Unit`, que é parecido com o `void` em outras linguagens.
+When a function doesn't have a defined return value, it is understood to return `Unit`, which is similar to `void` in other languages.
 
-O `Unit` no Kotlin indica que uma função não retorna nada.
+`Unit` in Kotlin indicates that a function returns nothing.
 
-A seguir, todas as expressões são equivalentes e válidas:
+The following expressions are all equivalent and valid:
 
 ```kotlin
-//Uso comum
-fun exibirMensagem() {}
-fun exibirMensagem() = Unit
+//Common usage
+fun showMessage() {}
+fun showMessage() = Unit
 
-//Uso incomum, porém equivalente
-fun exibirMensagem() {
+//Uncommon, but equivalent
+fun showMessage() {
     Unit
 }
-fun exibirMensagem(): Unit {}
-fun exibirMensagem(): Unit {
+fun showMessage(): Unit {}
+fun showMessage(): Unit {
     Unit
 }
-fun exibirMensagem(): Unit = Unit
+fun showMessage(): Unit = Unit
 ```
 
-### Lidando com múltiplos parâmetros usando _vararg_
+### Handling multiple parameters with _vararg_
 
-O `vararg` no Kotlin é usado para aceitar vários argumentos em uma função.
+`vararg` in Kotlin is used to accept multiple arguments in a function.
 
 ```kotlin
-fun imprimirItens(vararg itens: String) {
-    for (item in itens) {
+fun printItems(vararg items: String) {
+    for (item in items) {
         println(item)
     }
 }
 
-imprimirItens("Paçoca", "Cajú", "Açaí")
+printItems("Paçoca", "Cajú", "Açaí")
 ```
 
-### Declarando variáveis
+### Declaring variables
 
-No Kotlin, há duas maneiras comuns de declarar variáveis: com `val` e com `var`.
+In Kotlin, there are two common ways to declare variables: with `val` and with `var`.
 
-- `val` é um valor fixo, apenas para leitura.
+- `val` is a fixed, read-only value.
 
 ```kotlin
-val tituloDoLivro = "A Jornada Dev"
-// tituloDoLivro = "Outro Título" //impossível
+val bookTitle = "The Dev Journey"
+// bookTitle = "Another Title" //not possible
 ```
 
-- `var` é um valor não fixo, tanto para escrita quanto para leitura.
+- `var` is a non-fixed value, for both reading and writing.
 
 ```kotlin
-var paginaDeRascunho = "Minha ideia"
-paginaDeRascunho = "Uma ideia diferente" // permitido
+var draftPage = "My idea"
+draftPage = "A different idea" // allowed
 ```
 
-> 💡 `val` não é sinônimo de imutável. Embora não possa reatribuir um valor, o conteúdo interno ainda pode ser alterado.
+> 💡 `val` is not a synonym for immutable. Even though you can't reassign the value, its internal content can still change.
 
 ```kotlin
-val lista = mutableListOf("a", "b", "c")
-// lista = mutableListOf("d", "e", "f") // Erro de compilação, pois `val` é só para leitura.
+val list = mutableListOf("a", "b", "c")
+// list = mutableListOf("d", "e", "f") // Compilation error, because `val` is read-only.
 
-lista.add("d") // Isso é permitido, pois estamos modificando o conteúdo interno da lista e não reatribuindo um novo valor a ela.
+list.add("d") // This is allowed, because we are modifying the list's internal content, not reassigning a new value to it.
 ```
 
-## 🔗 [Tipos em Kotlin](https://kotlinlang.org/docs/kotlin-tour-basic-types.html)
+## 🔗 [Types in Kotlin](https://kotlinlang.org/docs/kotlin-tour-basic-types.html)
 
-Os tipos definem a natureza de um valor e determinam as operações que podem ser realizadas com esse valor.
+Types define the nature of a value and determine the operations you can perform on that value.
 
-Alguns tipos no Kotlin:
+Some types in Kotlin:
 
 ```kotlin
-// Int: Representa valores inteiros.
-val anoAtual: Int = 2023
+// Int: Represents integer values.
+val currentYear: Int = 2023
 
-// Double: Números com casas decimais de alta precisão.
-val peso: Double = 1.534776
+// Double: Decimal numbers with high precision.
+val weight: Double = 1.534776
 
-// Float: Números com casas decimais de precisão menor.
-val altura: Float = 1.82F
+// Float: Decimal numbers with lower precision.
+val height: Float = 1.82F
 
-// Long: Ideal para grandes valores inteiros.
-val populacaoMundial: Long = 7800000000L
+// Long: Ideal for large integer values.
+val worldPopulation: Long = 7800000000L
 
-// Char: Indica um caractere único.
-val inicial: Char = 'K'
+// Char: Indicates a single character.
+val initial: Char = 'K'
 
-// Boolean: Admite apenas verdadeiro ou falso.
-val estudandoKotlin: Boolean = true
+// Boolean: Only allows true or false.
+val studyingKotlin: Boolean = true
 
-// String: Conjunto de caracteres formando um texto.
-val nome: String = "Chico"
+// String: A set of characters forming a piece of text.
+val name: String = "Chico"
 
-// List: Agrupa vários elementos em uma ordem.
-val livros: List<String> = listOf("Kotlin para Iniciantes", "Programação Funcional")
+// List: Groups several elements in order.
+val books: List<String> = listOf("Kotlin for Beginners", "Functional Programming")
 
-// MutableList: Lista que permite adições e remoções.
-val animais: MutableList<String> = mutableListOf("Cão", "Gato")
+// MutableList: A list that allows additions and removals.
+val animals: MutableList<String> = mutableListOf("Dog", "Cat")
 
-// Set: Coleção com elementos únicos, sem duplicatas.
-val cores: Set<String> = setOf("Vermelho", "Azul", "Verde")
+// Set: A collection with unique elements, no duplicates.
+val colors: Set<String> = setOf("Red", "Blue", "Green")
 
-// Sequence: Sequência para grandes coleções ou cálculos complexos.
-val numeros: Sequence<Int> = sequenceOf(1, 2, 3, 4, 5)
+// Sequence: A sequence for large collections or complex calculations.
+val numbers: Sequence<Int> = sequenceOf(1, 2, 3, 4, 5)
 
-// Map: Relaciona chaves e valores.
-val dicionario: Map<String, String> = mapOf(
-    "Kotlin" to "Uma linguagem de programação",
-    "Lua" to "Outra linguagem de programação"
+// Map: Relates keys and values.
+val dictionary: Map<String, String> = mapOf(
+    "Kotlin" to "A programming language",
+    "Lua" to "Another programming language"
 )
 
-// HashSet: Conjunto baseado em hash, sem ordenação específica.
-val frutas: HashSet<String> = hashSetOf("Maçã", "Banana", "Laranja")
+// HashSet: A hash-based set, with no specific ordering.
+val fruits: HashSet<String> = hashSetOf("Apple", "Banana", "Orange")
 
-// HashMap: Mapa baseado em hash, sem ordenação específica.
-val capitais: HashMap<String, String> = hashMapOf(
-    "Brasil" to "Brasília",
+// HashMap: A hash-based map, with no specific ordering.
+val capitals: HashMap<String, String> = hashMapOf(
+    "Brazil" to "Brasília",
     "China" to "Beijing"
 )
 
-// Array: Parecido com List, mas tem tamanho definido.
-val diasDaSemana: Array<String> = arrayOf("Segunda", "Terça", "Quarta")
+// Array: Similar to List, but has a fixed size.
+val daysOfWeek: Array<String> = arrayOf("Monday", "Tuesday", "Wednesday")
 
-// Pair: Agrupa dois valores de possivelmente diferentes tipos.
-val nomeIdade: Pair<String, Int> = Pair(first = "Rodrigo", second = 30)
+// Pair: Groups two values of possibly different types.
+val nameAge: Pair<String, Int> = Pair(first = "Rodrigo", second = 30)
 
-// Triple: Agrupa três valores de possivelmente diferentes tipos.
-val coordenadas: Triple<Double, Double, Double> = Triple(first = 12.5, second = 45.6, third = 78.9)
+// Triple: Groups three values of possibly different types.
+val coordinates: Triple<Double, Double, Double> = Triple(first = 12.5, second = 45.6, third = 78.9)
 
-// Any: Superclasse de todos os tipos não-nulos em Kotlin.
-val qualquerCoisa: Any = "Isso poderia ser qualquer objeto"
+// Any: The superclass of all non-null types in Kotlin.
+val anything: Any = "This could be any object"
 
-// Nothing: Representa um valor que nunca ocorre, usado para funções que nunca retornam.
-val erro: Nothing = Nothing
+// Nothing: Represents a value that never occurs, used for functions that never return.
+val error: Nothing = Nothing
 
-// Byte: Valor integral de 8 bits, entre -128 e 127.
-val exemploByte: Byte = 127
+// Byte: An 8-bit integral value, between -128 and 127.
+val byteExample: Byte = 127
 
-// UByte: Byte positivo, varia de 0 a 255.
-val uByteExemplo: UByte = 255u
+// UByte: A positive byte, ranging from 0 to 255.
+val uByteExample: UByte = 255u
 
-// UShort: Valor positivo e curto, varia de 0 a 65,535.
-val uShortExemplo: UShort = 65535u
+// UShort: A positive, short value, ranging from 0 to 65,535.
+val uShortExample: UShort = 65535u
 
-// UInt: Valor integral positivo, varia de 0 a 4,294,967,295.
-val uIntExemplo: UInt = 4294967295u
+// UInt: A positive integral value, ranging from 0 to 4,294,967,295.
+val uIntExample: UInt = 4294967295u
 
-// ULong: Valor integral positivo bem grande, varia de 0 a 18,446,744,073,709,551,615.
-val uLongExemplo: ULong = 18446744073709551615uL
+// ULong: A very large positive integral value, ranging from 0 to 18,446,744,073,709,551,615.
+val uLongExample: ULong = 18446744073709551615uL
 ```

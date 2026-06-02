@@ -1,6 +1,6 @@
 ---
-title: 'Kotlin Koans BR: Argumentos padrão'
-description: 'Imagine que você tenha várias sobrecargas de foo() na sua linguagem favorita.'
+title: 'Kotlin Koans BR: Default arguments'
+description: 'Imagine you have several overloads of foo() in your favorite language. You can replace them all with a single function in Kotlin.'
 pubDate: 2024-03-07
 tags:
   - 'kotlin'
@@ -8,27 +8,25 @@ tags:
 series: 'kotlin-koans-br'
 seriesOrder: 3
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fsz63sj008b26a3aufei7.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-argumentos-padrao-c6m'
-  devtoId: 1783115
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
-## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Introduction/Default%20arguments/Task.kt)
+## 🔗 [Task](https://play.kotlinlang.org/koans/Introduction/Default%20arguments/Task.kt)
 
-Imagine que você tenha várias sobrecargas de `foo()` na sua linguagem favorita.
+Imagine you have several overloads of `foo()` in your favorite language.
 
-Você pode substituir todas essas sobrecargas por uma única função em Kotlin.
+You can replace all of those overloads with a single function in Kotlin.
 
-Altere a declaração da função `foo` de forma que o código que usa `foo` seja compilado.
+Change the declaration of the `foo` function so that the code using `foo` compiles.
 
 <details>
   <summary>Java</summary>
 
 ```java
-class SobrecargaJava {
+class OverloadJava {
     public String foo(String name, int number, boolean toUpperCase) {
         return (toUpperCase ? name.toUpperCase() : name) + number;
     }
@@ -55,7 +53,7 @@ class SobrecargaJava {
 ```csharp
 using System;
 
-class SobrecargaCSharp
+class OverloadCSharp
 {
     public string Foo(string name, int number, bool toUpperCase)
     {
@@ -85,7 +83,7 @@ class SobrecargaCSharp
   <summary>Dart</summary>
 
 ```dart
-class SobrecargaDart {
+class OverloadDart {
   String foo(String name, int number, bool toUpperCase) {
     return (toUpperCase ? name.toUpperCase() : name) + number.toString();
   }
@@ -117,24 +115,24 @@ import (
 	"strings"
 )
 
-type SobrecargaGo struct{}
+type OverloadGo struct{}
 
-func (s SobrecargaGo) Foo(name string, number int, toUpperCase bool) string {
+func (s OverloadGo) Foo(name string, number int, toUpperCase bool) string {
 	if toUpperCase {
 		return strings.ToUpper(name) + fmt.Sprintf("%d", number)
 	}
 	return name + fmt.Sprintf("%d", number)
 }
 
-func (s SobrecargaGo) FooWithNumber(name string, number int) string {
+func (s OverloadGo) FooWithNumber(name string, number int) string {
 	return s.Foo(name, number, false)
 }
 
-func (s SobrecargaGo) FooWithUpperCase(name string, toUpperCase bool) string {
+func (s OverloadGo) FooWithUpperCase(name string, toUpperCase bool) string {
 	return s.Foo(name, 42, toUpperCase)
 }
 
-func (s SobrecargaGo) FooWithName(name string) string {
+func (s OverloadGo) FooWithName(name string) string {
 	return s.Foo(name, 42, false)
 }
 ```
@@ -145,7 +143,7 @@ func (s SobrecargaGo) FooWithName(name string) string {
   <summary>JavaScript</summary>
 
 ```javascript
-class SobrecargaJavaScript {
+class OverloadJavaScript {
   foo(name, number, toUpperCase) {
     return (toUpperCase ? name.toUpperCase() : name) + number;
   }
@@ -171,7 +169,7 @@ class SobrecargaJavaScript {
 
 ```php
 <?php
-class SobrecargaPHP {
+class OverloadPHP {
     public function foo($name, $number, $toUpperCase) {
         return ($toUpperCase ? strtoupper($name) : $name) . $number;
     }
@@ -196,7 +194,7 @@ class SobrecargaPHP {
   <summary>Python</summary>
 
 ```python
-class SobrecargaPython:
+class OverloadPython:
     def foo(self, name, number, to_upper_case):
         return (name.upper() if to_upper_case else name) + str(number)
 
@@ -216,7 +214,7 @@ class SobrecargaPython:
   <summary>Swift</summary>
 
 ```swift
-class SobrecargaSwift {
+class OverloadSwift {
     func foo(name: String, number: Int, toUpperCase: Bool) -> String {
         return (toUpperCase ? name.uppercased() : name) + String(number)
     }
@@ -241,7 +239,7 @@ class SobrecargaSwift {
   <summary>TypeScript</summary>
 
 ```typescript
-class SobrecargaTypeScript {
+class OverloadTypeScript {
   foo(name: string, number: number, toUpperCase: boolean): string {
     return (toUpperCase ? name.toUpperCase() : name) + number.toString();
   }
@@ -262,55 +260,55 @@ class SobrecargaTypeScript {
 
 </details>
 
-## Caso de uso
+## Use case
 
-Quando se fala em [`default arguments` (https://kotlinlang.org/docs/functions.html#default-arguments) ou argumentos padrão, está se referindo a uma característica bem prática em Kotlin.
+When we talk about [`default arguments`](https://kotlinlang.org/docs/functions.html#default-arguments), we're referring to a very handy feature in Kotlin.
 
-Ela permite que alguns argumentos sejam deixados de lado quando alguém chama uma função.
+It lets you skip some arguments when someone calls a function.
 
-Se isso acontecer, o compilador usa esses argumentos padrão no lugar dos argumentos que foram pulados.
-
-```kotlin
-fun calculaDesconto(preco: Double, taxaDesconto: Double = 0.05) = preco - preco * taxaDesconto
-
-calculaDesconto(preco = 50.0)
-calculaDesconto(preco = 100.0, taxaDesconto = 0.10)
-```
-
-No exemplo acima, o parâmetro `taxaDesconto` tem um valor padrão de 5% de desconto. Ao chamar a função `calculaDesconto` sem especificar a `taxaDesconto`, o desconto de 5% será aplicado sobre o preço.
-
-Porém, ao passar `0.10` como argumento para o parâmetro `taxaDesconto`, esse será o valor utilizado, substituindo o desconto padrão de 5% para 10%.
-
-### Parâmetro x Argumento
-
-A diferença entre parâmetro e argumento em Kotlin pode ser compreendida da seguinte forma:
-
-- **Parâmetro**: identificado dentro da definição de uma função.
-- **Argumento**: identificado ao invocar ou usar essa função, ou seja, fora da definição.
-
-Imagine uma função que simula a preparação de um café:
+If that happens, the compiler uses those default arguments in place of the ones that were skipped.
 
 ```kotlin
-fun prepararCafe(tipo: String) = "Preparando um café $tipo..."
+fun calculateDiscount(price: Double, discountRate: Double = 0.05) = price - price * discountRate
+
+calculateDiscount(price = 50.0)
+calculateDiscount(price = 100.0, discountRate = 0.10)
 ```
 
-Nesta definição, `tipo` é considerado um parâmetro da função.
+In the example above, the `discountRate` parameter has a default value of a 5% discount. When you call the `calculateDiscount` function without specifying the `discountRate`, the 5% discount is applied to the price.
 
-Ao solicitar a preparação de um café:
+But when you pass `0.10` as the argument for the `discountRate` parameter, that's the value used instead, changing the default discount from 5% to 10%.
+
+### Parameter vs Argument
+
+The difference between a parameter and an argument in Kotlin can be understood like this:
+
+- **Parameter**: identified inside the definition of a function.
+- **Argument**: identified when you invoke or use that function — that is, outside the definition.
+
+Imagine a function that simulates making a coffee:
 
 ```kotlin
-val pedido = prepararCafe("espresso")
+fun makeCoffee(type: String) = "Making a $type coffee..."
 ```
 
-Neste contexto, _"espresso"_ é um argumento passado para a função `prepararCafe()`.
+In this definition, `type` is considered a parameter of the function.
 
-### Vantagens
+When you request a coffee:
 
-- **Menos sobrecargas**: permite uma única função em vez de várias versões com diferentes argumentos.
-- **Flexibilidade**: é possível chamar a função com diferentes combinações de parâmetros, contanto que os argumentos obrigatórios sejam fornecidos.
-- **Compatibilidade com Java**: funções com argumentos padrão são compatíveis com código Java, atuando como sobrecargas.
+```kotlin
+val order = makeCoffee("espresso")
+```
 
-### Desvantagens
+In this context, _"espresso"_ is an argument passed to the `makeCoffee()` function.
 
-- **Complexidade do código**: se usados em excesso, podem complicar a leitura e o entendimento do código.
-- **Descarte no bytecode Java**: No Java, argumentos padrão do Kotlin não são reconhecidos. Para contornar isso, é necessário usar a anotação `@JvmOverloads`
+### Advantages
+
+- **Fewer overloads**: lets you have a single function instead of several versions with different arguments.
+- **Flexibility**: you can call the function with different combinations of parameters, as long as the required arguments are provided.
+- **Java compatibility**: functions with default arguments are compatible with Java code, acting as overloads.
+
+### Disadvantages
+
+- **Code complexity**: if overused, they can make the code harder to read and understand.
+- **Dropped in Java bytecode**: In Java, Kotlin's default arguments aren't recognized. To work around this, you need to use the `@JvmOverloads` annotation.

@@ -1,6 +1,6 @@
 ---
-title: 'Kotlin Koans BR: Strings com três aspas'
-description: 'Substitua a chamada trimIndent pela chamada trimMargin, definindo # como valor de prefixo, assim a string resultante não conterá o caractere de prefixo.'
+title: 'Kotlin Koans BR: Triple-quoted strings'
+description: 'Swap the trimIndent call for trimMargin, setting # as the prefix value, so the resulting string no longer contains the prefix character.'
 pubDate: 2024-03-07
 tags:
   - 'kotlin'
@@ -8,57 +8,55 @@ tags:
 series: 'kotlin-koans-br'
 seriesOrder: 4
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F7i8v3zse00a2qe2uta0q.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-strings-com-tres-aspas-3202'
-  devtoId: 1783116
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
-## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Introduction/Triple-quoted%20strings/Task.kt)
+## 🔗 [Task](https://play.kotlinlang.org/koans/Introduction/Triple-quoted%20strings/Task.kt)
 
-Substitua a chamada `trimIndent` pela chamada `trimMargin`, definindo `#` como valor de prefixo, assim a string resultante não conterá o caractere de prefixo.
+Swap the `trimIndent` call for the `trimMargin` call, setting `#` as the prefix value, so the resulting string won't contain the prefix character.
 
-Há funções como [`trimIndent`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/trim-indent.html) e [`trimMargin`] (https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/trim-margin.html) que servem para formatar strings de múltiplas linhas com aspas triplas conforme o contexto do código.
+There are functions like [`trimIndent`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/trim-indent.html) and [`trimMargin`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/trim-margin.html) that format multi-line triple-quoted strings to fit the surrounding code context.
 
-## Caso de uso
+## Use case
 
-Em Kotlin, as [aspas triplas](https://kotlinlang.org/docs/strings.html#multiline-strings) (`multiline strings`) facilitam a representação de Strings com várias linhas e caracteres especiais, eliminando a necessidade de escapá-los.
+In Kotlin, [triple-quoted strings](https://kotlinlang.org/docs/strings.html#multiline-strings) (`multiline strings`) make it easy to represent strings with several lines and special characters, without having to escape them.
 
-Esta técnica realça a clareza do código e simplifica a gestão de textos longos ou com estruturas intrincadas.
+This technique improves code clarity and simplifies working with long text or text with intricate structures.
 
-Utilizando um par de três aspas `""" """`, é possível declarar um texto de múltiplas linhas em Kotlin.
+By using a pair of triple quotes `""" """`, you can declare a multi-line piece of text in Kotlin.
 
 ```kotlin
-val texto = """
-    Esta é uma string que contém
-    várias linhas
-    sem a necessidade de caracteres de escape.
+val text = """
+    This is a string that contains
+    several lines
+    without needing escape characters.
 """
 ```
 
-Neste contexto, sequências como `\n` (nova linha) e `\t` (tabulação) são interpretadas literalmente como texto, sem receber tratamento
-especial.
+In this context, sequences like `\n` (new line) and `\t` (tab) are read literally as text, without any
+special handling.
 
-### Vantagens
+### Advantages
 
-- **Simplicidade**: facilidade para trabalhar com textos longos ou com formatações específicas.
-- **Escape de caracteres não é necessário**: caracteres especiais não precisam ser "escapados", melhorando a clareza e a legibilidade do código.
-- **Oferecem um tipo de modelo de String**, facilitando a incorporação de valores dinâmicos em textos e tornando a manipulação de strings mais versátil.
+- **Simplicity**: easy to work with long text or text that needs specific formatting.
+- **No character escaping needed**: special characters don't have to be "escaped", which improves the clarity and readability of the code.
+- **They act as a kind of string template**, making it easy to embed dynamic values in text and giving you more flexibility when working with strings.
 
-### Desvantagens
+### Disadvantages
 
-- **Espaço em branco indesejado** pode ser evitado utilizando funções como `trimMargin()` e `trimIndent()` para remover esses espaços extras.
-- **Menos suporte em algumas IDEs** embora seja raro, é possível que algumas IDEs e ferramentas de edição de texto enfrentam desafios na coloração de sintaxe ou na formatação automática.
-- **Problemas de desempenho**: em algumas situações, como loops intensivos, seu uso excessivo pode levar a problemas de desempenho.
+- **Unwanted whitespace** can be avoided by using functions like `trimMargin()` and `trimIndent()` to remove those extra spaces.
+- **Less support in some IDEs**: although it's rare, some IDEs and text editors may struggle with syntax highlighting or automatic formatting.
+- **Performance concerns**: in some situations, such as heavy loops, overusing them can lead to performance problems.
 
-## Analogia
+## Analogy
 
-As aspas triplas em Kotlin são como os murais nas paredes. Um mural não é interrompido por molduras ou limites, permitindo que a arte se estenda por toda a superfície sem interrupção.
+Triple-quoted strings in Kotlin are like murals on walls. A mural isn't interrupted by frames or borders, letting the art stretch across the whole surface without a break.
 
 ```kotlin
-val coracao = """
+val heart = """
     ,d88b.d88b,
     88888888888
     `Y8888888Y'

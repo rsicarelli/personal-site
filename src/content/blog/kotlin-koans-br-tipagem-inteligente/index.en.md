@@ -1,6 +1,6 @@
 ---
-title: 'Kotlin Koans BR: Tipagem inteligente'
-description: 'Reescreva o código fornecido usando smart casts e a expressão when do Kotlin.'
+title: 'Kotlin Koans BR: Smart casts'
+description: 'Rewrite the given code using Kotlin smart casts and the when expression.'
 pubDate: 2024-03-07
 tags:
   - 'kotlin'
@@ -8,17 +8,15 @@ tags:
 series: 'kotlin-koans-br'
 seriesOrder: 10
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fe3vw9oh7352shny9kdh6.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-tipagem-inteligente-5b74'
-  devtoId: 1783187
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
-## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Classes/Smart%20casts/Task.kt)
+## 🔗 [Task](https://play.kotlinlang.org/koans/Classes/Smart%20casts/Task.kt)
 
-Reescreva o código fornecido usando [smart casts](https://kotlinlang.org/docs/typecasts.html#smart-casts) e a expressão [when](https://kotlinlang.org/docs/control-flow.html#when-expression) do Kotlin.
+Rewrite the given code using [smart casts](https://kotlinlang.org/docs/typecasts.html#smart-casts) and Kotlin's [when](https://kotlinlang.org/docs/control-flow.html#when-expression) expression.
 
 Java
 
@@ -267,140 +265,140 @@ func eval(_ expr: Expr) -> Int {
 
 ---
 
-## Casos de uso
+## Use cases
 
-Em programação, cada tipo de dado é representado e operado diferentemente na memória. O "casting" é uma técnica usada para informar ao compilador que uma variável deve ser tratada como outro tipo. Isso permite realizar operações específicas com essa variável, além de garantir a compatibilidade com outras partes do código.
+In programming, every data type is represented and handled differently in memory. "Casting" is a technique used to tell the compiler that a variable should be treated as another type. This lets you perform specific operations on that variable, and it also ensures compatibility with other parts of your code.
 
-Em Kotlin, existe um recurso do compilador chamado **Smart casts** que rastreia verificações de tipos (como com o operador `is`) e infere automaticamente o seu tipo quando necessário.
+In Kotlin, there's a compiler feature called **smart casts** that tracks type checks (such as the ones done with the `is` operator) and automatically infers the type when needed.
 
-### Verificação de tipo e inferência
+### Type checking and inference
 
-#### Verificação positiva
+#### Positive check
 
-Ao verificar uma variável com o operador `is`, e se a verificação for bem-sucedida, Kotlin reconhece imediatamente o tipo dessa variável dentro do bloco de código:
+When you check a variable with the `is` operator, and the check succeeds, Kotlin immediately recognizes the type of that variable inside the block of code:
 
 ```kotlin
-class Gato(val emojiGato: String = "🐱")
-class Cachorro(val emojiCachoro: String = "🐶")
-class Peixe(val emojiPeixe: String = "🐟")
-class Pássaro(val emojiPassaro: String = "🐦")
+class Cat(val catEmoji: String = "🐱")
+class Dog(val dogEmoji: String = "🐶")
+class Fish(val fishEmoji: String = "🐟")
+class Bird(val birdEmoji: String = "🐦")
 
-fun falar(animal: Any): String {
+fun speak(animal: Any): String {
     return when (animal) {
-        is Gato -> "Miau ${animal.emojiGato}"
-        is Cachorro -> "Au au ${animal.emojiCachoro}"
-        is Peixe -> "Blub blub ${animal.emojiPeixe}"
-        is Pássaro -> "Pi pi ${animal.emojiPassaro}"
-        else -> "Não reconhecemos esse animal."
+        is Cat -> "Meow ${animal.catEmoji}"
+        is Dog -> "Woof woof ${animal.dogEmoji}"
+        is Fish -> "Blub blub ${animal.fishEmoji}"
+        is Bird -> "Tweet tweet ${animal.birdEmoji}"
+        else -> "We don't recognize this animal."
     }
 }
 
-fun ondeVive(animal: Any) {
-    if (animal is Gato || animal is Cachorro) {
-        println("Vive em terra.")
-    } else if (animal is Peixe) {
-        println("Vive na água.")
-    } else if (animal is Pássaro) {
-        println("Vive no ar e na terra.")
+fun whereItLives(animal: Any) {
+    if (animal is Cat || animal is Dog) {
+        println("Lives on land.")
+    } else if (animal is Fish) {
+        println("Lives in water.")
+    } else if (animal is Bird) {
+        println("Lives in the air and on land.")
     } else {
-        println("Não reconhecemos esse animal.")
+        println("We don't recognize this animal.")
     }
 }
 ```
 
-#### Verificação negativa
+#### Negative check
 
-Usando `!` antes do operador `is`, é possível reagir quando a variável não é do tipo esperado:
+By using `!` before the `is` operator, you can react when the variable is not of the expected type:
 
 ```kotlin
-class Ave(val canto: String)
-class Macaco(val grito: String)
-class Reptil(val som: String = "Ssssss")
+class Bird(val song: String)
+class Monkey(val screech: String)
+class Reptile(val sound: String = "Ssssss")
 
-fun documentarSom(animal: Any) {
-    if (animal !is Ave) return
+fun documentSound(animal: Any) {
+    if (animal !is Bird) return
 
-    print("O som da ave é: ${animal.canto}")
+    print("The bird's song is: ${animal.song}")
 }
 
-// Testando a função
-val tucano = Ave("Pi-pi-piu")
-documentarSom(tucano)  // Saída: "O som da ave é: Pi-pi-piu"
+// Testing the function
+val toucan = Bird("Pi-pi-piu")
+documentSound(toucan)  // Output: "The bird's song is: Pi-pi-piu"
 ```
 
-#### Limitações com variáveis mutáveis (`var`)
+#### Limitations with mutable variables (`var`)
 
-O compilador pode não realizar um Smart Cast se não puder garantir que o valor da variável não mudou entre o momento da verificação e o momento do uso:
+The compiler may not perform a smart cast if it can't guarantee that the variable's value hasn't changed between the moment of the check and the moment of use:
 
 ```kotlin
 open class Animal
-class Cachorro() : Animal() {
-    fun alimentar() = Unit
+class Dog() : Animal() {
+    fun feed() = Unit
 }
 
-var animal: Animal? = Cachorro()
+var animal: Animal? = Dog()
 
-if (animal is Cachorro) {
+if (animal is Dog) {
     animal = null
-    animal.alimentar()  // Erro de compilação: Smart cast para 'Cachorro' é impossível
+    animal.feed()  // Compilation error: smart cast to 'Dog' is impossible
 }
 ```
 
-### Smart Casts com operadores lógicos
+### Smart casts with logical operators
 
-Kotlin vai além e integra a capacidade de "Smart Casts" com operadores lógicos como `&&` e `||`. Isso evita a necessidade de conversões explícitas, tornando o código mais limpo e legível.
+Kotlin goes further and integrates smart casts with logical operators like `&&` and `||`. This avoids the need for explicit conversions, making the code cleaner and more readable.
 
 ```kotlin
-open class Animal(val nome: String, val energia: Int = 100)
+open class Animal(val name: String, val energy: Int = 100)
 
-class Peixe(nome: String, energia: Int, val habitatPreferido: String) : Animal(nome, energia) {
-    fun explorar() = "está explorando o habitat $habitatPreferido!"
+class Fish(name: String, energy: Int, val preferredHabitat: String) : Animal(name, energy) {
+    fun explore() = "is exploring the $preferredHabitat habitat!"
 }
 
-class Passaro(nome: String, energia: Int, val tipoBico: String) : Animal(nome, energia) {
-    fun bicar() = "está usando seu bico $tipoBico para buscar comida!"
+class Bird(name: String, energy: Int, val beakType: String) : Animal(name, energy) {
+    fun peck() = "is using its $beakType beak to look for food!"
 }
 
-fun acaoEspecifica(animal: Animal) {
+fun specificAction(animal: Animal) {
     when {
-        animal is Peixe && animal.energia > 50 -> {
-            println("${animal.nome} ${animal.explorar()}")
+        animal is Fish && animal.energy > 50 -> {
+            println("${animal.name} ${animal.explore()}")
         }
 
-        animal is Passaro && animal.tipoBico == "afiado" -> {
-            println("${animal.nome} ${animal.bicar()}")
+        animal is Bird && animal.beakType == "sharp" -> {
+            println("${animal.name} ${animal.peck()}")
         }
 
         else -> {
-            println("${animal.nome} não está realizando uma ação específica no momento.")
+            println("${animal.name} isn't performing a specific action right now.")
         }
     }
 }
 
-// Testando a função
-val tilapia = Peixe("Tilápia", 60, "lago de água doce")
-val aguia = Passaro("Águia", 80, "afiado")
-val canario = Passaro("Canário", 50, "pequeno")
+// Testing the function
+val tilapia = Fish("Tilapia", 60, "freshwater lake")
+val eagle = Bird("Eagle", 80, "sharp")
+val canary = Bird("Canary", 50, "small")
 
-acaoEspecifica(tilapia)  // Saída: "Tilápia está explorando o habitat lago de água doce!"
-acaoEspecifica(aguia)    // Saída: "Águia está usando seu bico afiado para buscar comida!"
-acaoEspecifica(canario)  // Saída: "Canário não está realizando uma ação específica no momento."
+specificAction(tilapia)  // Output: "Tilapia is exploring the freshwater lake habitat!"
+specificAction(eagle)    // Output: "Eagle is using its sharp beak to look for food!"
+specificAction(canary)   // Output: "Canary isn't performing a specific action right now."
 ```
 
-### Vantagens
+### Advantages
 
-- **Sintaxe limpa e código legível**: permite um código mais limpo, direto e legível, evitando repetições de conversões explícitas de tipo.
-- **Segurança de tipo**: o compilador realiza o Smart Cast apenas quando é seguro, reduzindo a possibilidade de erros de conversão em tempo de execução.
-- **Integração com controle de fluxo**: dentro de controles condicionais como `if`, `else`, `when`, ou loops como `for`, `while`, o Kotlin reconhece e ajusta o tipo da variável de acordo, permitindo o acesso direto a suas propriedades específicas sem necessidade de casting explícito.
+- **Clean syntax and readable code**: it allows for cleaner, more direct, and more readable code, avoiding repeated explicit type conversions.
+- **Type safety**: the compiler performs the smart cast only when it's safe, reducing the chance of conversion errors at runtime.
+- **Integration with control flow**: inside conditionals like `if`, `else`, `when`, or loops like `for`, `while`, Kotlin recognizes and adjusts the variable's type accordingly, allowing direct access to its specific properties without explicit casting.
 
-### Desvantagens
+### Disadvantages
 
-- **Limitações com Variáveis Mutáveis**: com variáveis mutáveis, Smart Casts pode não ser garantido pelo compilador, já que o tipo pode ter mudado entre a verificação e o uso.
-- **Concorrência**: em ambientes com múltiplos threads, o Smart Cast pode apresentar riscos se uma variável for alterada por outro thread após a verificação.
-- **Potencial confusão com lógica complexa**: em certas lógicas condicionais, o compilador pode não conseguir inferir o tipo, mesmo que pareça claro para o desenvolvedor.
+- **Limitations with mutable variables**: with mutable variables, smart casts may not be guaranteed by the compiler, since the type may have changed between the check and the use.
+- **Concurrency**: in multi-threaded environments, smart casts can be risky if a variable is changed by another thread after the check.
+- **Potential confusion with complex logic**: in certain conditional logic, the compiler may not be able to infer the type, even when it seems clear to the developer.
 
-## Analogia
+## Analogy
 
-Ao ouvir o canto de um pássaro específico na floresta, um ornitólogo pode identificar imediatamente a espécie, mesmo sem vê-la. Esse reconhecimento imediato permite ao especialista saber tudo sobre esse pássaro, desde seus hábitos até seu habitat.
+When hearing the song of a specific bird in the forest, an ornithologist can immediately identify the species, even without seeing it. That instant recognition lets the expert know everything about that bird, from its habits to its habitat.
 
-O Smart Cast no Kotlin age de forma semelhante, permitindo utilizar o tipo específico assim que identificado, sem necessidade de verificações adicionais.
+Smart casts in Kotlin work in a similar way, letting you use the specific type as soon as it's identified, without the need for additional checks.

@@ -1,6 +1,6 @@
 ---
-title: 'Kotlin Koans BR: Extension functions e properties (funções e propriedades estendidas)'
-description: 'Implemente as funções de extensão Int.r() e Pair.r() e faça com que elas convertam Int e Pair em um RationalNumber.'
+title: 'Kotlin Koans BR: Extension functions and properties'
+description: 'Implement the extension functions Int.r() and Pair.r() so they convert an Int and a Pair into a RationalNumber.'
 pubDate: 2024-04-06
 tags:
   - 'kotlin'
@@ -10,25 +10,23 @@ tags:
 series: 'kotlin-koans-br'
 seriesOrder: 13
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fi1sa1wvhb23tg0s9tvkx.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-extension-functions-e-properties-funcoes-e-propriedades-estendidas-e39'
-  devtoId: 1813363
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 7
 ---
 
-## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Classes/Extension%20functions/Task.kt)
+## 🔗 [Task](https://play.kotlinlang.org/koans/Classes/Extension%20functions/Task.kt)
 
-Implemente as funções de extensão `Int.r()` e `Pair.r()` e faça com que elas convertam `Int` e `Pair` em um `RationalNumber`.
+Implement the extension functions `Int.r()` and `Pair.r()` so they convert an `Int` and a `Pair` into a `RationalNumber`.
 
-## Introdução as extension functions no Kotlin
+## Introduction to extension functions in Kotlin
 
-Em Kotlin, as [extension functions](https://kotlinlang.org/docs/extensions.html#extension-functions) são uma ferramenta poderosa que permite adicionar novas funcionalidades a uma classe sem a necessidade de modificá-la ou herdá-la: você a "estende".
+In Kotlin, [extension functions](https://kotlinlang.org/docs/extensions.html#extension-functions) are a powerful tool that lets you add new behavior to a class without having to modify it or inherit from it: you "extend" it.
 
-Essa ferramenta nos ajuda a isolar melhor nosso código, reaproveitar, e contextualizar dependendo do uso.
+This tool helps us isolate our code better, reuse it, and give it the right context depending on how it's used.
 
-Vamos supor que você possua a seguinte classe hipotética que calcula valores de frete:
+Let's say you have the following hypothetical class that calculates shipping rates:
 
 ```kotlin
 class DeliveryCalculator {
@@ -49,9 +47,9 @@ class DeliveryCalculator {
 }
 ```
 
-Perceba que estamos repetindo a lógica de cálculo de porcentagem 3 vezes: `"${valor * 100}%"`
+Notice that we're repeating the percentage calculation logic three times: `"${value * 100}%"`
 
-Para evitar a repetição do código, podemos extrair apenas esse cálculo em uma função que recebe o `valor`:
+To avoid repeating the code, we can extract just that calculation into a function that takes the `value`:
 
 ```kotlin
 class DeliveryCalculator {
@@ -74,9 +72,9 @@ class DeliveryCalculator {
 }
 ```
 
-Essa opção já é ótima e nos ajuda a reaproveitar nosso código. Porém, com as extension functions do Kotlin, existe uma forma mais idiomática e elegante de resolver o mesmo problema
+This option is already great and helps us reuse our code. But with Kotlin's extension functions, there's a more idiomatic and elegant way to solve the same problem.
 
-Ao criar uma extensão, essa função atua como se fosse um membro daquela classe, mas internamente o compilador a trata como apenas uma função comum que aceita uma instância daquela classe como seu primeiro parâmetro.
+When you create an extension, the function behaves as if it were a member of that class, but under the hood the compiler treats it as just an ordinary function that takes an instance of that class as its first parameter.
 
 ```kotlin
 class DeliveryCalculator {
@@ -99,7 +97,7 @@ class DeliveryCalculator {
 }
 ```
 
-Ou ainda:
+Or even:
 
 ```kotlin
 class DeliveryCalculator {
@@ -113,9 +111,9 @@ class DeliveryCalculator {
 }
 ```
 
-A maior vantagem é que estamos contextualizando a função e estendendo a classe `Double` (que é fechada), adaptando apenas para nosso contexto específico.
+The biggest advantage is that we're giving the function context and extending the `Double` class (which is closed), adapting it just for our specific case.
 
-Também é possível declarar funcões de "high-order" e reaproveitar em todo o repositório:
+You can also declare higher-order functions and reuse them across the whole repository:
 
 ```kotlin
 class DeliveryCalculator {
@@ -126,15 +124,15 @@ class DeliveryCalculator {
     fun calculateScheduledDelivery(): String = 15.50.formatAsPercentage()
 }
 
-// Pública para todo o repositório
+// Public to the whole repository
 fun Double.formatAsPercentage() = "${this * 100}%"
 ```
 
-### Extension properties (estendendo propriedades)
+### Extension properties
 
-No caso acima, uma função pode ser redundante, já que não há nenhum parâmetro para a função `formatAsPercentage()`.
+In the case above, a function can be redundant, since there's no parameter for the `formatAsPercentage()` function.
 
-Para resolver isso, o Kotlin também nos possibilita estender propriedades da classe, tornando o código ainda mais limpo.
+To solve this, Kotlin also lets us extend a class's properties, making the code even cleaner.
 
 ```kotlin
 class DeliveryCalculator {
@@ -149,37 +147,37 @@ class DeliveryCalculator {
 }
 ```
 
-### Como elas funcionam?
+### How do they work?
 
-Por baixo dos panos, uma extensão é apenas uma função estática que recebe o objeto que você está "expandindo" (o objeto receptor) como seu primeiro argumento.
+Under the hood, an extension is just a static function that takes the object you're "expanding" (the receiver object) as its first argument.
 
-Dessa forma, não existe uma sobrecarga de desempenho ao usar funções de extensão em comparação com funções normais.
+Because of this, there's no performance overhead in using extension functions compared to regular functions.
 
-### Vantagens
+### Advantages
 
-- **Melhora a legibilidade do código**: Muitas vezes, chamar um método em um objeto é mais intuitivo do que passar o objeto como um argumento para uma função.
-- **Evita poluição do namespace**: Ao invés de criar funções de utilidade genérica, você pode criar as suas próprias extensões privadas apenas no contexto onde ela é utilizada.
-- **Evita subclasses desnecessárias**: Em vez de criar uma subclasse apenas para adicionar algumas funcionalidades, você pode criar extensões
+- **Improves code readability**: Often, calling a method on an object is more intuitive than passing the object as an argument to a function.
+- **Avoids namespace pollution**: Instead of creating generic utility functions, you can create your own private extensions only in the context where they're used.
+- **Avoids unnecessary subclasses**: Instead of creating a subclass just to add a bit of behavior, you can create extensions.
 
-### Desvantagens
+### Disadvantages
 
-- **Não substituem métodos originais**: Se a classe original tiver um método com a mesma assinatura da função de extensão, a função original será chamado.
-- **Acesso limitado**: funções de extensão não podem acessar membros protegidos ou privados da classe.
-- **Podem levar à confusão**: O uso excessivo sem organização adequada pode tornar o código difícil de entender.
+- **They don't override original methods**: If the original class has a method with the same signature as the extension function, the original method gets called.
+- **Limited access**: extension functions can't access a class's protected or private members.
+- **They can lead to confusion**: Overusing them without proper organization can make the code hard to understand.
 
-#### Testabilidade
+#### Testability
 
-- **Isolamento e pureza**: Idealmente, as funções de extensão devem operar como funções puras, tornando os testes mais previsíveis.
-- **Restrição de acesso**: Sua incapacidade de acessar membros privados torna as funções de extensão mais fáceis de testar.
-- **Simplicidade**: funções de extensão devem ter uma única responsabilidade. Isto facilita o teste.
+- **Isolation and purity**: Ideally, extension functions should behave like pure functions, making tests more predictable.
+- **Restricted access**: Because they can't access private members, extension functions are easier to test.
+- **Simplicity**: extension functions should have a single responsibility. This makes them easier to test.
 
 ### Pair
 
-No exercício, nos deparamos com uma classe específica do Kotlin.
+In the exercise, we come across a specific Kotlin class.
 
-Em Kotlin, [Pair](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/) é uma classe que representa um valor composto por dois elementos - uma 'dupla'. É uma maneira simples de armazenar dois valores relacionados juntos, mas sem semântica particular.
+In Kotlin, [Pair](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/) is a class that represents a value made up of two elements - a 'pair'. It's a simple way to store two related values together, but without any particular meaning.
 
-`Pair` é uma classe definida na `stdlib`:
+`Pair` is a class defined in the `stdlib`:
 
 ```kotlin
 data class Pair<out A, out B>(
@@ -188,8 +186,8 @@ data class Pair<out A, out B>(
 )
 ```
 
-## Conclusão
+## Conclusion
 
-As extension functions e properties do Kotlin serão ferramentas que irão acompanhá-lo durante toda a sua trajetória como DEV Kotlin.
+Kotlin's extension functions and properties will be tools that stay with you throughout your whole journey as a Kotlin DEV.
 
-Elas nos ajudam a organizar e reaproveitar nosso código, contextualizando e incentivando funções puras e isoladas que facilitam a compreensão do código-fonte.
+They help us organize and reuse our code, giving it context and encouraging pure, isolated functions that make the source code easier to understand.
