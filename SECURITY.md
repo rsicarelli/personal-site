@@ -48,4 +48,27 @@ Policy, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, an
 
 ## Third-party & SRI review
 
-_To be completed in #82 (Minimal third-party / SRI review)._
+The site is near-zero third-party by design (Astro SSG + islands, self-hosted fonts, media on R2).
+A full audit of every externally-loaded subresource (#82):
+
+- **Scripts:** the only third-party script is the **Umami** analytics tracker
+  (`src/components/Analytics.astro`), loaded from `cloud.umami.is` and emitted **only** when the
+  `PUBLIC_UMAMI_*` env vars are set. **No Subresource Integrity (`integrity=`) is applied:** a hosted
+  analytics `script.js` is updated in place by the vendor, so a pinned hash would eventually fail to
+  match and silently break the page (the script would be refused). Instead the script is constrained
+  by CSP — `script-src` pins it to `https://cloud.umami.is` (and `connect-src` likewise for beacons),
+  so it can only be loaded from that origin. The small inline tracker that calls it is allow-listed by
+  sha256 hash (guarded by `tests/security/csp-hashes.test.ts`). If SRI is ever wanted here, self-host
+  a pinned Umami build under `/_astro` and add its integrity hash.
+- **Styles / fonts:** none third-party. Tailwind CSS is compiled into self-hosted, content-hashed
+  `/_astro/*.css`; Inter + JetBrains Mono are downloaded at build by Astro's Fonts API and served from
+  `/_astro/fonts/`. No external stylesheet or font-CDN `<link>` exists, so there is nothing to pin.
+- **Frames:** the `LiteYouTube` facade injects an `https://www.youtube-nocookie.com` iframe only on
+  user click (`frame-src`). SRI does not apply to frames/documents; the origin is pinned by CSP and
+  the privacy-preserving `-nocookie` host is used.
+- **Images:** all first-party (`/_astro` optimized, or R2 via `media.rsicarelli.com`). A few legacy
+  blog posts hot-link external images; these are tracked for migration to R2 (#170).
+
+**Conclusion:** SRI is not applicable to the one third-party resource (a rotating hosted script);
+CSP origin-pinning + the inline-script hash guard are the appropriate controls. Re-run the audit
+(`<script src>`, `<link>`, `<iframe>`, external `<img>`) whenever a new embed is introduced.
