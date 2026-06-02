@@ -1,7 +1,7 @@
 ---
-title: 'KMP 101: Como compartilhar código no KMP - conectando plataformas com expect e actual'
-description: 'Nos últimos artigos, aprofundamos nos bastidores do Kotlin Multiplataforma: seu paradigma, a arquitetura do compilador, os source sets, o ambiente de…'
-summary: 'Nos últimos artigos, aprofundamos nos bastidores do Kotlin Multiplataforma: seu paradigma, a arquitetura do compilador, os source sets, o ambiente de desenvolvimento, a criação e execução de um projeto exemplo, e o papel fundamental do Gradle.'
+title: 'KMP 101: How to Share Code in KMP - Connecting Platforms with expect and actual'
+description: 'Unpacking the expect and actual keywords in Kotlin Multiplatform and the different ways they let you share code across platforms.'
+summary: 'Over the last few articles, we dug into the inner workings of Kotlin Multiplatform: its paradigm, the compiler architecture, the source sets, the development environment, building and running a sample project, and the essential role of Gradle.'
 pubDate: 2023-12-13
 updatedDate: 2024-01-27
 tags:
@@ -12,42 +12,40 @@ tags:
 series: 'kmp-101'
 seriesOrder: 7
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F3x2ugp064gbq2qgpcrje.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-101-como-compartilhar-codigo-no-kmp-conectando-plataformas-com-expect-e-actual-49ma'
-  devtoId: 1696574
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 11
 ---
 
-Agora, vamos emergir à superfície do KMP, desvendando as palavras reservadas `actual` e `expect` e como elas facilitam o compartilhamento de código.
+Now let's come up to the surface of KMP, unpacking the `actual` and `expect` keywords and how they make code sharing easier.
 
 ---
 
-## Como o KMP Facilita o Compartilhamento de Código
+## How KMP Makes Code Sharing Easier
 
-No artigo [🔗 Dominando os Princípios dos Source Sets](https://dev.to/rsicarelli/kotlin-multiplataforma-101-dominando-os-principios-dos-source-sets-4pg), aprendemos que o KMP usa a estrutura de source sets e que todo source-set específico é herdeiro do source-set raiz `commonMain`. Todo código Kotlin no `commonMain` fica automaticamente acessível nos source-sets específicos, como `androidMain`, `appleMain`, entre outros.
+In the article [🔗 Mastering the Principles of Source Sets](https://dev.to/rsicarelli/kotlin-multiplataforma-101-dominando-os-principios-dos-source-sets-4pg), we learned that KMP uses the source set structure and that every platform-specific source set inherits from the root source set `commonMain`. All Kotlin code in `commonMain` automatically becomes accessible from the platform-specific source sets, such as `androidMain`, `appleMain`, and others.
 
-O código no `commonMain` pode ser:
+Code in `commonMain` can be:
 
-1. Suficientemente genérico para ser resolvido apenas com Kotlin.
-2. Comportar-se de maneira consistente, mas com implementações que variam conforme as exigências de cada plataforma.
+1. Generic enough to be resolved with Kotlin alone.
+2. Consistent in behavior, but with implementations that vary according to each platform's requirements.
 
-> Lembre-se: o Kotlin sempre compilará para código nativo, independente do tipo de compartilhamento.
+> Remember: Kotlin always compiles to native code, regardless of the type of sharing.
 
-Vamos examinar mais detalhadamente cada tipo de compartilhamento.
+Let's take a closer look at each type of sharing.
 
-### 1. Compartilhando código genérico utilizando 100% Kotlin
+### 1. Sharing generic code using 100% Kotlin
 
-Esse tipo de compartilhamento pressupõe que não existem implementações específicas de plataforma a serem feitas. Assim, podemos utilizar apenas Kotlin para atender aos nossos requisitos.
+This type of sharing assumes there are no platform-specific implementations to write. That way, we can use Kotlin alone to meet our requirements.
 
-No início do KMP, essa abordagem não era comum, pois a comunidade open-source e as bibliotecas KMP ainda estavam em fase inicial. Atualmente, com o aumento de recursos open-source disponíveis, tornou-se o método mais frequente de compartilhamento de código.
+In KMP's early days, this approach wasn't common, because the open-source community and KMP libraries were still in their infancy. Today, with the growing number of open-source resources available, it has become the most frequent way of sharing code.
 
-Vamos explorar alguns casos.
+Let's explore a few cases.
 
-#### 1.1 Constantes
+#### 1.1 Constants
 
-Constantes são informações estáticas e altamente específicas. Geralmente, possuem um tipo primitivo (`String`, `Int`, `Boolean`, etc.) e são consistentes em todas as plataformas.
+Constants are static, highly specific pieces of information. They usually have a primitive type (`String`, `Int`, `Boolean`, etc.) and are consistent across all platforms.
 
 ```kotlin
 object AppConfig {
@@ -57,7 +55,7 @@ object AppConfig {
 
 object AuthConfig {
     const val LOGIN_URL: String = "https://..."
-    const val TOKEN_EXPIRY: Long = 3600 // 1 hora em segundos
+    const val TOKEN_EXPIRY: Long = 3600 // 1 hour in seconds
 }
 
 object UIConfig {
@@ -92,11 +90,11 @@ object AnalyticsEvents {
 }
 ```
 
-#### 1.2 Modelos: entidades, DTOs, objetos de valor, respostas e requisições
+#### 1.2 Models: entities, DTOs, value objects, responses, and requests
 
-Modelos refletem aspectos mais específicos do negócio e raramente exigem implementações específicas de plataforma.
+Models reflect more specific aspects of the business and rarely require platform-specific implementations.
 
-Compartilhar modelos vai além da conveniência, mas também reforça uma linguagem de domínio único para todo o time de frontend (mobile, web e desktop). Para os praticantes do [Domain Driven Design (DDD)](https://en.wikipedia.org/wiki/Domain-driven_design), essa prática é um artefato extremamente poderoso, já que dessa forma, o time terá um único dicionário do domínio.
+Sharing models is more than just a convenience—it also reinforces a single domain language across the entire frontend team (mobile, web, and desktop). For practitioners of [Domain Driven Design (DDD)](https://en.wikipedia.org/wiki/Domain-driven_design), this practice is an extremely powerful artifact, since the team ends up with a single domain dictionary.
 
 ```kotlin
 data class User(
@@ -126,7 +124,7 @@ data class Money(
 )
 ```
 
-Com [kotlin.serialization](https://github.com/Kotlin/kotlinx.serialization), as implementações específicas de serialização são desnecessárias, permitindo o uso exclusivo de Kotlin:
+With [kotlin.serialization](https://github.com/Kotlin/kotlinx.serialization), platform-specific serialization implementations are unnecessary, allowing you to use Kotlin exclusively:
 
 ```kotlin
 @Serializable
@@ -153,13 +151,13 @@ data class LoginRequest(
 )
 ```
 
-> ⏱️ Vamos aprender sobre essa biblioteca nos próximos artigos
+> ⏱️ We'll learn about this library in upcoming articles
 
-#### 1.3 Lógica de negócio
+#### 1.3 Business logic
 
-A natureza de uma regra de negócio é geralmente agnóstica a plataforma, e imposta pelo contexto específico do seu projeto, sendo um candidato perfeito para ser solucionado apenas com Kotlin.
+A business rule is generally platform-agnostic by nature, imposed by your project's specific context, making it a perfect candidate to be solved with Kotlin alone.
 
-Além de impor o mesmo comportamento de negócio para todas as plataformas, compartilhar a regra de negócio também significa compartilhar os testes unitários e integração dessa regra. Ao invés de repetir o mesmo teste em cada plataforma, testaremos apenas uma vez.
+Beyond enforcing the same business behavior across all platforms, sharing business rules also means sharing the unit and integration tests for those rules. Instead of repeating the same test on each platform, we test only once.
 
 ```kotlin
 interface AccountRepository {
@@ -186,57 +184,57 @@ class CheckBalanceForTransferUseCase(
 }
 ```
 
-> No mundo do Kotlin/Android, o uso do padrão [UseCase](https://en.wikipedia.org/wiki/Use_case) se tornou uma prática comum e constantemente utilizada em projetos inner e open source.
+> In the Kotlin/Android world, the [UseCase](https://en.wikipedia.org/wiki/Use_case) pattern has become a common practice, used constantly in both inner-source and open-source projects.
 >
-> Existem diversas formas de criar UseCases no Kotlin, caso tenha curiosidade em aprender outras formas:
+> There are several ways to create UseCases in Kotlin. If you're curious to learn other approaches:
 >
 > [🔗 How To Avoid Use Cases Boilerplate in Android](https://betterprogramming.pub/how-to-avoid-use-cases-boilerplate-in-android-d0c9aa27ef27)
 
-#### 1.4 Testes unitários e de integração
+#### 1.4 Unit and integration tests
 
-Uma das grandes vantagens do KMP é a possibilidade de ter seu código testado uma vez e reutilizada em todas as plataformas. Lembrando que, dentro do source-set `commonMain` ou `commonTest`, não podemos utilizar nenhuma biblioteca específica da plataforma. Ou seja, precisamos escrever testes numa infraestrutura multiplataforma.
+One of the great advantages of KMP is being able to test your code once and reuse it across all platforms. Keep in mind that, inside the `commonMain` or `commonTest` source set, we can't use any platform-specific library. In other words, we need to write tests on a multiplatform infrastructure.
 
-Para isso, temos o [🔗 kotlin.test](https://kotlinlang.org/api/latest/kotlin.test/), que oferece uma API parecida com o `JUnit4/5` com suporte a anotações de `@Test`, além de recursos para verificar o conteúdo por funções como `assertEquals` e `assertContains`.
+For that, we have [🔗 kotlin.test](https://kotlinlang.org/api/latest/kotlin.test/), which offers an API similar to `JUnit4/5` with support for `@Test` annotations, plus features to verify content through functions like `assertEquals` and `assertContains`.
 
-Vamos ver como seria um teste unitário para nosso use case acima:
+Let's see what a unit test for our use case above would look like:
 
 ```kotlin
 import kotlin.test.Test
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
 
-// Implementação Fake
+// Fake implementation
 private class FakeAccountRepository(val balance: Double) : AccountRepository {
     override val currentBalance: Double
         get() = balance
 }
 
-// Classe de teste
+// Test class
 class CheckBalanceForTransferUseCaseTest {
 
     @Test
     fun `deve retornar HasSufficientFunds quando o saldo atual é maior que o valor da transferência`() {
-        // DADO: Um repositório fake com saldo suficiente
+        // GIVEN: A fake repository with sufficient balance
         val fakeRepository = FakeAccountRepository(balance = 1000.0)
         val useCase = CheckBalanceForTransferUseCase(fakeRepository)
 
-        // QUANDO: Verificando o saldo para uma transferência
+        // WHEN: Checking the balance for a transfer
         val result = useCase(500.0)
 
-        // ENTÃO: Deve retornar HasSufficientFunds
+        // THEN: It should return HasSufficientFunds
         assertTrue(result is HasSufficientFunds)
     }
 
     @Test
     fun `deve retornar InsufficientFunds com o valor correto faltante quando o saldo é menor que o valor da transferência`() {
-        // DADO: Um repositório fake com saldo insuficiente
+        // GIVEN: A fake repository with insufficient balance
         val fakeRepository = FakeAccountRepository(balance = 300.0)
         val useCase = CheckBalanceForTransferUseCase(fakeRepository)
 
-        // QUANDO: Verificando o saldo para uma transferência
+        // WHEN: Checking the balance for a transfer
         val result = useCase(500.0)
 
-        // ENTÃO: Deve retornar InsufficientFunds com o valor faltante correto
+        // THEN: It should return InsufficientFunds with the correct missing amount
         assertTrue(result is InsufficientFunds)
         val insufficientFundsResult = result as InsufficientFunds
         assertTrue(insufficientFundsResult.missingAmount == 200.0)
@@ -244,73 +242,73 @@ class CheckBalanceForTransferUseCaseTest {
 }
 ```
 
-> Para aprender sobre anotações no Kotlin: [The Full Guide to ANNOTATIONS In Kotlin por Philipp Lackner](https://www.youtube.com/watch?v=qdnhQzVGywQ)
+> To learn about annotations in Kotlin: [The Full Guide to ANNOTATIONS In Kotlin by Philipp Lackner](https://www.youtube.com/watch?v=qdnhQzVGywQ)
 >
-> Para aprender sobre o uso de "fakes" no Kotlin: [No Mocks Allowed por Marcello Galhardo](https://marcellogalhardo.dev/posts/no-mocks-allowed/)
+> To learn about using "fakes" in Kotlin: [No Mocks Allowed by Marcello Galhardo](https://marcellogalhardo.dev/posts/no-mocks-allowed/)
 
-> ⏱️ Vamos aprender mais sobre testes no KMP em artigos futuros
+> ⏱️ We'll learn more about testing in KMP in future articles
 
-#### Conclusão sobre compartilhando códigos 100% Kotlin
+#### Wrapping up on sharing 100% Kotlin code
 
-Percebemos que podemos utilizar apenas o Kotlin em diversos aspectos do nosso projeto. Essa capacidade do KMP é extremamente poderosa, já que sem muito esforço, podemos utilizar o maquinário do KMP para gerar compilações nativas do nosso código.
+We've seen that we can use Kotlin alone in many aspects of our project. This KMP capability is extremely powerful, since with little effort we can use the KMP machinery to generate native builds of our code.
 
-Mas, como pode perceber pelos exemplos, geralmente conseguimos utilizar essa abordagem e 100% Kotlin para implementações específicas do seu domínio (camada `domain`).
+But, as you can tell from the examples, we usually get to use this 100% Kotlin approach for implementations specific to your domain (the `domain` layer).
 
-Mas e quanto ao acesso a recursos específicos e nativos da plataforma no KMP?
+But what about accessing platform-specific, native resources in KMP?
 
-### 2. Compartilhando código com implementações específicas de cada plataforma
+### 2. Sharing code with platform-specific implementations
 
-Aprendemos que cada plataforma tem uma forma específica de acessar recursos exclusivos do sistema operacional como internet, bluetooth, disco, notificações, imagens, etc. Esses recursos, apesar de na teoria terem o mesmo conceito, diferem nas suas implementações.
+We learned that each platform has a specific way of accessing exclusive operating-system resources like the internet, Bluetooth, disk, notifications, images, etc. These resources, although in theory they share the same concept, differ in their implementations.
 
-Para resolver esse desafio, o KMP introduz [duas novas palavras reservadas](https://kotlinlang.org/docs/multiplatform-expect-actual.html): `expect` (o contrato) e `actual` (a implementação).
+To solve this challenge, KMP introduces [two new keywords](https://kotlinlang.org/docs/multiplatform-expect-actual.html): `expect` (the contract) and `actual` (the implementation).
 
-#### 2.1 A palavra reservada `expect` no KMP
+#### 2.1 The `expect` keyword in KMP
 
-A palavra reservada `expect` informa o compilador do Kotlin para ele pode "esperar" ou "exigir" uma implementação específica de cada plataforma para aquele componente específico durante a compilação de um source-set específico. Podemos utilizar a palavra `expect` para funções, propriedades, classes, objetos, interfaces, enumerações ou anotações.
+The `expect` keyword tells the Kotlin compiler that it can "expect" or "require" a platform-specific implementation for that particular component while compiling a specific source set. We can use the `expect` keyword for functions, properties, classes, objects, interfaces, enums, or annotations.
 
-Só é possível utilizar o `expect` no source set comum (`commonMain`): o source set comum declara, e os source sets específicos implementam.
+You can only use `expect` in the common source set (`commonMain`): the common source set declares, and the platform-specific source sets implement.
 
-- Ao declarar um componente com a palavra `expect`, você tem a obrigação de declarar a implementação (`actual`) em cada source-set específico. Inclusive, ao declarar um `expect` qualquer, a IDE já sinaliza um erro informando que precisamos declarar a versão `actual` de cada plataforma.
-  ![Erro ao declarar expect](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-expect-actual-kotlin.png?raw=true)
-- Não é possível declarar a implementação ou atribuir um valor para seu componente. Por exemplo, ao declarar uma variável com `expect`, não é possível assinar um valor
-  ![Erro ao inicializar expect](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-expect-no-initializer.png?raw=true)
+- When you declare a component with the `expect` keyword, you are required to declare the implementation (`actual`) in each platform-specific source set. In fact, the moment you declare any `expect`, the IDE flags an error telling you that you need to declare the `actual` version for each platform.
+  ![Error declaring expect](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-expect-actual-kotlin.png?raw=true)
+- You can't provide an implementation or assign a value to your component. For example, when you declare a variable with `expect`, you can't assign a value to it
+  ![Error initializing expect](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-expect-no-initializer.png?raw=true)
 
-Agora que entendemos a palavra reservada `expect`, vamos aprender mais sobre seu outro par: o `actual`
+Now that we understand the `expect` keyword, let's learn more about its counterpart: `actual`
 
-#### 2.2 A palavra reservada `actual` no KMP
+#### 2.2 The `actual` keyword in KMP
 
-A palavra reservada `actual` satisfaz o contrato do `expect`, informando o compilador que aquela declaração é a implementação "atual" ou "real" do source-set específico. Durante a compilação, o Kotlin vai tentar combinar todo `actual` com seu `expect` de origem no source-set comum.
+The `actual` keyword satisfies the `expect` contract, telling the compiler that this declaration is the "actual" or "real" implementation for the platform-specific source set. During compilation, Kotlin will try to match every `actual` with its originating `expect` in the common source set.
 
-Essa palavra é reservada para os source-sets específicos. Ou seja, não é possível utilizar no source-set comum `commonMain`.
+This keyword is reserved for the platform-specific source sets. In other words, you can't use it in the common source set `commonMain`.
 
-O compilador do Kotlin garante que:
+The Kotlin compiler guarantees that:
 
-- Toda declaração esperada no source-set comum tem uma declaração real correspondente em cada source-set específico da plataforma.
+- Every expected declaration in the common source set has a corresponding actual declaration in each platform-specific source set.
 
-![Demo em todas as plataformas](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/fullfilling-expect-actual.gif?raw=true)
+![Demo across all platforms](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/fullfilling-expect-actual.gif?raw=true)
 
-- Toda declaração real compartilha o mesmo pacote que a declaração esperada correspondente, como `br.com.rsicarelli.example`. A imagem a seguir mostra o erro relacionado a tentar refatorar declarações que não compartilham o mesmo pacote:
+- Every actual declaration shares the same package as its corresponding expected declaration, such as `br.com.rsicarelli.example`. The image below shows the error you get when trying to refactor declarations that don't share the same package:
 
-![Error: não pode ter pacotes diferentes](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-cannot-have-different-packages.gif?raw=true) <br> _"Não é Possível Realizar Refatoração. <br> Esta refatoração moverá a declaração selecionada sem seus correspondentes esperados/reais que podem levar a erros de compilação."_
+![Error: cannot have different packages](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-cannot-have-different-packages.gif?raw=true) <br> _"Cannot Perform Refactoring. <br> This refactoring will move the selected declaration without its expected/actual counterparts, which may lead to compilation errors."_
 
-## Conclusões
+## Conclusions
 
-Neste artigo, desbravamos as funcionalidades das palavras reservadas `actual` e `expect`, que são peças-chave para a portabilidade do código entre diferentes plataformas. Compreendemos como essas palavras reservadas orquestram a harmonia entre o código comum e as especificidades de cada plataforma, assegurando a coesão e a integridade do nosso projeto multiplataforma.
+In this article, we explored the capabilities of the `actual` and `expect` keywords, which are key pieces for making code portable across different platforms. We came to understand how these keywords orchestrate the harmony between common code and the specifics of each platform, ensuring the cohesion and integrity of our multiplatform project.
 
-No próximo artigo, vamos nos aprofundar no ecossistema das bibliotecas KMP. Aprenderemos como navegar por este território, escolher as bibliotecas adequadas para as nossas necessidades, entender seus detalhes e peculiaridades, e como elas podem impulsionar ainda mais nosso trabalho no desenvolvimento multiplataforma.
+In the next article, we'll dive deeper into the ecosystem of KMP libraries. We'll learn how to navigate this territory, choose the right libraries for our needs, understand their details and quirks, and how they can push our multiplatform development work even further.
 
-Até a próxima!
+See you next time!
 
 ---
 
-> 🤖 Artigo foi escrito com o auxílio do ChatGPT 4, utilizando o plugin Web.
+> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
 >
-> As fontes e o conteúdo são revisados para garantir a relevância das informações fornecidas, assim como as fontes utilizadas em cada prompt.
+> The sources and content are reviewed to ensure the relevance of the information provided, as well as the sources used in each prompt.
 >
-> No entanto, caso encontre alguma informação incorreta ou acredite que algum crédito está faltando, por favor, entre em contato!
+> That said, if you find any incorrect information or believe some credit is missing, please get in touch!
 
 ---
 
-> Referências
+> References
 >
 > - [Rules for expected and actual declarations](https://kotlinlang.org/docs/multiplatform-expect-actual.html)

@@ -1,7 +1,7 @@
 ---
-title: 'KMP 101: Aprendendo sobre o uso do Gradle no Kotlin Multiplataforma'
-description: 'No último artigo, criamos um projeto utilizando o KMP Wizard e, sem muitos esforços, executamos nosso app em aparelhos Android, iOS e Desktop.'
-summary: 'No último artigo, criamos um projeto utilizando o KMP Wizard e, sem muitos esforços, executamos nosso app em aparelhos Android, iOS e Desktop.'
+title: 'KMP 101: Learning how Gradle is used in Kotlin Multiplatform'
+description: 'In the last article, we created a project using the KMP Wizard and, with little effort, ran our app on Android, iOS, and Desktop.'
+summary: 'In the last article, we created a project using the KMP Wizard and, with little effort, ran our app on Android, iOS, and Desktop devices.'
 pubDate: 2023-12-01
 updatedDate: 2024-01-27
 tags:
@@ -12,61 +12,59 @@ tags:
 series: 'kmp-101'
 seriesOrder: 6
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F6wdj5w6bjhallotjxo2x.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-101-aprendendo-sobre-o-uso-do-gradle-no-kotlin-multiplataforma-47f8'
-  devtoId: 1685330
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 9
 ---
 
-Dessa vez, vamos nos aprofundar em um aspecto fundamental do KMP: o Plugin KMP para Gradle.
+This time, we're going to dig into a core aspect of KMP: the KMP Gradle Plugin.
 
 ---
 
-## O que é o Gradle?
+## What is Gradle?
 
-O Gradle é uma ferramenta crucial em projetos Kotlin, sendo um tópico no qual você precisará investir bastante tempo aprendendo, especialmente se não tiver experiência como dev Android.
+Gradle is a crucial tool in Kotlin projects, and it's a topic you'll need to invest plenty of time learning—especially if you don't have any Android dev experience.
 
-Pense no Gradle como o equivalente ao NPM/Yarn/Webpack no mundo JavaScript, ou ao CocoaPods/Swift Package Manager no mundo iOS. Utilizaremos a seguinte tabela para comparar essas ferramentas:
+Think of Gradle as the equivalent of NPM/Yarn/Webpack in the JavaScript world, or CocoaPods/Swift Package Manager in the iOS world. We'll use the following table to compare these tools:
 
-| Funcionalidade                | Gradle | NPM      | Webpack | CocoaPods |
-| ----------------------------- | ------ | -------- | ------- | --------- |
-| Gerenciamento de dependências | ✅     | ✅       | ❌      | ✅        |
-| Automação de build            | ✅     | ❌       | ✅      | ❌        |
-| Execução de scripts           | ✅     | ✅       | ✅      | ✅        |
-| Customização de builds        | ✅     | Limitada | ✅      | Limitada  |
-| Gestão de repositórios        | ✅     | ✅       | ❌      | ✅        |
-| Plug-ins e extensões          | ✅     | ✅       | ✅      | ✅        |
-| Pacotes distribuíveis         | ✅     | ✅       | ✅      | ✅        |
+| Feature                | Gradle | NPM     | Webpack | CocoaPods |
+| ---------------------- | ------ | ------- | ------- | --------- |
+| Dependency management  | ✅     | ✅      | ❌      | ✅        |
+| Build automation       | ✅     | ❌      | ✅      | ❌        |
+| Script execution       | ✅     | ✅      | ✅      | ✅        |
+| Build customization    | ✅     | Limited | ✅      | Limited   |
+| Repository management  | ✅     | ✅      | ❌      | ✅        |
+| Plugins and extensions | ✅     | ✅      | ✅      | ✅        |
+| Distributable packages | ✅     | ✅      | ✅      | ✅        |
 
-### Por que o Gradle é tão importante no KMP?
+### Why is Gradle so important in KMP?
 
-Um dos pilares do Kotlin Multiplatform Project (KMP) é a integração profunda com o Gradle, por meio do uso do [Plugin KMP](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.multiplatform). O KMP utiliza extensivamente o Gradle para gerenciar diversos aspectos antes, durante e após o processo de desenvolvimento. O Gradle não apenas facilita a configuração do projeto, mas também oferece tarefas especializadas que auxiliam na integração de módulos compartilhados do KMP com aplicativos iOS, por exemplo.
+One of the pillars of the Kotlin Multiplatform Project (KMP) is its deep integration with Gradle, through the use of the [KMP Plugin](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.multiplatform). KMP relies heavily on Gradle to manage many aspects before, during, and after the development process. Gradle not only makes project setup easier, it also provides specialized tasks that help integrate shared KMP modules with iOS apps, for example.
 
-O Plugin do KMP se encarrega de, por exemplo, vincular o projeto Xcode e KMP, além de oferecer recursos mais específicos do Xcode como o uso do `XFCFramework` para geração do distribuível.
+The KMP Plugin is responsible for, among other things, linking the Xcode and KMP projects, as well as offering more Xcode-specific capabilities such as using `XFCFramework` to generate the distributable.
 
-Além da integração com o Xcode/Apple, o Plugin do KMP oferece uma ampla gama de integrações com outras plataformas, como o uso do **_Webpack_** para projetos JS. Tudo é orquestrado e executado pelo Gradle.
+Beyond the Xcode/Apple integration, the KMP Plugin offers a wide range of integrations with other platforms, such as using **_Webpack_** for JS projects. Everything is orchestrated and executed by Gradle.
 
 ### Groovy vs Kotlin
 
-A linguagem original do Gradle é o Groovy. Porém, atualmente, a comunidade Kotlin utiliza o [Kotlin DSL](https://docs.gradle.org/current/userguide/kotlin_dsl.html), que permite manipular o Gradle por meio do Kotlin.
+Gradle's original language is Groovy. Today, however, the Kotlin community uses the [Kotlin DSL](https://docs.gradle.org/current/userguide/kotlin_dsl.html), which lets you drive Gradle with Kotlin.
 
-É importante notar que:
+It's worth noting that:
 
-- Arquivos `.gradle` são escritos em Groovy.
-- Arquivos `.gradle.kts` são em Kotlin, utilizando o Kotlin DSL.
+- `.gradle` files are written in Groovy.
+- `.gradle.kts` files are in Kotlin, using the Kotlin DSL.
 
-### Recado para iniciantes em Gradle
+### A note for Gradle beginners
 
-Recomendo fortemente que faça uma pausa na leitura e pesquise mais sobre o básico do Gradle. Esse conhecimento vai te auxiliar a compreender os próximos conceitos!
+I strongly recommend pausing here and reading up on the basics of Gradle. That knowledge will help you understand the concepts that follow!
 
-- [🔗 Começando com o Gradle: Tasks e comandos básicos | #AluraMais com o Alex Felipe](https://www.youtube.com/watch?v=uX6Ezf73OEY)
-- [Getting Started with the Gradle Kotlin DSL com o Paul Merlin e Rodrigo B. de Oliveira](https://www.youtube.com/watch?v=KN-_q3ss4l0)
+- [🔗 Getting started with Gradle: Tasks and basic commands | #AluraMais with Alex Felipe](https://www.youtube.com/watch?v=uX6Ezf73OEY)
+- [Getting Started with the Gradle Kotlin DSL with Paul Merlin and Rodrigo B. de Oliveira](https://www.youtube.com/watch?v=KN-_q3ss4l0)
 
-## Dissecando os arquivos Gradle
+## Dissecting the Gradle files
 
-Assumindo que você tenha compreendido alguns aspectos-chave do Gradle, vamos analisar os arquivos mais importantes do projeto que criamos no [artigo anterior](https://dev.to/rsicarelli/kmp-101-criando-e-executando-seu-primeiro-projeto-multiplataforma-no-fleet-4ep7).
+Assuming you've grasped a few key aspects of Gradle, let's look at the most important files in the project we created in the [previous article](https://dev.to/rsicarelli/kmp-101-criando-e-executando-seu-primeiro-projeto-multiplataforma-no-fleet-4ep7).
 
 ```
 .
@@ -86,21 +84,21 @@ Assumindo que você tenha compreendido alguns aspectos-chave do Gradle, vamos an
 └── settings.gradle.kt
 ```
 
-### O arquivo `settings.gradle.kts` da raíz
+### The root `settings.gradle.kts` file
 
-Esse arquivo é um componente do Gradle cuja responsabilidade é definir as configurações globais do projeto, como módulos e subprojetos, além da configuração de repositórios e dependências do projeto global.
+This file is a Gradle component whose responsibility is to define the project's global settings, such as modules and subprojects, as well as the repository and dependency configuration for the overall project.
 
 ```kotlin
-// Define o nome do projeto
+// Defines the project name
 rootProject.name = "KMP101"
 
-// Forma de habilitar funcionalidades do Gradle. Neste caso, o "type safe project accessors"
+// How to enable Gradle features. In this case, "type safe project accessors"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-// Esse bloco inicia uma configuração dos plugins que os módulos do projeto irão compartilhar
+// This block starts the configuration of the plugins the project's modules will share
 pluginManagement {
 
-    // Todo módulo do projeto poderá utilizar plugins desses repositórios
+    // Every module in the project will be able to use plugins from these repositories
     repositories {
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         google()
@@ -109,10 +107,10 @@ pluginManagement {
     }
 }
 
-// Esse bloco inicia uma configuração das dependências que os módulos do projeto irão compartilhar
+// This block starts the configuration of the dependencies the project's modules will share
 dependencyResolutionManagement {
 
-    // Todo módulo do projeto poderá utilizar dependências desses repositórios
+    // Every module in the project will be able to use dependencies from these repositories
     repositories {
         google()
         mavenCentral()
@@ -120,74 +118,74 @@ dependencyResolutionManagement {
     }
 }
 
-// A função `include(String)` "pluga" um módulo ao projeto
-// Faz com que o arquivo `build.gradle.kts` do módulo do projeto seja executado
+// The `include(String)` function "plugs" a module into the project
+// It causes the module's `build.gradle.kts` file to be executed
 include(":composeApp")
 ```
 
-### O arquivo `build.gradle.kts` da raíz
+### The root `build.gradle.kts` file
 
-O papel principal do arquivo `build.gradle.kts` da raiz do projeto é definir a configuração de build de todo o projeto. É através desse arquivo que declaramos quais plugins os outros módulos poderão utilizar, assim como outras configurações de build que são aplicáveis a todo o projeto.
+The main role of the root project's `build.gradle.kts` file is to define the build configuration for the entire project. It's through this file that we declare which plugins the other modules can use, along with other build settings that apply to the whole project.
 
-Note o padrão `apply false`. Essa anotação se torna necessária para evitar que esses plugins sejam carregados múltiplas vezes por cada subprojeto. Por exemplo, sem esse `apply false`, estaríamos não só registrando, **mas também aplicando** o plugin específico para todos os módulos.
+Note the `apply false` pattern. This annotation is needed to prevent these plugins from being loaded multiple times by each subproject. For example, without this `apply false`, we'd be not just registering, **but also applying** the specific plugin to every module.
 
 ```kotlin
 plugins {
-    // Registra o plugin do Compose Multiplatform
+    // Registers the Compose Multiplatform plugin
     alias(libs.plugins.jetbrainsCompose) apply false
-    // Registra o plugin de "application" do AGP (Android Gradle Plugin)
+    // Registers the AGP (Android Gradle Plugin) "application" plugin
     alias(libs.plugins.androidApplication) apply false
-    // Registra o plugin de "library" do AGP (Android Gradle Plugin)
+    // Registers the AGP (Android Gradle Plugin) "library" plugin
     alias(libs.plugins.androidLibrary) apply false
-    // Registra o plugin do KMP
+    // Registers the KMP plugin
     alias(libs.plugins.kotlinMultiplatform) apply false
 }
 ```
 
-> Se perguntando o que é esse `libs`?
+> Wondering what this `libs` is?
 >
-> [🔗 Confira meu artigo sobre o catalogo de versão (version catalog) do Gradle](https://dev.to/rsicarelli/android-plataforma-parte-6-version-catalog-59ob)
+> [🔗 Check out my article on Gradle's version catalog](https://dev.to/rsicarelli/android-plataforma-parte-6-version-catalog-59ob)
 
-### O arquivo `build.gradle.kts` do módulo `composeApp`
+### The `composeApp` module's `build.gradle.kts` file
 
-É aqui que as configurações específicas acontecem. O arquivo `build.gradle.kts` de um módulo Gradle aplica configurações locais apenas no módulo específico.
+This is where the module-specific settings happen. A Gradle module's `build.gradle.kts` file applies local settings to that specific module only.
 
-Vamos dividir o `build.gradle.kts` desse módulo em algumas partes e analisar cada uma delas.
+Let's split this module's `build.gradle.kts` into a few parts and analyze each one.
 
-#### 1. Aplicando plugins
+#### 1. Applying plugins
 
-No arquivo `build.gradle.kts` da raiz, registramos nossos plugins. Agora, vamos aplicá-los no nosso projeto.
+In the root `build.gradle.kts` file, we registered our plugins. Now, let's apply them to our project.
 
 ```kotlin
 plugins {
-    // Habilita a extensão "kotlin" neste arquivo
+    // Enables the "kotlin" extension in this file
     alias(libs.plugins.kotlinMultiplatform)
 
-    // Habilita a extensão "android" neste arquivo
+    // Enables the "android" extension in this file
     alias(libs.plugins.androidApplication)
 
-    // Habilita a extensão "compose" neste arquivo
+    // Enables the "compose" extension in this file
     alias(libs.plugins.jetbrainsCompose)
 }
 ```
 
-#### 2. Extensão `kotlin` (aka [_KotlinMultiplatformExtension_](https://github.com/JetBrains/kotlin/blob/c4fe7e44534a5412463acf6bba0da9f5bf8f9cb3/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension.kt))
+#### 2. The `kotlin` extension (aka [_KotlinMultiplatformExtension_](https://github.com/JetBrains/kotlin/blob/c4fe7e44534a5412463acf6bba0da9f5bf8f9cb3/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension.kt))
 
-Bem-vindo à porta de entrada do KMP. Esta extensão permite declarar plataformas e configurações específicas de compilação. As principais responsabilidades são:
+Welcome to the gateway of KMP. This extension lets you declare platforms and compilation-specific settings. Its main responsibilities are:
 
-1. Definir os alvos (_targets_) do módulo
-2. Estabelecer os _source sets_ do módulo
-3. Determinar as dependências comuns e específicas dos _source sets_
+1. Define the module's targets
+2. Set up the module's source sets
+3. Determine the common and source-set-specific dependencies
 
-##### 2.1: Definindo os alvos do módulo `composeApp`
+##### 2.1: Defining the `composeApp` module's targets
 
-Inicialmente, especificamos quais alvos o módulo compilará e algumas configurações pontuais.
+First, we specify which targets the module will compile to, plus a few specific settings.
 
 ```kotlin
 kotlin {
-    // Instrui o plugin a adicionar o Android como alvo
+    // Tells the plugin to add Android as a target
     androidTarget {
-        // Instrui qual versão da JVM seu app Android irá utilizar
+        // Tells which JVM version your Android app will use
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
@@ -195,16 +193,16 @@ kotlin {
         }
     }
 
-    // Instrui o plugin a adicionar Desktop como alvo
+    // Tells the plugin to add Desktop as a target
     jvm("desktop")
 
-    // Instrui o plugin a adicionar o iOS como alvo
+    // Tells the plugin to add iOS as a target
     listOf(
         iosX64(),
         iosArm64(),
         iosSimulatorArm64()
-    ).forEach { iosTarget -> //do tipo KotlinNativeTarget
-        // É necessário realizar uma configuração básica do framework
+    ).forEach { iosTarget -> //of type KotlinNativeTarget
+        // A basic framework configuration is required
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
@@ -214,31 +212,31 @@ kotlin {
 }
 ```
 
-##### 2.2 Definindo os _source sets_
+##### 2.2 Defining the source sets
 
-O próximo passo é definir os _source sets_ do projeto e as dependências necessárias em cada um.
+The next step is to define the project's source sets and the dependencies each one needs.
 
-Importante ressaltar o seguinte:
+It's important to highlight the following:
 
-1. O `androidMain` e `commonMain` estão pre-definidos através da classe `KotlinMultiplatformSourceSetConventions`. Isso remove a necessidade de manualmente registrar esses source sets
-2. O `desktopMain` ainda não possuí uma convenção. Por isso, precisamos criar manualmente.
-3. Note não haver um `iosMain` nessa configuração. O motivo é que, por hora, não é necessário nenhuma depêndencia extra pro iOS. Mas, assim como `androidMain` e `commonMain`, temos `iosMain` disponível caso necessário.
+1. `androidMain` and `commonMain` are predefined through the `KotlinMultiplatformSourceSetConventions` class. This removes the need to manually register these source sets.
+2. `desktopMain` doesn't have a convention yet. That's why we need to create it manually.
+3. Note that there's no `iosMain` in this configuration. The reason is that, for now, no extra dependencies are needed for iOS. But, just like `androidMain` and `commonMain`, we have `iosMain` available if needed.
 
 ```kotlin
 kotlin {
     ..
 
     sourceSets {
-        // Define as depêndencias do source set "androidMain".
-        // Essas depêndencias apenas para o Android
+        // Defines the dependencies of the "androidMain" source set.
+        // These dependencies are Android-only
         androidMain.dependencies {
             implementation(libs.compose.ui)
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
         }
 
-        // Define as depêndencias do source set "commonMain".
-        // Essas depêndencias são compartilhadas entre todos os alvos
+        // Defines the dependencies of the "commonMain" source set.
+        // These dependencies are shared across all targets
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -247,11 +245,11 @@ kotlin {
         }
 
 
-        // Cria o source set "desktopMain"
+        // Creates the "desktopMain" source set
         val desktopMain by getting
 
-        // Define as depêndencias do source set "desktopMain"
-        // Essas depêndencias são específicas para o Desktop
+        // Defines the dependencies of the "desktopMain" source set
+        // These dependencies are specific to Desktop
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
         }
@@ -259,46 +257,46 @@ kotlin {
 }
 ```
 
-#### 3. Extensão `android` (também conhecida como `BaseAppModuleExtension`)
+#### 3. The `android` extension (also known as `BaseAppModuleExtension`)
 
-Esta configuração é específica para o Android, imposta pelo plugin `androidApplication`. Aqui, definimos caminhos para recursos e manifestos. Em vez de detalhar todo o conteúdo, vamos nos concentrar apenas na parte relacionada ao KMP.
+This configuration is specific to Android, imposed by the `androidApplication` plugin. Here, we define paths for resources and manifests. Rather than detailing everything, let's focus only on the KMP-related part.
 
-Normalmente, em projetos Android, temos apenas uma pasta `main`, e o Android Gradle Plugin (AGP) não necessita de informações adicionais sobre a localização de recursos específicos do Android, como o `AndroidManifest.xml`.
+Normally, in Android projects, we only have a single `main` folder, and the Android Gradle Plugin (AGP) doesn't need additional information about where Android-specific resources—like the `AndroidManifest.xml`—are located.
 
-No entanto, no contexto do KMP, existem múltiplos diretórios `main`, e, atualmente, o AGP não identifica claramente qual deles é específico para o Android.
+In the KMP context, however, there are multiple `main` directories, and AGP currently doesn't clearly identify which one is the Android-specific one.
 
-Para resolver isso, precisamos definir alguns caminhos manualmente:
+To solve this, we need to define a few paths manually:
 
 ```kotlin
 android {
     ..
-    // Informa a localização do AndroidManifest.xml
+    // Tells where the AndroidManifest.xml is located
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
-    // Informa a localização da pasta `res`
+    // Tells where the `res` folder is located
     sourceSets["main"].res.srcDirs("src/androidMain/res")
 
-    // Informa a localização da pasta `resources`.
-    // Observe que essa pasta não é exclusiva do Android, portanto, podemos compartilhá-la com o "commonMain"
+    // Tells where the `resources` folder is located.
+    // Note that this folder isn't exclusive to Android, so we can share it with "commonMain"
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
     ..
 }
 ```
 
-#### 4. Extensão `compose` (também conhecida como `ComposeExtension`)
+#### 4. The `compose` extension (also known as `ComposeExtension`)
 
-Ainda não exploramos profundamente o Compose, mas, já que estamos adotando o modelo do KMP Wizard, vale mencionar brevemente esta extensão.
+We haven't dug deeply into Compose yet, but since we're following the KMP Wizard's template, it's worth briefly mentioning this extension.
 
-Ela se torna essencial exclusivamente para configurar a versão desktop do nosso aplicativo:
+It becomes essential exclusively for configuring the desktop version of our app:
 
 ```kotlin
 compose.desktop {
-    // Define uma nova aplicação baseada na JVM
+    // Defines a new JVM-based application
     application {
-        // Aponta para uma classe interna do source set "desktopMain"
+        // Points to an internal class in the "desktopMain" source set
         mainClass = "MainKt"
 
-        // Define as informações sobre o pacote distribuível
+        // Defines the information about the distributable package
         nativeDistributions {
             targetFormats(
                 TargetFormat.Dmg, // Mac
@@ -312,60 +310,60 @@ compose.desktop {
 }
 ```
 
-### Outros arquivos Gradle
+### Other Gradle files
 
-Já abordamos os arquivos específicos ao nosso projeto KMP. Outros arquivos, como `gradle.properties` e `libs.versions.toml`, contêm configurações e definições importantes do Gradle e do projeto.
+We've already covered the files specific to our KMP project. Other files, like `gradle.properties` and `libs.versions.toml`, hold important Gradle and project settings.
 
-#### Arquivo `gradle.properties` na raiz
+#### The root `gradle.properties` file
 
-Este arquivo contém diversas configurações do Gradle que nos possibilitam realizar algumas alterações mais profundas no nosso projeto.
+This file contains various Gradle settings that let us make some deeper changes to our project.
 
-Nos projetos KMP, existem algumas _flags_ importantes a serem declaradas:
+In KMP projects, there are a few important _flags_ to declare:
 
 ```properties
-# Habilita o suporte do Compose Multiplatform para iOS.
+# Enables Compose Multiplatform support for iOS.
 org.jetbrains.compose.experimental.uikit.enabled=true
 
-# Define a versão do layout do source set do Android para a nova estrutura introduzida no Kotlin 1.8.0 e padrão no 1.9.0.
+# Sets the Android source set layout version to the new structure introduced in Kotlin 1.8.0 and the default in 1.9.0.
 kotlin.mpp.androidSourceSetLayoutVersion=2
 
-# Habilita a "commonization" de interoperação C no Kotlin Multiplatform.
+# Enables C-interop "commonization" in Kotlin Multiplatform.
 kotlin.mpp.enableCInteropCommonization=true
 ```
 
-#### Arquivo `libs.versions.toml` na pasta `gradle`
+#### The `libs.versions.toml` file in the `gradle` folder
 
-Este arquivo representa nosso catálogo de bibliotecas, versões e plugins.
+This file represents our catalog of libraries, versions, and plugins.
 
-> [🔗 Confira meu artigo sobre o catálogo de versões (version catalog) do Gradle](https://dev.to/rsicarelli/android-plataforma-parte-6-version-catalog-59ob)
+> [🔗 Check out my article on Gradle's version catalog](https://dev.to/rsicarelli/android-plataforma-parte-6-version-catalog-59ob)
 
-#### Outros arquivos
+#### Other files
 
-Arquivos e pastas como `.gradle`, `gradlew`, `gradlew.bat`, `local.properties`, `.idea` e `.fleet` são gerenciados pelos comandos do Gradle ou pela própria IDE, não havendo configurações específicas do KMP que precisem ser analisadas.
+Files and folders like `.gradle`, `gradlew`, `gradlew.bat`, `local.properties`, `.idea`, and `.fleet` are managed by Gradle commands or by the IDE itself, with no KMP-specific configuration that needs analyzing.
 
-## Conclusão
+## Conclusion
 
-Com este guia, aprendemos aspectos cruciais do Gradle em projetos KMP.
+With this guide, we've learned crucial aspects of Gradle in KMP projects.
 
-A capacidade de gerenciar eficientemente as dependências, definir caminhos para recursos e manifestos, e configurar extensões específicas é crucial para o dia a dia como dev KMP. Além disso, a compreensão dos arquivos Gradle, como `gradle.properties` e `libs.versions.toml`, é fundamental para manter seu projeto atualizado e alinhado com as melhores práticas da indústria.
+Being able to efficiently manage dependencies, define paths for resources and manifests, and configure specific extensions is crucial for day-to-day life as a KMP dev. On top of that, understanding the Gradle files—like `gradle.properties` and `libs.versions.toml`—is fundamental to keeping your project up to date and aligned with industry best practices.
 
-A meu ver, o Gradle em projetos KMP não é apenas uma habilidade técnica; é um ativo estratégico que potencializa o desenvolvimento de aplicações robustas e adaptáveis em várias plataformas. À medida que o KMP continua a evoluir, o conhecimento adquirido aqui será uma base sólida para explorar novas funcionalidades e integrar tecnologias emergentes em seus projetos.
+The way I see it, Gradle in KMP projects isn't just a technical skill; it's a strategic asset that powers the development of robust, adaptable applications across multiple platforms. As KMP continues to evolve, the knowledge gained here will be a solid foundation for exploring new features and integrating emerging technologies into your projects.
 
-No próximo artigo, vamos finalmente mexer em código Kotlin, aprendendo uma característica essencial do KMP: `expect` e `actual`.
+In the next article, we'll finally get our hands on some Kotlin code, learning an essential KMP feature: `expect` and `actual`.
 
-Até a próxima!
-
----
-
-> 🤖 Artigo foi escrito com o auxílio do ChatGPT 4, utilizando o plugin Web.
->
-> As fontes e o conteúdo são revisados para garantir a relevância das informações fornecidas, assim como as fontes utilizadas em cada prompt.
->
-> No entanto, caso encontre alguma informação incorreta ou acredite que algum crédito está faltando, por favor, entre em contato!
+See you next time!
 
 ---
 
-> Referências
+> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
+>
+> The sources and content are reviewed to ensure the information provided is relevant, as are the sources used in each prompt.
+>
+> That said, if you find any incorrect information or believe some credit is missing, please get in touch!
+
+---
+
+> References
 >
 > - [Gradle vs. Other Build Tools - unrepo.com](https://www.unrepo.com)
 > - [Gradle vs. npm - Gradle Hero](https://gradlehero.com)

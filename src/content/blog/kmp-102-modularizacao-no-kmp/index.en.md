@@ -1,7 +1,7 @@
 ---
-title: 'KMP-102 - Modularização no KMP'
-description: 'No último artigo, entramos em detalhes e aprendemos sobre as peculiaridades do código exportado nos headers do Objective-C, assim como as boas práticas…'
-summary: 'No último artigo, entramos em detalhes e aprendemos sobre as peculiaridades do código exportado nos headers do Objective-C, assim como as boas práticas quanto ao que exportar.'
+title: 'KMP-102 - Modularization in KMP'
+description: 'In the last article we dug into the quirks of code exported to Objective-C headers, along with the best practices for what to export…'
+summary: 'In the last article we dug into the quirks of code exported to Objective-C headers, along with the best practices for what to export.'
 pubDate: 2025-03-07
 tags:
   - 'kotlin'
@@ -11,153 +11,151 @@ tags:
 series: 'kmp-102'
 seriesOrder: 5
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fz0zdcy0ty1bpvi3mlcob.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-102-modularizacao-no-kmp-4oe5'
-  devtoId: 2317222
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 23
 ---
 
-Neste artigo, vamos entender melhor o comportamento da modularização em projetos KMP, e como isso pode ser feito de forma eficiente e organizada.
+In this article, we'll get a better understanding of how modularization behaves in KMP projects, and how to do it in an efficient, well-organized way.
 
 ---
 
-- [O que é modularização?](#o-que-é-modularização)
-- [Modularização no KMP](#modularização-no-kmp)
-- [Pavimentando flexibilidade da UI](#pavimentando-flexibilidade-da-ui)
-- [Exportando para o XCFramework](#exportando-para-o-xcframework)
-  - [Cenário 1: "backend" KMP compartilhado, "frontend" flexível](#cenário-1-backend-kmp-compartilhado-frontend-flexível)
-  - [Cenário 2: Híbrido, migrando para Compose Multiplatform](#cenário-2-híbrido-migrando-para-compose-multiplatform)
-  - [Cenário 3: 100% Compose Multiplatform](#cenário-3-100-compose-multiplatform)
-- [Explorando os benefícios da modularização no KMP](#explorando-os-benefícios-da-modularização-no-kmp)
-- [Conclusão](#conclusão)
+- [What is modularization?](#what-is-modularization)
+- [Modularization in KMP](#modularization-in-kmp)
+- [Paving the way for UI flexibility](#paving-the-way-for-ui-flexibility)
+- [Exporting to the XCFramework](#exporting-to-the-xcframework)
+  - [Scenario 1: shared KMP "backend", flexible "frontend"](#scenario-1-shared-kmp-backend-flexible-frontend)
+  - [Scenario 2: Hybrid, migrating to Compose Multiplatform](#scenario-2-hybrid-migrating-to-compose-multiplatform)
+  - [Scenario 3: 100% Compose Multiplatform](#scenario-3-100-compose-multiplatform)
+- [Exploring the benefits of modularization in KMP](#exploring-the-benefits-of-modularization-in-kmp)
+- [Conclusion](#conclusion)
 
 ---
 
-## O que é modularização?
+## What is modularization?
 
-Não irei me alongar muito neste tópico, pois já abordamos esse assunto no [Android Plataforma - Parte 1: Modularização](https://dev.to/rsicarelli/android-plataforma-parte-1-modularizacao-2016). Se você não tem certeza do que é modularização em projetos Gradle, recomendo uma pausa para a leitura do artigo.
+I won't dwell too long on this topic, since we already covered it in [Android Platform - Part 1: Modularization](https://dev.to/rsicarelli/android-plataforma-parte-1-modularizacao-2016). If you're not sure what modularization means in Gradle projects, I recommend taking a break to read that article.
 
-Em resumo, modularização é a prática de dividir um projeto em módulos menores e independentes, que podem ser desenvolvidos, testados e mantidos separadamente.
+In short, modularization is the practice of splitting a project into smaller, independent modules that can be developed, tested, and maintained separately.
 
-Essa prática é crucial para escalar projetos KMP, já que a modularização impacta diretamente na autonomia e independência dos times, evitando que um time dependa do outro para realizar suas tarefas.
+This practice is crucial for scaling KMP projects, since modularization directly affects team autonomy and independence, preventing one team from depending on another to get its work done.
 
-## Modularização no KMP
+## Modularization in KMP
 
-No KMP, a modularização é feita por meio de módulos compartilhados, que são responsáveis por compartilhar código entre as plataformas.
+In KMP, modularization is done through shared modules, which are responsible for sharing code across platforms.
 
-Vamos elaborar uma estrutura de módulos que respeite a separação de responsabilidades e possibilite a reutilização de código de forma eficiente entre módulos. Nosso contexto aqui considera uma aplicação que irá escalar, no sentido de ter mais features e mais plataformas:
+Let's put together a module structure that respects separation of concerns and enables efficient code reuse across modules. Our context here assumes an application that will scale, in the sense of gaining more features and more platforms:
 
 <img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-modularization-pt1.png?raw=true" />
 
-Essa estrutura segue algumas ideias do Domain Driven Design (DDD), em que cada módulo representa um domínio independente e isolado da aplicação. Não irei entrar em muitos detalhes sobre o DDD, mas recomendo a leitura do livro [Domain-Driven Design: Tackling Complexity in the Heart of Software](https://www.amazon.com.br/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215/ref=sr_1_1?dib=eyJ2IjoiMSJ9.Lo7-Md3VvIV38Rzn-ytmnX1FyJz_hHxG_c3ocyge7LEEkMf9J0QQUC_vNRqM-bly1FEW6JDWiQjxRiR4Ip4uOSi5BDadwwQLRq-qGmgXmoG36NnUp66mVBVEOL-xFpHChmTWdyWDB5EZGboxu2dOIVTrzRS54KI4S6rDRsLLLoSAkU9bCl81j0cePEicQvqB.QPWgwg7lUfTottKjOov5grb2CciIICVV12MWxs8bueA&dib_tag=se&keywords=Domain-Driven-Design-Tackling-Complexity-Software&qid=1739362218&sr=8-1&ufe=app_do%3Aamzn1.fos.4bddec23-2dcf-4403-8597-e1a02442043d) para entender melhor sobre o assunto.
+This structure follows some ideas from Domain Driven Design (DDD), in which each module represents an independent, isolated domain of the application. I won't go into much detail about DDD, but I recommend reading [Domain-Driven Design: Tackling Complexity in the Heart of Software](https://www.amazon.com.br/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215/ref=sr_1_1?dib=eyJ2IjoiMSJ9.Lo7-Md3VvIV38Rzn-ytmnX1FyJz_hHxG_c3ocyge7LEEkMf9J0QQUC_vNRqM-bly1FEW6JDWiQjxRiR4Ip4uOSi5BDadwwQLRq-qGmgXmoG36NnUp66mVBVEOL-xFpHChmTWdyWDB5EZGboxu2dOIVTrzRS54KI4S6rDRsLLLoSAkU9bCl81j0cePEicQvqB.QPWgwg7lUfTottKjOov5grb2CciIICVV12MWxs8bueA&dib_tag=se&keywords=Domain-Driven-Design-Tackling-Complexity-Software&qid=1739362218&sr=8-1&ufe=app_do%3Aamzn1.fos.4bddec23-2dcf-4403-8597-e1a02442043d) to learn more about the subject.
 
-Com essa estrutura, conseguimos:
+With this structure, we can:
 
-- Permitir escalar de forma eficiente sem duplicação de código. Ao criar uma nova feature, basta criar um novo módulo e adicionar as dependências necessárias.
-- Ter granularidade no que será exportado para as outras plataformas, especialmente para o XCFramework.
-- Ter independência de domínio para times específicos, evitando conflitos de código e responsabilidades. Por exemplo, times podem criar um `CODEOWNER` para um módulo específico, e serem responsáveis por manter e evoluir esse módulo.
+- Scale efficiently without duplicating code. To add a new feature, you just create a new module and add the necessary dependencies.
+- Have granularity over what gets exported to the other platforms, especially to the XCFramework.
+- Have domain independence for specific teams, avoiding code and responsibility conflicts. For example, teams can set up a `CODEOWNER` for a specific module, and be responsible for maintaining and evolving that module.
 
-## Pavimentando flexibilidade da UI
+## Paving the way for UI flexibility
 
-Um dos superpoderes do KMP é permitir compartilhar muito ou pouco código. Essa habilidade implica que podemos escolher qual UI iremos utilizar em cada plataforma. Dependendo da sua estratégia de construção de UI, você precisará de uma abordagem específica de módulos para criar essa flexibilidade.
+One of KMP's superpowers is letting you share a lot of code or a little. This ability means we can choose which UI to use on each platform. Depending on your UI-building strategy, you'll need a specific module approach to create that flexibility.
 
-Vamos pensar que cada feature pode ser separada em um "frontend" e "backend". Seguindo o padrão de arquitetura MVVM, o "frontend" seria a nossa UI (Compose, SwiftUI) e o "backend" seria a nossa lógica de negócio (ViewModel/UiModel + Domain + Data). Ou seja, partes da camada de apresentação podem ser compartilhadas, mas damos a liberdade para cada plataforma de escolher a sua UI.
+Let's think of each feature as something that can be split into a "frontend" and a "backend". Following the MVVM architecture pattern, the "frontend" would be our UI (Compose, SwiftUI) and the "backend" would be our business logic (ViewModel/UiModel + Domain + Data). In other words, parts of the presentation layer can be shared, but we give each platform the freedom to choose its own UI.
 
-Com isso em mente, uma abordagem que pode ser utilizada é a seguinte:
+With that in mind, one approach you can use is the following:
 
 <img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-modularization-pt2.png?raw=true" />
 
-Aqui, nós separamos cada feature que possui uma tela em 3 módulos:
+Here, we split each feature that has a screen into 3 modules:
 
-- `common`, nosso "backend" que contém a lógica de negócio da feature.
-- `android-ui`, nosso "frontend" apenas em Android, que contém a UI da feature.
-- `common-ui`, nosso "frontend" multiplataforma, que contém a UI da feature compartilhada entre as plataformas.
+- `common`, our "backend" containing the feature's business logic.
+- `android-ui`, our Android-only "frontend", containing the feature's UI.
+- `common-ui`, our multiplatform "frontend", containing the feature's UI shared across platforms.
 
-Com essa abordagem, é possível:
+With this approach, you can:
 
-- Iniciar migrações de telas em SwiftUI de forma gradual, sem a necessidade de migrar toda a feature de uma vez.
-- Ter flexibilidade para migrar features Jetpack Compose (apenas Android) enquanto se compartilha o "backend" com outras plataformas.
-- Ter flexibilidade para iniciar telas em Compose Multiplatform (Android, iOS, Desktop, ...) enquanto se compartilha o "backend" com outras plataformas.
+- Start migrating screens to SwiftUI gradually, without having to migrate the whole feature at once.
+- Have the flexibility to keep features in Jetpack Compose (Android-only) while sharing the "backend" with other platforms.
+- Have the flexibility to start screens in Compose Multiplatform (Android, iOS, Desktop, ...) while sharing the "backend" with other platforms.
 
-## Exportando para o XCFramework
+## Exporting to the XCFramework
 
-Agora que exploramos um modelo de modularização que permite flexibilidade na escolha da UI, podemos avançar e exportar nosso código Kotlin para o XCFramework.
+Now that we've explored a modularization model that allows flexibility in choosing the UI, we can move forward and export our Kotlin code to the XCFramework.
 
-Para utilizar nosso código Kotlin no iOS, precisamos de um módulo que represente nosso XCFramework. Esse é um módulo "cola", ou seja, um módulo que agrega vários módulos que serão exportados para o XCFramework.
+To use our Kotlin code on iOS, we need a module that represents our XCFramework. This is a "glue" module, that is, a module that aggregates several modules to be exported to the XCFramework.
 
-Esse módulo não será utilizado diretamente pelo app Android ou outras plataformas, mas representará nossa exportação para o iOS. Esse módulo é comumente chamado de `ios-interop`.
+This module won't be used directly by the Android app or other platforms, but it represents our export to iOS. This module is commonly called `ios-interop`.
 
-Para exemplificar o poder da modularização e a flexibilidade do KMP, vamos explorar alguns cenários de compartilhamento:
+To illustrate the power of modularization and the flexibility of KMP, let's explore a few sharing scenarios:
 
-### Cenário 1: "backend" KMP compartilhado, "frontend" flexível
+### Scenario 1: shared KMP "backend", flexible "frontend"
 
-Neste cenário, temos um módulo `common` que contém a lógica de negócio da feature. O módulo `android-ui` contém a UI da feature apenas para Android e é utilizado pelo app Android.
+In this scenario, we have a `common` module that contains the feature's business logic. The `android-ui` module contains the feature's UI for Android only, and is used by the Android app.
 
-Características desse modelo:
+Characteristics of this model:
 
-1. A lógica de negócio é compartilhada entre as plataformas
-2. A UI é específica para Android usando Jetpack Compose
-3. A UI não é compartilhada entre as plataformas
-4. No iOS, a lógica de negócio é utilizada, mas a UI é específica para iOS com SwiftUI
-5. Modelo ideal para projetos que buscam migrar para Compose gradualmente ou que pretendem manter a UI específica por plataforma
+1. The business logic is shared across platforms
+2. The UI is Android-specific, using Jetpack Compose
+3. The UI is not shared across platforms
+4. On iOS, the business logic is reused, but the UI is iOS-specific with SwiftUI
+5. An ideal model for projects looking to migrate to Compose gradually, or that intend to keep platform-specific UI
 
 <img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-modularization-scenario-1.png?raw=true" />
 
-### Cenário 2: Híbrido, migrando para Compose Multiplatform
+### Scenario 2: Hybrid, migrating to Compose Multiplatform
 
-Neste cenário, temos um módulo `common` que contém a lógica de negócio da feature. O módulo `common-ui` contém a UI da feature compartilhada entre as plataformas.
+In this scenario, we have a `common` module that contains the feature's business logic. The `common-ui` module contains the feature's UI shared across platforms.
 
-Aqui, inicia-se a migração para Compose Multiplatform, enquanto mantemos a feature `android-ui` específica para Android.
+Here, the migration to Compose Multiplatform begins, while we keep the `android-ui` feature Android-specific.
 
-Características desse modelo:
+Characteristics of this model:
 
-1. Lógica de negócio compartilhada entre as plataformas
-2. Parte da UI compartilhada entre as plataformas
-3. No `android-ui`, componentes de UI específicos para Android usando Jetpack Compose
-4. No `common-ui`, componentes de UI compartilhados usando Compose Multiplatform
-5. Modelo ideal para iniciar migração para Compose Multiplatform com migração gradual da UI
+1. Business logic shared across platforms
+2. Part of the UI shared across platforms
+3. In `android-ui`, Android-specific UI components using Jetpack Compose
+4. In `common-ui`, shared UI components using Compose Multiplatform
+5. An ideal model to begin migrating to Compose Multiplatform with a gradual UI migration
 
 <img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-modularization-scenario-2.png?raw=true" />
 
-### Cenário 3: 100% Compose Multiplatform
+### Scenario 3: 100% Compose Multiplatform
 
-Neste cenário, temos um módulo `common` que contém a lógica de negócio da feature. O módulo `common-ui` contém a UI da feature compartilhada entre as plataformas.
+In this scenario, we have a `common` module that contains the feature's business logic. The `common-ui` module contains the feature's UI shared across platforms.
 
-Aqui, não há distinção por plataforma - toda a UI é compartilhada usando Compose Multiplatform.
+Here, there's no distinction by platform - the entire UI is shared using Compose Multiplatform.
 
-Características desse modelo:
+Characteristics of this model:
 
-1. Lógica de negócio compartilhada entre as plataformas
-2. UI totalmente compartilhada por meio do Compose Multiplatform
-3. Modelo ideal para projetos com UI unificada entre todas as plataformas
+1. Business logic shared across platforms
+2. UI fully shared through Compose Multiplatform
+3. An ideal model for projects with a unified UI across all platforms
 
 <img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-modularization-scenario-3.png?raw=true" />
 
-## Explorando os benefícios da modularização no KMP
+## Exploring the benefits of modularization in KMP
 
-Como vocês puderam ver, a modularização no KMP é uma prática essencial para escalar projetos de forma eficiente e organizada.
+As you've seen, modularization in KMP is an essential practice for scaling projects efficiently and in an organized way.
 
-Mas há um ponto crucial que quero destacar: a modularização ajuda a ter granularidade no que queremos exportar para o XCFramework, mais especificamente, para os headers do Objective-C.
+But there's one crucial point I want to highlight: modularization helps us achieve granularity over what we want to export to the XCFramework, more specifically, to the Objective-C headers.
 
-Como vimos no último post, [KMP-102 - Otimizando a Exportação do Kotlin para o Obj-c/Swift](https://dev.to/rsicarelli/kmp-102-otimizando-a-exportacao-do-kotlin-para-o-obj-cswift-358p), ser seletivo com o código que exportamos para os headers do Objective-C está diretamente ligado à eficiência do tempo de build (ou seja, compilações do XCFramework mais eficientes).
+As we saw in the last post, [KMP-102 - Optimizing the Export of Kotlin to Obj-C/Swift](https://dev.to/rsicarelli/kmp-102-otimizando-a-exportacao-do-kotlin-para-o-obj-cswift-358p), being selective about the code we export to the Objective-C headers is directly tied to build-time efficiency (that is, more efficient XCFramework compilations).
 
-Por exemplo:
+For example:
 
-- No **Modelo 1**, garantimos que apenas o `login:common` seja exposto nos headers do Objective-C, enquanto evitamos que qualquer parte do `android-ui` seja exposta.
-- No **Modelo 3**, garantimos que nada do "backend" da jornada seja exposto nos headers, apenas o "frontend" multiplataforma.
+- In **Model 1**, we ensure that only `login:common` is exposed in the Objective-C headers, while keeping any part of `android-ui` from being exposed.
+- In **Model 3**, we ensure that none of the journey's "backend" is exposed in the headers, only the multiplatform "frontend".
 
-Essa estratégia é fundamental para a saúde e evolução do repositório, e garante que DEVs KMP possam consumir o XCFramework de forma eficiente e sem conflitos de dependências.
+This strategy is fundamental to the health and evolution of the repository, and it ensures that KMP devs can consume the XCFramework efficiently and without dependency conflicts.
 
-## Conclusão
+## Conclusion
 
-Neste artigo, exploramos a modularização no KMP e como isso pode ser feito de forma eficiente e organizada. Aprendemos como essa prática pode ser utilizada para escalar projetos e obtivemos uma prévia de como isso impacta diretamente na autonomia e independência dos times.
+In this article, we explored modularization in KMP and how to do it efficiently and in an organized way. We learned how this practice can be used to scale projects, and got a preview of how it directly affects team autonomy and independence.
 
-Geralmente, em exemplos KMP básicos, temos apenas um módulo `shared`. Porém, em cenários reais - onde projetos precisam escalar e adotar estratégias de UI flexíveis - a complexidade é muito maior.
+Usually, in basic KMP examples, we have just a single `shared` module. But in real-world scenarios - where projects need to scale and adopt flexible UI strategies - the complexity is much higher.
 
-A modularização é uma peça-chave para o sucesso de projetos KMP, e é crucial que seja implementada de forma estruturada e organizada!
+Modularization is a key piece for the success of KMP projects, and it's crucial that it's implemented in a structured and organized way!
 
-No próximo artigo, vamos explorar estratégias de construção do XCFramework em projetos existentes, garantindo autonomia e independência para os times.
+In the next article, we'll explore strategies for building the XCFramework in existing projects, ensuring autonomy and independence for teams.
 
-Até a próxima!
+See you next time!

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { buildCanonicalMap } from '../../scripts/devto-canonical-writeback.mjs';
+import { placeholderBlogPaths } from '../../scripts/placeholder-posts.mjs';
 
 /**
  * dev.to canonical write-back (#151). Guards the pure mapping that decides which rsicarelli.com URL
@@ -29,10 +30,12 @@ describe('buildCanonicalMap', () => {
     expect(result.warnings).toEqual([]);
   });
 
-  it('skips the placeholders and the hand-authored posts', () => {
-    // Shrinks as translations land (#143): each translated placeholder drops its `devtoId` and
-    // `translated: false`, so it stops counting here (it becomes a `skippedNoId` instead).
-    expect(result.skippedPlaceholder).toBe(28);
+  it('skips the placeholders and the hand-authored posts', async () => {
+    // Derived from the shared placeholder scan, not a magic number — the canonical script's
+    // notion of "placeholder" must match `placeholderBlogPaths()` exactly. Self-maintaining as
+    // translations land (#143): each translated file drops its `devtoId` + `translated: false`,
+    // leaving both sides in lockstep with no per-batch bump.
+    expect(result.skippedPlaceholder).toBe((await placeholderBlogPaths()).size);
     expect(result.skippedNoId).toBeGreaterThan(0);
   });
 

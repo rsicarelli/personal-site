@@ -1,7 +1,7 @@
 ---
-title: 'KMP 101: Entendendo como o Kotlin compila para múltiplas plataformas'
-description: 'No último post (🔗 KMP 101: Introdução ao paradigma da multiplataforma), exploramos o paradigma multiplataforma e como o KMP se destaca no ecossistema.'
-summary: 'No último post (🔗 KMP 101: Introdução ao paradigma da multiplataforma), exploramos o paradigma multiplataforma e como o KMP se destaca no ecossistema.'
+title: 'KMP 101: Understanding How Kotlin Compiles to Multiple Platforms'
+description: 'In the last post (🔗 KMP 101: An Introduction to the multiplatform paradigm), we explored the multiplatform paradigm and how KMP stands out in the ecosystem.'
+summary: 'In the last post (🔗 KMP 101: An Introduction to the multiplatform paradigm), we explored the multiplatform paradigm and how KMP stands out in the ecosystem.'
 pubDate: 2023-11-21
 updatedDate: 2024-01-27
 tags:
@@ -12,103 +12,101 @@ tags:
 series: 'kmp-101'
 seriesOrder: 2
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F5gjwksi829qicrvewv3e.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-multiplataforma-101-entendendo-como-o-kotlin-compila-para-multiplas-plataformas-5hba'
-  devtoId: 1672546
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 13
 ---
 
-Neste artigo, vamos desvendar os conceitos básicos do compilador Kotlin e sua capacidade de compilar para múltiplas plataformas.
+In this article, we'll unpack the basics of the Kotlin compiler and its ability to compile to multiple platforms.
 
 ---
 
-## Introdução ao compilador do Kotlin
+## An introduction to the Kotlin compiler
 
-Um compilador é um software que converte código de uma linguagem de programação para outra. Frequentemente, os compiladores são utilizados para transformar programas de linguagens de alto nível em linguagens de baixo nível.
+A compiler is a piece of software that converts code from one programming language into another. Compilers are often used to turn programs written in high-level languages into low-level languages.
 
-O Kotlin, assim como alguns outros compiladores como [LLVM](https://llvm.org/) e [GCC](https://gcc.gnu.org/), possui uma arquitetura dividida em **frontend** e **backend**, comunicando-se por uma **Representação Intermediária (IR)**.
+Kotlin, like some other compilers such as [LLVM](https://llvm.org/) and [GCC](https://gcc.gnu.org/), has an architecture split into a **frontend** and a **backend**, which communicate through an **Intermediate Representation (IR)**.
 
-### Entendendo o Frontend do compilador do Kotlin
+### Understanding the Kotlin compiler frontend
 
-Responsável por analisar e preparar o código-fonte `.kt` para a compilação, o Kotlin apresenta duas versões de frontends: o **K1** e o **K2**.
+Responsible for analyzing and preparing the `.kt` source code for compilation, Kotlin ships with two frontend versions: **K1** and **K2**.
 
-#### K1: codinome FE10 (Frontend 1.0)
+#### K1: codename FE10 (Frontend 1.0)
 
-O frontend K1, também conhecido como FE10, é o frontend original do compilador Kotlin e é o padrão utilizado na atualidade.
+The K1 frontend, also known as FE10, is the original Kotlin compiler frontend and is the default in use today.
 
-Principais características:
+Key characteristics:
 
-- **Análise Léxica (Lexer):** divide o código-fonte Kotlin em tokens, elementos fundamentais para a construção da linguagem.
-- **Análise Sintática (Parser):** organiza os tokens em uma estrutura sintática, geralmente uma árvore de análise sintática (AST), que representa a estrutura lógica do código.
-- **Árvores PSI/AST:** utiliza a `Abstract Syntax Tree` (AST) e a `Program Structure Interface` (PSI) para representar e manipular a estrutura do código, essencial para análises subsequentes.
-- **Análise Semântica:** verifica a corretude do uso dos elementos da linguagem, como tipos e escopos, garantindo que o código segue as regras semânticas do Kotlin.
+- **Lexical analysis (Lexer):** breaks the Kotlin source code into tokens, the fundamental building blocks of the language.
+- **Syntactic analysis (Parser):** organizes the tokens into a syntactic structure, usually a syntax tree (AST), that represents the logical structure of the code.
+- **PSI/AST trees:** uses the `Abstract Syntax Tree` (AST) and the `Program Structure Interface` (PSI) to represent and manipulate the code structure, which is essential for later analyses.
+- **Semantic analysis:** checks that language elements such as types and scopes are used correctly, making sure the code follows Kotlin's semantic rules.
 
 ![Frontend K1](https://github.com/ahinchman1/Kotlin-Compiler-Crash-Course/blob/master/res/k1_frontend.png?raw=true)
 
-#### K2: codinome FIR (Frontend Intermediate Representation)
+#### K2: codename FIR (Frontend Intermediate Representation)
 
-O K2, também conhecido como `FIR`, é a próxima grande atualização do compilador do Kotlin e promete ser o substituto do K1/FE10.
+K2, also known as `FIR`, is the next major update to the Kotlin compiler and is set to replace K1/FE10.
 
-A primeira versão beta do K2 chegou com o Kotlin `1.9.20`, lançada em novembro de 2023, e a versão final está planejada para o Kotlin 2.0.0, que esperamos para 2024. Esse novo sistema traz várias melhorias importantes, como mais velocidade, uma estrutura mais organizada e uma maneira mais clara de entender o código.
+The first beta of K2 arrived with Kotlin `1.9.20`, released in November 2023, and the final version is planned for Kotlin 2.0.0, which we expect in 2024. This new system brings several important improvements, such as more speed, a more organized structure, and a clearer way to understand the code.
 
 ![KotlinConf2023 K1 vs K2](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/k1-vs-k2-kotlinconf2023.png?raw=true)
 
-> Dados do [KotlinConf’23 - Keynote](https://www.youtube.com/live/c4f4SCEYA5Q?si=LyH_q_6R8hjd-dRo&t=495)
+> Data from the [KotlinConf'23 - Keynote](https://www.youtube.com/live/c4f4SCEYA5Q?si=LyH_q_6R8hjd-dRo&t=495)
 
-Listando algumas dessas melhorias:
+A few of those improvements:
 
-- **Totalmente renovado:** o K2 foi feito do zero, pensando em ser rápido e fácil de atualizar no futuro.
-- **Melhor análise de código:** possui um método mais avançado para verificar o código, ajudando a identificar e usar informações importantes de maneira mais inteligente.
-- **Suporte a plugins:** inclui suporte a uma variedade de plugins, como `kapt`, `serialization`, `all-open`, e outros.
-- **Compatibilidade entre plataformas:** suporta `JVM`, `Native`, `Wasm`, e `JS`, otimizado para projetos multiplataforma.
+- **Completely rebuilt:** K2 was built from scratch, with speed and easy future updates in mind.
+- **Better code analysis:** it has a more advanced method for inspecting code, helping it identify and use important information in a smarter way.
+- **Plugin support:** includes support for a variety of plugins, such as `kapt`, `serialization`, `all-open`, and others.
+- **Cross-platform compatibility:** supports `JVM`, `Native`, `Wasm`, and `JS`, optimized for multiplatform projects.
 
 ![Frontend K2 FIR](https://github.com/ahinchman1/Kotlin-Compiler-Crash-Course/blob/master/res/k2_frontend.png?raw=true)
 
-### Entendendo o Backend do compilador do Kotlin
+### Understanding the Kotlin compiler backend
 
-Após o processamento e preparação do código-fonte pelo frontend de um compilador, o backend assume um papel crucial.
+Once the frontend has processed and prepared the source code, the backend takes on a crucial role.
 
-O backend é responsável por converter a representação intermediária (IR) em código de máquina, realizando otimizações e gerando a saída específica para a plataforma alvo (como `*.class`, `*.js`, `*.so`, `*.wasm`).
+The backend is responsible for converting the intermediate representation (IR) into machine code, performing optimizations and generating the output specific to the target platform (such as `*.class`, `*.js`, `*.so`, `*.wasm`).
 
-Projetado para ser multiplataforma, o Kotlin pode ser compilado para funcionar em diversos dispositivos e sistemas operacionais. Cada backend do compilador Kotlin é especialmente otimizado para uma plataforma-alvo, possibilitando que devs escrevam um código que pode ser executado em variados ambientes.
+Designed to be multiplatform, Kotlin can be compiled to run on a wide range of devices and operating systems. Each Kotlin compiler backend is specially optimized for a target platform, making it possible for developers to write code that can run in many different environments.
 
-- **Kotlin/JVM:** este backend é o mais tradicional e gera bytecode compatível com a Máquina Virtual Java (`JVM`). É ideal para aplicações que serão executadas em ambientes que suportam a JVM, incluindo Android, Desktop e aplicações de servidor.
-- **Kotlin/Native:** utilizando a toolchain do `LLVM`, este backend compila o código Kotlin diretamente para código de máquina nativo. Ele suporta uma ampla gama de plataformas, como iOS, macOS, Windows, Linux e sistemas embarcados, permitindo que aplicações sejam executadas diretamente no hardware.
-- **Kotlin/JS:** especializado para o desenvolvimento web, este backend converte o código Kotlin em JavaScript, tornando-o compatível com navegadores web e ambientes de servidor baseados em JavaScript, como Node.js.
-- **Kotlin/Wasm:** uma adição mais recente ainda em fase de desenvolvimento, este backend permite a compilação de Kotlin para WebAssembly (Wasm), facilitando a execução de aplicações Kotlin com alto desempenho em navegadores web.
+- **Kotlin/JVM:** this is the most traditional backend and generates bytecode compatible with the Java Virtual Machine (`JVM`). It's ideal for applications that will run in JVM-supported environments, including Android, Desktop, and server applications.
+- **Kotlin/Native:** using the `LLVM` toolchain, this backend compiles Kotlin code directly into native machine code. It supports a wide range of platforms, such as iOS, macOS, Windows, Linux, and embedded systems, allowing applications to run directly on the hardware.
+- **Kotlin/JS:** specialized for web development, this backend converts Kotlin code into JavaScript, making it compatible with web browsers and JavaScript-based server environments such as Node.js.
+- **Kotlin/Wasm:** a more recent addition that's still in development, this backend lets you compile Kotlin to WebAssembly (Wasm), making it easier to run high-performance Kotlin applications in web browsers.
 
-![Desenvolvimento nativo](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kotlin-compiler-backend.jpg?raw=true)
+![Native development](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kotlin-compiler-backend.jpg?raw=true)
 
-## Representação Intermediária ou Intermediary Representation (IR)
+## Intermediate Representation (IR)
 
-O IR é uma forma de representar o código-fonte dentro do compilador que é independente tanto da linguagem de programação de origem quanto da arquitetura da máquina de destino. Ela serve como um meio-termo entre o código de alto nível e o código de máquina de baixo nível.
+The IR is a way of representing the source code inside the compiler that is independent of both the source programming language and the target machine architecture. It serves as a middle ground between the high-level code and the low-level machine code.
 
-Essa estrutura de dados permite que o compilador Kotlin manipule o código de maneira mais abstrata, facilitando a geração de código para múltiplas plataformas. Isso é particularmente benéfico para Kotlin, projetado para ser multiplataforma.
+This data structure lets the Kotlin compiler manipulate code in a more abstract way, making it easier to generate code for multiple platforms. This is especially beneficial for Kotlin, which is designed to be multiplatform.
 
-## Conclusões
+## Conclusions
 
-Entender como o Kotlin compila para diferentes plataformas não é nada que você precise fazer diariamente ou memorizar. No entanto, ter uma visão geral desse processo tem suas vantagens.
+Understanding how Kotlin compiles to different platforms isn't something you need to do every day or memorize. Still, having an overview of this process has its advantages.
 
-Esse entendimento fornece uma perspectiva sobre a versatilidade e a eficiência do Kotlin, oferecendo a você a confiança de que seu código pode operar em vários ecossistemas. Além disso, uma apreciação básica do que acontece "por debaixo dos panos" pode ser incrivelmente útil ao depurar o código e compreender mensagens de erro, economizando horas de frustração.
-
----
-
-> 🤖 Artigo foi escrito com o auxílio do ChatGPT 4, utilizando o plugin Web.
->
-> As fontes e o conteúdo são revisados para garantir a relevância das informações fornecidas, assim como as fontes utilizadas em cada prompt.
->
-> No entanto, caso encontre alguma informação incorreta ou acredite que algum crédito está faltando, por favor, entre em contato!
+This understanding gives you a sense of Kotlin's versatility and efficiency, offering you the confidence that your code can run across multiple ecosystems. On top of that, a basic appreciation of what happens "under the hood" can be incredibly useful when debugging code and making sense of error messages, saving you hours of frustration.
 
 ---
 
-> Referencias
+> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
+>
+> The sources and content are reviewed to ensure the relevance of the information provided, as well as the sources used in each prompt.
+>
+> However, if you find any incorrect information or believe a credit is missing, please get in touch!
+
+---
+
+> References
 >
 > - [Crash Course on the Kotlin Compiler by Amanda Hinchman-Dominguez - KotlinConf'23](https://www.youtube.com/watch?v=wUGfuWHCqrc), [Github repo](https://github.com/ahinchman1/Kotlin-Compiler-Crash-Course)
-> - [Curso intensivo no compilador do Kotlin | K1 + K2 Frontends, Backends](https://medium.com/google-developer-experts/crash-course-on-the-kotlin-compiler-k1-k2-frontends-backends-fe2238790bd8)
-> - [Rumo ao Compilador K2 | The Kotlin Blog](https://blog.jetbrains.com/kotlin/2021/11/the-road-to-the-k2-compiler/)
-> - [Destaques do Roteiro Kotlin Outono 2021 | The Kotlin Blog](https://blog.jetbrains.com/kotlin/2021/11/kotlin-roadmap-autumn-2021/)
-> - [O Compilador K2 Estabilizando no Kotlin 2.0 | The Kotlin Blog](https://blog.jetbrains.com/kotlin/2021/11/the-k2-compiler-is-going-stable-in-kotlin-2-0/)
-> - [Documentação Básica FIR | GitHub](https://github.com/JetBrains/kotlin/blob/master/docs/fir/fir-basics.md)
-> - [Novidades no Kotlin 2.0.0-Beta1 | Documentação Kotlin](https://kotlinlang.org/docs/whatsnew-eap.html)
+> - [Crash Course on the Kotlin Compiler | K1 + K2 Frontends, Backends](https://medium.com/google-developer-experts/crash-course-on-the-kotlin-compiler-k1-k2-frontends-backends-fe2238790bd8)
+> - [The Road to the K2 Compiler | The Kotlin Blog](https://blog.jetbrains.com/kotlin/2021/11/the-road-to-the-k2-compiler/)
+> - [Kotlin Roadmap Autumn 2021 Highlights | The Kotlin Blog](https://blog.jetbrains.com/kotlin/2021/11/kotlin-roadmap-autumn-2021/)
+> - [The K2 Compiler Is Going Stable in Kotlin 2.0 | The Kotlin Blog](https://blog.jetbrains.com/kotlin/2021/11/the-k2-compiler-is-going-stable-in-kotlin-2-0/)
+> - [FIR Basics | GitHub](https://github.com/JetBrains/kotlin/blob/master/docs/fir/fir-basics.md)
+> - [What's new in Kotlin 2.0.0-Beta1 | Kotlin Documentation](https://kotlinlang.org/docs/whatsnew-eap.html)
