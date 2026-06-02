@@ -1,0 +1,44 @@
+---
+/**
+ * Bilingual 404 (#38). Cloudflare Pages serves `/404.html` for any unmatched path, regardless of
+ * locale prefix — at that point there is no reliable route locale to read, so this page is
+ * intentionally locale-neutral and shows BOTH languages, mirroring the neutral gateway at `/`.
+ * Not wrapped in BaseLayout (its Header/Footer are locale-bound) and not under `[locale]/`, so it
+ * stays out of the per-locale routing and the rendered-locale tests. No JS, no redirect.
+ */
+import '../styles/global.css';
+import { SITE } from '@/config/site';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>404 · {SITE.title}</title>
+    <meta name="description" content="Page not found · Página não encontrada" />
+    <meta name="robots" content="noindex" />
+  </head>
+  <body class="min-h-dvh antialiased">
+    <main class="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center px-6 py-16">
+      <p class="text-muted-foreground font-mono text-sm">404</p>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight">Page not found · Página não encontrada</h1>
+      <p class="text-muted-foreground mt-4 max-w-prose">
+        The page you’re looking for doesn’t exist or has moved.
+        <br />
+        A página que você procura não existe ou foi movida.
+      </p>
+      <ul class="mt-8 flex flex-col gap-2 text-lg">
+        <li>
+          <a href="/en/" class="underline-offset-4 hover:underline">Go to the homepage (English)</a>
+        </li>
+        <li>
+          <a href="/pt-br/" class="underline-offset-4 hover:underline">
+            Ir para a página inicial (Português)
+          </a>
+        </li>
+      </ul>
+    </main>
+  </body>
+</html>
