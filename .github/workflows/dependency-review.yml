@@ -1,0 +1,39 @@
+name: Dependency review
+
+# Scans dependency manifest changes on pull requests and fails the PR if it introduces a dependency
+# with a known high-severity vulnerability or a disallowed license (#78). Complements Dependabot
+# (which proposes upgrades on a schedule) and the repo's Dependabot security alerts by gating *new*
+# dependencies at review time, before they ever reach main.
+#
+# Standalone workflow (not part of the required CI Summary): it only runs on PRs that touch the
+# dependency graph (pnpm-lock.yaml / package.json / workflow files), and posts its findings as a PR
+# summary + comment.
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: read the diff, write the summary comment on the PR.
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    name: Dependency review
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/dependency-review-action@v4
+        with:
+          # Block PRs that add a dependency with a known high (or worse) severity advisory.
+          fail-on-severity: high
+          # Surface findings inline on the PR, not just in the run log.
+          comment-summary-in-pr: on-failure
+          # Copyleft/network licenses would complicate the future paid-content work; flag them now.
+          deny-licenses: AGPL-3.0, GPL-2.0, GPL-3.0, LGPL-2.1, LGPL-3.0
