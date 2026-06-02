@@ -33,7 +33,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v6
-      # Reuses the mise-pinned toolchain (Node/pnpm/go-task from .tool-versions) so CI runs the
+      # Reuses the mise-pinned toolchain (Node/pnpm/go-task from mise.toml) so CI runs the
       # exact `task` command developers run locally — no hardcoded tool versions here.
       - uses: ./.github/actions/setup
       - run: task i18n:check

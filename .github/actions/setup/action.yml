@@ -1,6 +1,6 @@
 name: Setup toolchain
 description: >-
-  Install the mise-pinned toolchain (Node, pnpm, go-task from .tool-versions) and the project
+  Install the mise-pinned toolchain (Node, pnpm, go-task from mise.toml) and the project
   dependencies, with caching for both the mise tools and the pnpm store. Mirrors the local
   `mise` setup so CI runs the same `task` commands developers run.
 
@@ -10,7 +10,7 @@ runs:
     - name: Install mise toolchain
       uses: jdx/mise-action@v2
       with:
-        # Reads .tool-versions; caches the installed tools and activates them for later steps,
+        # Reads mise.toml; caches the installed tools and activates them for later steps,
         # so `node`, `pnpm`, and `task` are on PATH without a `mise exec --` prefix.
         cache: true
 
