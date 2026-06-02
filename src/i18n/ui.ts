@@ -57,6 +57,9 @@ export const ui = {
     'photos.empty': 'No photos yet.',
     'materials.empty': 'No materials yet.',
     'materials.download': 'Download',
+    'home.latestPosts': 'Latest posts',
+    'home.featuredProjects': 'Featured projects',
+    'home.upcomingTalks': 'Upcoming talks',
   },
   'pt-br': {
     'site.title': 'rsicarelli.com',
@@ -104,6 +107,9 @@ export const ui = {
     'photos.empty': 'Nenhuma foto ainda.',
     'materials.empty': 'Nenhum material ainda.',
     'materials.download': 'Baixar',
+    'home.latestPosts': 'Posts recentes',
+    'home.featuredProjects': 'Projetos em destaque',
+    'home.upcomingTalks': 'Próximas palestras',
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 
