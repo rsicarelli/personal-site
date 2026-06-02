@@ -28,6 +28,26 @@ const base = z.object({
   draft: z.boolean().default(false),
 });
 
+/**
+ * Provenance for posts mirrored in-house from elsewhere (dev.to is the syndication copy; this site
+ * is canonical). Every field is optional: a hand-written post has none, and the `ArticleMeta`
+ * component renders nothing when the whole object is absent/empty.
+ */
+const provenance = z
+  .object({
+    /** The dev.to original — shown as an "originally published" cross-link (never rel=canonical). */
+    devtoUrl: z.url().optional(),
+    /** dev.to numeric article id — the target for the later `canonical_url` write-back script. */
+    devtoId: z.number().int().optional(),
+    /** Companion source repository for the post (series-level, denormalized for convenience). */
+    githubRepo: z.url().optional(),
+    /** Per-post branch/tree link parsed from the article body header (richer than the repo root). */
+    githubBranch: z.url().optional(),
+    /** dev.to reaction count at import time — a light social proof signal, not kept in sync. */
+    reactions: z.number().int().optional(),
+  })
+  .optional();
+
 const blog = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
   schema: ({ image }) =>
@@ -36,6 +56,23 @@ const blog = defineCollection({
       updatedDate: z.coerce.date().optional(),
       tags: z.array(z.string()).default([]),
       cover: image().optional(),
+      /** Remote cover URL (dev.to CDN) until media moves to R2 (#R2). Distinct from local `cover`. */
+      coverUrl: z.url().optional(),
+      /**
+       * Series membership. The value is a series *slug* (e.g. `kmp-101`) matched against the
+       * `series` collection by its filePath-derived slug — NOT an Astro `reference()`, because the
+       * glob loader mangles dotted per-locale ids (`kmp-101.en.yaml` → `kmp-101en`), which would
+       * make a post bind to one locale's file. Standalone posts omit both fields.
+       */
+      series: z.string().optional(),
+      seriesOrder: z.number().int().optional(),
+      /**
+       * Whether this file holds a real translation for its locale. `false` means it carries the
+       * original-language body as a placeholder (kept so the locale-completeness guardrail passes);
+       * the post route shows a "shown in original language" banner and it's listed for translation.
+       */
+      translated: z.boolean().default(true),
+      provenance,
     }),
 });
 
@@ -146,4 +183,24 @@ const materials = defineCollection({
   }),
 });
 
-export const collections = { blog, portfolio, events, pages, cv, photos, materials };
+/**
+ * Blog series (#31) — display metadata for a group of ordered posts (the `SeriesSpotlight` cards
+ * and the `/series/<slug>` landing). Per-locale YAML so the locale-completeness guardrail enforces
+ * both-locale labels for free, mirroring cv/photos/materials. The series *slug* is its filename
+ * (parsed by `src/lib/content.ts`), so a post's `series: <slug>` joins here without `reference()`.
+ */
+const series = defineCollection({
+  loader: glob({ pattern: '**/*.{yaml,yml}', base: './src/content/series' }),
+  schema: z.object({
+    label: z.string(),
+    description: z.string().optional(),
+    /** Spotlight ordering (lower = first); ties fall back to post count then slug. */
+    order: z.number().int().optional(),
+    /** Companion repository for the whole series → shown on the series landing. */
+    repo: z.url().optional(),
+    /** Remote cover URL (dev.to CDN) until media moves to R2 (#R2). */
+    coverUrl: z.url().optional(),
+  }),
+});
+
+export const collections = { blog, portfolio, events, pages, cv, photos, materials, series };

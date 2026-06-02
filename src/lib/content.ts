@@ -116,6 +116,68 @@ export async function commonBlogTagSlugs(): Promise<Set<string>> {
   return new Set([...perLocale[0]].filter((slug) => perLocale.every((set) => set.has(slug))));
 }
 
+/** Read a blog post's series slug + part order (typed accessors for the un-narrowed entry data). */
+function seriesOf(entry: CollectionEntry<'blog'>): string | undefined {
+  return entry.data.series;
+}
+function seriesOrderOf(entry: CollectionEntry<'blog'>): number {
+  return entry.data.seriesOrder ?? 0;
+}
+
+export interface SeriesWithCount {
+  /** Series slug (its filePath-derived id), e.g. `kmp-101`. */
+  slug: string;
+  locale: Locale;
+  data: CollectionEntry<'series'>['data'];
+  /** Number of published posts in this series for the locale. */
+  count: number;
+  /** `/`<locale>`/series/`<slug> landing URL. */
+  href: string;
+}
+
+/**
+ * Series that have at least one published post in `locale`, each with its post count, ordered for
+ * the spotlight: explicit `order` first, then most posts, then slug. Empty series are dropped so the
+ * spotlight never shows a series with nothing to read.
+ */
+export async function getSeriesWithCounts(locale: Locale): Promise<SeriesWithCount[]> {
+  const [seriesEntries, posts] = await Promise.all([
+    getLocalizedEntries('series', locale),
+    getLocalizedEntries('blog', locale),
+  ]);
+  const counts = new Map<string, number>();
+  for (const { entry } of posts) {
+    const s = seriesOf(entry);
+    if (s) counts.set(s, (counts.get(s) ?? 0) + 1);
+  }
+  return seriesEntries
+    .map(({ slug, entry }) => ({
+      slug,
+      locale,
+      data: entry.data,
+      count: counts.get(slug) ?? 0,
+      href: `/${locale}/series/${slug}`,
+    }))
+    .filter((s) => s.count > 0)
+    .sort(
+      (a, b) =>
+        (a.data.order ?? Number.MAX_SAFE_INTEGER) - (b.data.order ?? Number.MAX_SAFE_INTEGER) ||
+        b.count - a.count ||
+        a.slug.localeCompare(b.slug),
+    );
+}
+
+/** Published posts of one series in a locale, ordered by `seriesOrder` (part 1 → N). */
+export async function getSeriesPosts(
+  locale: Locale,
+  seriesSlug: string,
+): Promise<LocalizedEntry<'blog'>[]> {
+  const posts = await getLocalizedEntries('blog', locale);
+  return posts
+    .filter(({ entry }) => seriesOf(entry) === seriesSlug)
+    .sort((a, b) => seriesOrderOf(a.entry) - seriesOrderOf(b.entry));
+}
+
 /** `getStaticPaths` builder: the (locale × slug) product for a `[locale]/.../[...slug]` route. */
 export async function localizedPaths<C extends CollectionKey>(
   collection: C,
