@@ -43,6 +43,27 @@ const alternates = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {
+      /* Theme bootstrap (#42) — runs before first paint to set the persisted/system theme on
+      <html>, so there is no flash of the wrong theme (FOUC). The visible toggle (ThemeToggle
+      island in the Header) keeps localStorage in sync; this just replays the choice on load. */
+    }
+    <script is:inline>
+      (() => {
+        try {
+          const stored = localStorage.getItem('theme');
+          const dark = stored
+            ? stored === 'dark'
+            : matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+        } catch {
+          /* storage/matchMedia unavailable — fall back to the default (light) theme */
+        }
+      })();
+    </script>
+
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     {
