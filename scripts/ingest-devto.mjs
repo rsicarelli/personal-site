@@ -68,6 +68,19 @@ const scalar = (v) => (typeof v === 'number' ? String(v) : JSON.stringify(String
 const ghRepoUrl = (repo) => (repo ? `https://github.com/${GH_USER}/${repo}` : undefined);
 
 /**
+ * Code-fence language aliases → a Shiki-known id. dev.to's editor emitted a few non-standard info
+ * strings (the koans' PHP reference blocks came through as `injectablephp`/`phpregexp`), which Shiki
+ * can't highlight and warns about at build. Map the known bad ones; leave everything else untouched.
+ */
+const FENCE_ALIASES = { injectablephp: 'php', phpregexp: 'php' };
+function normalizeFences(body) {
+  return body.replace(/^([ \t]*)(```|~~~)([A-Za-z0-9_+#-]+)/gm, (m, indent, fence, lang) => {
+    const alias = FENCE_ALIASES[lang.toLowerCase()];
+    return alias ? `${indent}${fence}${alias}` : m;
+  });
+}
+
+/**
  * Clean one article body: drop the leading metadata header (TOC blockquote, cross-lang line,
  * 🌱/🔗/⬅️/➡️ nav, a duplicate H1) and trailing prev/next nav. Returns the cleaned body plus any
  * GitHub repo/branch URLs found in the header. Conservative: stops at the first real content line,
@@ -139,6 +152,7 @@ function cleanBody(raw) {
   while (j > 0 && isTailNav(out[j - 1])) j--;
   body = out.slice(0, j).join('\n').trim() + '\n';
 
+  body = normalizeFences(body);
   const liquid = (body.match(/\{%/g) || []).length;
   return { body, repo, branch, liquid };
 }

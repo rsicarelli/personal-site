@@ -141,7 +141,7 @@ func sendMessageToClient(client: Client?, message: String?, mailer: Mailer) {
 <details>
   <summary>PHP</summary>
 
-```injectablephp
+```php
 <?php
 
 function sendMessageToClient($client, $message, $mailer) {

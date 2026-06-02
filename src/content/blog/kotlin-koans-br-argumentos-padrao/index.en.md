@@ -169,7 +169,7 @@ class SobrecargaJavaScript {
 <details>
   <summary>PHP</summary>
 
-```phpregexp
+```php
 <?php
 class SobrecargaPHP {
     public function foo($name, $number, $toUpperCase) {
