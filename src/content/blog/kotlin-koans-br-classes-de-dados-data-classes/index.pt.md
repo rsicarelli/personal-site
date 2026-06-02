@@ -125,7 +125,7 @@ struct Person {
 <details>
   <summary>PHP</summary>
 
-```injectablephp
+```php
 class Person {
     public function __construct(private string $name, private int $age) {}
 

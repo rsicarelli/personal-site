@@ -184,7 +184,7 @@ function eval(expr: Expr): number {
 <details>
   <summary>PHP</summary>
 
-```injectablephp
+```php
 interface Expr {}
 
 class Num implements Expr {
