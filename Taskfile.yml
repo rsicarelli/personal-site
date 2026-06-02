@@ -71,6 +71,12 @@ tasks:
       - task: build
       - pnpm test:i18n
 
+  lighthouse:
+    desc: Core Web Vitals budget — build, then run Lighthouse CI against dist (needs Chrome)
+    cmds:
+      - task: build
+      - pnpm lighthouse
+
   check:
     desc: All quality gates — typecheck + lint + format check
     cmds:
