@@ -1,6 +1,6 @@
 ---
-title: 'The Hidden Cost of Default Hierarchy Template in Kotlin Multiplatform'
-description: 'The Default Hierarchy Template in KMP projects is a great way to reduce boilerplate code and start working quickly. However, it came with an unexpected…'
+title: 'O Custo Oculto do Default Hierarchy Template no Kotlin Multiplatform'
+description: 'O Default Hierarchy Template em projetos KMP é uma ótima forma de reduzir código boilerplate e começar a trabalhar rapidamente. Porém, ele veio com um custo inesperado…'
 pubDate: 2025-11-02
 updatedDate: 2025-11-14
 tags:
@@ -8,30 +8,28 @@ tags:
   - 'kmp'
   - 'mobile'
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F6nh7bfue7eck9yqnr91b.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/the-hidden-cost-of-default-hierarchy-templates-in-kotlin-multiplatform-256a'
-  devtoId: 2985222
   reactions: 6
 ---
 
-## Introduction
+## Introdução
 
-The Default Hierarchy Template in KMP projects is a great way to reduce boilerplate code and start working quickly. However, it came with an unexpected cost in our large-scale codebase. A project with 70+ KMP modules targeting Android, iOS, and JVM saw sync times balloon from 15 minutes to over an hour. More critically, an enterprise project with 180+ modules became completely unusable, crashing after 10+ hours of attempting to sync.
+O Default Hierarchy Template em projetos KMP é uma ótima forma de reduzir código boilerplate e começar a trabalhar rapidamente. Porém, ele veio com um custo inesperado na nossa base de código de larga escala. Um projeto com mais de 70 módulos KMP visando Android, iOS e JVM viu os tempos de sync explodirem de 15 minutos para mais de uma hora. Mais grave ainda, um projeto enterprise com mais de 180 módulos ficou completamente inutilizável, travando após mais de 10 horas tentando sincronizar.
 
-This wasn't a misconfiguration or a rogue plugin. The culprit? A single, seemingly innocent line of code introduced with Kotlin 1.9.20:
+Não foi uma configuração errada nem um plugin problemático. O culpado? Uma única linha de código, aparentemente inofensiva, introduzida com o Kotlin 1.9.20:
 
 ```kotlin
 applyDefaultHierarchyTemplate()
 ```
 
-Before we dive into the solution, let's understand what's happening under the hood. What are hierarchy templates, and why does the default one create such a performance bottleneck?
+Antes de mergulharmos na solução, vamos entender o que está acontecendo por baixo dos panos. O que são hierarchy templates, e por que o template padrão cria um gargalo de performance tão grande?
 
-## What Are Hierarchy Templates in Kotlin Multiplatform?
+## O Que São Hierarchy Templates no Kotlin Multiplatform?
 
-At its core, Kotlin Multiplatform is built on a elegant but complex system of **source sets**—logical collections of code that share common dependencies and compilation settings.
+Na sua essência, o Kotlin Multiplatform é construído sobre um sistema elegante, porém complexo, de **source sets** — coleções lógicas de código que compartilham dependências e configurações de compilação em comum.
 
-When you create a KMP project, you declare **targets** (the platforms you're compiling for) and **source sets** (where your code lives):
+Quando você cria um projeto KMP, você declara **targets** (as plataformas para as quais você está compilando) e **source sets** (onde seu código vive):
 
 ```kotlin
 kotlin {
@@ -43,43 +41,43 @@ kotlin {
 }
 ```
 
-Each target automatically gets its own source set (`androidMain`, `jvmMain`, `iosArm64Main`), where you can write platform-specific code with access to platform APIs. But the real power of KMP lies in `commonMain`—code written here is shared across _all_ your targets.
+Cada target automaticamente ganha seu próprio source set (`androidMain`, `jvmMain`, `iosArm64Main`), onde você pode escrever código específico de plataforma com acesso às APIs daquela plataforma. Mas o real poder do KMP está no `commonMain` — código escrito aqui é compartilhado entre _todos_ os seus targets.
 
-### The dependsOn Relationship: Connecting the Dots
+### A Relação dependsOn: Conectando os Pontos
 
-Source sets form a hierarchy through the `dependsOn` relationship. When `iosArm64Main` depends on `commonMain`, it can access all the code written in the common source set. This relationship creates a directed graph that determines:
+Os source sets formam uma hierarquia por meio da relação `dependsOn`. Quando `iosArm64Main` depende de `commonMain`, ele consegue acessar todo o código escrito no source set comum. Essa relação cria um grafo direcionado que determina:
 
-1. **Code visibility** - Which declarations are accessible where
-2. **Dependency propagation** - Libraries added to `commonMain` flow down to all dependent source sets
-3. **API safety** - The compiler ensures you only use APIs available on all platforms a source set compiles to
+1. **Visibilidade de código** - Quais declarações são acessíveis onde
+2. **Propagação de dependências** - Bibliotecas adicionadas ao `commonMain` descem para todos os source sets dependentes
+3. **Segurança de API** - O compilador garante que você só use APIs disponíveis em todas as plataformas para as quais um source set compila
 
-### Intermediate Source Sets: The Middle Ground
+### Source Sets Intermediários: O Meio-Termo
 
-Here's where it gets interesting. What if you want to share code between _some_ platforms, but not all?
+É aqui que fica interessante. E se você quiser compartilhar código entre _algumas_ plataformas, mas não todas?
 
-Imagine you have iOS-specific logic that works across all iOS variants (arm64 for devices, x64 for Intel simulators, simulatorArm64 for Apple Silicon simulators). You don't want to duplicate this code in three places, but you also can't put it in `commonMain` because it uses iOS-specific APIs.
+Imagine que você tem lógica específica de iOS que funciona em todas as variantes de iOS (arm64 para dispositivos, x64 para simuladores Intel, simulatorArm64 para simuladores Apple Silicon). Você não quer duplicar esse código em três lugares, mas também não pode colocá-lo no `commonMain` porque ele usa APIs específicas do iOS.
 
-Enter **intermediate source sets**. An `iosMain` source set sits between `commonMain` and your platform-specific iOS source sets, allowing you to:
+Entram em cena os **source sets intermediários**. Um source set `iosMain` fica entre o `commonMain` e os seus source sets específicos de iOS, permitindo que você:
 
-- Access iOS-specific APIs (like Foundation framework)
-- Share that code across all iOS targets
-- Keep it separate from Android and JVM code
+- Acesse APIs específicas do iOS (como o framework Foundation)
+- Compartilhe esse código entre todos os targets iOS
+- Mantenha-o separado do código Android e JVM
 
-This hierarchy might look like:
+Essa hierarquia poderia ficar assim:
 
 ```
 commonMain
 ├── androidMain
 ├── jvmMain
-└── iosMain (intermediate)
+└── iosMain (intermediário)
     ├── iosArm64Main
     ├── iosX64Main
     └── iosSimulatorArm64Main
 ```
 
-### What Hierarchy Templates Do
+### O Que os Hierarchy Templates Fazem
 
-Manually creating intermediate source sets and wiring up all the `dependsOn` relationships was tedious and error-prone. You'd write something like:
+Criar source sets intermediários manualmente e conectar todas as relações `dependsOn` era tedioso e propenso a erros. Você escreveria algo como:
 
 ```kotlin
 val iosMain by creating {
@@ -88,22 +86,22 @@ val iosMain by creating {
 val iosArm64Main by getting {
     dependsOn(iosMain)
 }
-// ... repeat for each iOS target
+// ... repita para cada target iOS
 ```
 
-**Hierarchy templates** automate this boilerplate. They're predefined blueprints that analyze your declared targets and automatically create the appropriate intermediate source sets with the correct dependency relationships.
+Os **hierarchy templates** automatizam esse boilerplate. Eles são plantas predefinidas que analisam os targets que você declarou e criam automaticamente os source sets intermediários apropriados, com as relações de dependência corretas.
 
-Starting with Kotlin 1.9.20, the default hierarchy template became active automatically, eliminating the need to manually configure iOS source sets. Sounds great, right?
+A partir do Kotlin 1.9.20, o default hierarchy template passou a ser ativado automaticamente, eliminando a necessidade de configurar os source sets de iOS manualmente. Parece ótimo, não é?
 
-It is—until it isn't.
+E é — até que deixa de ser.
 
-## The Default Hierarchy Template in Action
+## O Default Hierarchy Template na Prática
 
-To understand the performance problem, we need to see what the default template actually _does_.
+Para entender o problema de performance, precisamos ver o que o template padrão realmente _faz_.
 
-When you call `applyDefaultHierarchyTemplate()` (or let it apply automatically), the Kotlin Gradle Plugin analyzes your targets and creates intermediate source sets based on a comprehensive, predefined structure designed to support _all possible_ Kotlin Multiplatform targets.
+Quando você chama `applyDefaultHierarchyTemplate()` (ou deixa que ele se aplique automaticamente), o Kotlin Gradle Plugin analisa seus targets e cria source sets intermediários com base em uma estrutura abrangente e predefinida, desenhada para suportar _todos os targets possíveis_ do Kotlin Multiplatform.
 
-Let's consider a common real-world scenario. Your project targets:
+Vamos considerar um cenário comum do mundo real. Seu projeto tem como alvo:
 
 ```kotlin
 kotlin {
@@ -117,7 +115,7 @@ kotlin {
 }
 ```
 
-You might expect a simple hierarchy:
+Você poderia esperar uma hierarquia simples:
 
 ```
 commonMain
@@ -129,94 +127,94 @@ commonMain
     └── iosSimulatorArm64Main
 ```
 
-But here's what the default template _actually_ creates:
+Mas aqui está o que o template padrão _realmente_ cria:
 
 ```
 commonMain
 ├── androidMain
 ├── jvmMain
-├── nativeMain (shared by ALL native targets)
-    └── appleMain (shared by ALL Apple targets)
-        └── iosMain (shared by iOS targets)
+├── nativeMain (compartilhado por TODOS os targets nativos)
+    └── appleMain (compartilhado por TODOS os targets Apple)
+        └── iosMain (compartilhado pelos targets iOS)
             ├── iosArm64Main
             ├── iosX64Main
             └── iosSimulatorArm64Main
 ```
 
-Notice the extra layers: nativeMain and appleMain. The template creates these intermediate source sets (and their corresponding src/nativeMain and src/appleMain directories) to enable code sharing in scenarios like:
+Repare nas camadas extras: nativeMain e appleMain. O template cria esses source sets intermediários (e seus respectivos diretórios src/nativeMain e src/appleMain) para habilitar o compartilhamento de código em cenários como:
 
-- `nativeMain`: Share code across _all_ Kotlin/Native targets (iOS, macOS, Linux, Windows Native, watchOS, tvOS, etc.)
-- `appleMain`: Share code across _all_ Apple platforms (iOS, macOS, watchOS, tvOS)
+- `nativeMain`: Compartilhar código entre _todos_ os targets Kotlin/Native (iOS, macOS, Linux, Windows Native, watchOS, tvOS, etc.)
+- `appleMain`: Compartilhar código entre _todas_ as plataformas Apple (iOS, macOS, watchOS, tvOS)
 
-The design philosophy is sound. The default template optimizes for the most comprehensive code-sharing scenario. If you later add `macosArm64()` to your targets, it will automatically slot into the existing hierarchy under `appleMain`, and any code you've written there will just work.
+A filosofia de design é sólida. O template padrão otimiza para o cenário mais abrangente de compartilhamento de código. Se mais tarde você adicionar `macosArm64()` aos seus targets, ele automaticamente se encaixa na hierarquia existente, abaixo de `appleMain`, e qualquer código que você tenha escrito ali simplesmente vai funcionar.
 
-This is "convention over configuration" at its finest—the template handles the complexity for you.
+Isso é "convention over configuration" no seu melhor momento — o template lida com a complexidade por você.
 
-But here's the critical question: What if you're never going to target macOS, Linux, or tvOS? What if your "native" targets are only iOS?
+Mas aqui vai a pergunta crucial: e se você nunca for mirar macOS, Linux ou tvOS? E se os seus targets "native" forem apenas iOS?
 
-In an iOS-only project, you likely have no code in nativeMain or appleMain—these directories sit empty in your project structure. Yet they still generate build tasks and configuration overhead.
+Em um projeto iOS-only, você provavelmente não tem código nenhum em nativeMain ou appleMain — esses diretórios ficam vazios na estrutura do seu projeto. Ainda assim, eles continuam gerando build tasks e overhead de configuração.
 
-## The Hidden Cost: A Task Explosion
+## O Custo Oculto: Uma Explosão de Tasks
 
-Source sets aren't just a conceptual model—they have real, tangible consequences in your build system. Every source set in your hierarchy triggers the creation of multiple Gradle tasks.
+Os source sets não são apenas um modelo conceitual — eles têm consequências reais e tangíveis no seu sistema de build. Cada source set na sua hierarquia dispara a criação de várias tasks do Gradle.
 
-When the Kotlin Gradle Plugin processes your source set hierarchy, it generates tasks for each source set. The pattern is predictable and measurable.
+Quando o Kotlin Gradle Plugin processa a hierarquia de source sets, ele gera tasks para cada source set. O padrão é previsível e mensurável.
 
-The results were striking:
+Os resultados foram impressionantes:
 
-- **Optimized template**: 158 tasks per module
-- **Default template**: 166 tasks per module
-- **Difference**: **8 extra tasks per module**
+- **Template otimizado**: 158 tasks por módulo
+- **Template padrão**: 166 tasks por módulo
+- **Diferença**: **8 tasks extras por módulo**
 
-Extrapolate to our production codebase with 70 modules, and you're looking at **560 wasteful tasks**. In our enterprise codebase with 180+ modules we have "only" **1440** **wasteful tasks** 🫣.
+Extrapolando para a nossa base de código de produção com 70 módulos, você está olhando para **560 tasks desperdiçadas**. Na nossa base enterprise com mais de 180 módulos temos "apenas" **1440** **tasks desperdiçadas** 🫣.
 
-For every intermediate source set (`nativeMain`, `appleMain`), Gradle creates a family of tasks:
+Para cada source set intermediário (`nativeMain`, `appleMain`), o Gradle cria uma família de tasks:
 
-- `compile<SourceSet>KotlinMetadata` - Compiles the source set into platform-agnostic Kotlin IR (Intermediate Representation) stored in a `.klib` file
-- `metadata<SourceSet>Classes` - Assembles compilation outputs
-- `metadata<SourceSet>ProcessResources` - Processes resources for the source set
-- `transform<SourceSet>DependenciesMetadata` - Generates serialized dependency metadata for IDE tooling
+- `compile<SourceSet>KotlinMetadata` - Compila o source set em Kotlin IR (Intermediate Representation) agnóstico de plataforma, armazenado em um arquivo `.klib`
+- `metadata<SourceSet>Classes` - Reúne os outputs da compilação
+- `metadata<SourceSet>ProcessResources` - Processa os recursos do source set
+- `transform<SourceSet>DependenciesMetadata` - Gera metadados de dependência serializados para o ferramental da IDE
 
-### Task Deep Dive: The Metadata Compilation Tasks
+### Olhando de Perto: As Tasks de Compilação de Metadata
 
-**`compileNativeMainKotlinMetadata`** and **`compileAppleMainKotlinMetadata`** are responsible for compiling the (conceptual) `nativeMain` and `appleMain` source sets into Kotlin metadata.
+**`compileNativeMainKotlinMetadata`** e **`compileAppleMainKotlinMetadata`** são responsáveis por compilar os source sets (conceituais) `nativeMain` e `appleMain` em metadata do Kotlin.
 
-Here's the problem: **These source sets have no code.** The `src/nativeMain/kotlin` and `src/appleMain/kotlin` directories exist but sit empty because we're not sharing any code at those levels. Yet the Kotlin compiler still runs, processing an empty source set, generating an (essentially empty) `.klib` file.
+Aqui está o problema: **esses source sets não têm código.** Os diretórios `src/nativeMain/kotlin` e `src/appleMain/kotlin` existem, mas ficam vazios porque não estamos compartilhando nenhum código nesses níveis. Mesmo assim, o compilador do Kotlin ainda roda, processando um source set vazio, gerando um arquivo `.klib` (essencialmente vazio).
 
-The source sets exist in the dependency graph because the template created them. The `iosArm64Main` compilation needs to know what APIs are available from `appleMain`, which needs to know what's available from `nativeMain`. Even if those source sets are empty, the metadata must be compiled to satisfy the dependency chain.
+Os source sets existem no grafo de dependências porque o template os criou. A compilação de `iosArm64Main` precisa saber quais APIs estão disponíveis a partir de `appleMain`, que por sua vez precisa saber o que está disponível a partir de `nativeMain`. Mesmo que esses source sets estejam vazios, o metadata precisa ser compilado para satisfazer a cadeia de dependências.
 
-Think of it like compiling an empty `.kt` file—the compiler still has to initialize, parse (nothing), run analysis passes, and write output. The overhead isn't zero.
+Pense nisso como compilar um arquivo `.kt` vazio — o compilador ainda precisa inicializar, fazer o parse (de nada), rodar as passagens de análise e escrever o output. O overhead não é zero.
 
-### Task Deep Dive: The IDE Transform Tasks
+### Olhando de Perto: As Tasks de Transform da IDE
 
-**`transformNativeMainCInteropDependenciesMetadataForIde`** and **`transformAppleMainCInteropDependenciesMetadataForIde`** are even more insidious.
+**`transformNativeMainCInteropDependenciesMetadataForIde`** e **`transformAppleMainCInteropDependenciesMetadataForIde`** são ainda mais traiçoeiras.
 
-If you have tests under `iosTest` you will get an extra **`transformNativeTestCInteropDependenciesMetadataForIde`** and **`transformAppleTestCInteropDependenciesMetadataForIde`** as well.
+Se você tiver testes sob `iosTest`, você ganhará também um **`transformNativeTestCInteropDependenciesMetadataForIde`** e um **`transformAppleTestCInteropDependenciesMetadataForIde`** extras.
 
-These tasks exist specifically for IDE support. When you sync your project in Android Studio or IntelliJ IDEA, these tasks run to process C-interop dependencies (Kotlin/Native bindings to C/Objective-C libraries) and make them understandable to the IDE's code analysis engine.
+Essas tasks existem especificamente para o suporte da IDE. Quando você sincroniza seu projeto no Android Studio ou no IntelliJ IDEA, essas tasks rodam para processar as dependências de C-interop (bindings do Kotlin/Native para bibliotecas C/Objective-C) e torná-las compreensíveis para o motor de análise de código da IDE.
 
-**The irony?** Our project has no C-interop dependencies in `nativeMain` or `appleMain` because those source sets don't exist in our codebase. We're transforming... nothing.
+**A ironia?** Nosso projeto não tem dependências de C-interop em `nativeMain` ou `appleMain`, porque esses source sets não existem na nossa base de código. Estamos transformando... nada.
 
-But the task still runs. It still needs to:
+Mas a task ainda roda. Ela ainda precisa:
 
-1. Resolve the dependency graph for the source set
-2. Check for C-interop `.klib` files
-3. Process (empty) results
-4. Write metadata for the IDE
+1. Resolver o grafo de dependências do source set
+2. Verificar a existência de arquivos `.klib` de C-interop
+3. Processar resultados (vazios)
+4. Escrever metadata para a IDE
 
-These tasks created real bottlenecks in our workflow. The 70-module project went from 15-minute syncs to over an hour and twenty minutes. The 180-module project became completely unusable, with syncs crashing consistently after 10+ hours.
+Essas tasks criaram gargalos reais no nosso fluxo de trabalho. O projeto de 70 módulos passou de syncs de 15 minutos para mais de uma hora e vinte minutos. O projeto de 180 módulos ficou completamente inutilizável, com os syncs travando consistentemente após mais de 10 horas.
 
-After implementing the fix, we couldn't reproduce the exact conditions to capture detailed metrics—Gradle's caching and environmental factors made this difficult. But the aggregate impact was consistent across our entire team, and the theoretical analysis aligned with reality: eliminating 1,440 wasteful tasks restored functionality to the broken project.
+Depois de implementar a correção, não conseguimos reproduzir as condições exatas para capturar métricas detalhadas — o caching do Gradle e fatores de ambiente tornaram isso difícil. Mas o impacto agregado foi consistente em todo o nosso time, e a análise teórica bateu com a realidade: eliminar 1.440 tasks desperdiçadas restaurou a funcionalidade do projeto quebrado.
 
-## The Solution: Custom Optimized Hierarchy
+## A Solução: Uma Hierarquia Customizada e Otimizada
 
-Once we understood the problem, the solution became clear: **build exactly the hierarchy we need, no more, no less.**
+Uma vez que entendemos o problema, a solução ficou clara: **construir exatamente a hierarquia que precisamos, nem mais, nem menos.**
 
-Kotlin provides the `applyHierarchyTemplate()` DSL for precisely this purpose—defining custom hierarchies that match your project's actual structure.
+O Kotlin oferece a DSL `applyHierarchyTemplate()` exatamente para isso — definir hierarquias customizadas que correspondam à estrutura real do seu projeto.
 
-### The Optimized Hierarchy
+### A Hierarquia Otimizada
 
-Instead of the default template's deep, general-purpose hierarchy, we created a minimal, flat structure:
+Em vez da hierarquia profunda e de propósito geral do template padrão, criamos uma estrutura mínima e plana:
 
 ```kotlin
 kotlin {
@@ -240,7 +238,7 @@ kotlin {
 }
 ```
 
-This creates the hierarchy:
+Isso cria a hierarquia:
 
 ```
 commonMain
@@ -252,36 +250,36 @@ commonMain
     └── iosSimulatorArm64Main
 ```
 
-Notice what's missing: `nativeMain` and `appleMain`. We've collapsed the hierarchy to only include the intermediate source sets we actually use.
+Repare no que está faltando: `nativeMain` e `appleMain`. Reduzimos a hierarquia para incluir apenas os source sets intermediários que de fato usamos.
 
-This configuration change transformed our development experience. The 70-module project saw sync times improve from roughly an hour and twenty minutes to about 14 minutes. The 180-module project went from completely broken to functional. The improvement was universal across our team ✨.
+Essa mudança de configuração transformou a nossa experiência de desenvolvimento. O projeto de 70 módulos viu os tempos de sync melhorarem de cerca de uma hora e vinte minutos para aproximadamente 14 minutos. O projeto de 180 módulos passou de completamente quebrado para funcional. A melhoria foi universal em todo o nosso time ✨.
 
-By eliminating unused intermediate source sets, we removed the overhead that had been silently compounding across our codebase.
+Ao eliminar os source sets intermediários não utilizados, removemos o overhead que vinha se acumulando silenciosamente em toda a nossa base de código.
 
-## A Note on Reproducing This Issue
+## Uma Nota Sobre Reproduzir Esse Problema
 
-After implementing the fix, I attempted to reproduce the original problem to capture more detailed metrics. Surprisingly, the severe degradation didn't reoccur—likely due to Gradle's aggressive caching and configuration state.
+Depois de implementar a correção, tentei reproduzir o problema original para capturar métricas mais detalhadas. Surpreendentemente, a degradação severa não voltou a ocorrer — provavelmente por causa do caching agressivo do Gradle e do estado de configuração.
 
-**If you're considering this optimization:** You may not see dramatic improvements immediately after switching, especially if Gradle has already cached artifacts from your current configuration. The benefits become most apparent on clean syncs or when onboarding new team members. The task count reduction is objective—whether it becomes a bottleneck depends on your specific project context and scale.
+**Se você está considerando essa otimização:** você pode não ver melhorias dramáticas imediatamente após a troca, especialmente se o Gradle já tiver cacheado artefatos da sua configuração atual. Os benefícios ficam mais aparentes em syncs limpos ou ao integrar novos membros ao time. A redução na contagem de tasks é objetiva — se isso vira um gargalo depende do contexto e da escala específicos do seu projeto.
 
-## When to Use Default vs Custom Hierarchy
+## Quando Usar a Hierarquia Padrão vs. a Customizada
 
-The default hierarchy template isn't inherently bad—it's solving for a different use case than ours. Understanding when to use each approach is critical.
+O default hierarchy template não é inerentemente ruim — ele está resolvendo um caso de uso diferente do nosso. Entender quando usar cada abordagem é crucial.
 
-If your project genuinely targets macOS, Linux, Windows, iOS, and watchOS, the `nativeMain` source set becomes valuable. You _want_ to share native-specific code across all these platforms, so the Default Hierarchy is gold here.
+Se o seu projeto realmente mira macOS, Linux, Windows, iOS e watchOS, o source set `nativeMain` se torna valioso. Você _quer_ compartilhar código específico de native entre todas essas plataformas, então a Default Hierarchy é ouro aqui.
 
-On the other hand, if you're starting a new project and not sure if you'll add macOS support in six months, the default template provides a stable foundation that scales as you add targets.
+Por outro lado, se você está começando um projeto novo e não tem certeza se vai adicionar suporte a macOS daqui a seis meses, o template padrão fornece uma base estável que escala conforme você adiciona targets.
 
-However, if "native" means exclusively iOS in your project, `nativeMain` and `appleMain` are dead weight. The task multiplication effect becomes severe at scale, as it adds 8-10 tasks per module.
+No entanto, se "native" significa exclusivamente iOS no seu projeto, `nativeMain` e `appleMain` são peso morto. O efeito de multiplicação de tasks se torna severo em escala, já que adiciona de 8 a 10 tasks por módulo.
 
-So, when to use Default Hierarchy Template? Sorry, but "it depends" 🫠.
+Então, quando usar o Default Hierarchy Template? Desculpe, mas "depende" 🫠.
 
-## Conclusion
+## Conclusão
 
-The default hierarchy template in Kotlin Multiplatform is a powerful tool that embodies the "convention over configuration" philosophy. For many projects, it's the right choice—it simplifies setup, reduces boilerplate, and scales effortlessly as you add targets.
+O default hierarchy template no Kotlin Multiplatform é uma ferramenta poderosa que encarna a filosofia de "convention over configuration". Para muitos projetos, é a escolha certa — ele simplifica o setup, reduz o boilerplate e escala sem esforço conforme você adiciona targets.
 
-But as our experience demonstrates, **the default optimizes for maximum flexibility, not maximum performance.** When you know your platform constraints (iOS-only native targets) and operate at scale (70+ modules), that flexibility becomes a liability. You're paying the build-time cost of supporting platforms you'll never target.
+Mas, como a nossa experiência demonstra, **o padrão otimiza para a máxima flexibilidade, não para a máxima performance.** Quando você conhece as suas restrições de plataforma (targets nativos iOS-only) e opera em escala (mais de 70 módulos), essa flexibilidade vira um passivo. Você está pagando o custo de tempo de build para suportar plataformas que nunca vai mirar.
 
-The transformation we experienced—from unusable to functional, from frustrating to manageable—came from a simple realization: **we don't need a hierarchy designed for the entire Kotlin Multiplatform universe. We need one designed for our project.** The `applyHierarchyTemplate()` DSL gave us the precision to define exactly that, eliminating hundreds of wasteful tasks and restoring our development velocity.
+A transformação que vivemos — de inutilizável para funcional, de frustrante para gerenciável — veio de uma constatação simples: **não precisamos de uma hierarquia desenhada para todo o universo do Kotlin Multiplatform. Precisamos de uma desenhada para o nosso projeto.** A DSL `applyHierarchyTemplate()` nos deu a precisão para definir exatamente isso, eliminando centenas de tasks desperdiçadas e restaurando a nossa velocidade de desenvolvimento.
 
-That's it! ✌️ Hope you can apply to our project today and give your day a performance boost!
+É isso! ✌️ Espero que você consiga aplicar no seu projeto hoje mesmo e dar um boost de performance no seu dia!
