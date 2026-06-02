@@ -5,6 +5,13 @@ import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
+import { placeholderBlogPaths } from './scripts/placeholder-posts.mjs';
+
+// `translated: false` placeholder posts (#152) are `robots: noindex, follow`. Drop them from the
+// sitemap too (#173): a noindexed URL in the sitemap only earns a benign "Submitted URL marked
+// 'noindex'" notice in Search Console. Computed once from the same scan that drives the noindex
+// meta, so a post rejoins the sitemap automatically when it's translated (#143) — no per-post edit.
+const noindexPlaceholders = await placeholderBlogPaths();
 
 // https://astro.build/config
 export default defineConfig({
@@ -26,6 +33,9 @@ export default defineConfig({
     react(),
     mdx(),
     sitemap({
+      // The callback only sees the absolute URL string; match on its trailing-slash-normalized
+      // pathname (dir-form <loc>s carry a trailing slash, the placeholder set doesn't).
+      filter: (page) => !noindexPlaceholders.has(new URL(page).pathname.replace(/\/$/, '')),
       i18n: {
         defaultLocale: 'en',
         locales: { en: 'en', 'pt-br': 'pt-BR' },
