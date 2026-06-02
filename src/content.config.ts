@@ -36,6 +36,12 @@ const blog = defineCollection({
       updatedDate: z.coerce.date().optional(),
       tags: z.array(z.string()).default([]),
       cover: image().optional(),
+      /**
+       * Answer-first capsule (#56): a 1–3 sentence direct answer rendered as a visible lede above
+       * the prose — the highest-leverage GEO/AEO formatting lever. Distinct from `description`
+       * (the meta/OG/SERP snippet): `summary` is the on-page answer; both can diverge.
+       */
+      summary: z.string().max(320).optional(),
     }),
 });
 
