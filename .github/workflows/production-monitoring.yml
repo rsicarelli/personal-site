@@ -1,0 +1,43 @@
+name: Production CWV monitoring
+
+# Synthetic Core Web Vitals monitoring against the LIVE origin (#58/#146). The PR-time lighthouse.yml
+# tests a local `astro preview` (lab budget on every change); this watches the real deployed site
+# (Cloudflare CDN, real fonts/images) on a cadence, so a production regression surfaces even when no
+# PR touches the relevant files. Same budget as lighthouserc.json — the CWV lab metrics (LCP/CLS/TBT)
+# + a11y/SEO are hard gates; the aggregate performance score is a warning (lab variance).
+#
+# Field/CrUX + real INP are NOT here: CrUX needs weeks of real traffic, and a web-vitals RUM beacon
+# belongs to Analytics (#70). Standalone workflow (not part of the required CI Summary).
+
+on:
+  schedule:
+    # Mondays 07:00 UTC — weekly health check of the live site.
+    - cron: '0 7 * * 1'
+  workflow_dispatch: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse-prod:
+    name: Core Web Vitals budget (live)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      # Reuses the mise-pinned toolchain + installs deps (so @lhci/cli is available). No build —
+      # this asserts against the live origin, not a local preview.
+      - uses: ./.github/actions/setup
+      # ubuntu-latest ships google-chrome-stable, which @lhci/cli's chrome-launcher auto-detects.
+      - run: pnpm exec lhci autorun --config=lighthouserc.prod.json
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-prod-reports
+          path: ./.lighthouseci
+          if-no-files-found: ignore
