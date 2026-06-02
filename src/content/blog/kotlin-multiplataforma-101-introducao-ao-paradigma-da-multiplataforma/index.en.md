@@ -1,22 +1,22 @@
 ---
-title: "KMP 101: Introdução ao paradigma da Multiplataforma"
-description: "Usamos diariamente uma variedade de aplicativos em dispositivos como celulares, relógios, TVs e computadores, inseridos em um amplo ecossistema digital."
-summary: "Usamos diariamente uma variedade de aplicativos em dispositivos como celulares, relógios, TVs e computadores, inseridos em um amplo ecossistema digital."
+title: 'KMP 101: Introdução ao paradigma da Multiplataforma'
+description: 'Usamos diariamente uma variedade de aplicativos em dispositivos como celulares, relógios, TVs e computadores, inseridos em um amplo ecossistema digital.'
+summary: 'Usamos diariamente uma variedade de aplicativos em dispositivos como celulares, relógios, TVs e computadores, inseridos em um amplo ecossistema digital.'
 pubDate: 2023-11-14
 updatedDate: 2024-01-27
 tags:
-  - "kotlin"
-  - "kmp"
-  - "braziliandevs"
-  - "mobile"
-series: "kmp-101"
+  - 'kotlin'
+  - 'kmp'
+  - 'braziliandevs'
+  - 'mobile'
+series: 'kmp-101'
 seriesOrder: 1
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fgfgzfl54fe26cqlk9jk2.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fgfgzfl54fe26cqlk9jk2.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kotlin-multiplataforma-101-introducao-ao-paradigma-da-multiplataforma-eo3"
+  devtoUrl: 'https://dev.to/rsicarelli/kotlin-multiplataforma-101-introducao-ao-paradigma-da-multiplataforma-eo3'
   devtoId: 1662061
-  githubRepo: "https://github.com/rsicarelli/KMP-101"
+  githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 18
 ---
 
@@ -265,14 +265,15 @@ Iremos aprender como o compilador do Kotlin funciona, e como sua estrutura de fr
 
 ---
 
-> 🤖 Artigo foi escrito com o auxílio do ChatGPT 4, utilizando o plugin Web. 
+> 🤖 Artigo foi escrito com o auxílio do ChatGPT 4, utilizando o plugin Web.
 >
 > As fontes e o conteúdo são revisados para garantir a relevância das informações fornecidas, assim como as fontes utilizadas em cada prompt.
-> 
+>
 > No entanto, caso encontre alguma informação incorreta ou acredite que algum crédito está faltando, por favor, entre em contato!
 
---- 
+---
 
 > Referencias
+>
 > - [Simplifying Application Development with Kotlin Multiplatform Mobile Robert Nagy](https://github.com/PacktPublishing/Simplifying-Application-Development-with-Kotlin-Multiplatform-Mobile)
 > - [Kotlin In-Depth - Aleksei Sedunov ](https://www.amazon.com/Kotlin-Depth-Multipurpose-Programming-Multiplatform/dp/9391030637)

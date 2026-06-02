@@ -1,24 +1,24 @@
 ---
-title: "Claude Code 101: Introdução à Programação Agêntica"
-description: "Setembro de 2025. Eu estava tocando a atualização de uma dependência crítica num app mobile com milhões de usuários. O tipo de mudança que quebra testes…"
-summary: "Setembro de 2025. Eu estava tocando a atualização de uma dependência crítica num app mobile com milhões de usuários. O tipo de mudança que quebra testes em cascata. O prazo era Outubro: se não ficasse pronto, o app não subia pra loja."
+title: 'Claude Code 101: Introdução à Programação Agêntica'
+description: 'Setembro de 2025. Eu estava tocando a atualização de uma dependência crítica num app mobile com milhões de usuários. O tipo de mudança que quebra testes…'
+summary: 'Setembro de 2025. Eu estava tocando a atualização de uma dependência crítica num app mobile com milhões de usuários. O tipo de mudança que quebra testes em cascata. O prazo era Outubro: se não ficasse pronto, o app não subia pra loja.'
 pubDate: 2026-04-04
 updatedDate: 2026-04-09
 tags:
-  - "claude"
-  - "ai"
-  - "braziliandevs"
-series: "claude-code-101"
+  - 'claude'
+  - 'ai'
+  - 'braziliandevs'
+series: 'claude-code-101'
 seriesOrder: 1
-coverUrl: "https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F6mc3scopj9lxh9vo7yar.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F6mc3scopj9lxh9vo7yar.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/claude-code-101-introducao-a-programacao-agentica-4mk1"
+  devtoUrl: 'https://dev.to/rsicarelli/claude-code-101-introducao-a-programacao-agentica-4mk1'
   devtoId: 3454772
-  githubRepo: "https://github.com/rsicarelli/claude-code-10x"
+  githubRepo: 'https://github.com/rsicarelli/claude-code-10x'
   reactions: 4
 ---
 
-O problema: quase 10.000 testes precisavam ser adaptados pra nova versão. Código de mais de 20 times, espalhado por centenas de módulos. 
+O problema: quase 10.000 testes precisavam ser adaptados pra nova versão. Código de mais de 20 times, espalhado por centenas de módulos.
 
 Pensei "e se eu der uma chance pra essas ferramentas de IA que todo mundo fala?" Depois de alguns vídeos e documentação, coloquei quatro terminais rodando em paralelo com Claude Code, cada um migrando uma fatia dos testes. Em uma semana: 2.000+ arquivos alterados, 50 mil linhas de código, 85% migrado de primeira. Na semana seguinte, pente fino no restante.
 
@@ -99,7 +99,7 @@ Aqui o paradigma inverte. Em vez de você orquestrar a IA, **você define o obje
 Essa virada não aconteceu do nada. Teve uma sequência de avanços que a tornaram possível:
 
 - **Function calling** (OpenAI, junho de 2023). Pela primeira vez, modelos podiam invocar ferramentas externas. É o pré-requisito técnico pra qualquer comportamento agêntico [[6]](#referências).
-- **Andrew Ng cunha "agentic"** (final de 2023). Ele escolheu um adjetivo de propósito, não um substantivo: *"Diferente do substantivo 'agent', o adjetivo 'agentic' nos permite pensar em sistemas como sendo mais ou menos parecidos com agentes, em diferentes graus."* [[7]](#referências)
+- **Andrew Ng cunha "agentic"** (final de 2023). Ele escolheu um adjetivo de propósito, não um substantivo: _"Diferente do substantivo 'agent', o adjetivo 'agentic' nos permite pensar em sistemas como sendo mais ou menos parecidos com agentes, em diferentes graus."_ [[7]](#referências)
 - **Model Context Protocol** (Anthropic, novembro de 2024). O padrão aberto pra conectar agentes a ferramentas externas, adotado rapidamente por toda a indústria [[8]](#referências).
 - **"Building Effective Agents"** (Anthropic, dezembro de 2024). O paper que virou a referência mais citada do campo, diferenciando **workflows** (caminhos predefinidos) de **agents** (processos dinâmicos, autodirigidos) [[9]](#referências).
 
@@ -115,7 +115,7 @@ O que faz algo ser "agêntico"? Cinco coisas:
 
 Aqui é onde a analogia da fábrica muda completamente. Você não está mais na linha de produção apertando parafuso e movendo peça. Agora você **projeta** a fábrica. Programa as máquinas, configura os controles de qualidade, supervisiona a produção. Os agentes executam, reportam problemas e se autocorrigem. Sua produtividade deixa de ser limitada pela velocidade das suas mãos e passa a depender da qualidade das suas instruções.
 
-Como a Anthropic resumiu: o desenvolvimento vai "de *'escrever código, rodar testes, ler erros, corrigir, repetir'* para *'definir objetivo, revisar mudanças, aprovar implementação.'*"
+Como a Anthropic resumiu: o desenvolvimento vai "de _'escrever código, rodar testes, ler erros, corrigir, repetir'_ para _'definir objetivo, revisar mudanças, aprovar implementação.'_"
 
 ### A linha do tempo completa
 
@@ -131,7 +131,7 @@ Cinco anos, acelerando absurdamente em 2024-2025:
 
 Vale uma distinção importante aqui. Digitar prompts vagos sem conferir o resultado (o que a comunidade chama de "vibe coding") não é programação agêntica. É só... preguiça com interface bonita. É a diferença entre ligar a máquina sem ler o manual e configurar tudo direitinho antes de apertar o botão.
 
-Programação agêntica profissional, como o blog de engenharia da Tweag define, envolve *"profissionais qualificados que escrevem prompts intencionalmente, validam rigorosamente e guiam a saída dentro de limites arquiteturais claros"* [[11]](#referências).
+Programação agêntica profissional, como o blog de engenharia da Tweag define, envolve _"profissionais qualificados que escrevem prompts intencionalmente, validam rigorosamente e guiam a saída dentro de limites arquiteturais claros"_ [[11]](#referências).
 
 É essa abordagem que esta série ensina. E pra usá-la direito, vale conhecer o ecossistema de ferramentas disponíveis.
 
@@ -155,14 +155,14 @@ Eis as principais:
 
 No lado open source, mais dois se destacam. **[Aider](https://github.com/paul-gauthier/aider)** (Apache 2.0) funciona com qualquer LLM e é gratuito. Detalhe curioso: o Aider escreve 70-88% do seu próprio código em cada release [[17]](#referências). **[Codex CLI](https://github.com/openai/codex)** da OpenAI (Apache 2.0) tem 2M+ de usuários semanais [[19]](#referências).
 
-| Ferramenta | Interface | Modelos | Open Source | Preço | Usuários aprox. |
-|---|---|---|---|---|---|
-| **Claude Code** | CLI + extensões | Anthropic | Source-available | $20/mês | 108K+ stars |
-| **Cursor** | IDE + CLI | Multi-modelo | Não | $20/mês | 1M+ DAU |
-| **GitHub Copilot** | Plugin IDE + cloud | Multi-modelo | Parcial | $10/mês | 20M+ |
-| **OpenCode** | CLI/TUI | 75+ provedores | Sim (MIT) | Grátis (usa sua API key) | 129K stars |
-| **Codex CLI** | CLI | OpenAI | Sim (Apache 2.0) | $20/mês | 2M+ semanais |
-| **Aider** | CLI | Qualquer LLM | Sim (Apache 2.0) | Grátis (usa sua API key) | 42.5K stars |
+| Ferramenta         | Interface          | Modelos        | Open Source      | Preço                    | Usuários aprox. |
+| ------------------ | ------------------ | -------------- | ---------------- | ------------------------ | --------------- |
+| **Claude Code**    | CLI + extensões    | Anthropic      | Source-available | $20/mês                  | 108K+ stars     |
+| **Cursor**         | IDE + CLI          | Multi-modelo   | Não              | $20/mês                  | 1M+ DAU         |
+| **GitHub Copilot** | Plugin IDE + cloud | Multi-modelo   | Parcial          | $10/mês                  | 20M+            |
+| **OpenCode**       | CLI/TUI            | 75+ provedores | Sim (MIT)        | Grátis (usa sua API key) | 129K stars      |
+| **Codex CLI**      | CLI                | OpenAI         | Sim (Apache 2.0) | $20/mês                  | 2M+ semanais    |
+| **Aider**          | CLI                | Qualquer LLM   | Sim (Apache 2.0) | Grátis (usa sua API key) | 42.5K stars     |
 
 O que chama atenção: são máquinas de fabricantes diferentes, mas no fim fazem a mesma coisa. Edição multi-arquivo, execução no terminal, extensibilidade via MCP e loop iterativo. O que realmente diferencia cada uma é como o comportamento agêntico é implementado e orquestrado por baixo dos panos: o sistema de tools, a forma de gerenciar contexto, o loop de planejamento e autocorreção. Fora isso, pesam o modelo de entrega (CLI vs IDE vs nuvem), o ecossistema e o preço. E as alternativas open source provam que o paradigma agêntico não exige ferramenta cara. Só um LLM capaz.
 
@@ -180,7 +180,7 @@ Na programação agêntica, o papel muda. Você define o objetivo, fornece conte
 
 Eu sei o que você pode estar pensando: "então a IA faz o trabalho e eu fico... fazendo o quê?"
 
-A pergunta melhor talvez seja: fazendo o quê de *diferente*. Quando surgiu o compilador, ninguém mais precisou escrever Assembly na mão. Quem programava não ficou sem função. Subiu um nível de abstração. Passou a pensar em lógica de negócio em vez de registradores de memória. Ficou *mais* produtivo, *mais* estratégico, *mais* valioso.
+A pergunta melhor talvez seja: fazendo o quê de _diferente_. Quando surgiu o compilador, ninguém mais precisou escrever Assembly na mão. Quem programava não ficou sem função. Subiu um nível de abstração. Passou a pensar em lógica de negócio em vez de registradores de memória. Ficou _mais_ produtivo, _mais_ estratégico, _mais_ valioso.
 
 A mesma coisa está acontecendo agora: você não está sendo substituído, está subindo de nível. Quem projeta a fábrica não é menos importante que quem opera, pelo contrário, mas as habilidades são outras.
 
@@ -206,7 +206,7 @@ Por um lado, o crescimento é inegável: US$ 7,37 bilhões de receita em 2025, 8
 
 Por outro, os dados independentes são mais sóbrios. O estudo METR (um ensaio randomizado rigoroso com 16 devs experientes) encontrou que ferramentas de IA deixaram o time **19% mais lento**, embora a percepção fosse de estar 20% mais rápido [[21]](#referências). Código gerado por IA carrega **2,74× mais vulnerabilidades** segundo a Veracode [[22]](#referências). E o Gartner prevê que **40% dos projetos agênticos serão cancelados** antes de chegar a produção até 2027 [[23]](#referências).
 
-A frase mais honesta que li sobre o assunto veio do relatório DORA 2025: *"A IA amplifica as forças de organizações de alto desempenho e as disfunções das que estão em dificuldade."* [[24]](#referências)
+A frase mais honesta que li sobre o assunto veio do relatório DORA 2025: _"A IA amplifica as forças de organizações de alto desempenho e as disfunções das que estão em dificuldade."_ [[24]](#referências)
 
 A fábrica automatizada produz mais, mas sem controle de qualidade, produz defeito mais rápido também. O resultado depende de quem configura e supervisiona. É exatamente isso que os três pilares endereçam.
 
@@ -216,7 +216,7 @@ A fábrica automatizada produz mais, mas sem controle de qualidade, produz defei
 
 Você agora sabe o que é programação agêntica, de onde veio e quais ferramentas existem. Sabe que o papel mudou: de quem escreve cada linha pra quem projeta, orienta e supervisiona. E sabe que três pilares (prompt engineering, context engineering e harness engineering) separam quem usa IA de qualquer jeito de quem usa com consistência.
 
-Só que saber o *que* não é suficiente. Pra usar isso de verdade, você precisa entender o *como*. E o como começa por uma pergunta que pouca gente para pra fazer: como essa tecnologia funciona por dentro?
+Só que saber o _que_ não é suficiente. Pra usar isso de verdade, você precisa entender o _como_. E o como começa por uma pergunta que pouca gente para pra fazer: como essa tecnologia funciona por dentro?
 
 O que são tokens? O que é uma context window? Por que modelos erram com tanta convicção? Entender isso muda completamente a forma como você interage com qualquer ferramenta agêntica.
 

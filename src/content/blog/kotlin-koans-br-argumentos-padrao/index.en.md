@@ -1,18 +1,18 @@
 ---
-title: "Kotlin Koans BR: Argumentos padrão"
-description: "Imagine que você tenha várias sobrecargas de foo() na sua linguagem favorita."
+title: 'Kotlin Koans BR: Argumentos padrão'
+description: 'Imagine que você tenha várias sobrecargas de foo() na sua linguagem favorita.'
 pubDate: 2024-03-07
 tags:
-  - "kotlin"
-  - "braziliandevs"
-series: "kotlin-koans-br"
+  - 'kotlin'
+  - 'braziliandevs'
+series: 'kotlin-koans-br'
 seriesOrder: 3
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fsz63sj008b26a3aufei7.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fsz63sj008b26a3aufei7.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kotlin-koans-br-argumentos-padrao-c6m"
+  devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-argumentos-padrao-c6m'
   devtoId: 1783115
-  githubRepo: "https://github.com/rsicarelli/kotlin-koans-edu-br"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
@@ -146,21 +146,21 @@ func (s SobrecargaGo) FooWithName(name string) string {
 
 ```javascript
 class SobrecargaJavaScript {
-    foo(name, number, toUpperCase) {
-        return (toUpperCase ? name.toUpperCase() : name) + number;
-    }
+  foo(name, number, toUpperCase) {
+    return (toUpperCase ? name.toUpperCase() : name) + number;
+  }
 
-    fooWithNameAndNumber(name, number) {
-        return this.foo(name, number, false);
-    }
+  fooWithNameAndNumber(name, number) {
+    return this.foo(name, number, false);
+  }
 
-    fooWithNameAndUpperCase(name, toUpperCase) {
-        return this.foo(name, 42, toUpperCase);
-    }
+  fooWithNameAndUpperCase(name, toUpperCase) {
+    return this.foo(name, 42, toUpperCase);
+  }
 
-    fooWithName(name) {
-        return this.foo(name, 42);
-    }
+  fooWithName(name) {
+    return this.foo(name, 42);
+  }
 }
 ```
 
@@ -220,15 +220,15 @@ class SobrecargaSwift {
     func foo(name: String, number: Int, toUpperCase: Bool) -> String {
         return (toUpperCase ? name.uppercased() : name) + String(number)
     }
-    
+
     func foo(name: String, number: Int) -> String {
         return foo(name: name, number: number, toUpperCase: false)
     }
-    
+
     func foo(name: String, toUpperCase: Bool) -> String {
         return foo(name: name, number: 42, toUpperCase: toUpperCase)
     }
-    
+
     func foo(name: String) -> String {
         return foo(name: name, number: 42)
     }
@@ -242,22 +242,22 @@ class SobrecargaSwift {
 
 ```typescript
 class SobrecargaTypeScript {
-    foo(name: string, number: number, toUpperCase: boolean): string {
-        return (toUpperCase ? name.toUpperCase() : name) + number.toString();
-    }
+  foo(name: string, number: number, toUpperCase: boolean): string {
+    return (toUpperCase ? name.toUpperCase() : name) + number.toString();
+  }
 
-    fooWithNumber(name: string, number: number): string {
-        return this.foo(name, number, false);
-    }
+  fooWithNumber(name: string, number: number): string {
+    return this.foo(name, number, false);
+  }
 
-    fooWithUpperCase(name: string, toUpperCase: boolean): string {
-        return this.foo(name, 42, toUpperCase);
-    }
+  fooWithUpperCase(name: string, toUpperCase: boolean): string {
+    return this.foo(name, 42, toUpperCase);
+  }
 
-    fooWithName(name: string): string {
-        return this.foo(name, 42);
-    }
-} 
+  fooWithName(name: string): string {
+    return this.foo(name, 42);
+  }
+}
 ```
 
 </details>
@@ -274,7 +274,7 @@ Se isso acontecer, o compilador usa esses argumentos padrão no lugar dos argume
 fun calculaDesconto(preco: Double, taxaDesconto: Double = 0.05) = preco - preco * taxaDesconto
 
 calculaDesconto(preco = 50.0)
-calculaDesconto(preco = 100.0, taxaDesconto = 0.10) 
+calculaDesconto(preco = 100.0, taxaDesconto = 0.10)
 ```
 
 No exemplo acima, o parâmetro `taxaDesconto` tem um valor padrão de 5% de desconto. Ao chamar a função `calculaDesconto` sem especificar a `taxaDesconto`, o desconto de 5% será aplicado sobre o preço.

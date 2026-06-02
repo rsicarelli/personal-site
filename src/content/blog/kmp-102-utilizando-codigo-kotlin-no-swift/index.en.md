@@ -1,21 +1,21 @@
 ---
-title: "KMP-102 - Utilizando Código Kotlin no Swift"
-description: "No último post, aprendemos a criar um XCFramework a partir de código Kotlin e exploramos algumas características dos tipos de build gerados."
-summary: "No último post, aprendemos a criar um XCFramework a partir de código Kotlin e exploramos algumas características dos tipos de build gerados."
+title: 'KMP-102 - Utilizando Código Kotlin no Swift'
+description: 'No último post, aprendemos a criar um XCFramework a partir de código Kotlin e exploramos algumas características dos tipos de build gerados.'
+summary: 'No último post, aprendemos a criar um XCFramework a partir de código Kotlin e exploramos algumas características dos tipos de build gerados.'
 pubDate: 2024-10-11
 tags:
-  - "kotlin"
-  - "kmp"
-  - "braziliandevs"
-  - "mobile"
-series: "kmp-102"
+  - 'kotlin'
+  - 'kmp'
+  - 'braziliandevs'
+  - 'mobile'
+series: 'kmp-102'
 seriesOrder: 3
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fxs3j6mxf4ocf4xif66pz.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fxs3j6mxf4ocf4xif66pz.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kmp-102-utilizando-codigo-kotlin-no-swift-2ice"
+  devtoUrl: 'https://dev.to/rsicarelli/kmp-102-utilizando-codigo-kotlin-no-swift-2ice'
   devtoId: 2034279
-  githubRepo: "https://github.com/rsicarelli/KMP-101"
+  githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 7
 ---
 
@@ -23,16 +23,16 @@ Com isso, podemos avançar e aprender como o código Kotlin compilado para Objec
 
 <!-- TOC -->
 
-  * [Exportando um 'Olá mundo' em Kotlin para iOS](#exportando-um-olá-mundo-em-kotlin-para-ios)
-    * [O que está acontecendo aqui?](#o-que-está-acontecendo-aqui)
-  * [Compreendendo o código gerado pelo Kotlin/Native](#compreendendo-o-código-gerado-pelo-kotlinnative)
-  * [Melhorando a interoperabilidade com Swift](#melhorando-a-interoperabilidade-com-swift)
-    * [E a anotação `@HiddenFromObjC`?](#e-a-anotação-hiddenfromobjc)
-  * [Outras maneiras de melhorar a interoperabilidade](#outras-maneiras-de-melhorar-a-interoperabilidade)
-    * [Utilizando o SKIE para melhorar a interoperabilidade](#utilizando-o-skie-para-melhorar-a-interoperabilidade)
-    * [Considerações sobre o SKIE](#considerações-sobre-o-skie)
-      * [Reduzindo o tempo de build do SKIE utilizando anotações](#reduzindo-o-tempo-de-build-do-skie-utilizando-anotações)
-  * [Conclusões finais](#conclusões-finais)
+- [Exportando um 'Olá mundo' em Kotlin para iOS](#exportando-um-olá-mundo-em-kotlin-para-ios)
+  - [O que está acontecendo aqui?](#o-que-está-acontecendo-aqui)
+- [Compreendendo o código gerado pelo Kotlin/Native](#compreendendo-o-código-gerado-pelo-kotlinnative)
+- [Melhorando a interoperabilidade com Swift](#melhorando-a-interoperabilidade-com-swift)
+  - [E a anotação `@HiddenFromObjC`?](#e-a-anotação-hiddenfromobjc)
+- [Outras maneiras de melhorar a interoperabilidade](#outras-maneiras-de-melhorar-a-interoperabilidade)
+  - [Utilizando o SKIE para melhorar a interoperabilidade](#utilizando-o-skie-para-melhorar-a-interoperabilidade)
+  - [Considerações sobre o SKIE](#considerações-sobre-o-skie)
+    - [Reduzindo o tempo de build do SKIE utilizando anotações](#reduzindo-o-tempo-de-build-do-skie-utilizando-anotações)
+- [Conclusões finais](#conclusões-finais)
 
 <!-- TOC -->
 

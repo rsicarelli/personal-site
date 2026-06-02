@@ -1,23 +1,24 @@
 ---
-title: "Kotlin Koans BR: Classes de dados (Data Classes)"
-description: "Reescreva o seguinte código para Kotlin: <details> <summary>Java</summary>"
+title: 'Kotlin Koans BR: Classes de dados (Data Classes)'
+description: 'Reescreva o seguinte código para Kotlin: <details> <summary>Java</summary>'
 pubDate: 2024-03-07
 tags:
-  - "kotlin"
-  - "braziliandevs"
-series: "kotlin-koans-br"
+  - 'kotlin'
+  - 'braziliandevs'
+series: 'kotlin-koans-br'
 seriesOrder: 9
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F337vd4c2gz7beq7st1ow.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F337vd4c2gz7beq7st1ow.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kotlin-koans-br-classes-de-dados-data-classes-2h9b"
+  devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-classes-de-dados-data-classes-2h9b'
   devtoId: 1783184
-  githubRepo: "https://github.com/rsicarelli/kotlin-koans-edu-br"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
 ## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Classes/Data%20classes/Task.kt)
 
 Reescreva o seguinte código para Kotlin:
+
 <details>
   <summary>Java</summary>
 
@@ -47,18 +48,18 @@ public class Person {
 
 ```javascript
 class Person {
-    constructor(name, age) {
-        this.name = name;
-        this.age = age;
-    }
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
 
-    getName() {
-        return this.name;
-    }
+  getName() {
+    return this.name;
+  }
 
-    getAge() {
-        return this.age;
-    }
+  getAge() {
+    return this.age;
+  }
 }
 ```
 
@@ -69,21 +70,21 @@ class Person {
 
 ```typescript
 class Person {
-    readonly name: string;
-    readonly age: number;
+  readonly name: string;
+  readonly age: number;
 
-    constructor(name: string, age: number) {
-        this.name = name;
-        this.age = age;
-    }
+  constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
+  }
 
-    getName(): string {
-        return this.name;
-    }
+  getName(): string {
+    return this.name;
+  }
 
-    getAge(): number {
-        return this.age;
-    }
+  getAge(): number {
+    return this.age;
+  }
 }
 ```
 
@@ -173,12 +174,12 @@ func NewPerson(name string, age int) *Person {
   <summary>C#</summary>
 
 ```csharp
-public class Person 
+public class Person
 {
     public string Name { get; }
     public int Age { get; }
 
-    public Person(string name, int age) 
+    public Person(string name, int age)
     {
         Name = name;
         Age = age;
@@ -231,7 +232,7 @@ class Pessoa(nome: String, idade: Int) {
 
 ### 4. Propriedades
 
-Podemos declarar propriedades diretamente no construtor primário, usando os modificadores `val`  e `var`.
+Podemos declarar propriedades diretamente no construtor primário, usando os modificadores `val` e `var`.
 Quando fazemos isso, estamos não apenas declarando um construtor, mas também definindo propriedades para a classe:
 
 ```kotlin
@@ -256,14 +257,13 @@ Em Kotlin, classes, objetos, propriedades e funções têm um modificador de ace
 - **Classes Internas (`inner`)**: são classes definidas dentro de outra classe com acesso aos membros da classe externa.
 - **Classes Abertas (`open`)**: Em Kotlin, por padrão, todas as classes são finais (não podem ser herdadas). Se você quiser permitir que uma classe seja herdada, você deve marcar a classe com `open`.
 - **Classes Abstratas (`abstract`)**: São classes que não podem ser instanciadas direta e geralmente servem como base para outras classes.
-- **Classes Seladas (`sealed`)**: Iremos aprender no próximo modulo 🔗 [Classes seladas (Sealed classes)](
-  https://github.com/rsicarelli/kotlin-koans-edu-br/blob/main/koans/src/commonMain/kotlin/com/rsicarelli/koansbr/classes/sealedClasses/README.md
-  )
+- **Classes Seladas (`sealed`)**: Iremos aprender no próximo modulo 🔗 [Classes seladas (Sealed classes)](https://github.com/rsicarelli/kotlin-koans-edu-br/blob/main/koans/src/commonMain/kotlin/com/rsicarelli/koansbr/classes/sealedClasses/README.md)
 - **Data Classes**: Classes otimizadas para armazenar dados, que serão mais exploradas no decorrer desse texto.
 
 🚫 **Nota Importante**: As `data classes` em Kotlin **não podem** ser marcadas como abertas (`open`), abstratas (`abstract`), seladas (`sealed`) ou internas (`inner`).
 
 ---
+
 Dado esse contexto, podemos explorar mais sobre as **Data Classes** em Kotlin 🧵👇
 
 ## Caso de uso
@@ -295,7 +295,7 @@ val pessoaC = Pessoa("Carla", 28)
 
 println(pessoaA == pessoaB)  // true, pois têm o mesmo nome e a mesma idade
 println(pessoaA == pessoaC)  // false, pois os nomes e idades são diferentes
-   ```
+```
 
 #### 2. **`hashCode()`**
 
@@ -321,7 +321,7 @@ fun adicionaPessoas() {
 
 Converte os dados da classe para uma representação em string de forma legível e estruturada. Por padrão, ele exibe o nome da classe seguido por seus campos (nomes e valores) em ordem de declaração
 
- ```kotlin
+```kotlin
 val juliana = Pessoa("Juliana", 16)
 
 println(juliana)  // Imprime "Pessoa(nome=Juliana, idade=16)"
@@ -404,7 +404,7 @@ println(autorDoLivro)   // Saída: João Silva
 
 > ℹ️ Essa prática não é comum e raramente é necessária, porém possível
 
-> 💡 Em Kotlin, a palavra-chave "operator" permite que funções se comportem como operadores tradicionais (como +, -, *, etc.) ou permita operações específicas (como a desconstrução de objetos).
+> 💡 Em Kotlin, a palavra-chave "operator" permite que funções se comportem como operadores tradicionais (como +, -, \*, etc.) ou permita operações específicas (como a desconstrução de objetos).
 
 ### Data Classes e a Imutabilidade
 

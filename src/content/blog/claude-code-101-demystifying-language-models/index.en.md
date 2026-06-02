@@ -1,18 +1,18 @@
 ---
-title: "Claude Code 101: Demystifying Language Models"
-description: "In the previous article, we built the entire factory: the evolution from manual production to autonomous machines, the ecosystem of agentic tools, the…"
-summary: "In the previous article, we built the entire factory: the evolution from manual production to autonomous machines, the ecosystem of agentic tools, the three pillars (prompt, context, and harness engineering). You know what the factory does, who works in it, and even how much revenue it pulls in."
+title: 'Claude Code 101: Demystifying Language Models'
+description: 'In the previous article, we built the entire factory: the evolution from manual production to autonomous machines, the ecosystem of agentic tools, the…'
+summary: 'In the previous article, we built the entire factory: the evolution from manual production to autonomous machines, the ecosystem of agentic tools, the three pillars (prompt, context, and harness engineering). You know what the factory does, who works in it, and even how much revenue it pulls in.'
 pubDate: 2026-04-09
 tags:
-  - "ai"
-  - "claude"
-series: "claude-code-101"
+  - 'ai'
+  - 'claude'
+series: 'claude-code-101'
 seriesOrder: 2
-coverUrl: "https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fruy65fg3biv53aa6r856.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fruy65fg3biv53aa6r856.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/claude-code-101-demystifying-language-models-3h8o"
+  devtoUrl: 'https://dev.to/rsicarelli/claude-code-101-demystifying-language-models-3h8o'
   devtoId: 3476270
-  githubRepo: "https://github.com/rsicarelli/claude-code-10x"
+  githubRepo: 'https://github.com/rsicarelli/claude-code-10x'
   reactions: 1
 ---
 
@@ -44,11 +44,11 @@ The character "o" with an accent becomes a separate token because accented chara
 
 A study by Petrov et al. presented at NeurIPS 2023 measured what they called the "tokenization premium" across languages [[1]](#references). The numbers:
 
-| Tokenizer | How much more Portuguese consumes vs English |
-|---|---|
-| GPT-2 (`r50k_base`) | **1.94x** (nearly double) |
-| GPT-4 (`cl100k_base`) | **1.48x** (~50% more) |
-| GPT-4o (`o200k_base`) | **~1.3-1.4x** (improved) * |
+| Tokenizer             | How much more Portuguese consumes vs English |
+| --------------------- | -------------------------------------------- |
+| GPT-2 (`r50k_base`)   | **1.94x** (nearly double)                    |
+| GPT-4 (`cl100k_base`) | **1.48x** (~50% more)                        |
+| GPT-4o (`o200k_base`) | **~1.3-1.4x** (improved) \*                  |
 
 The GPT-2 and GPT-4 numbers come directly from Petrov et al. [[1]](#references). The GPT-4o estimate reflects the improvement trend with larger vocabularies, confirmed by subsequent studies.
 
@@ -64,15 +64,15 @@ If tokens are the pieces, the context window is the desk where you build. Fixed 
 
 The market has converged on **1 million tokens** (1M) as the standard for frontier models [[2]](#references). In the table below, "K" means thousand and "M" means million:
 
-| Model | Desk size | Max response |
-|---|---|---|
-| **[Claude Opus 4.6](https://docs.anthropic.com/en/docs/about-claude/models)** | 1M tokens | 128K tokens |
-| **[Claude Sonnet 4.6](https://docs.anthropic.com/en/docs/about-claude/models)** | 1M tokens | 64K tokens |
-| **[Claude Haiku 4.5](https://docs.anthropic.com/en/docs/about-claude/models)** | 200K tokens | 64K tokens |
-| **[GPT-5.4](https://platform.openai.com/docs/models)** | 1.05M tokens | 128K tokens |
-| **[GPT-4.1](https://platform.openai.com/docs/models)** | 1M tokens | 32K tokens |
-| **[Gemini 2.5 Pro](https://ai.google.dev/gemini-api/docs/models)** | 1M tokens | 65K tokens |
-| **[Llama 4 Scout](https://ai.meta.com/blog/llama-4-multimodal-intelligence/)** | 10M tokens | varies |
+| Model                                                                           | Desk size    | Max response |
+| ------------------------------------------------------------------------------- | ------------ | ------------ |
+| **[Claude Opus 4.6](https://docs.anthropic.com/en/docs/about-claude/models)**   | 1M tokens    | 128K tokens  |
+| **[Claude Sonnet 4.6](https://docs.anthropic.com/en/docs/about-claude/models)** | 1M tokens    | 64K tokens   |
+| **[Claude Haiku 4.5](https://docs.anthropic.com/en/docs/about-claude/models)**  | 200K tokens  | 64K tokens   |
+| **[GPT-5.4](https://platform.openai.com/docs/models)**                          | 1.05M tokens | 128K tokens  |
+| **[GPT-4.1](https://platform.openai.com/docs/models)**                          | 1M tokens    | 32K tokens   |
+| **[Gemini 2.5 Pro](https://ai.google.dev/gemini-api/docs/models)**              | 1M tokens    | 65K tokens   |
+| **[Llama 4 Scout](https://ai.meta.com/blog/llama-4-multimodal-intelligence/)**  | 10M tokens   | varies       |
 
 The desk is shared. Everything you send to the model (your question, files, conversation history) and everything it replies with must fit together on the same surface. A desk of 1 million tokens sounds enormous, but the response already reserves a chunk of it, and the rest is the maximum you can send.
 
@@ -149,12 +149,12 @@ You're building a blue wall and need the next piece. In the box, the pieces are 
 
 **Temperature** controls how deep the model reaches into the box. At zero, it always grabs the piece on top: same choice, every time, no surprises. At 0.7, it sometimes fishes out a green one nobody expected, and it adds a nice touch to the build. Above 1.0, it pulls the red wheel and snaps it onto the wall anyway.
 
-| Temperature | Completing "The recipe calls for..." | Behavior |
-|---|---|---|
-| 0.0 | "flour, sugar, and cocoa." | Always the same answer |
-| 0.3 | "whole wheat flour, coconut oil, and cocoa." | Minor variations |
-| 0.7 | "exotic spices and a hint of Sicilian lemon." | Creative |
-| 1.5 | "melted dreams in dragon caramel." | Incoherent |
+| Temperature | Completing "The recipe calls for..."          | Behavior               |
+| ----------- | --------------------------------------------- | ---------------------- |
+| 0.0         | "flour, sugar, and cocoa."                    | Always the same answer |
+| 0.3         | "whole wheat flour, coconut oil, and cocoa."  | Minor variations       |
+| 0.7         | "exotic spices and a hint of Sicilian lemon." | Creative               |
+| 1.5         | "melted dreams in dragon caramel."            | Incoherent             |
 
 ![Temperature: how deep into the box](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part2/assets/en/part2-image5-c50d.png?raw=true)
 
@@ -259,15 +259,15 @@ Every piece costs money. LLMs are billed per token processed, split into two cat
 
 Prices in USD per 1 million tokens (MTok):
 
-| Model | Input / MTok | Output / MTok | Cache read / MTok |
-|---|---|---|---|
-| **Claude Opus 4.6** | $5.00 | $25.00 | $0.50 |
-| **Claude Sonnet 4.6** | $3.00 | $15.00 | $0.30 |
-| **Claude Haiku 4.5** | $1.00 | $5.00 | $0.10 |
-| **GPT-5.4** | $2.50 | $15.00 | $0.25 |
-| **GPT-4.1** | $2.00 | $8.00 | $0.50 |
-| **Gemini 2.5 Pro** | $1.25 | $10.00 | $0.125 |
-| **Gemini 2.5 Flash** | $0.30 | $2.50 | $0.03 |
+| Model                 | Input / MTok | Output / MTok | Cache read / MTok |
+| --------------------- | ------------ | ------------- | ----------------- |
+| **Claude Opus 4.6**   | $5.00        | $25.00        | $0.50             |
+| **Claude Sonnet 4.6** | $3.00        | $15.00        | $0.30             |
+| **Claude Haiku 4.5**  | $1.00        | $5.00         | $0.10             |
+| **GPT-5.4**           | $2.50        | $15.00        | $0.25             |
+| **GPT-4.1**           | $2.00        | $8.00         | $0.50             |
+| **Gemini 2.5 Pro**    | $1.25        | $10.00        | $0.125            |
+| **Gemini 2.5 Flash**  | $0.30        | $2.50         | $0.03             |
 
 Notice the "Cache read" column. It'll be important in a moment.
 

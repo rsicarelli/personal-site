@@ -1,38 +1,40 @@
 ---
-title: "Android Plataforma - Parte 6: Version Catalog"
-description: "No post anterior, otimizamos nossa plataforma, deixando-a preparada para mais funcionalidades."
+title: 'Android Plataforma - Parte 6: Version Catalog'
+description: 'No post anterior, otimizamos nossa plataforma, deixando-a preparada para mais funcionalidades.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
-  - "kotlin"
-  - "android"
-  - "gradle"
-series: "android-plataforma"
+  - 'kotlin'
+  - 'android'
+  - 'gradle'
+series: 'android-plataforma'
 seriesOrder: 6
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F3b7x5zvcghon1kgq5zxn.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F3b7x5zvcghon1kgq5zxn.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/android-plataforma-parte-6-version-catalog-59ob"
+  devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-6-version-catalog-59ob'
   devtoId: 1609535
-  githubRepo: "https://github.com/rsicarelli/kotlin-gradle-android-platform/"
-  githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/6/version-catalog"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
+  githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/6/version-catalog'
   reactions: 2
 ---
 
 No post anterior, otimizamos nossa plataforma, deixando-a preparada para mais funcionalidades.
 
-Neste post, vamos configurar os *Version Catalogs* do Gradle, proporcionando uma forma sofisticada de gerenciar nossas dependências.
+Neste post, vamos configurar os _Version Catalogs_ do Gradle, proporcionando uma forma sofisticada de gerenciar nossas dependências.
 
 ---
 
 ## O que são Version Catalogs?
-*Version Catalogs* é uma funcionalidade lançada inicialmente como experimental no Gradle `7.x` e posteriormente estabilizada na versão `8.x`. 
+
+_Version Catalogs_ é uma funcionalidade lançada inicialmente como experimental no Gradle `7.x` e posteriormente estabilizada na versão `8.x`.
 
 Essencialmente, esse recurso gera um "acessor de projeto", frequentemente nomeado como `libs`. Ele pode ser definido através de uma DSL no `settings.gradle.kts` ou por meio de um arquivo `.toml`. Neste tutorial, optaremos pela abordagem do arquivo `.toml`.
 
 ## Passos
 
 **1 -** Acesse a pasta `gradle` no diretório raiz do seu projeto e crie um arquivo nomeado `libs.versions.toml`:
+
 ```shell
 cd gradle
 touch libs.versions.toml
@@ -80,7 +82,7 @@ dependencyResolutionManagement {
     ..
     versionCatalogs {
         create("libs") {
-            // Note que subimos 1 nível de folder, para utilizar a pasta "gradle" da raiz 
+            // Note que subimos 1 nível de folder, para utilizar a pasta "gradle" da raiz
             from(files("../gradle/libs.versions.toml"))
         }
     }
@@ -88,12 +90,14 @@ dependencyResolutionManagement {
 ```
 
 ### Notas Importantes:
+
 1. É vital que o `libs.versions.toml` esteja localizado na pasta `gradle` do diretório raiz. Isso garante que tanto o projeto quanto nosso `build-logic` possam acessar esse catálogo.
 2. A adição do version catalog no `build-logic > settings.gradle.kts` assegura que o catálogo seja incluído tanto no projeto quanto no `build-logic`.
 
 Mantenha essas observações em mente, pois podem evitar futuros problemas relacionados à localização dos arquivos.
 
 ## Utilizando o acessor de projeto `libs`
+
 Após sincronizar o projeto, uma nova classe `libs` estará disponível. Agora, é hora de atualizar todos os `build.gradle.kts` para fazer uso desta classe:
 
 ```kotlin
@@ -105,6 +109,7 @@ plugins {
     id(libs.plugins.rsicarelli.kplatform.get().pluginId)
 }
 ```
+
 ```kotlin
 // app/build.gradle.kts
 
@@ -122,6 +127,7 @@ dependencies {
     implementation(projects.features.home)
 }
 ```
+
 ```kotlin
 // core/designsystem/build.gradle.kts
 
@@ -141,6 +147,7 @@ dependencies {
     debugApi(libs.androidx.compose.ui.test.manifest)
 }
 ```
+
 ```kotlin
 // feature/details/build.gradle.kts
 // feature/home/build.gradle.kts
@@ -151,7 +158,9 @@ plugins {
 }
 ..
 ```
+
 ## Atualizando a versão do Compose Compiler
+
 Busque por referências do `kotlinCompilerExtensionVersion` e substitua pelo nosso acessor `libs`:
 
 ```kotlin
@@ -161,6 +170,7 @@ composeOptions {
 ```
 
 ## Concluído!
+
 Com essas alterações, agora possuímos uma maneira robusta e unificada de gerenciar nossas dependências, seja no projeto ou na plataforma.
 
 No próximo artigo, migraremos nossos scripts do módulo `app` diretamente para nossa plataforma.

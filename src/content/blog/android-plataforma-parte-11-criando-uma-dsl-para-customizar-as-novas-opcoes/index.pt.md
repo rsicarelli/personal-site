@@ -1,20 +1,20 @@
 ---
-title: "Android Plataforma - Parte 11: Criando uma DSL para customizar as novas opções"
-description: "No artigo anterior, parametrizamos os argumentos de applyAndroidApp() e appyAndroidLibary() com modelos."
+title: 'Android Plataforma - Parte 11: Criando uma DSL para customizar as novas opções'
+description: 'No artigo anterior, parametrizamos os argumentos de applyAndroidApp() e appyAndroidLibary() com modelos.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
-  - "kotlin"
-  - "android"
-  - "gradle"
-series: "android-plataforma"
+  - 'kotlin'
+  - 'android'
+  - 'gradle'
+series: 'android-plataforma'
 seriesOrder: 11
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Favuc64tchhyvt93ar1za.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Favuc64tchhyvt93ar1za.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/android-plataforma-parte-11-criando-uma-dsl-para-customizar-as-novas-opcoes-1m1e"
+  devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-11-criando-uma-dsl-para-customizar-as-novas-opcoes-1m1e'
   devtoId: 1611012
-  githubRepo: "https://github.com/rsicarelli/kotlin-gradle-android-platform/"
-  githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/10-11/customizing-android-options"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
+  githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/10-11/customizing-android-options'
   reactions: 2
 ---
 
@@ -25,6 +25,7 @@ Agora, as funções `androidApp()` e `androidLibrary()` devem ser modificadas pa
 ---
 
 ## Definindo os valores através de uma DSL
+
 Dentro das nossas funções `androidApp()` e `androidLibrary()` poderiamos simplesmente aceitar um modelo:
 
 ```kotlin
@@ -51,7 +52,6 @@ Para solucionar esse problema, vamos introduzir uma DSL que cuide dessa customiz
 Note que, aqui iremos definir os valores padrões da nossa plataforma.
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/7v2mwju1ebm1o7ebodow.png)
-
 
 ```kotlin
 
@@ -144,6 +144,7 @@ fun Project.androidLibrary(builderAction: AndroidLibraryOptionsBuilder.() -> Uni
 ```
 
 ### Uso
+
 Uso é super flúido, olha só como podemos customizar `versionCode` e `versionName` no `app/build.gradle.kts`:
 
 ```kotlin
@@ -160,6 +161,7 @@ androidApp {
 ```
 
 ## Sucesso!
+
 Agora, nossa configuração está elegante com uma DSL expressiva e intuitiva, permitindo diversas customizações adaptáveis para diferentes cenários.
 
 Essa abordagem nos permite estabelecer comportamentos padrão para os módulos, mas também oferece uma DSL robusta para que o time consiga adicionar novas configurações conforme necessário.

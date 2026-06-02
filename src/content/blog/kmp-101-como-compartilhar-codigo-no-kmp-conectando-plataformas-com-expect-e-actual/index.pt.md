@@ -1,21 +1,21 @@
 ---
-title: "KMP 101: Como compartilhar código no KMP - conectando plataformas com expect e actual"
-description: "Nos últimos artigos, aprofundamos nos bastidores do Kotlin Multiplataforma: seu paradigma, a arquitetura do compilador, os source sets, o ambiente de…"
-summary: "Nos últimos artigos, aprofundamos nos bastidores do Kotlin Multiplataforma: seu paradigma, a arquitetura do compilador, os source sets, o ambiente de desenvolvimento, a criação e execução de um projeto exemplo, e o papel fundamental do Gradle."
+title: 'KMP 101: Como compartilhar código no KMP - conectando plataformas com expect e actual'
+description: 'Nos últimos artigos, aprofundamos nos bastidores do Kotlin Multiplataforma: seu paradigma, a arquitetura do compilador, os source sets, o ambiente de…'
+summary: 'Nos últimos artigos, aprofundamos nos bastidores do Kotlin Multiplataforma: seu paradigma, a arquitetura do compilador, os source sets, o ambiente de desenvolvimento, a criação e execução de um projeto exemplo, e o papel fundamental do Gradle.'
 pubDate: 2023-12-13
 updatedDate: 2024-01-27
 tags:
-  - "kotlin"
-  - "kmp"
-  - "braziliandevs"
-  - "mobile"
-series: "kmp-101"
+  - 'kotlin'
+  - 'kmp'
+  - 'braziliandevs'
+  - 'mobile'
+series: 'kmp-101'
 seriesOrder: 7
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F3x2ugp064gbq2qgpcrje.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F3x2ugp064gbq2qgpcrje.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kmp-101-como-compartilhar-codigo-no-kmp-conectando-plataformas-com-expect-e-actual-49ma"
+  devtoUrl: 'https://dev.to/rsicarelli/kmp-101-como-compartilhar-codigo-no-kmp-conectando-plataformas-com-expect-e-actual-49ma'
   devtoId: 1696574
-  githubRepo: "https://github.com/rsicarelli/KMP-101"
+  githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 11
 ---
 
@@ -258,19 +258,21 @@ Mas, como pode perceber pelos exemplos, geralmente conseguimos utilizar essa abo
 Mas e quanto ao acesso a recursos específicos e nativos da plataforma no KMP?
 
 ### 2. Compartilhando código com implementações específicas de cada plataforma
+
 Aprendemos que cada plataforma tem uma forma específica de acessar recursos exclusivos do sistema operacional como internet, bluetooth, disco, notificações, imagens, etc. Esses recursos, apesar de na teoria terem o mesmo conceito, diferem nas suas implementações.
 
 Para resolver esse desafio, o KMP introduz [duas novas palavras reservadas](https://kotlinlang.org/docs/multiplatform-expect-actual.html): `expect` (o contrato) e `actual` (a implementação).
 
 #### 2.1 A palavra reservada `expect` no KMP
+
 A palavra reservada `expect` informa o compilador do Kotlin para ele pode "esperar" ou "exigir" uma implementação específica de cada plataforma para aquele componente específico durante a compilação de um source-set específico. Podemos utilizar a palavra `expect` para funções, propriedades, classes, objetos, interfaces, enumerações ou anotações.
 
 Só é possível utilizar o `expect` no source set comum (`commonMain`): o source set comum declara, e os source sets específicos implementam.
 
-- Ao declarar um componente com a palavra `expect`, você tem a obrigação de declarar a implementação (`actual`) em cada source-set específico. Inclusive, ao declarar um `expect` qualquer, a IDE já sinaliza um erro informando que precisamos declarar a versão `actual` de cada plataforma. 
- ![Erro ao declarar expect](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-expect-actual-kotlin.png?raw=true) 
-- Não é possível declarar a implementação ou atribuir um valor para seu componente. Por exemplo, ao declarar uma variável com `expect`, não é possível assinar um valor 
- ![Erro ao inicializar expect](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-expect-no-initializer.png?raw=true) 
+- Ao declarar um componente com a palavra `expect`, você tem a obrigação de declarar a implementação (`actual`) em cada source-set específico. Inclusive, ao declarar um `expect` qualquer, a IDE já sinaliza um erro informando que precisamos declarar a versão `actual` de cada plataforma.
+  ![Erro ao declarar expect](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-expect-actual-kotlin.png?raw=true)
+- Não é possível declarar a implementação ou atribuir um valor para seu componente. Por exemplo, ao declarar uma variável com `expect`, não é possível assinar um valor
+  ![Erro ao inicializar expect](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-expect-no-initializer.png?raw=true)
 
 Agora que entendemos a palavra reservada `expect`, vamos aprender mais sobre seu outro par: o `actual`
 
@@ -284,10 +286,11 @@ O compilador do Kotlin garante que:
 
 - Toda declaração esperada no source-set comum tem uma declaração real correspondente em cada source-set específico da plataforma.
 
- ![Demo em todas as plataformas](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/fullfilling-expect-actual.gif?raw=true)                                                                                                                                                                                                             
+![Demo em todas as plataformas](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/fullfilling-expect-actual.gif?raw=true)
+
 - Toda declaração real compartilha o mesmo pacote que a declaração esperada correspondente, como `br.com.rsicarelli.example`. A imagem a seguir mostra o erro relacionado a tentar refatorar declarações que não compartilham o mesmo pacote:
 
- ![Error: não pode ter pacotes diferentes](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-cannot-have-different-packages.gif?raw=true) <br> _"Não é Possível Realizar Refatoração. <br> Esta refatoração moverá a declaração selecionada sem seus correspondentes esperados/reais que podem levar a erros de compilação."_
+![Error: não pode ter pacotes diferentes](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-cannot-have-different-packages.gif?raw=true) <br> _"Não é Possível Realizar Refatoração. <br> Esta refatoração moverá a declaração selecionada sem seus correspondentes esperados/reais que podem levar a erros de compilação."_
 
 ## Conclusões
 
@@ -308,4 +311,5 @@ Até a próxima!
 ---
 
 > Referências
+>
 > - [Rules for expected and actual declarations](https://kotlinlang.org/docs/multiplatform-expect-actual.html)

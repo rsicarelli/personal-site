@@ -1,20 +1,20 @@
 ---
-title: "Kotlin Koans BR: Extension functions e properties (funções e propriedades estendidas)"
-description: "Implemente as funções de extensão Int.r() e Pair.r() e faça com que elas convertam Int e Pair em um RationalNumber."
+title: 'Kotlin Koans BR: Extension functions e properties (funções e propriedades estendidas)'
+description: 'Implemente as funções de extensão Int.r() e Pair.r() e faça com que elas convertam Int e Pair em um RationalNumber.'
 pubDate: 2024-04-06
 tags:
-  - "kotlin"
-  - "braziliandevs"
-  - "mobile"
-  - "kmp"
-series: "kotlin-koans-br"
+  - 'kotlin'
+  - 'braziliandevs'
+  - 'mobile'
+  - 'kmp'
+series: 'kotlin-koans-br'
 seriesOrder: 13
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fi1sa1wvhb23tg0s9tvkx.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fi1sa1wvhb23tg0s9tvkx.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kotlin-koans-br-extension-functions-e-properties-funcoes-e-propriedades-estendidas-e39"
+  devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-extension-functions-e-properties-funcoes-e-propriedades-estendidas-e39'
   devtoId: 1813363
-  githubRepo: "https://github.com/rsicarelli/kotlin-koans-edu-br"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 7
 ---
 
@@ -23,11 +23,13 @@ provenance:
 Implemente as funções de extensão `Int.r()` e `Pair.r()` e faça com que elas convertam `Int` e `Pair` em um `RationalNumber`.
 
 ## Introdução as extension functions no Kotlin
+
 Em Kotlin, as [extension functions](https://kotlinlang.org/docs/extensions.html#extension-functions) são uma ferramenta poderosa que permite adicionar novas funcionalidades a uma classe sem a necessidade de modificá-la ou herdá-la: você a "estende".
 
 Essa ferramenta nos ajuda a isolar melhor nosso código, reaproveitar, e contextualizar dependendo do uso.
 
 Vamos supor que você possua a seguinte classe hipotética que calcula valores de frete:
+
 ```kotlin
 class DeliveryCalculator {
     fun calculateDefaultDelivery(): String {
@@ -67,7 +69,7 @@ class DeliveryCalculator {
         val value : Double = 15.50
         return formatAsPercentage(value)
     }
-    
+
     private fun formatAsPercentage(value: Double) = "${value * 100}%"
 }
 ```
@@ -129,6 +131,7 @@ fun Double.formatAsPercentage() = "${this * 100}%"
 ```
 
 ### Extension properties (estendendo propriedades)
+
 No caso acima, uma função pode ser redundante, já que não há nenhum parâmetro para a função `formatAsPercentage()`.
 
 Para resolver isso, o Kotlin também nos possibilita estender propriedades da classe, tornando o código ainda mais limpo.
@@ -140,7 +143,7 @@ class DeliveryCalculator {
     fun calculateFastDelivery(): String = 22.90.asPercentage
 
     fun calculateScheduledDelivery(): String = 15.50.asPercentage
-    
+
     private val Double.asPercentage
         get() = "${this * 100}%"
 }
@@ -171,6 +174,7 @@ Dessa forma, não existe uma sobrecarga de desempenho ao usar funções de exten
 - **Simplicidade**: funções de extensão devem ter uma única responsabilidade. Isto facilita o teste.
 
 ### Pair
+
 No exercício, nos deparamos com uma classe específica do Kotlin.
 
 Em Kotlin, [Pair](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/) é uma classe que representa um valor composto por dois elementos - uma 'dupla'. É uma maneira simples de armazenar dois valores relacionados juntos, mas sem semântica particular.
@@ -185,6 +189,7 @@ data class Pair<out A, out B>(
 ```
 
 ## Conclusão
+
 As extension functions e properties do Kotlin serão ferramentas que irão acompanhá-lo durante toda a sua trajetória como DEV Kotlin.
 
 Elas nos ajudam a organizar e reaproveitar nosso código, contextualizando e incentivando funções puras e isoladas que facilitam a compreensão do código-fonte.

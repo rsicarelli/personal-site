@@ -1,17 +1,17 @@
 ---
-title: "Kotlin Koans BR: Lambdas"
-description: "Passe um lambda para a função anypara verificar se a coleção contém um número par."
+title: 'Kotlin Koans BR: Lambdas'
+description: 'Passe um lambda para a função anypara verificar se a coleção contém um número par.'
 pubDate: 2024-03-07
 tags:
-  - "kotlin"
-  - "braziliandevs"
-series: "kotlin-koans-br"
+  - 'kotlin'
+  - 'braziliandevs'
+series: 'kotlin-koans-br'
 seriesOrder: 8
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fi79j8kpd34s9m5t1y524.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fi79j8kpd34s9m5t1y524.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kotlin-koans-br-lambdas-4pnl"
+  devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-lambdas-4pnl'
   devtoId: 1783128
-  githubRepo: "https://github.com/rsicarelli/kotlin-koans-edu-br"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 

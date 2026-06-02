@@ -1,22 +1,22 @@
 ---
-title: "Android Plataforma - Parte 13: Incluindo módulos \"puro JVM\""
-description: "No último artigo, otimizamos a compilação dos módulos Android desativando diversas funcionalidades do Android Gradle Plugin (AGP)."
-summary: "No último artigo, otimizamos a compilação dos módulos Android desativando diversas funcionalidades do Android Gradle Plugin (AGP)."
+title: 'Android Plataforma - Parte 13: Incluindo módulos "puro JVM"'
+description: 'No último artigo, otimizamos a compilação dos módulos Android desativando diversas funcionalidades do Android Gradle Plugin (AGP).'
+summary: 'No último artigo, otimizamos a compilação dos módulos Android desativando diversas funcionalidades do Android Gradle Plugin (AGP).'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
-  - "kotlin"
-  - "android"
-  - "gradle"
-series: "android-plataforma"
+  - 'kotlin'
+  - 'android'
+  - 'gradle'
+series: 'android-plataforma'
 seriesOrder: 13
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fxiiw5fbp76p9gde68ci1.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fxiiw5fbp76p9gde68ci1.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/android-plataforma-parte-13-incluindo-modulos-puro-jvm-4f61"
+  devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-13-incluindo-modulos-puro-jvm-4f61'
   devtoId: 1611083
-  githubRepo: "https://github.com/rsicarelli/kotlin-gradle-android-platform/"
-  githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/13/jvm-only-modules"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
+  githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/13/jvm-only-modules'
   reactions: 2
 ---
 
@@ -26,12 +26,11 @@ Neste artigo, discutiremos a distinção entre módulos puro JVM (`java-library`
 
 ## O que são Módulos Puro JVM?
 
-Módulos Puro JVM são aqueles que utilizam exclusivamente a JVM (Java Virtual Machine) para sua execução. Em outras palavras, não têm vínculo nem dependência direta com o Android. 
+Módulos Puro JVM são aqueles que utilizam exclusivamente a JVM (Java Virtual Machine) para sua execução. Em outras palavras, não têm vínculo nem dependência direta com o Android.
 
 Simplificando, são módulos puramente Java, isentos das especificidades e complexidades dos módulos Android.
 
 Como resultado, as compilações são mais eficientes, já que esses módulos não passam pelas etapas de compilação do Android Gradle Plugin (AGP).
-
 
 ### Quando usar módulos puro JVM?
 
@@ -104,6 +103,7 @@ class CompilationOptionsBuilder {
 ```
 
 **3 -** Vamos adaptar nossa função `applyJvmLibrary()` pra receber um `CompilationOptions`:
+
 ```kotlin
 import com.rsicarelli.kplatform.options.CompilationOptions
 import org.gradle.api.JavaVersion
@@ -179,6 +179,7 @@ private fun Project.applyAndroidCommon(
 ```
 
 ### Expondo as novas APIs
+
 Agora, atualizaremos nosso `KPlatformPlugin.kt` com as novas definições:
 
 ```kotlin
@@ -211,11 +212,13 @@ fun Project.jvmLibrary(builderAction: CompilationOptionsBuilder.() -> Unit = { }
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/81xtralh2ban3swg5isb.png)
 
 **2 -** Inclua esse novo módulo no `settings.gradle.kts`:
+
 ```kotlin
 include(":app", ":features:details", ":features:home", ":core:designsystem", ":core:threading")
 ```
 
 **3 -** Sincronize o projeto. Em seguida, crie um arquivo `build.gradle.kts` e configure as opções desse módulo:
+
 ```kotlin
 import com.rsicarelli.kplatform.jvmLibrary
 
@@ -232,7 +235,8 @@ dependencies {
 ```
 
 ## Sucesso!
-A IDE informará se essa biblioteca é pura JVM. 
+
+A IDE informará se essa biblioteca é pura JVM.
 
 Embora eu esteja usando o IntelliJ, o Android Studio também exibirá um ícone diferente
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/e3pvnqbr36fgmjw91v08.png)

@@ -1,19 +1,19 @@
 ---
-title: "Claude Code 101: Introduction to Agentic Programming"
-description: "September 2025. I was leading a critical dependency upgrade on a mobile app with millions of users. The kind of change that breaks tests in a cascade.…"
+title: 'Claude Code 101: Introduction to Agentic Programming'
+description: 'September 2025. I was leading a critical dependency upgrade on a mobile app with millions of users. The kind of change that breaks tests in a cascade.…'
 summary: "September 2025. I was leading a critical dependency upgrade on a mobile app with millions of users. The kind of change that breaks tests in a cascade. The deadline was October: if it wasn't ready, the app wouldn't ship to the store."
 pubDate: 2026-04-06
 updatedDate: 2026-04-09
 tags:
-  - "claude"
-  - "ai"
-series: "claude-code-101"
+  - 'claude'
+  - 'ai'
+series: 'claude-code-101'
 seriesOrder: 1
-coverUrl: "https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fk7x245w00xy8wd4jdt6t.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fk7x245w00xy8wd4jdt6t.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/claude-code-101-introduction-to-agentic-programming-3p83"
+  devtoUrl: 'https://dev.to/rsicarelli/claude-code-101-introduction-to-agentic-programming-3p83'
   devtoId: 3460063
-  githubRepo: "https://github.com/rsicarelli/claude-code-10x"
+  githubRepo: 'https://github.com/rsicarelli/claude-code-10x'
   reactions: 6
 ---
 
@@ -98,7 +98,7 @@ This is where the paradigm flips. Instead of you orchestrating the AI, **you set
 This shift didn't happen out of nowhere. A sequence of advances made it possible:
 
 - **Function calling** (OpenAI, June 2023). For the first time, models could invoke external tools. This is the technical prerequisite for any agentic behavior [[6]](#references).
-- **Andrew Ng coins "agentic"** (late 2023). He chose an adjective on purpose, not a noun: *"Unlike the noun 'agent,' the adjective 'agentic' lets us think of systems as being more or less agent-like, in varying degrees."* [[7]](#references)
+- **Andrew Ng coins "agentic"** (late 2023). He chose an adjective on purpose, not a noun: _"Unlike the noun 'agent,' the adjective 'agentic' lets us think of systems as being more or less agent-like, in varying degrees."_ [[7]](#references)
 - **Model Context Protocol** (Anthropic, November 2024). The open standard for connecting agents to external tools, rapidly adopted across the industry [[8]](#references).
 - **"Building Effective Agents"** (Anthropic, December 2024). The paper that became the most cited reference in the field, distinguishing **workflows** (predefined paths) from **agents** (dynamic, self-directed processes) [[9]](#references).
 
@@ -114,7 +114,7 @@ What makes something "agentic"? Five things:
 
 This is where the factory analogy changes completely. You're no longer on the production line tightening bolts and moving parts. Now you **design** the factory. You program the machines, set up quality controls, oversee production. The agents execute, report problems, and self-correct. Your productivity is no longer limited by the speed of your hands; it depends on the quality of your instructions.
 
-As Anthropic put it: development shifts "from *'write code, run tests, read errors, fix, repeat'* to *'set goal, review changes, approve implementation.'*"
+As Anthropic put it: development shifts "from _'write code, run tests, read errors, fix, repeat'_ to _'set goal, review changes, approve implementation.'_"
 
 ### The full timeline
 
@@ -130,7 +130,7 @@ Five years, accelerating dramatically in 2024-2025:
 
 An important distinction here. Typing vague prompts without checking the output (what the community calls "vibe coding") is not agentic programming. It's just... laziness with a nice interface. It's the difference between turning on a machine without reading the manual and configuring everything properly before pressing the button.
 
-Professional agentic programming, as Tweag's engineering blog defines it, involves *"qualified professionals who write prompts intentionally, validate rigorously, and guide the output within clear architectural boundaries"* [[11]](#references).
+Professional agentic programming, as Tweag's engineering blog defines it, involves _"qualified professionals who write prompts intentionally, validate rigorously, and guide the output within clear architectural boundaries"_ [[11]](#references).
 
 That's the approach this series teaches. And to use it properly, it helps to know the ecosystem of available tools.
 
@@ -154,14 +154,14 @@ Here are the main ones:
 
 On the open source side, two more stand out. **[Aider](https://github.com/paul-gauthier/aider)** (Apache 2.0) works with any LLM and is free. Fun fact: Aider writes 70–88% of its own code in each release [[17]](#references). **[Codex CLI](https://github.com/openai/codex)** from OpenAI (Apache 2.0) has 2M+ weekly users [[19]](#references).
 
-| Tool | Interface | Models | Open Source | Price | Approx. Users |
-|---|---|---|---|---|---|
-| **Claude Code** | CLI + extensions | Anthropic | Source-available | $20/mo | 108K+ stars |
-| **Cursor** | IDE + CLI | Multi-model | No | $20/mo | 1M+ DAU |
-| **GitHub Copilot** | IDE plugin + cloud | Multi-model | Partial | $10/mo | 20M+ |
-| **OpenCode** | CLI/TUI | 75+ providers | Yes (MIT) | Free (bring your API key) | 129K stars |
-| **Codex CLI** | CLI | OpenAI | Yes (Apache 2.0) | $20/mo | 2M+ weekly |
-| **Aider** | CLI | Any LLM | Yes (Apache 2.0) | Free (bring your API key) | 42.5K stars |
+| Tool               | Interface          | Models        | Open Source      | Price                     | Approx. Users |
+| ------------------ | ------------------ | ------------- | ---------------- | ------------------------- | ------------- |
+| **Claude Code**    | CLI + extensions   | Anthropic     | Source-available | $20/mo                    | 108K+ stars   |
+| **Cursor**         | IDE + CLI          | Multi-model   | No               | $20/mo                    | 1M+ DAU       |
+| **GitHub Copilot** | IDE plugin + cloud | Multi-model   | Partial          | $10/mo                    | 20M+          |
+| **OpenCode**       | CLI/TUI            | 75+ providers | Yes (MIT)        | Free (bring your API key) | 129K stars    |
+| **Codex CLI**      | CLI                | OpenAI        | Yes (Apache 2.0) | $20/mo                    | 2M+ weekly    |
+| **Aider**          | CLI                | Any LLM       | Yes (Apache 2.0) | Free (bring your API key) | 42.5K stars   |
 
 What stands out: these are machines from different manufacturers, but they ultimately do the same thing. Multi-file editing, terminal execution, extensibility via MCP, and an iterative loop. What truly differentiates each one is how the agentic behavior is implemented and orchestrated under the hood: the tool system, the way context is managed, the planning and self-correction loop. Beyond that, what matters is the delivery model (CLI vs IDE vs cloud), the ecosystem, and the price. And the open source alternatives prove that the agentic paradigm doesn't require expensive tools. Just a capable LLM.
 
@@ -179,7 +179,7 @@ In agentic programming, the role changes. You define the goal, provide context, 
 
 I know what you might be thinking: "so the AI does the work and I just... do what?"
 
-The better question might be: do what *differently*. When the compiler came along, nobody needed to write Assembly by hand anymore. Programmers didn't lose their purpose. They moved up a level of abstraction. They started thinking about business logic instead of memory registers. They became *more* productive, *more* strategic, *more* valuable.
+The better question might be: do what _differently_. When the compiler came along, nobody needed to write Assembly by hand anymore. Programmers didn't lose their purpose. They moved up a level of abstraction. They started thinking about business logic instead of memory registers. They became _more_ productive, _more_ strategic, _more_ valuable.
 
 The same thing is happening now: you're not being replaced, you're leveling up. Whoever designs the factory isn't less important than whoever operates it — quite the opposite — but the skills are different.
 
@@ -205,7 +205,7 @@ On one hand, the growth is undeniable: $7.37 billion in revenue in 2025, 84% of 
 
 On the other hand, independent data is more sobering. The METR study (a rigorous randomized trial with 16 experienced devs) found that AI tools made the team **19% slower**, even though participants perceived themselves as 20% faster [[21]](#references). AI-generated code carries **2.74x more vulnerabilities** according to Veracode [[22]](#references). And Gartner predicts that **40% of agentic AI projects will be canceled** before reaching production by 2027 [[23]](#references).
 
-The most honest take I've read on this came from the DORA 2025 report: *"AI amplifies the strengths of high-performing organizations and the dysfunctions of those that are struggling."* [[24]](#references)
+The most honest take I've read on this came from the DORA 2025 report: _"AI amplifies the strengths of high-performing organizations and the dysfunctions of those that are struggling."_ [[24]](#references)
 
 The automated factory produces more, but without quality control, it produces defects faster too. The outcome depends on who configures and oversees it. That's exactly what the three pillars address.
 
@@ -215,7 +215,7 @@ The automated factory produces more, but without quality control, it produces de
 
 You now know what agentic programming is, where it came from, and what tools exist. You know that the role has shifted: from the one who writes every line to the one who designs, guides, and oversees. And you know that three pillars (prompt engineering, context engineering, and harness engineering) separate those who use AI haphazardly from those who use it with consistency.
 
-But knowing the *what* isn't enough. To actually use this, you need to understand the *how*. And the how starts with a question few people stop to ask: how does this technology work under the hood?
+But knowing the _what_ isn't enough. To actually use this, you need to understand the _how_. And the how starts with a question few people stop to ask: how does this technology work under the hood?
 
 What are tokens? What is a context window? Why do models hallucinate with such conviction? Understanding this completely changes how you interact with any agentic tool.
 

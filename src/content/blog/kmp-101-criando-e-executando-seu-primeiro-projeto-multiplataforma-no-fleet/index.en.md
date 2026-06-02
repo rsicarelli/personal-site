@@ -1,22 +1,22 @@
 ---
-title: "KMP 101: Criando e executando seu primeiro projeto multiplataforma no Fleet"
-description: "Nos últimos artigos, focamos em diversos conceitos-chave do KMP e entendemos desde o paradigma multiplataforma, até a configuração do ambiente."
-summary: "Nos últimos artigos, focamos em diversos conceitos-chave do KMP e entendemos desde o paradigma multiplataforma, até a configuração do ambiente."
+title: 'KMP 101: Criando e executando seu primeiro projeto multiplataforma no Fleet'
+description: 'Nos últimos artigos, focamos em diversos conceitos-chave do KMP e entendemos desde o paradigma multiplataforma, até a configuração do ambiente.'
+summary: 'Nos últimos artigos, focamos em diversos conceitos-chave do KMP e entendemos desde o paradigma multiplataforma, até a configuração do ambiente.'
 pubDate: 2023-12-01
 updatedDate: 2024-01-27
 tags:
-  - "kotlin"
-  - "kmp"
-  - "braziliandevs"
-  - "mobile"
-series: "kmp-101"
+  - 'kotlin'
+  - 'kmp'
+  - 'braziliandevs'
+  - 'mobile'
+series: 'kmp-101'
 seriesOrder: 5
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Firwzqv63nau0qx6mxiks.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Firwzqv63nau0qx6mxiks.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kmp-101-criando-e-executando-seu-primeiro-projeto-multiplataforma-no-fleet-4ep7"
+  devtoUrl: 'https://dev.to/rsicarelli/kmp-101-criando-e-executando-seu-primeiro-projeto-multiplataforma-no-fleet-4ep7'
   devtoId: 1684940
-  githubRepo: "https://github.com/rsicarelli/KMP-101"
+  githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 9
 ---
 
@@ -37,9 +37,10 @@ Existem diversas maneiras para criarmos um novo projeto KMP, como, por exemplo:
 Já que iremos utilizar o **Fleet** para esse e os próximos artigos, o [KMP Wizard](https://kmp.jetbrains.com/) é uma opção perfeita, já que o Fleet ainda não possui um mecanismo de templates.
 
 O uso do Wizard é super intuitivo, caso precise de um passo a passo:
+
 1. Atribua um nome e um ID de projeto
 2. Selecione Android, iOS e Desktop
-3. Clique em ***Download***;
+3. Clique em **_Download_**;
 
 > E a Web? O motivo merece um artigo separado sobre Kotlin/JS e Kotlin/Wasm.
 >
@@ -52,7 +53,7 @@ Utilizar o projeto gerado pelo KMP Wizard no **Fleet** é bem simples:
 1. Extraia o `.zip` em alguma pasta no seu ambiente
 2. Abra o **Fleet** e selecione `Open File or Folder...`
 3. Selecione toda a pasta com o nome do seu projeto
-4. Uma tela "Trust and Open Folder in Smart Mode" irá aparecer. Clique em ***trust***
+4. Uma tela "Trust and Open Folder in Smart Mode" irá aparecer. Clique em **_trust_**
 5. Aguarde alguns instantes enquanto o **Fleet** inicia seu projeto. Você poderá ver o progresso no topo no canto direito
 
 #### O que é o Smart Mode no Fleet?
@@ -70,12 +71,13 @@ Sendo representado por um ícone de raio ⚡️ no topo direito do **Fleet**, o 
 ### Testando nas plataformas
 
 Se tudo deu certo, o **Fleet** realizou as seguintes etapas
+
 1. Inicializou o projeto
 2. Identificou que temos 3 alvos:
    1. Android com o ícone do robo verde
    2. iOS com o ícone da fruta mordida
    3. Desktop com o ícone do elefante (do Gradle)
-3. Configurou cada alvo, e o tornou disponível na janela "Run & Debug" (clicando no ícone ▶️ ***run & debug***)
+3. Configurou cada alvo, e o tornou disponível na janela "Run & Debug" (clicando no ícone ▶️ **_run & debug_**)
 
 ![Executando o projeto no Fleet](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/fleet-hello-world-run.png?raw=true)
 
@@ -84,9 +86,10 @@ Agora é só testar! Clique em cada uma das plataformas, e execute nosso Olá Mu
 ![Demo em todas as plataformas](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/hello-world-kmp-compose.gif?raw=true)
 
 ## Conclusão
+
 Simples, não é? De fato, foram anos de desenvolvimento para que o Kotlin Multiplataforma alcançasse este estágio. Atualmente, a comunidade está entusiasmada com a facilidade de criar projetos multiplataforma nativos para Android, iOS e Desktop em apenas alguns minutos.
 
-Agora que temos um projeto base configurado e funcionando, estamos prontos para avançar em tópicos mais específicos do KMP. 
+Agora que temos um projeto base configurado e funcionando, estamos prontos para avançar em tópicos mais específicos do KMP.
 
 No próximo artigo, exploraremos um aspecto crucial do Kotlin Multiplataforma: a integração com o Gradle através do Plugin KMP.
 
@@ -103,4 +106,5 @@ Até lá!
 ---
 
 > Referências
+>
 > - [JetBrains Fleet Documentation](https://www.jetbrains.com/help/fleet/smart-mode.html)

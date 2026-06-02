@@ -1,35 +1,36 @@
 ---
-title: "KMP-102 - Modularização no KMP"
-description: "No último artigo, entramos em detalhes e aprendemos sobre as peculiaridades do código exportado nos headers do Objective-C, assim como as boas práticas…"
-summary: "No último artigo, entramos em detalhes e aprendemos sobre as peculiaridades do código exportado nos headers do Objective-C, assim como as boas práticas quanto ao que exportar."
+title: 'KMP-102 - Modularização no KMP'
+description: 'No último artigo, entramos em detalhes e aprendemos sobre as peculiaridades do código exportado nos headers do Objective-C, assim como as boas práticas…'
+summary: 'No último artigo, entramos em detalhes e aprendemos sobre as peculiaridades do código exportado nos headers do Objective-C, assim como as boas práticas quanto ao que exportar.'
 pubDate: 2025-03-07
 tags:
-  - "kotlin"
-  - "kmp"
-  - "braziliandevs"
-  - "mobile"
-series: "kmp-102"
+  - 'kotlin'
+  - 'kmp'
+  - 'braziliandevs'
+  - 'mobile'
+series: 'kmp-102'
 seriesOrder: 5
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fz0zdcy0ty1bpvi3mlcob.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fz0zdcy0ty1bpvi3mlcob.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kmp-102-modularizacao-no-kmp-4oe5"
+  devtoUrl: 'https://dev.to/rsicarelli/kmp-102-modularizacao-no-kmp-4oe5'
   devtoId: 2317222
-  githubRepo: "https://github.com/rsicarelli/KMP-101"
+  githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 23
 ---
 
 Neste artigo, vamos entender melhor o comportamento da modularização em projetos KMP, e como isso pode ser feito de forma eficiente e organizada.
 
---- 
-  * [O que é modularização?](#o-que-é-modularização)
-  * [Modularização no KMP](#modularização-no-kmp)
-  * [Pavimentando flexibilidade da UI](#pavimentando-flexibilidade-da-ui)
-  * [Exportando para o XCFramework](#exportando-para-o-xcframework)
-    * [Cenário 1: "backend" KMP compartilhado, "frontend" flexível](#cenário-1-backend-kmp-compartilhado-frontend-flexível)
-    * [Cenário 2: Híbrido, migrando para Compose Multiplatform](#cenário-2-híbrido-migrando-para-compose-multiplatform)
-    * [Cenário 3: 100% Compose Multiplatform](#cenário-3-100-compose-multiplatform)
-  * [Explorando os benefícios da modularização no KMP](#explorando-os-benefícios-da-modularização-no-kmp)
-  * [Conclusão](#conclusão)
+---
+
+- [O que é modularização?](#o-que-é-modularização)
+- [Modularização no KMP](#modularização-no-kmp)
+- [Pavimentando flexibilidade da UI](#pavimentando-flexibilidade-da-ui)
+- [Exportando para o XCFramework](#exportando-para-o-xcframework)
+  - [Cenário 1: "backend" KMP compartilhado, "frontend" flexível](#cenário-1-backend-kmp-compartilhado-frontend-flexível)
+  - [Cenário 2: Híbrido, migrando para Compose Multiplatform](#cenário-2-híbrido-migrando-para-compose-multiplatform)
+  - [Cenário 3: 100% Compose Multiplatform](#cenário-3-100-compose-multiplatform)
+- [Explorando os benefícios da modularização no KMP](#explorando-os-benefícios-da-modularização-no-kmp)
+- [Conclusão](#conclusão)
 
 ---
 
@@ -142,6 +143,7 @@ Mas há um ponto crucial que quero destacar: a modularização ajuda a ter granu
 Como vimos no último post, [KMP-102 - Otimizando a Exportação do Kotlin para o Obj-c/Swift](https://dev.to/rsicarelli/kmp-102-otimizando-a-exportacao-do-kotlin-para-o-obj-cswift-358p), ser seletivo com o código que exportamos para os headers do Objective-C está diretamente ligado à eficiência do tempo de build (ou seja, compilações do XCFramework mais eficientes).
 
 Por exemplo:
+
 - No **Modelo 1**, garantimos que apenas o `login:common` seja exposto nos headers do Objective-C, enquanto evitamos que qualquer parte do `android-ui` seja exposta.
 - No **Modelo 3**, garantimos que nada do "backend" da jornada seja exposto nos headers, apenas o "frontend" multiplataforma.
 

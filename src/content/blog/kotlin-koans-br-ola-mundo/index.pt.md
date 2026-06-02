@@ -1,17 +1,17 @@
 ---
-title: "Kotlin Koans BR: Olá, mundo!"
-description: "Altere o código para que a função start retorne a string \"OK\"."
+title: 'Kotlin Koans BR: Olá, mundo!'
+description: 'Altere o código para que a função start retorne a string "OK".'
 pubDate: 2024-03-07
 tags:
-  - "kotlin"
-  - "braziliandevs"
-series: "kotlin-koans-br"
+  - 'kotlin'
+  - 'braziliandevs'
+series: 'kotlin-koans-br'
 seriesOrder: 1
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F0kuchkfp7latpkvmkj89.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F0kuchkfp7latpkvmkj89.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kotlin-koans-br-ola-mundo-2dpf"
+  devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-ola-mundo-2dpf'
   devtoId: 1783049
-  githubRepo: "https://github.com/rsicarelli/kotlin-koans-edu-br"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
@@ -118,11 +118,14 @@ imprimirItens("Paçoca", "Cajú", "Açaí")
 No Kotlin, há duas maneiras comuns de declarar variáveis: com `val` e com `var`.
 
 - `val` é um valor fixo, apenas para leitura.
+
 ```kotlin
 val tituloDoLivro = "A Jornada Dev"
 // tituloDoLivro = "Outro Título" //impossível
 ```
+
 - `var` é um valor não fixo, tanto para escrita quanto para leitura.
+
 ```kotlin
 var paginaDeRascunho = "Minha ideia"
 paginaDeRascunho = "Uma ideia diferente" // permitido

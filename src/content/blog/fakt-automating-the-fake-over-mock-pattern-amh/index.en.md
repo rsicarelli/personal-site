@@ -1,15 +1,15 @@
 ---
-title: "Fakt: Automating the Fake-over-mock pattern"
-description: "Kotlin testing has a problem that gets worse the more successful your project becomes."
+title: 'Fakt: Automating the Fake-over-mock pattern'
+description: 'Kotlin testing has a problem that gets worse the more successful your project becomes.'
 pubDate: 2026-02-25
 tags:
-  - "kotlin"
-  - "testing"
-  - "automation"
-  - "kmp"
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fzzcltp2drlweo3amp2tw.png"
+  - 'kotlin'
+  - 'testing'
+  - 'automation'
+  - 'kmp'
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fzzcltp2drlweo3amp2tw.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/fakt-automating-the-fake-over-mock-pattern-amh"
+  devtoUrl: 'https://dev.to/rsicarelli/fakt-automating-the-fake-over-mock-pattern-amh'
   devtoId: 3284620
   reactions: 1
 ---
@@ -98,13 +98,13 @@ The problems: N methods require ~10N lines. Interface changes don't break unused
 
 Runtime mocking frameworks solve the boilerplate but pay a different cost. Kotlin classes are `final` by default, so MockK and Mockito resort to bytecode instrumentation. Independent benchmarks[^1] quantify the penalty:
 
-| Mocking Pattern | Framework | Comparison | Verified Penalty |
-|-----------------|-----------|------------|------------------|
-| `mockkObject` (Singletons) | MockK | vs. Dependency Injection | **1,391x slower** |
-| `mockkStatic` (Top-level functions) | MockK | vs. Interface-based DI | **146x slower** |
-| `verify { ... }` (Interaction verification) | MockK | vs. State-based testing | **47x slower** |
-| `relaxed` mocks (Unstubbed calls) | MockK | vs. Strict mocks | **3.7x slower** |
-| `mock-maker-inline` | Mockito | vs. `all-open` plugin | **2.7-3x slower**[^2][^3] |
+| Mocking Pattern                             | Framework | Comparison               | Verified Penalty          |
+| ------------------------------------------- | --------- | ------------------------ | ------------------------- |
+| `mockkObject` (Singletons)                  | MockK     | vs. Dependency Injection | **1,391x slower**         |
+| `mockkStatic` (Top-level functions)         | MockK     | vs. Interface-based DI   | **146x slower**           |
+| `verify { ... }` (Interaction verification) | MockK     | vs. State-based testing  | **47x slower**            |
+| `relaxed` mocks (Unstubbed calls)           | MockK     | vs. Strict mocks         | **3.7x slower**           |
+| `mock-maker-inline`                         | Mockito   | vs. `all-open` plugin    | **2.7-3x slower**[^2][^3] |
 
 A production test suite with 2,668 tests experienced a 2.7x slowdown (7.3s → 20.0s) when using `mock-maker-inline`[^3]. For large projects, the mock tax accumulates to 40% slower test suites[^1].
 
@@ -118,10 +118,10 @@ The community attempted KSP-based solutions, but Kotlin 2.0's K2 compiler broke 
 
 KSP-based tools (Mockative, MocKMP) operated at the symbol level—after type resolution, with limited access to the type system. When K2 landed, they broke. Compiler plugins operate during compilation, with full access to FIR and IR. They survive Kotlin version updates.
 
-| Aspect | KSP | Compiler Plugin |
-|--------|-----|-----------------|
-| Access | After type resolution | During compilation |
-| Type System | Read-only symbols | Full manipulation |
+| Aspect      | KSP                   | Compiler Plugin    |
+| ----------- | --------------------- | ------------------ |
+| Access      | After type resolution | During compilation |
+| Type System | Read-only symbols     | Full manipulation  |
 
 Fakt uses a two-phase FIR → IR architecture:
 
@@ -161,16 +161,16 @@ Kotlin's async testing stack—`runTest`, `TestDispatcher`, Turbine[^17]—is in
 
 ### Fakes vs. Mocks: Quick Comparison
 
-| Feature | MockK/Mockito | Fakt |
-|---------|---------------|------|
-| **KMP Support** | Limited (JVM only) | Universal (all targets) |
-| **Compile-time Safety** | ❌ | ✅ |
-| **Runtime Overhead** | Heavy (reflection) | Zero |
-| **Type Safety** | Partial (`any()` matchers) | Complete |
-| **Learning Curve** | Steep (complex DSL) | Gentle (typed functions) |
-| **Call History** | Manual (`verify { }`) | Built-in (StateFlow) |
-| **Thread Safety** | Not guaranteed | StateFlow-based |
-| **Debuggability** | Reflection (opaque) | Generated `.kt` files |
+| Feature                 | MockK/Mockito              | Fakt                     |
+| ----------------------- | -------------------------- | ------------------------ |
+| **KMP Support**         | Limited (JVM only)         | Universal (all targets)  |
+| **Compile-time Safety** | ❌                         | ✅                       |
+| **Runtime Overhead**    | Heavy (reflection)         | Zero                     |
+| **Type Safety**         | Partial (`any()` matchers) | Complete                 |
+| **Learning Curve**      | Steep (complex DSL)        | Gentle (typed functions) |
+| **Call History**        | Manual (`verify { }`)      | Built-in (StateFlow)     |
+| **Thread Safety**       | Not guaranteed             | StateFlow-based          |
+| **Debuggability**       | Reflection (opaque)        | Generated `.kt` files    |
 
 ### Choosing the Right Tool
 
@@ -198,7 +198,7 @@ Fakt and mocking libraries solve overlapping but distinct problems. Choosing bet
 
 ## Works Cited
 
-[^1]: Benchmarking Mockk — Avoid these patterns for fast unit tests. Kevin Block. [https://medium.com/@_kevinb/benchmarking-mockk-avoid-these-patterns-for-fast-unit-tests-220fc225da55](https://medium.com/@_kevinb/benchmarking-mockk-avoid-these-patterns-for-fast-unit-tests-220fc225da55)
+[^1]: Benchmarking Mockk — Avoid these patterns for fast unit tests. Kevin Block. [https://medium.com/@\_kevinb/benchmarking-mockk-avoid-these-patterns-for-fast-unit-tests-220fc225da55](https://medium.com/@_kevinb/benchmarking-mockk-avoid-these-patterns-for-fast-unit-tests-220fc225da55)
 
 [^2]: Effective migration to Kotlin on Android. Aris Papadopoulos. [https://medium.com/android-news/effective-migration-to-kotlin-on-android-cfb92bfaa49b](https://medium.com/android-news/effective-migration-to-kotlin-on-android-cfb92bfaa49b)
 

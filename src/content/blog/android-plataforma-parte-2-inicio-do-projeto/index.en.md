@@ -1,22 +1,22 @@
 ---
-title: "Android Plataforma - Parte 2: Início do Projeto"
-description: "Neste post, vamos explorar um projeto inicial, entender os desafios de manter os arquivos build.gradle.kts e descobrir como o conceito de Composite…"
-summary: "Neste post, vamos explorar um projeto inicial, entender os desafios de manter os arquivos build.gradle.kts e descobrir como o conceito de Composite Builds do Gradle pode auxiliar nessa jornada."
+title: 'Android Plataforma - Parte 2: Início do Projeto'
+description: 'Neste post, vamos explorar um projeto inicial, entender os desafios de manter os arquivos build.gradle.kts e descobrir como o conceito de Composite…'
+summary: 'Neste post, vamos explorar um projeto inicial, entender os desafios de manter os arquivos build.gradle.kts e descobrir como o conceito de Composite Builds do Gradle pode auxiliar nessa jornada.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
-  - "kotlin"
-  - "android"
-  - "gradle"
-series: "android-plataforma"
+  - 'kotlin'
+  - 'android'
+  - 'gradle'
+series: 'android-plataforma'
 seriesOrder: 2
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F40ckwb99i0qotfyr6zb8.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F40ckwb99i0qotfyr6zb8.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/android-plataforma-parte-2-inicio-do-projeto-34jg"
+  devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-2-inicio-do-projeto-34jg'
   devtoId: 1609493
-  githubRepo: "https://github.com/rsicarelli/kotlin-gradle-android-platform/"
-  githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/1-2/introduction"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
+  githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/1-2/introduction'
   reactions: 4
 ---
 
@@ -24,19 +24,14 @@ provenance:
 
 Iniciaremos a partir de um projeto simples, gerado a partir de um template padrão do IntelliJ, ao qual foram adicionados alguns módulos:
 
-
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/mx1hv2uvq4pa5oqglvj2.png)
-
 
 - **app**: Atua como o ponto central do aplicativo, contendo a MainActivity.
 - **core:designsystem**: Define os principais elementos visuais, como tema, cores, tipografia e ícones do projeto.
 - **features:home**: Representa a primeira tela de interação, exibindo o conteúdo do módulo details.
 - **features:details**: Apresenta uma mensagem textual na interface.
 
-
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/oasfibiiy8z36dtjytfs.png)
-
-
 
 ## Problema a ser solucionado
 

@@ -1,19 +1,19 @@
 ---
-title: "KMP-102 - XCFramework para Devs KMP"
-description: "Olá! Dou as boas-vindas a série KMP-102. Vamos aprofundar os conceitos do Kotlin Multiplatform, aprendendo mais sobre como integrar nosso código Kotlin…"
+title: 'KMP-102 - XCFramework para Devs KMP'
+description: 'Olá! Dou as boas-vindas a série KMP-102. Vamos aprofundar os conceitos do Kotlin Multiplatform, aprendendo mais sobre como integrar nosso código Kotlin…'
 pubDate: 2024-05-29
 tags:
-  - "kotlin"
-  - "kmp"
-  - "ios"
-  - "braziliandevs"
-series: "kmp-102"
+  - 'kotlin'
+  - 'kmp'
+  - 'ios'
+  - 'braziliandevs'
+series: 'kmp-102'
 seriesOrder: 1
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F77ybgidb8t2gwn9n696y.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F77ybgidb8t2gwn9n696y.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kmp-102-xcframework-para-devs-kmp-4a4b"
+  devtoUrl: 'https://dev.to/rsicarelli/kmp-102-xcframework-para-devs-kmp-4a4b'
   devtoId: 1868908
-  githubRepo: "https://github.com/rsicarelli/KMP-101"
+  githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 16
 ---
 
@@ -77,7 +77,6 @@ Este artefato é exatamente o arquivo que precisamos vincular ao projeto Xcode p
   <img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/xcframework-task-result.png?raw=true" alt="AppKit.framework" width="450">
 </p>
 
-
 ## NativeBuildTypes: debug e release
 
 Observe que temos dois frameworks gerados: a versão `debug` e a versão `release`. Esses dois tipos possuem características especiais, provenientes da classe [NativeBinaryType](https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-gradle-plugin-api/src/common/kotlin/org/jetbrains/kotlin/gradle/plugin/mpp/NativeBinaryTypes.kt):
@@ -85,6 +84,7 @@ Observe que temos dois frameworks gerados: a versão `debug` e a versão `releas
 Analisando esse enum, entendemos que a versão `release` possui a flag `optimized = true` e `debuggable = false`, enquanto a versão `debug` possui `optimized = false` e `debuggable = true`.
 
 Como você pode imaginar, devemos ter cuidado ao escolher qual `XCFramework` utilizar no fluxo de desenvolvimento:
+
 - Para o ambiente de desenvolvimento local, a versão `debug` é a escolha ideal, pois permite debugar nosso código KMP.
 - Para o ambiente de produção, a versão `release` é a escolha correta, pois o binário é otimizado e evita a inclusão de informações de debug no produto final.
 
@@ -150,10 +150,12 @@ kotlin {
 ```
 
 ## Conclusões
+
 O XCFramework é um tema central no universo do Kotlin Multiplatform (KMP). Compreender o que é, como funciona e como gerá-lo nos proporciona um maior controle e compreensão dos bastidores do KMP.
 
 No próximo artigo, exploraremos melhor a função `framework()`!
 
 ## Fontes
+
 - [KotlinLang | Build final native binaries](https://kotlinlang.org/docs/multiplatform-build-native-binaries.html)
 - [Embracing the Power of XCFrameworks: A Comprehensive Guide for iOS Developers](https://medium.com/@mihail_salari/embracing-the-power-of-xcframeworks-a-comprehensive-guide-for-ios-developers-77fe192d47fe)

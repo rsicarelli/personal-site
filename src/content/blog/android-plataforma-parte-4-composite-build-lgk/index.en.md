@@ -1,22 +1,22 @@
 ---
-title: "Android Plataforma - Parte 4: Composite Build"
-description: "Nos artigos anteriores, compreendemos a importância da modularidade e como os Composite Builds são a escolha certa para escalar projetos Kotlin."
-summary: "Nos artigos anteriores, compreendemos a importância da modularidade e como os Composite Builds são a escolha certa para escalar projetos Kotlin."
+title: 'Android Plataforma - Parte 4: Composite Build'
+description: 'Nos artigos anteriores, compreendemos a importância da modularidade e como os Composite Builds são a escolha certa para escalar projetos Kotlin.'
+summary: 'Nos artigos anteriores, compreendemos a importância da modularidade e como os Composite Builds são a escolha certa para escalar projetos Kotlin.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
-  - "kotlin"
-  - "android"
-  - "gradle"
-series: "android-plataforma"
+  - 'kotlin'
+  - 'android'
+  - 'gradle'
+series: 'android-plataforma'
 seriesOrder: 4
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fh5b4mdf2bo8tj31ylvtz.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fh5b4mdf2bo8tj31ylvtz.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/android-plataforma-parte-4-composite-build-lgk"
+  devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-4-composite-build-lgk'
   devtoId: 1609512
-  githubRepo: "https://github.com/rsicarelli/kotlin-gradle-android-platform/"
-  githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/3-4/composite-build"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
+  githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/3-4/composite-build'
   reactions: 3
 ---
 
@@ -35,6 +35,7 @@ Prefiro seguir padrões reconhecidos pela comunidade, então usaremos o nome mai
 ## Passo a passo
 
 **1 -** Crie uma pasta na raiz do projeto:
+
 ```shell
 mkdir build-logic
 ```
@@ -42,9 +43,11 @@ mkdir build-logic
 **2 -** Entre nesta pasta e execute o comando `gradle init`. Este script do Gradle inicializa um projeto Gradle na raiz, acompanhado do Gradlew Wrapper (`gradlew`) e outros arquivos úteis.
 
 Certifique-se de ter o Gradle instalado. Se estiver usando o homebrew:
+
 ```shell
 brew install gradle
 ```
+
 ```shell
 cd build-logic
 gradle init
@@ -125,6 +128,7 @@ A presença deste arquivo permite que este módulo seja tratado como um **Compos
 Note que é um arquivo simples. Por enquanto, não precisamos adicionar nada.
 
 ### build.gradle.kts
+
 Esse arquivo gerado contém algumas várias configurações, mas vamos focar nas mais importantes:
 
 ```kotlin
@@ -144,6 +148,7 @@ gradlePlugin {
 ```
 
 #### `java-gradle-plugin`
+
 Esse plugin traz uma extensão chamada `gradlePlugin`. É com ela que iremos realizar as declarações dos nossos plugins.
 
 Por debaixo dos panos, esse plugin aplica algumas decorações na hora de compilar o `jar` desse módulo, além de adicionar metadata do seu artefato, e a criação de um arquivo de propriedade do Gradle que serve como referencia nossa classe de implementação.
@@ -151,6 +156,7 @@ Por debaixo dos panos, esse plugin aplica algumas decorações na hora de compil
 Basicamente, estamos registrando um plugin com o id `build.logic.greeting` no projeto, e, ao aplica-lo, a classe de implementaçào `BuildLogicPlugin` estará disponível, pré-compilada para uso.
 
 ### `BuildLogicPlugin.kt`
+
 Esse arquivo é a declaração do nosso plugin, utilizando a api `Plugin<Project>`.
 
 Graças ao Kotlin DSL, é bem fácil de entender o que estamos fazendo:
@@ -172,9 +178,10 @@ class BuildLogicPlugin: Plugin<Project> {
 ```
 
 ## Incluindo nosso `build-logic` no projeto raiz
-Chegou a hora de conectarmos os dois mundos. 
 
-Para incluir composite builds em nosso projeto, precisamos utilizar uma função especial chamada `includeBuild()`. O único requisito para utilizar essa função, é que o módulo tenha um arquivo `settings.gradle.kts` em sua raiz. 
+Chegou a hora de conectarmos os dois mundos.
+
+Para incluir composite builds em nosso projeto, precisamos utilizar uma função especial chamada `includeBuild()`. O único requisito para utilizar essa função, é que o módulo tenha um arquivo `settings.gradle.kts` em sua raiz.
 
 Como nosso `build-logic` está pronto pra uso, vamos apenas navegar até o nosso `settings.gradle.kts` e incluir esse módulo:
 
@@ -193,6 +200,7 @@ pluginManagement {
 Basicamente, estamos instruindo o Gradle a utilizar nosso `build-logic` como Composite Build, e incluindo nosso plugin pre-compilado `BuildLogicPlugin` no classpath do projeto.
 
 ### Aplicando o plugin no `build.gradle.kts`
+
 Finalmente, iremos aplicar nosso plugin ao projeto principal.
 
 Tenha certeza de que você sincronizou seus arquivos Gradle ("Reload all gradle projects") e navegue até o arquivo `build.gradle.kts` da raiz do projeto:
@@ -208,6 +216,7 @@ plugins {
 ```
 
 ## Utilizando nossa task "greeting"
+
 Após sincronizar os arquivos Gradle do projeto, vá até o console e execute o seguinte comando:
 
 Garanta que você esteja na pasta raiz do projeto, e não dentro `build-logic`:
@@ -219,6 +228,7 @@ cd ..
 pwd
 .../kplatform
 ```
+
 ```shell
 ./gradlew greeting
 
@@ -229,6 +239,7 @@ BUILD SUCCESSFUL in 518ms
 ```
 
 ## Sucesso!
+
 Já temos nosso esqueleto para compor nossa plataforma, e incrementar nosso `build-logic` com outras funcionalidades.
 
 No próximo artigo, vamos dar uma "limpada" nesses arquivos auto gerados pelo `gradle init`, e dar continuidade aos trabalhos.

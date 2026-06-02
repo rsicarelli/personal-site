@@ -1,22 +1,22 @@
 ---
-title: "Android Plataforma - Parte 1: Modularização"
-description: "A eficiência no desenvolvimento de software é essencial nos projetos atuais. Neste artigo, discutiremos a modularização em projetos Kotlin/Android, o…"
-summary: "A eficiência no desenvolvimento de software é essencial nos projetos atuais. Neste artigo, discutiremos a modularização em projetos Kotlin/Android, o papel vital do Gradle para otimizar compilações e os desafios de gerir múltiplos módulos."
+title: 'Android Plataforma - Parte 1: Modularização'
+description: 'A eficiência no desenvolvimento de software é essencial nos projetos atuais. Neste artigo, discutiremos a modularização em projetos Kotlin/Android, o…'
+summary: 'A eficiência no desenvolvimento de software é essencial nos projetos atuais. Neste artigo, discutiremos a modularização em projetos Kotlin/Android, o papel vital do Gradle para otimizar compilações e os desafios de gerir múltiplos módulos.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
-  - "kotlin"
-  - "android"
-  - "gradle"
-series: "android-plataforma"
+  - 'kotlin'
+  - 'android'
+  - 'gradle'
+series: 'android-plataforma'
 seriesOrder: 1
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fvih5nd062eyxjjo6l50n.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fvih5nd062eyxjjo6l50n.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/android-plataforma-parte-1-modularizacao-2016"
+  devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-1-modularizacao-2016'
   devtoId: 1609438
-  githubRepo: "https://github.com/rsicarelli/kotlin-gradle-android-platform/"
-  githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/1-2/introduction"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
+  githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/1-2/introduction'
   reactions: 6
 ---
 
@@ -34,7 +34,7 @@ Isso é similar à modularização em Kotlin. Segmentamos o código em "módulos
 
 ## Modularização vs pastas
 
-Apenas agrupar o código em pastas não é o mesmo que modularizar. Em grandes módulos, alterações pequenas levam à recompilação de todo o módulo. 
+Apenas agrupar o código em pastas não é o mesmo que modularizar. Em grandes módulos, alterações pequenas levam à recompilação de todo o módulo.
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/4bbq7yrajidhu3ffjh5b.png)
 

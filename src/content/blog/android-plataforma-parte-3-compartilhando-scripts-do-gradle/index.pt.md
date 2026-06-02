@@ -1,21 +1,21 @@
 ---
-title: "Android Plataforma - Parte 3: Compartilhando scripts do Gradle"
-description: "No artigo anterior, entendemos quais os desafios que um projeto multi-modular traz: a da manutenção e reutilização dos arquivos do Gradle. Vamos entender…"
-summary: "No artigo anterior, entendemos quais os desafios que um projeto multi-modular traz: a da manutenção e reutilização dos arquivos do Gradle. Vamos entender melhor como resolver esse problema analisando dois conceitos: o buildSrc e os Composite Builds."
+title: 'Android Plataforma - Parte 3: Compartilhando scripts do Gradle'
+description: 'No artigo anterior, entendemos quais os desafios que um projeto multi-modular traz: a da manutenção e reutilização dos arquivos do Gradle. Vamos entender…'
+summary: 'No artigo anterior, entendemos quais os desafios que um projeto multi-modular traz: a da manutenção e reutilização dos arquivos do Gradle. Vamos entender melhor como resolver esse problema analisando dois conceitos: o buildSrc e os Composite Builds.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
-  - "kotlin"
-  - "android"
-  - "gradle"
-series: "android-plataforma"
+  - 'kotlin'
+  - 'android'
+  - 'gradle'
+series: 'android-plataforma'
 seriesOrder: 3
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fv0zw6o1nmtk9vblrb5zq.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fv0zw6o1nmtk9vblrb5zq.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/android-plataforma-parte-3-compartilhando-scripts-do-gradle-5ak3"
+  devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-3-compartilhando-scripts-do-gradle-5ak3'
   devtoId: 1609504
-  githubRepo: "https://github.com/rsicarelli/kotlin-gradle-android-platform/"
-  githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/3-4/composite-build"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
+  githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/3-4/composite-build'
   reactions: 6
 ---
 
@@ -31,14 +31,11 @@ O `buildSrc` é uma convenção especial do Gradle para organizar e encapsular c
 
 Todos os artefatos gerados (classes, recursos, etc.) pelo `buildSrc` são então adicionados ao classpath dos arquivos do Gradle do projeto, possibilitando que você referencie e use essas classes diretamente nesses arquivos Gradle sem nenhuma configuração adicional.
 
-
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/fpupqlqr1nhyumiwau5d.png)
 
 Infelizmente, todos esses recursos incríveis vêm com um grande inconveniente: qualquer alteração dentro do `buildSrc` invalida completamente o cache de compilação. Esse comportamento pode ser especialmente problemático para projetos maiores, uma vez que invalidar o cache implica em recompilações frequentes, aumentando consideravelmente o tempo de build.
 
-
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/lpkfn0h6fei2mzv38eyl.png)
-
 
 ## Composite Builds
 

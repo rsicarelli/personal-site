@@ -1,17 +1,17 @@
 ---
-title: "Kotlin Koans BR: Strings com três aspas"
-description: "Substitua a chamada trimIndent pela chamada trimMargin, definindo # como valor de prefixo, assim a string resultante não conterá o caractere de prefixo."
+title: 'Kotlin Koans BR: Strings com três aspas'
+description: 'Substitua a chamada trimIndent pela chamada trimMargin, definindo # como valor de prefixo, assim a string resultante não conterá o caractere de prefixo.'
 pubDate: 2024-03-07
 tags:
-  - "kotlin"
-  - "braziliandevs"
-series: "kotlin-koans-br"
+  - 'kotlin'
+  - 'braziliandevs'
+series: 'kotlin-koans-br'
 seriesOrder: 4
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F7i8v3zse00a2qe2uta0q.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F7i8v3zse00a2qe2uta0q.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kotlin-koans-br-strings-com-tres-aspas-3202"
+  devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-strings-com-tres-aspas-3202'
   devtoId: 1783116
-  githubRepo: "https://github.com/rsicarelli/kotlin-koans-edu-br"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
@@ -23,7 +23,7 @@ Há funções como [`trimIndent`](https://kotlinlang.org/api/latest/jvm/stdlib/k
 
 ## Caso de uso
 
-Em Kotlin, as [aspas triplas](https://kotlinlang.org/docs/strings.html#multiline-strings) (`multiline strings`)  facilitam a representação de Strings com várias linhas e caracteres especiais, eliminando a necessidade de escapá-los.
+Em Kotlin, as [aspas triplas](https://kotlinlang.org/docs/strings.html#multiline-strings) (`multiline strings`) facilitam a representação de Strings com várias linhas e caracteres especiais, eliminando a necessidade de escapá-los.
 
 Esta técnica realça a clareza do código e simplifica a gestão de textos longos ou com estruturas intrincadas.
 
@@ -61,7 +61,7 @@ val coracao = """
     ,d88b.d88b,
     88888888888
     `Y8888888Y'
-      `Y888Y'  
-        `Y'    
+      `Y888Y'
+        `Y'
 """
 ```

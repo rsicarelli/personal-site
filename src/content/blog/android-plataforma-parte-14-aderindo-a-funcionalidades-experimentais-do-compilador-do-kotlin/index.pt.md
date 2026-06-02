@@ -1,20 +1,20 @@
 ---
-title: "Android Plataforma - Parte 14: Aderindo a funcionalidades experimentais do compilador do Kotlin"
-description: "No último artigo, extendemos nossa plataforma com a capacidade de declarar módulos JVM."
+title: 'Android Plataforma - Parte 14: Aderindo a funcionalidades experimentais do compilador do Kotlin'
+description: 'No último artigo, extendemos nossa plataforma com a capacidade de declarar módulos JVM.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
-  - "kotlin"
-  - "android"
-  - "gradle"
-series: "android-plataforma"
+  - 'kotlin'
+  - 'android'
+  - 'gradle'
+series: 'android-plataforma'
 seriesOrder: 14
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F3qk47henua28l33se5vd.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F3qk47henua28l33se5vd.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/android-plataforma-parte-14-aderindo-a-funcionalidades-experimentais-do-compilador-do-kotlin-3b0g"
+  devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-14-aderindo-a-funcionalidades-experimentais-do-compilador-do-kotlin-3b0g'
   devtoId: 1611131
-  githubRepo: "https://github.com/rsicarelli/kotlin-gradle-android-platform/"
-  githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/14/opt-in-experimental-kotlin-compiler"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
+  githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/14/opt-in-experimental-kotlin-compiler'
   reactions: 2
 ---
 
@@ -50,7 +50,8 @@ public annotation class RequiresOptIn(
 ```
 
 ### Contagiosidade
-APIs anotadas com marcadores que requerem opt-in são "contagiosas". Qualquer uso ou menção a essa API em outras declarações também demandará um opt-in. 
+
+APIs anotadas com marcadores que requerem opt-in são "contagiosas". Qualquer uso ou menção a essa API em outras declarações também demandará um opt-in.
 
 Por exemplo:
 
@@ -65,6 +66,7 @@ fun foo(): Unstable = Unstable()
 Ao tentar usar a função `foo`, seremos alertados sobre a necessidade de optar pela API instável.
 
 ### Anotação `OptIn`
+
 A anotação `OptIn` nos permite declarar que estamos cientes e aceitamos os riscos associados ao uso de uma API marcada.
 
 ```kotlin
@@ -79,6 +81,7 @@ public annotation class OptIn(
 ```
 
 ## Utilizando APIs experimentais
+
 Para ilustrar tudo o que discutimos, vamos usar um componente do `Material3` que está anotado com `RequiresOptIn`:
 
 ```kotlin
@@ -123,7 +126,7 @@ fun HomeScreen() {
 Para situações específicas, essa abordagem funciona. Mas considere funções que são usadas frequentemente, como `Flow.flatMapConcat`:
 
 ```kotlin
-@OptIn(FlowPreview::class) 
+@OptIn(FlowPreview::class)
 fun main() {
     flowOf(null)
         .flatMapConcat { flowOf(true) }
@@ -136,9 +139,7 @@ Repetir essa declaração em cada uso pode ser tedioso, especialmente em codebas
 
 A boa notícia é que podemos configurar nosso `applyKotlinOptions()` para dar opt-in nas features necessárias.
 
-
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/1m7xwrr2kspiuxgno236.png)
-
 
 **1 -** Atualizaremos nosso modelo `CompilationOptions` para aceitar uma lista de `FeatureOptIn`:
 
@@ -183,6 +184,7 @@ class FeatureOptInBuilder {
 ```
 
 **2 -** Vá até a função `fun applyKotlinOptions()` e atualize o uso:
+
 ```kotlin
 internal fun Project.applyKotlinOptions(compilationOptions: CompilationOptions) {
     tasks.withType<KotlinCompile>().configureEach {
@@ -219,6 +221,7 @@ dependencies {
 ```
 
 ## Sucesso!
+
 Agora, podemos usar as funcionalidades experimentais de Coroutines e Material3 sem a necessidade de adotar a anotação `OptIn`.
 
 No próximo artigo, focaremos na qualidade de código, introduzindo recursos de análise estática com `Detekt` e `Spotless` para auxiliar na autoformatação, aderindo ao estilo de código do projeto (`.editorconfig`).

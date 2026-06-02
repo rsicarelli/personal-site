@@ -1,21 +1,21 @@
 ---
-title: "KMP 101: Entendendo como o Kotlin compila para múltiplas plataformas"
-description: "No último post (🔗 KMP 101: Introdução ao paradigma da multiplataforma), exploramos o paradigma multiplataforma e como o KMP se destaca no ecossistema."
-summary: "No último post (🔗 KMP 101: Introdução ao paradigma da multiplataforma), exploramos o paradigma multiplataforma e como o KMP se destaca no ecossistema."
+title: 'KMP 101: Entendendo como o Kotlin compila para múltiplas plataformas'
+description: 'No último post (🔗 KMP 101: Introdução ao paradigma da multiplataforma), exploramos o paradigma multiplataforma e como o KMP se destaca no ecossistema.'
+summary: 'No último post (🔗 KMP 101: Introdução ao paradigma da multiplataforma), exploramos o paradigma multiplataforma e como o KMP se destaca no ecossistema.'
 pubDate: 2023-11-21
 updatedDate: 2024-01-27
 tags:
-  - "kotlin"
-  - "kmp"
-  - "braziliandevs"
-  - "mobile"
-series: "kmp-101"
+  - 'kotlin'
+  - 'kmp'
+  - 'braziliandevs'
+  - 'mobile'
+series: 'kmp-101'
 seriesOrder: 2
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F5gjwksi829qicrvewv3e.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F5gjwksi829qicrvewv3e.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kotlin-multiplataforma-101-entendendo-como-o-kotlin-compila-para-multiplas-plataformas-5hba"
+  devtoUrl: 'https://dev.to/rsicarelli/kotlin-multiplataforma-101-entendendo-como-o-kotlin-compila-para-multiplas-plataformas-5hba'
   devtoId: 1672546
-  githubRepo: "https://github.com/rsicarelli/KMP-101"
+  githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 13
 ---
 
@@ -103,6 +103,7 @@ Esse entendimento fornece uma perspectiva sobre a versatilidade e a eficiência 
 ---
 
 > Referencias
+>
 > - [Crash Course on the Kotlin Compiler by Amanda Hinchman-Dominguez - KotlinConf'23](https://www.youtube.com/watch?v=wUGfuWHCqrc), [Github repo](https://github.com/ahinchman1/Kotlin-Compiler-Crash-Course)
 > - [Curso intensivo no compilador do Kotlin | K1 + K2 Frontends, Backends](https://medium.com/google-developer-experts/crash-course-on-the-kotlin-compiler-k1-k2-frontends-backends-fe2238790bd8)
 > - [Rumo ao Compilador K2 | The Kotlin Blog](https://blog.jetbrains.com/kotlin/2021/11/the-road-to-the-k2-compiler/)

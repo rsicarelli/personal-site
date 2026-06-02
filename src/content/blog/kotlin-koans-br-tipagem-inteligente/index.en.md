@@ -1,18 +1,18 @@
 ---
-title: "Kotlin Koans BR: Tipagem inteligente"
-description: "Reescreva o código fornecido usando smart casts e a expressão when do Kotlin."
+title: 'Kotlin Koans BR: Tipagem inteligente'
+description: 'Reescreva o código fornecido usando smart casts e a expressão when do Kotlin.'
 pubDate: 2024-03-07
 tags:
-  - "kotlin"
-  - "braziliandevs"
-series: "kotlin-koans-br"
+  - 'kotlin'
+  - 'braziliandevs'
+series: 'kotlin-koans-br'
 seriesOrder: 10
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fe3vw9oh7352shny9kdh6.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fe3vw9oh7352shny9kdh6.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kotlin-koans-br-tipagem-inteligente-5b74"
+  devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-tipagem-inteligente-5b74'
   devtoId: 1783187
-  githubRepo: "https://github.com/rsicarelli/kotlin-koans-edu-br"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
@@ -131,26 +131,26 @@ func Eval(expr Expr) int {
 
 ```javascript
 function eval(expr) {
-    if (expr instanceof Num) {
-        return expr.value;
-    }
-    if (expr instanceof Sum) {
-        return eval(expr.left) + eval(expr.right);
-    }
-    throw new Error("Unknown expression");
+  if (expr instanceof Num) {
+    return expr.value;
+  }
+  if (expr instanceof Sum) {
+    return eval(expr.left) + eval(expr.right);
+  }
+  throw new Error('Unknown expression');
 }
 
 class Num {
-    constructor(value) {
-        this.value = value;
-    }
+  constructor(value) {
+    this.value = value;
+  }
 }
 
 class Sum {
-    constructor(left, right) {
-        this.left = left;
-        this.right = right;
-    }
+  constructor(left, right) {
+    this.left = left;
+    this.right = right;
+  }
 }
 ```
 
@@ -160,23 +160,23 @@ class Sum {
   <summary>TypeScript</summary>
 
 ```typescript
-interface Expr {
-}
+interface Expr {}
 
 class Num implements Expr {
-    constructor(public value: number) {
-    }
+  constructor(public value: number) {}
 }
 
 class Sum implements Expr {
-    constructor(public left: Expr, public right: Expr) {
-    }
+  constructor(
+    public left: Expr,
+    public right: Expr,
+  ) {}
 }
 
 function eval(expr: Expr): number {
-    if (expr instanceof Num) return expr.value;
-    if (expr instanceof Sum) return eval(expr.left) + eval(expr.right);
-    throw new Error("Unknown expression");
+  if (expr instanceof Num) return expr.value;
+  if (expr instanceof Sum) return eval(expr.left) + eval(expr.right);
+  throw new Error('Unknown expression');
 }
 ```
 
@@ -206,7 +206,6 @@ function evalExpr($expr) {
 ```
 
 </details>
-
 
 <details>
   <summary>Python</summary>

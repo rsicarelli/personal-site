@@ -1,24 +1,25 @@
 ---
-title: "Kotlin Koans BR: Tipos anuláveis"
-description: "Reescreva o código a seguir para que ele tenha apenas uma expressão if: <details> <summary>Java</summary>"
+title: 'Kotlin Koans BR: Tipos anuláveis'
+description: 'Reescreva o código a seguir para que ele tenha apenas uma expressão if: <details> <summary>Java</summary>'
 pubDate: 2024-03-07
 tags:
-  - "kotlin"
-  - "braziliandevs"
-series: "kotlin-koans-br"
+  - 'kotlin'
+  - 'braziliandevs'
+series: 'kotlin-koans-br'
 seriesOrder: 6
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fggj8j1wgvcmgw1oql67g.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fggj8j1wgvcmgw1oql67g.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kotlin-koans-br-tipos-anulaveis-3mg"
+  devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-tipos-anulaveis-3mg'
   devtoId: 1783123
-  githubRepo: "https://github.com/rsicarelli/kotlin-koans-edu-br"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
 ## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Introduction/Nullable%20types/Task.kt)
 
 Reescreva o código a seguir para que ele tenha apenas uma expressão `if`:
+
 <details>
   <summary>Java</summary>
 
@@ -54,15 +55,15 @@ public class MinhaClasse {
 
 ```javascript
 function sendMessageToClient(client, message, mailer) {
-    if (client === null || message === null) return;
+  if (client === null || message === null) return;
 
-    const personalInfo = client.getPersonalInfo();
-    if (personalInfo === null) return;
+  const personalInfo = client.getPersonalInfo();
+  if (personalInfo === null) return;
 
-    const email = personalInfo.getEmail();
-    if (email === null) return;
+  const email = personalInfo.getEmail();
+  if (email === null) return;
 
-    mailer.sendMessage(email, message);
+  mailer.sendMessage(email, message);
 }
 ```
 
@@ -73,27 +74,27 @@ function sendMessageToClient(client, message, mailer) {
 
 ```typescript
 interface Client {
-    getPersonalInfo: () => PersonalInfo | null;
+  getPersonalInfo: () => PersonalInfo | null;
 }
 
 interface PersonalInfo {
-    getEmail: () => string | null;
+  getEmail: () => string | null;
 }
 
 interface Mailer {
-    sendMessage: (email: string, message: string) => void;
+  sendMessage: (email: string, message: string) => void;
 }
 
 function sendMessageToClient(client: Client | null, message: string | null, mailer: Mailer): void {
-    if (client === null || message === null) return;
+  if (client === null || message === null) return;
 
-    const personalInfo: PersonalInfo | null = client.getPersonalInfo();
-    if (personalInfo === null) return;
+  const personalInfo: PersonalInfo | null = client.getPersonalInfo();
+  if (personalInfo === null) return;
 
-    const email: string | null = personalInfo.getEmail();
-    if (email === null) return;
+  const email: string | null = personalInfo.getEmail();
+  if (email === null) return;
 
-    mailer.sendMessage(email, message);
+  mailer.sendMessage(email, message);
 }
 ```
 
@@ -244,13 +245,13 @@ public void SendMessageToClient(
     Mailer mailer
 ){
     if(client==null || message==null) return;
-    
+
     PersonalInfo personalInfo=client.GetPersonalInfo();
     if(personalInfo==null) return;
-    
-    string email=personalInfo.Email; 
+
+    string email=personalInfo.Email;
     if(email==null) return;
-    
+
     mailer.SendMessage(email, message);
 }
 ```

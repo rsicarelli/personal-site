@@ -1,15 +1,15 @@
 ---
-title: "The Hidden Cost of Default Hierarchy Template in Kotlin Multiplatform"
-description: "The Default Hierarchy Template in KMP projects is a great way to reduce boilerplate code and start working quickly. However, it came with an unexpected…"
+title: 'The Hidden Cost of Default Hierarchy Template in Kotlin Multiplatform'
+description: 'The Default Hierarchy Template in KMP projects is a great way to reduce boilerplate code and start working quickly. However, it came with an unexpected…'
 pubDate: 2025-11-02
 updatedDate: 2025-11-14
 tags:
-  - "kotlin"
-  - "kmp"
-  - "mobile"
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F6nh7bfue7eck9yqnr91b.png"
+  - 'kotlin'
+  - 'kmp'
+  - 'mobile'
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F6nh7bfue7eck9yqnr91b.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/the-hidden-cost-of-default-hierarchy-templates-in-kotlin-multiplatform-256a"
+  devtoUrl: 'https://dev.to/rsicarelli/the-hidden-cost-of-default-hierarchy-templates-in-kotlin-multiplatform-256a'
   devtoId: 2985222
   reactions: 6
 ---
@@ -42,7 +42,7 @@ kotlin {
 }
 ```
 
-Each target automatically gets its own source set (`androidMain`, `jvmMain`, `iosArm64Main`), where you can write platform-specific code with access to platform APIs. But the real power of KMP lies in `commonMain`—code written here is shared across *all* your targets.
+Each target automatically gets its own source set (`androidMain`, `jvmMain`, `iosArm64Main`), where you can write platform-specific code with access to platform APIs. But the real power of KMP lies in `commonMain`—code written here is shared across _all_ your targets.
 
 ### The dependsOn Relationship: Connecting the Dots
 
@@ -54,7 +54,7 @@ Source sets form a hierarchy through the `dependsOn` relationship. When `iosArm6
 
 ### Intermediate Source Sets: The Middle Ground
 
-Here's where it gets interesting. What if you want to share code between *some* platforms, but not all?
+Here's where it gets interesting. What if you want to share code between _some_ platforms, but not all?
 
 Imagine you have iOS-specific logic that works across all iOS variants (arm64 for devices, x64 for Intel simulators, simulatorArm64 for Apple Silicon simulators). You don't want to duplicate this code in three places, but you also can't put it in `commonMain` because it uses iOS-specific APIs.
 
@@ -98,9 +98,9 @@ It is—until it isn't.
 
 ## The Default Hierarchy Template in Action
 
-To understand the performance problem, we need to see what the default template actually *does*.
+To understand the performance problem, we need to see what the default template actually _does_.
 
-When you call `applyDefaultHierarchyTemplate()` (or let it apply automatically), the Kotlin Gradle Plugin analyzes your targets and creates intermediate source sets based on a comprehensive, predefined structure designed to support *all possible* Kotlin Multiplatform targets.
+When you call `applyDefaultHierarchyTemplate()` (or let it apply automatically), the Kotlin Gradle Plugin analyzes your targets and creates intermediate source sets based on a comprehensive, predefined structure designed to support _all possible_ Kotlin Multiplatform targets.
 
 Let's consider a common real-world scenario. Your project targets:
 
@@ -128,7 +128,7 @@ commonMain
     └── iosSimulatorArm64Main
 ```
 
-But here's what the default template *actually* creates:
+But here's what the default template _actually_ creates:
 
 ```
 commonMain
@@ -144,8 +144,8 @@ commonMain
 
 Notice the extra layers: nativeMain and appleMain. The template creates these intermediate source sets (and their corresponding src/nativeMain and src/appleMain directories) to enable code sharing in scenarios like:
 
-- `nativeMain`: Share code across *all* Kotlin/Native targets (iOS, macOS, Linux, Windows Native, watchOS, tvOS, etc.)
-- `appleMain`: Share code across *all* Apple platforms (iOS, macOS, watchOS, tvOS)
+- `nativeMain`: Share code across _all_ Kotlin/Native targets (iOS, macOS, Linux, Windows Native, watchOS, tvOS, etc.)
+- `appleMain`: Share code across _all_ Apple platforms (iOS, macOS, watchOS, tvOS)
 
 The design philosophy is sound. The default template optimizes for the most comprehensive code-sharing scenario. If you later add `macosArm64()` to your targets, it will automatically slot into the existing hierarchy under `appleMain`, and any code you've written there will just work.
 
@@ -207,7 +207,6 @@ These tasks created real bottlenecks in our workflow. The 70-module project went
 
 After implementing the fix, we couldn't reproduce the exact conditions to capture detailed metrics—Gradle's caching and environmental factors made this difficult. But the aggregate impact was consistent across our entire team, and the theoretical analysis aligned with reality: eliminating 1,440 wasteful tasks restored functionality to the broken project.
 
-
 ## The Solution: Custom Optimized Hierarchy
 
 Once we understood the problem, the solution became clear: **build exactly the hierarchy we need, no more, no less.**
@@ -268,7 +267,7 @@ After implementing the fix, I attempted to reproduce the original problem to cap
 
 The default hierarchy template isn't inherently bad—it's solving for a different use case than ours. Understanding when to use each approach is critical.
 
-If your project genuinely targets macOS, Linux, Windows, iOS, and watchOS, the `nativeMain` source set becomes valuable. You *want* to share native-specific code across all these platforms, so the Default Hierarchy is gold here.
+If your project genuinely targets macOS, Linux, Windows, iOS, and watchOS, the `nativeMain` source set becomes valuable. You _want_ to share native-specific code across all these platforms, so the Default Hierarchy is gold here.
 
 On the other hand, if you're starting a new project and not sure if you'll add macOS support in six months, the default template provides a stable foundation that scales as you add targets.
 

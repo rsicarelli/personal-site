@@ -1,22 +1,22 @@
 ---
 title: "Android Plataforma - Parte 8: Decorando os módulos 'library'"
-description: "No último post, apresentamos a primeira decoração na Plataforma e fizemos toda a configuração do nosso módulo app usando Kotlin DSL."
-summary: "No último post, apresentamos a primeira decoração na Plataforma e fizemos toda a configuração do nosso módulo app usando Kotlin DSL."
+description: 'No último post, apresentamos a primeira decoração na Plataforma e fizemos toda a configuração do nosso módulo app usando Kotlin DSL.'
+summary: 'No último post, apresentamos a primeira decoração na Plataforma e fizemos toda a configuração do nosso módulo app usando Kotlin DSL.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
-  - "kotlin"
-  - "android"
-  - "gradle"
-series: "android-plataforma"
+  - 'kotlin'
+  - 'android'
+  - 'gradle'
+series: 'android-plataforma'
 seriesOrder: 8
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F9jgi6gklng4hp7izrvot.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F9jgi6gklng4hp7izrvot.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/android-plataforma-parte-8-decorando-os-modulo-library-4mm0"
+  devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-8-decorando-os-modulo-library-4mm0'
   devtoId: 1610075
-  githubRepo: "https://github.com/rsicarelli/kotlin-gradle-android-platform/"
-  githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/8/decorating-android-library"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
+  githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/8/decorating-android-library'
   reactions: 3
 ---
 
@@ -31,6 +31,7 @@ Adotaremos exatamente a mesma estratégia para essa decoração:
 ---
 
 ## Passo a passo
+
 **1 -** Crie uma nova função `internal fun applyAndroidLibrary()` em `build-logic/decorations`. Em seguida, recupere as extensões registradas no `Project` para configurar o `LibraryExtension`:
 
 ```kotlin
@@ -40,7 +41,7 @@ import org.gradle.kotlin.dsl.configure
 
 internal fun Project.applyAndroidLibrary() {
     extensions.configure<LibraryExtension> {
-        
+
     }
 }
 ```
@@ -96,6 +97,7 @@ internal fun Project.applyAndroidLibrary() {
     }
 }
 ```
+
 **3 -** É hora de tornar esta decoração acessível aos nossos projetos. No `KPlatformPlugin.kt`, declare a função `fun androidLibrary()`:
 
 ```kotlin
@@ -138,6 +140,7 @@ dependencies {
     debugApi(libs.androidx.compose.ui.test.manifest)
 }
 ```
+
 ```kotlin
 // features/home/build.gradle.kts
 
@@ -153,6 +156,7 @@ dependencies {
     implementation(projects.features.details)
 }
 ```
+
 ```kotlin
 // features/details/build.gradle.kts
 
@@ -171,6 +175,7 @@ dependencies {
 ```
 
 ## Sucesso!
+
 E aí, o que achou dessa mudança? Olha a quantidade de código e repetição que conseguimos reduzir!
 
 Com isso, a escalabilidade dos nossos módulos em desenvolvimentos futuros se torna muito mais viável.

@@ -1,17 +1,17 @@
 ---
-title: "Kotlin Koans BR: Classes Seladas"
-description: "Reutilize sua solução da tarefa anterior, mas substitua a interface pela interface sealed. Assim, você não precisará mais do bloco else na expressão when."
+title: 'Kotlin Koans BR: Classes Seladas'
+description: 'Reutilize sua solução da tarefa anterior, mas substitua a interface pela interface sealed. Assim, você não precisará mais do bloco else na expressão when.'
 pubDate: 2024-03-07
 tags:
-  - "kotlin"
-  - "braziliandevs"
-series: "kotlin-koans-br"
+  - 'kotlin'
+  - 'braziliandevs'
+series: 'kotlin-koans-br'
 seriesOrder: 11
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fsigsnosikvtvpuyqfe77.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fsigsnosikvtvpuyqfe77.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kotlin-koans-br-classes-seladas-50m0"
+  devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-classes-seladas-50m0'
   devtoId: 1783194
-  githubRepo: "https://github.com/rsicarelli/kotlin-koans-edu-br"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 7
 ---
 

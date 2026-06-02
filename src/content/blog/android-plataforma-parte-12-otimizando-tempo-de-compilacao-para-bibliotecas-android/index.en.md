@@ -1,21 +1,21 @@
 ---
-title: "Android Plataforma - Parte 12: Otimizando tempo de compilação para bibliotecas Android"
-description: "🌱 Branch: 12/improving-android-library-build-time 🔗 Repositório:..."
+title: 'Android Plataforma - Parte 12: Otimizando tempo de compilação para bibliotecas Android'
+description: '🌱 Branch: 12/improving-android-library-build-time 🔗 Repositório:...'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
-  - "kotlin"
-  - "android"
-  - "gradle"
-series: "android-plataforma"
+  - 'kotlin'
+  - 'android'
+  - 'gradle'
+series: 'android-plataforma'
 seriesOrder: 12
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F95wf01w1l93eqd5slfhg.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F95wf01w1l93eqd5slfhg.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/android-plataforma-parte-12-otimizando-tempo-de-compilacao-para-bibliotecas-android-3g36"
+  devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-12-otimizando-tempo-de-compilacao-para-bibliotecas-android-3g36'
   devtoId: 1611061
-  githubRepo: "https://github.com/rsicarelli/kotlin-gradle-android-platform/"
-  githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/12/improving-android-library-build-time"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
+  githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/12/improving-android-library-build-time'
   reactions: 2
 ---
 
@@ -28,7 +28,8 @@ Agora, vamos entender como podemos reduzir o tempo de compilação das nossas no
 ---
 
 ## "Build features" do Android Gradle Plugin (AGP)
-A classe [`BuildFeatures`](https://developer.android.com/reference/tools/gradle-api/7.0/com/android/build/api/dsl/BuildFeatures) é uma interface que define uma lista de características de "build" que podem ser habilitadas ou desabilitadas em um projeto Android. 
+
+A classe [`BuildFeatures`](https://developer.android.com/reference/tools/gradle-api/7.0/com/android/build/api/dsl/BuildFeatures) é uma interface que define uma lista de características de "build" que podem ser habilitadas ou desabilitadas em um projeto Android.
 
 É por meio dessas funcionalidades que classes como `R` e `BuildConfig` são geradas, ou que as pastas `res` e `resource` são reconhecidas e incluídas no projeto.
 
@@ -38,7 +39,7 @@ A classe [`BuildFeatures`](https://developer.android.com/reference/tools/gradle-
 
 2. **buildConfig**: Esta funcionalidade gera automaticamente uma classe `BuildConfig` com informações meta sobre o aplicativo, como sua versão e se é `debug`.
 
-3. **compose**: Compose é uma toolkit de UI moderna nativa do Android para criação de interfaces. 
+3. **compose**: Compose é uma toolkit de UI moderna nativa do Android para criação de interfaces.
 
 4. **prefab**: Prefab permite a importação de bibliotecas C e C++ como módulos em projetos Android. Essas bibliotecas são empacotadas como AARs (Android ARchive) e facilitam a integração de código nativo nos projetos Android.
 
@@ -53,6 +54,7 @@ A classe [`BuildFeatures`](https://developer.android.com/reference/tools/gradle-
 ### Comportamento padrão
 
 Por padrão, tanto o módulo `app` quanto `library` terão estas funcionalidades habilitadas:
+
 - aidl
 - buildConfig
 - renderScript
@@ -60,18 +62,20 @@ Por padrão, tanto o módulo `app` quanto `library` terão estas funcionalidades
 - shaders
 
 **Funcionalidades desabilitadas por padrão (valor `false`):**
+
 - compose
 - prefab
 - viewBinding
 
 ## Delegando o controle de build features para nossa Plataforma
+
 Sabendo que essas funcionalidades adicionam tempo de compilação, podemos torná-las `false` por padrão e delegar essa configuração para nossa Plataforma.
 
 ### Definindo `BuildFeatures` e `BuildFeaturesBuilder`
 
 **1 -** Crie um novo modelo e builder para expressar as opções customizadas.
 
-Note que apenas o `AndroidLibraryOptions` irá receber essas opções. O motivo é que um `app` precisa de todos esses recursos habilitados, então nem damos trabalho de expor essa api no `AndroidAppOptions` também. 
+Note que apenas o `AndroidLibraryOptions` irá receber essas opções. O motivo é que um `app` precisa de todos esses recursos habilitados, então nem damos trabalho de expor essa api no `AndroidAppOptions` também.
 
 ```kotlin
 data class AndroidLibraryOptions(
@@ -87,6 +91,7 @@ data class AndroidLibraryOptions(
     )
 }
 ```
+
 ```kotlin
 class AndroidLibraryOptionsBuilder : AndroidOptionsBuilder() {
     ..
@@ -123,7 +128,6 @@ internal fun Project.applyAndroidLibrary(androidLibraryOptions: AndroidLibraryOp
 
 **3 -** Nos passos a seguir, vamos desligar a geração do `BuildConfig` por completo, incluindo o módulo `app`. Já que é comum precisar do `BuildConfig` no `app`, vamos adaptar nossos modelos para trazer essa opção:
 
-
 ```kotlin
 data class AndroidAppOptions(
     ..
@@ -133,6 +137,7 @@ data class AndroidAppOptions(
     ..
 ) : AndroidOptions(..)
 ```
+
 ```kotlin
 class AndroidAppOptionsBuilder : AndroidOptionsBuilder() {
 
@@ -176,9 +181,10 @@ androidLibrary {
 }
 ```
 
-
 ### Desligando as funcionalidades no `gradle.properties`
+
 **1 -** Vamos atualizar nosso `gradle.properties`. Abra o arquivo e adicione as seguintes linhas:
+
 ```kotlin
 android.library.defaults.buildfeatures.androidresources=false
 android.defaults.buildfeatures.buildConfig=false
@@ -190,7 +196,6 @@ android.defaults.buildfeatures.viewBinding=false
 ```
 
 **2 -** Já que estamos aqui, vamos aproveitar e aplicar outras configurações para otimizar nosso desenvolvimento com múltiplos módulos:
-
 
 ```properties
 # -------Gradle--------
@@ -260,6 +265,7 @@ Caso o conteúdo do `gradle.properties` do `build-logic` seja diferente, o Gradl
 Copie o conteúdo acima, e simplesmente cole no `build-logic/gradle.properties`
 
 ## Sucesso!
-Agora, nosso projeto assume que os módulos não terão nenhum recurso extra de compilação. Contudo, nossa plataforma se mantém flexível para atender módulos que necessitem de features específicas. 
+
+Agora, nosso projeto assume que os módulos não terão nenhum recurso extra de compilação. Contudo, nossa plataforma se mantém flexível para atender módulos que necessitem de features específicas.
 
 No próximo artigo, daremos um passo adicional na manutenção dos módulos, permitindo que nossa plataforma decore módulos "puro JVM", otimizando ainda mais o tempo de compilação quando possível.

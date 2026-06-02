@@ -1,18 +1,18 @@
 ---
-title: "Kotlin Koans BR: Tipo \"nenhum\" (Nothing)"
-description: "Especifique o tipo de retorno Nothing para a função failWithWrongAge."
+title: 'Kotlin Koans BR: Tipo "nenhum" (Nothing)'
+description: 'Especifique o tipo de retorno Nothing para a função failWithWrongAge.'
 pubDate: 2024-03-07
 tags:
-  - "kotlin"
-  - "braziliandevs"
-series: "kotlin-koans-br"
+  - 'kotlin'
+  - 'braziliandevs'
+series: 'kotlin-koans-br'
 seriesOrder: 7
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F035mutklknjlsv9o3iw2.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F035mutklknjlsv9o3iw2.png'
 translated: false
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/kotlin-koans-br-tipo-nenhum-nothing-5gio"
+  devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-tipo-nenhum-nothing-5gio'
   devtoId: 1783125
-  githubRepo: "https://github.com/rsicarelli/kotlin-koans-edu-br"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
@@ -33,7 +33,7 @@ fun esperarPraSempre(): Nothing {
     while (true) {
         // Estou esperando...
     }
-}   
+}
 ```
 
 ### O papel especial de `Nothing`

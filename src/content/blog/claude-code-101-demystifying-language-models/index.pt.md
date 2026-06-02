@@ -1,22 +1,22 @@
 ---
-title: "Claude Code 101: Desmistificando os Modelos de Linguagem"
-description: "O que é um token A janela de contexto Como o modelo gera texto O mecanismo de atenção Como o modelo..."
+title: 'Claude Code 101: Desmistificando os Modelos de Linguagem'
+description: 'O que é um token A janela de contexto Como o modelo gera texto O mecanismo de atenção Como o modelo...'
 pubDate: 2026-04-09
 tags:
-  - "ai"
-  - "claude"
-  - "braziliandevs"
-series: "claude-code-101"
+  - 'ai'
+  - 'claude'
+  - 'braziliandevs'
+series: 'claude-code-101'
 seriesOrder: 2
-coverUrl: "https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F3404ytflo133004tl73y.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F3404ytflo133004tl73y.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/claude-code-101-desmistificando-os-modelos-de-linguagem-5big"
+  devtoUrl: 'https://dev.to/rsicarelli/claude-code-101-desmistificando-os-modelos-de-linguagem-5big'
   devtoId: 3476054
-  githubRepo: "https://github.com/rsicarelli/claude-code-10x"
+  githubRepo: 'https://github.com/rsicarelli/claude-code-10x'
   reactions: 5
 ---
 
-[🌐 Read in English](https://dev.to/rsicarelli/claude-code-101-demystifying-language-models-3h8o) 
+[🌐 Read in English](https://dev.to/rsicarelli/claude-code-101-demystifying-language-models-3h8o)
 
 No [artigo anterior](https://dev.to/rsicarelli/claude-code-101-introducao-a-programacao-agentica-4mk1), montamos a fábrica inteira: a evolução de produção manual pra máquinas autônomas, o ecossistema de ferramentas agênticas, os três pilares (prompt, context e harness engineering). Você sabe o que a fábrica faz, quem trabalha nela e até quanto fatura.
 
@@ -48,11 +48,11 @@ O caractere "ó" sozinho já vira um token separado porque acentos aparecem pouc
 
 Um estudo de Petrov et al. apresentado no NeurIPS 2023 mediu o que eles chamaram de "prêmio de tokenização" entre idiomas [[1]](#referências). Os números:
 
-| Tokenizer | Quanto a mais o português consome vs inglês |
-|---|---|
-| GPT-2 (`r50k_base`) | **1.94x** (quase o dobro) |
-| GPT-4 (`cl100k_base`) | **1.48x** (~50% a mais) |
-| GPT-4o (`o200k_base`) | **~1.3-1.4x** (melhorou) * |
+| Tokenizer             | Quanto a mais o português consome vs inglês |
+| --------------------- | ------------------------------------------- |
+| GPT-2 (`r50k_base`)   | **1.94x** (quase o dobro)                   |
+| GPT-4 (`cl100k_base`) | **1.48x** (~50% a mais)                     |
+| GPT-4o (`o200k_base`) | **~1.3-1.4x** (melhorou) \*                 |
 
 Os números do GPT-2 e GPT-4 vêm diretamente do estudo de Petrov et al. [[1]](#referências). A estimativa pro GPT-4o reflete a tendência de melhoria com vocabulários maiores, confirmada por estudos posteriores.
 
@@ -68,15 +68,15 @@ Se tokens são as peças, a context window é a mesa onde você monta. Tamanho f
 
 O mercado convergiu pra **1 milhão de tokens** (1M) como padrão nos modelos frontier [[2]](#referências). Na tabela abaixo, "K" significa mil e "M" significa milhão:
 
-| Modelo | Tamanho da mesa | Resposta máxima |
-|---|---|---|
-| **[Claude Opus 4.6](https://docs.anthropic.com/en/docs/about-claude/models)** | 1M tokens | 128K tokens |
-| **[Claude Sonnet 4.6](https://docs.anthropic.com/en/docs/about-claude/models)** | 1M tokens | 64K tokens |
-| **[Claude Haiku 4.5](https://docs.anthropic.com/en/docs/about-claude/models)** | 200K tokens | 64K tokens |
-| **[GPT-5.4](https://platform.openai.com/docs/models)** | 1.05M tokens | 128K tokens |
-| **[GPT-4.1](https://platform.openai.com/docs/models)** | 1M tokens | 32K tokens |
-| **[Gemini 2.5 Pro](https://ai.google.dev/gemini-api/docs/models)** | 1M tokens | 65K tokens |
-| **[Llama 4 Scout](https://ai.meta.com/blog/llama-4-multimodal-intelligence/)** | 10M tokens | varia |
+| Modelo                                                                          | Tamanho da mesa | Resposta máxima |
+| ------------------------------------------------------------------------------- | --------------- | --------------- |
+| **[Claude Opus 4.6](https://docs.anthropic.com/en/docs/about-claude/models)**   | 1M tokens       | 128K tokens     |
+| **[Claude Sonnet 4.6](https://docs.anthropic.com/en/docs/about-claude/models)** | 1M tokens       | 64K tokens      |
+| **[Claude Haiku 4.5](https://docs.anthropic.com/en/docs/about-claude/models)**  | 200K tokens     | 64K tokens      |
+| **[GPT-5.4](https://platform.openai.com/docs/models)**                          | 1.05M tokens    | 128K tokens     |
+| **[GPT-4.1](https://platform.openai.com/docs/models)**                          | 1M tokens       | 32K tokens      |
+| **[Gemini 2.5 Pro](https://ai.google.dev/gemini-api/docs/models)**              | 1M tokens       | 65K tokens      |
+| **[Llama 4 Scout](https://ai.meta.com/blog/llama-4-multimodal-intelligence/)**  | 10M tokens      | varia           |
 
 A mesa é compartilhada. Tudo que você manda pro modelo (sua pergunta, arquivos, histórico de conversa) e tudo que ele responde precisam caber juntos na mesma superfície. Uma mesa de 1 milhão de tokens parece enorme, mas o espaço da resposta já reserva uma parte, e o resto é o máximo que você pode mandar.
 
@@ -153,12 +153,12 @@ Você tá montando uma parede azul e precisa da próxima peça. Na caixa, as pe�
 
 A **temperatura** controla o quão fundo o modelo enfia a mão na caixa. No zero, sempre pega a peça do topo: mesma escolha, toda vez, sem surpresa. No 0.7, às vezes pesca uma verde que ninguém esperava, mas que dá um charme na construção. Acima de 1.0, puxa a roda vermelha e encaixa na parede mesmo assim.
 
-| Temperatura | Completando "A receita leva..." | Comportamento |
-|---|---|---|
-| 0.0 | "farinha, açúcar e cacau." | Sempre a mesma resposta |
-| 0.3 | "farinha de trigo, óleo de coco e cacau." | Pequenas variações |
-| 0.7 | "especiarias exóticas e um toque de limão siciliano." | Criativo |
-| 1.5 | "sonhos derretidos em caramelo de dragão." | Incoerente |
+| Temperatura | Completando "A receita leva..."                       | Comportamento           |
+| ----------- | ----------------------------------------------------- | ----------------------- |
+| 0.0         | "farinha, açúcar e cacau."                            | Sempre a mesma resposta |
+| 0.3         | "farinha de trigo, óleo de coco e cacau."             | Pequenas variações      |
+| 0.7         | "especiarias exóticas e um toque de limão siciliano." | Criativo                |
+| 1.5         | "sonhos derretidos em caramelo de dragão."            | Incoerente              |
 
 ![Temperatura: o quão fundo na caixa](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part2/assets/pt-br/part2-image5-9d21.png?raw=true)
 
@@ -263,15 +263,15 @@ Cada peça custa dinheiro. LLMs são cobrados por token processado, dividido em 
 
 Preços em USD por 1 milhão de tokens (MTok):
 
-| Modelo | Input / MTok | Output / MTok | Cache read / MTok |
-|---|---|---|---|
-| **Claude Opus 4.6** | $5.00 | $25.00 | $0.50 |
-| **Claude Sonnet 4.6** | $3.00 | $15.00 | $0.30 |
-| **Claude Haiku 4.5** | $1.00 | $5.00 | $0.10 |
-| **GPT-5.4** | $2.50 | $15.00 | $0.25 |
-| **GPT-4.1** | $2.00 | $8.00 | $0.50 |
-| **Gemini 2.5 Pro** | $1.25 | $10.00 | $0.125 |
-| **Gemini 2.5 Flash** | $0.30 | $2.50 | $0.03 |
+| Modelo                | Input / MTok | Output / MTok | Cache read / MTok |
+| --------------------- | ------------ | ------------- | ----------------- |
+| **Claude Opus 4.6**   | $5.00        | $25.00        | $0.50             |
+| **Claude Sonnet 4.6** | $3.00        | $15.00        | $0.30             |
+| **Claude Haiku 4.5**  | $1.00        | $5.00         | $0.10             |
+| **GPT-5.4**           | $2.50        | $15.00        | $0.25             |
+| **GPT-4.1**           | $2.00        | $8.00         | $0.50             |
+| **Gemini 2.5 Pro**    | $1.25        | $10.00        | $0.125            |
+| **Gemini 2.5 Flash**  | $0.30        | $2.50         | $0.03             |
 
 Repare na coluna "Cache read". Ela vai ser importante daqui a pouco.
 

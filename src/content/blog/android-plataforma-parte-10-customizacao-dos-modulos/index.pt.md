@@ -1,20 +1,20 @@
 ---
-title: "Android Plataforma - Parte 10: Customização dos módulos"
-description: "No último artigo, exploramos o CommonsExtension para eliminar duplicidades em nossas configurações."
+title: 'Android Plataforma - Parte 10: Customização dos módulos'
+description: 'No último artigo, exploramos o CommonsExtension para eliminar duplicidades em nossas configurações.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
-  - "kotlin"
-  - "android"
-  - "gradle"
-series: "android-plataforma"
+  - 'kotlin'
+  - 'android'
+  - 'gradle'
+series: 'android-plataforma'
 seriesOrder: 10
-coverUrl: "https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fej0i91sw2qolg9uuruxi.png"
+coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fej0i91sw2qolg9uuruxi.png'
 provenance:
-  devtoUrl: "https://dev.to/rsicarelli/android-plataforma-parte-10-customizacao-dos-modulos-2a7"
+  devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-10-customizacao-dos-modulos-2a7'
   devtoId: 1610709
-  githubRepo: "https://github.com/rsicarelli/kotlin-gradle-android-platform/"
-  githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/10-11/customizing-android-options"
+  githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
+  githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/10-11/customizing-android-options'
   reactions: 3
 ---
 
@@ -37,12 +37,12 @@ Por exemplo, talvez um módulo necessite de um build type adicional, modificar a
 Então, como podemos incorporar essa flexibilidade à nossa plataforma?
 
 ## Introduzindo o conceito de `Options`
+
 Cada ajuste em nossa plataforma pode ser adaptado a partir de um modelo ou opções, permitindo maior controle sobre determinado módulo.
 
 A proposta é criar um modelo que especifique quais opções serão aplicadas para cada módulo.
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/24m73d4j4cj8rcjgg27g.png)
-
 
 ```kotlin
 sealed class AndroidOptions(
@@ -151,6 +151,7 @@ object DebugBuildType : AndroidBuildType {
 ```
 
 A partir desse modelo, conseguimos:
+
 - Estabelecer opções comuns entre diferentes tipos de módulos Android usando a `sealed class` `AndroidOptions`.
 - Especificar opções para o app com o `AndroidAppOptions`.
 - Delimitar opções para uma biblioteca usando o `AndroidLibraryOptions`.
@@ -207,7 +208,8 @@ private fun Project.applyAndroidCommon(androidOptions: AndroidOptions) =
     }
 
 ```
-**3 -** Atualize nossas funções `applyAndroidApp()` e 
+
+**3 -** Atualize nossas funções `applyAndroidApp()` e
 `applyAndroidLibrary()` para receber e aplicar as opções do modelo, assim como invocar nossa `applyAndroidCommon()`
 
 ```kotlin
@@ -224,6 +226,7 @@ internal fun Project.applyAndroidApp(androidAppOptions: AndroidAppOptions) {
     }
 }
 ```
+
 ```kotlin
 internal fun Project.applyAndroidLibrary(androidLibraryOptions: AndroidLibraryOptions) {
     applyAndroidCommon(androidLibraryOptions)
@@ -257,7 +260,6 @@ private fun <T> Project.setProguardFiles(
 ```
 
 **5 -** Atualize as funções `applyAndroidApp()` e `applyAndroidLibrary()`, definindo o proguard dentro do bloco `defaultConfig { }`. Aqui, você terá acesso às funções `proguardFiles` e `consumerProguardFiles`:
-
 
 ```kotlin
 internal fun Project.applyAndroidApp(androidAppOptions: AndroidAppOptions) {
@@ -320,6 +322,7 @@ private fun ApplicationExtension.setAppBuildTypes(options: AndroidAppOptions) {
 ```
 
 Para a `LibraryExtension`:
+
 ```kotlin
 private fun LibraryExtension.setLibraryBuildTypes(options: AndroidLibraryOptions) {
     fun LibraryBuildType.applyFrom(androidBuildType: AndroidBuildType) {
@@ -340,6 +343,7 @@ private fun LibraryExtension.setLibraryBuildTypes(options: AndroidLibraryOptions
 ```
 
 **7 -** Por fim, integre todos os componentes:
+
 ```kotlin
 internal fun Project.applyAndroidApp(androidAppOptions: AndroidAppOptions) {
     applyAndroidCommon(androidAppOptions)
@@ -362,6 +366,7 @@ internal fun Project.applyAndroidApp(androidAppOptions: AndroidAppOptions) {
     }
 }
 ```
+
 ```kotlin
 internal fun Project.applyAndroidLibrary(androidLibraryOptions: AndroidLibraryOptions) {
     applyAndroidCommon(androidLibraryOptions)
@@ -381,10 +386,11 @@ internal fun Project.applyAndroidLibrary(androidLibraryOptions: AndroidLibraryOp
 ```
 
 ## Sucesso!
+
 Com essa adaptação, tornamos nossos ajustes mais flexíveis, podendo, por exemplo, habilitar o `Compose` em um módulo específico.
 
 No entanto, ainda há desafios pela frente.
 
-Precisamos encontrar uma maneira de permitir que os módulos definam esses parâmetros. 
+Precisamos encontrar uma maneira de permitir que os módulos definam esses parâmetros.
 
 Uma opção seria aceitar um modelo predefinido, mas no próximo artigo, construiremos juntos uma DSL, buscando uma abordagem mais fluida e idiomática no Kotlin, sem a necessidade de criar objetos em módulos individuais.
