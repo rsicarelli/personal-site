@@ -1,0 +1,49 @@
+# Dependabot — weekly dependency updates for the npm (pnpm) project and GitHub Actions.
+# Grouped to keep PR noise low: routine minor/patch bumps batch together; majors come solo.
+version: 2
+
+updates:
+  # ---- JavaScript / pnpm (repo root) -------------------------------------------------
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 5
+    labels:
+      - 'area:devex'
+    commit-message:
+      prefix: chore # -> "chore(deps): ..."
+      prefix-development: chore # -> "chore(deps-dev): ..."
+      include: scope
+    groups:
+      # Batch routine production bumps; majors still open individually for review.
+      production-dependencies:
+        dependency-type: production
+        update-types:
+          - minor
+          - patch
+      # Dev tooling (eslint, prettier, types, tailwind, astro check) — batch everything.
+      dev-dependencies:
+        dependency-type: development
+
+  # ---- GitHub Actions (workflows + composite actions) --------------------------------
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 5
+    labels:
+      - 'area:devex'
+    commit-message:
+      prefix: ci # -> "ci(deps): ..."
+      include: scope
+    groups:
+      github-actions:
+        patterns:
+          - '*'
