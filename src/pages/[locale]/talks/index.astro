@@ -7,8 +7,9 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import { LOCALES, type Locale } from '@/config/site';
-import { useTranslations, hreflangOf } from '@/i18n/utils';
+import { useTranslations } from '@/i18n/utils';
 import { getLocalizedEntries } from '@/lib/content';
+import { formatDate, isoDate } from '@/lib/datetime';
 import type { CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -17,9 +18,6 @@ export async function getStaticPaths() {
 
 const locale = Astro.params.locale as Locale;
 const t = useTranslations(locale);
-// timeZone UTC: content dates are date-only (UTC midnight); local-zone formatting would shift the
-// calendar day (e.g. a 2024-07-29 talk showing as Jul 28).
-const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'medium', timeZone: 'UTC' });
 
 const now = new Date();
 /** An event is "past" once its end (or start, if single-day) is before today. */
@@ -33,8 +31,8 @@ const past = all.filter((e) => endOf(e.entry.data) < now); // already newest-fir
 const dateRange = (data: CollectionEntry<'events'>['data']) => {
   const { startDate, endDate } = data;
   return endDate && endDate.getTime() !== startDate.getTime()
-    ? `${df.format(startDate)} – ${df.format(endDate)}`
-    : df.format(startDate);
+    ? `${formatDate(startDate, locale, 'medium')} – ${formatDate(endDate, locale, 'medium')}`
+    : formatDate(startDate, locale, 'medium');
 };
 ---
 
@@ -67,9 +65,7 @@ const dateRange = (data: CollectionEntry<'events'>['data']) => {
                       </a>
                     </h3>
                     <p class="text-muted-foreground mt-1 font-mono text-xs">
-                      <time datetime={entry.data.startDate.toISOString()}>
-                        {dateRange(entry.data)}
-                      </time>
+                      <time datetime={isoDate(entry.data.startDate)}>{dateRange(entry.data)}</time>
                       {entry.data.location && <span> · {entry.data.location}</span>}
                     </p>
                     <p class="text-muted-foreground mt-2 max-w-prose">{entry.data.description}</p>
