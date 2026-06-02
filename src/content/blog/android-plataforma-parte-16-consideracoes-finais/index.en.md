@@ -1,7 +1,7 @@
 ---
-title: 'Android Plataforma - Parte 16: Considerações finais'
-description: 'Nos últimos artigos, construímos uma plataforma do zero, aprendendo e aplicando diversos conceitos com o objetivo de flexibilizar e escalar aplicações…'
-summary: 'Nos últimos artigos, construímos uma plataforma do zero, aprendendo e aplicando diversos conceitos com o objetivo de flexibilizar e escalar aplicações multimodulares em Kotlin.'
+title: 'Android Plataforma - Part 16: Final thoughts'
+description: 'Over the last articles, we built a platform from scratch, learning and applying concepts to make multi-module Kotlin apps more flexible and scalable.'
+summary: 'Over the last articles, we built a platform from scratch, learning and applying several concepts with the goal of making multi-module Kotlin apps more flexible and scalable.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -11,58 +11,56 @@ tags:
 series: 'android-plataforma'
 seriesOrder: 16
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F2qd3veu7t1vhhf53y720.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-16-consideracoes-finais-53f2'
-  devtoId: 1611230
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/main'
   reactions: 3
 ---
 
-Gostaria de fazer algumas considerações finais sobre tudo o que foi abordado e sugerir alguns próximos passos para as séries futuras!
+I'd like to share a few final thoughts on everything we've covered, and suggest some next steps for future series!
 
 ---
 
-## Eu realmente preciso de uma plataforma?
+## Do I really need a platform?
 
-Essa é a pergunta do milhão.
+That's the million-dollar question.
 
-Como indivíduo, a principal justificativa para adotar essa estratégia é se seu repositório for muito grande ou se você tiver vários outros projetos open source e desejar auxílio na manutenção desses projetos.
+As an individual, the main reason to adopt this strategy is if your repository is very large, or if you have several other open source projects and want help maintaining them.
 
-Para projetos pequenos ou com fins educativos, essa complexidade toda dificilmente se justifica.
+For small or educational projects, all this complexity is hard to justify.
 
-Por outro lado, para aplicações de grande porte e que contam com a colaboração de várias pessoas, uma plataforma robusta realmente faz a diferença.
+On the other hand, for large applications with many contributors, a solid platform really makes a difference.
 
-Uma plataforma saudável encoraja o time a adotar a modularidade, o que traz ganhos significativos de produtividade e manutenção, já que as práticas adotadas reduzem drasticamente o tempo de compilação e build dos projetos.
+A healthy platform encourages the team to embrace modularity, which brings significant gains in productivity and maintenance, since the practices you adopt drastically cut compilation and build times.
 
-Essa prática é especialmente relevante para empresas que têm vários aplicativos publicados na loja, seja da mesma empresa ou no caso de uma consultoria com artefatos internos.
+This is especially relevant for companies that have several apps published in the store, whether from the same company or, in the case of a consultancy, with internal artifacts.
 
-Basta importar sua plataforma para automaticamente acessar diversos recursos essenciais para escalar seus projetos.
+Just import your platform to automatically get access to a range of features that are essential for scaling your projects.
 
-### E as boas práticas?
+### What about best practices?
 
-Como vimos ao longo dos artigos, não existe uma única maneira de criar sua plataforma.
+As we saw throughout the articles, there's no single way to build your platform.
 
-É fundamental que você e seu time estejam alinhados em diversos aspectos, tais como:
+It's essential that you and your team are aligned on several aspects, such as:
 
-- Quais recursos queremos disponibilizar para os módulos?
-- Quais serão as configurações padrão da plataforma?
-- Qual terminologia usar? Recursos, Funcionalidades ou Aplicações?
+- Which features do we want to expose to the modules?
+- What will the platform's default configurations be?
+- What terminology should we use? Resources, Features, or Applications?
 
-O objetivo final é ter uma plataforma robusta e que faça sentido dentro do contexto do seu produto.
+The end goal is to have a solid platform that makes sense within the context of your product.
 
-## Próximos passos
+## Next steps
 
-Agradeço imensamente pela paciência e perseverança ao ler e consumir todo esse material.
+Thank you so much for your patience and persistence in reading through and working through all this material.
 
-Estou curioso para saber a opinião de vocês, os impactos positivos (ou negativos) alcançados e as inspirações que você e seu time tiveram.
+I'm curious to hear what you think, the positive (or negative) impacts you've seen, and the ideas you and your team came away with.
 
-Quanto aos próximos passos, ainda estou decidindo sobre o que abordar:
+As for next steps, I'm still deciding what to cover:
 
-1. Adaptar essa plataforma para Kotlin Multiplataforma e ter uma solução para Android e iOS utilizando Compose Multiplataforma.
-2. Explorar a extração da nossa plataforma para um repositório separado e discutir sobre artefatos Maven e como consumir sua plataforma em qualquer projeto como uma dependência comum.
+1. Adapting this platform to Kotlin Multiplatform and having a single solution for Android and iOS using Compose Multiplatform.
+2. Exploring how to extract our platform into a separate repository, and discussing Maven artifacts and how to consume your platform in any project as a regular dependency.
 
 ---
 
-Tchau!
+Bye!

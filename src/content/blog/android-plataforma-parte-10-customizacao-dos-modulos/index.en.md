@@ -1,6 +1,6 @@
 ---
-title: 'Android Plataforma - Parte 10: Customização dos módulos'
-description: 'No último artigo, exploramos o CommonsExtension para eliminar duplicidades em nossas configurações.'
+title: 'Android Plataforma - Part 10: Customizing the modules'
+description: 'In the last article we explored CommonsExtension to remove duplication from our configuration.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -10,40 +10,38 @@ tags:
 series: 'android-plataforma'
 seriesOrder: 10
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fej0i91sw2qolg9uuruxi.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-10-customizacao-dos-modulos-2a7'
-  devtoId: 1610709
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/10-11/customizing-android-options'
   reactions: 3
 ---
 
-No último artigo, exploramos o `CommonsExtension` para eliminar duplicidades em nossas configurações.
+In the last article, we explored `CommonsExtension` to remove duplication from our configuration.
 
-Agora, vamos discutir situações em que são necessárias modificações no comportamento e como enriquecer nossa plataforma com uma DSL customizada para a construção de um `AndroidOptions`.
+Now let's talk about situations where we need to change behavior, and how to enrich our platform with a custom DSL for building an `AndroidOptions`.
 
-Ainda enfrentamos duplicidade ao definir nossos `buildTypes`, além de não estarmos configurando o Proguard corretamente para as nossas biblotecas.
+We still have duplication when defining our `buildTypes`, and on top of that we aren't configuring Proguard correctly for our libraries.
 
-Mas, antes de resolver essa questão, vale a pena entender como cada módulo pode ter configurações específicas.
+But before solving that, it's worth understanding how each module can have its own specific configuration.
 
 ---
 
-## Módulos diferentes, configurações diferentes.
+## Different modules, different configurations.
 
-Em uma aplicação real, é comum que diferentes módulos demandem certa flexibilidade em relação à plataforma.
+In a real application, it's common for different modules to need some flexibility around the platform.
 
-Por exemplo, talvez um módulo necessite de um build type adicional, modificar as regras do "resource packing" para excluir determinados arquivos, ou até usar um `namespace` diferente.
+For example, maybe a module needs an extra build type, needs to change the "resource packing" rules to exclude certain files, or even needs a different `namespace`.
 
-Então, como podemos incorporar essa flexibilidade à nossa plataforma?
+So how can we bring that flexibility into our platform?
 
-## Introduzindo o conceito de `Options`
+## Introducing the `Options` concept
 
-Cada ajuste em nossa plataforma pode ser adaptado a partir de um modelo ou opções, permitindo maior controle sobre determinado módulo.
+Every setting in our platform can be adapted from a model, or options, giving us more control over a given module.
 
-A proposta é criar um modelo que especifique quais opções serão aplicadas para cada módulo.
+The idea is to create a model that specifies which options will be applied to each module.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/24m73d4j4cj8rcjgg27g.png)
+![Diagram of the AndroidOptions model](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/24m73d4j4cj8rcjgg27g.png)
 
 ```kotlin
 sealed class AndroidOptions(
@@ -151,23 +149,23 @@ object DebugBuildType : AndroidBuildType {
 }
 ```
 
-A partir desse modelo, conseguimos:
+With this model in place, we can:
 
-- Estabelecer opções comuns entre diferentes tipos de módulos Android usando a `sealed class` `AndroidOptions`.
-- Especificar opções para o app com o `AndroidAppOptions`.
-- Delimitar opções para uma biblioteca usando o `AndroidLibraryOptions`.
-- Ter maior adaptabilidade para definir as opções do Proguard.
-- Tornar nossa plataforma agnóstica, facilitando a integração com outros projetos que tenham `applicationId` distintos, entre outros.
+- Set up options shared across different Android module types using the `sealed class` `AndroidOptions`.
+- Specify options for the app with `AndroidAppOptions`.
+- Scope options for a library using `AndroidLibraryOptions`.
+- Get more flexibility when defining the Proguard options.
+- Make our platform agnostic, making it easier to integrate with other projects that have a different `applicationId`, and so on.
 
-## Refatorando com `AndroidOptions`
+## Refactoring with `AndroidOptions`
 
-**1 -** Crie um arquivo nomeado `AndroidOptions.kt` na raiz do módulo `build-logic` e mova o conteúdo anterior para este arquivo.
+**1 -** Create a file named `AndroidOptions.kt` at the root of the `build-logic` module and move the previous content into it.
 
-Traga todo o conteúdo acima para esse arquivo.
+Bring everything above into this file.
 
-**2 -** Atualize a função `applyAndroidCommon()` trazendo o `AndroidOptions` como argumento.
+**2 -** Update the `applyAndroidCommon()` function to take `AndroidOptions` as an argument.
 
-Atualize a função para utilizarmos os valores definidos pelo modelo:
+Update the function so it uses the values defined by the model:
 
 ```kotlin
 private fun Project.applyAndroidCommon(androidOptions: AndroidOptions) =
@@ -210,8 +208,8 @@ private fun Project.applyAndroidCommon(androidOptions: AndroidOptions) =
 
 ```
 
-**3 -** Atualize nossas funções `applyAndroidApp()` e
-`applyAndroidLibrary()` para receber e aplicar as opções do modelo, assim como invocar nossa `applyAndroidCommon()`
+**3 -** Update our `applyAndroidApp()` and
+`applyAndroidLibrary()` functions to receive and apply the model's options, as well as call our `applyAndroidCommon()`.
 
 ```kotlin
 internal fun Project.applyAndroidApp(androidAppOptions: AndroidAppOptions) {
@@ -237,9 +235,9 @@ internal fun Project.applyAndroidLibrary(androidLibraryOptions: AndroidLibraryOp
 }
 ```
 
-**4 -** Vamos criar uma DSL para definir as configurações do Proguard.
+**4 -** Let's create a DSL to define the Proguard configuration.
 
-A ideia dessa função é delegar a função `consume` para quem invoca, e deixar aplicar configurações específicas para cada tipo de módulo
+The idea of this function is to delegate the `consume` function to the caller, leaving it to apply settings that are specific to each module type.
 
 ```kotlin
 private fun <T> Project.setProguardFiles(
@@ -260,7 +258,7 @@ private fun <T> Project.setProguardFiles(
 }
 ```
 
-**5 -** Atualize as funções `applyAndroidApp()` e `applyAndroidLibrary()`, definindo o proguard dentro do bloco `defaultConfig { }`. Aqui, você terá acesso às funções `proguardFiles` e `consumerProguardFiles`:
+**5 -** Update the `applyAndroidApp()` and `applyAndroidLibrary()` functions, setting Proguard up inside the `defaultConfig { }` block. Here you'll have access to the `proguardFiles` and `consumerProguardFiles` functions:
 
 ```kotlin
 internal fun Project.applyAndroidApp(androidAppOptions: AndroidAppOptions) {
@@ -296,9 +294,9 @@ internal fun Project.applyAndroidLibrary(androidLibraryOptions: AndroidLibraryOp
 }
 ```
 
-**6 -** Em seguida, configure os `buildTypes` a partir da `List<ApplicationBuildType>`:
+**6 -** Next, configure the `buildTypes` from the `List<ApplicationBuildType>`:
 
-Para a `ApplicationExtension`:
+For the `ApplicationExtension`:
 
 ```kotlin
 private fun ApplicationExtension.setAppBuildTypes(options: AndroidAppOptions) {
@@ -322,7 +320,7 @@ private fun ApplicationExtension.setAppBuildTypes(options: AndroidAppOptions) {
 }
 ```
 
-Para a `LibraryExtension`:
+For the `LibraryExtension`:
 
 ```kotlin
 private fun LibraryExtension.setLibraryBuildTypes(options: AndroidLibraryOptions) {
@@ -343,7 +341,7 @@ private fun LibraryExtension.setLibraryBuildTypes(options: AndroidLibraryOptions
 }
 ```
 
-**7 -** Por fim, integre todos os componentes:
+**7 -** Finally, wire all the pieces together:
 
 ```kotlin
 internal fun Project.applyAndroidApp(androidAppOptions: AndroidAppOptions) {
@@ -386,12 +384,12 @@ internal fun Project.applyAndroidLibrary(androidLibraryOptions: AndroidLibraryOp
 }
 ```
 
-## Sucesso!
+## Success!
 
-Com essa adaptação, tornamos nossos ajustes mais flexíveis, podendo, por exemplo, habilitar o `Compose` em um módulo específico.
+With this change, we've made our settings more flexible, so we can, for example, enable `Compose` in a specific module.
 
-No entanto, ainda há desafios pela frente.
+There are still challenges ahead, though.
 
-Precisamos encontrar uma maneira de permitir que os módulos definam esses parâmetros.
+We need a way to let modules define these parameters.
 
-Uma opção seria aceitar um modelo predefinido, mas no próximo artigo, construiremos juntos uma DSL, buscando uma abordagem mais fluida e idiomática no Kotlin, sem a necessidade de criar objetos em módulos individuais.
+One option would be to accept a predefined model, but in the next article we'll build a DSL together, going for a smoother, more idiomatic approach in Kotlin, without having to create objects in individual modules.

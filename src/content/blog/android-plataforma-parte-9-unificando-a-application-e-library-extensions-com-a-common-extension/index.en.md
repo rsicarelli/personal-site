@@ -1,6 +1,6 @@
 ---
-title: 'Android Plataforma - Parte 9: Unificando a Application e Library extensions com a Common Extension'
-description: 'No último post, conseguimos extrair a lógica de configuração de nossos módulos library/biblioteca.'
+title: 'Android Plataforma - Part 9: Unifying the Application and Library extensions with the Common Extension'
+description: 'In the last post, we managed to extract the configuration logic for our library modules.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -10,38 +10,36 @@ tags:
 series: 'android-plataforma'
 seriesOrder: 9
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fizahj8mbp4vfocjlzu36.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-9-unificando-a-application-e-library-extensions-com-a-common-extension-19gc'
-  devtoId: 1610109
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/9/android-commons-extension'
   reactions: 3
 ---
 
-No último post, conseguimos extrair a lógica de configuração de nossos módulos library/biblioteca.
+In the last post, we managed to extract the configuration logic for our library modules.
 
-Mas, notamos que houve muita duplicação de código, além de não ter uma "fonte da verdade" para partes cruciais, por exemplo configurações de sdk.
+But we noticed there was a lot of code duplication, and no "source of truth" for crucial parts like SDK settings.
 
-Nesse post, iremos entender como unificar essas duas partes em comum, falar sobre a `ApplicationExtension`, `LibraryExtension` e `CommonExtension` e ter uma função que aplique as configurações comuns para qualquer tipo de módulo Android.
+In this post, we'll understand how to unify these two shared parts, talk about `ApplicationExtension`, `LibraryExtension` and `CommonExtension`, and end up with a function that applies the common configuration to any type of Android module.
 
 ---
 
-## Extensions do Android Gradle Plugin (AGP)
+## Android Gradle Plugin (AGP) Extensions
 
-No universo do desenvolvimento Android, o Google nos presenteia com uma DSL consistente e poderosa dentro dos nossos arquivos `build.gradle.kts`.
+In the Android development world, Google gives us a consistent and powerful DSL inside our `build.gradle.kts` files.
 
-No entanto, quando começamos a utilizar essas extensões em nossa plataforma, percebemos que há várias features "pequenas" que, embora sutis, têm o poder de redefinir como configuramos nossos módulos.
+However, once we started using these extensions in our platform, we noticed there are several "small" features that, while subtle, have the power to reshape how we configure our modules.
 
 ### ApplicationExtension
 
-A porta de entrada para desenvolvimendo Android, é a extensão `android { }` no `build.gradle.kts`.
+The gateway to Android development is the `android { }` extension in `build.gradle.kts`.
 
-Esta extensão é, na verdade, uma representação da `ApplicationExtension` quando o plugin `com.android.application` está aplicado.
+This extension is actually a representation of `ApplicationExtension` when the `com.android.application` plugin is applied.
 
-A `ApplicationExtension` é uma extensão específica do Android Gradle Plugin para a configuração de diversos aspectos de um projeto Android.
+`ApplicationExtension` is an Android Gradle Plugin-specific extension for configuring various aspects of an Android project.
 
-Adicionalmente, ela herda características de outras extensões, como `CommonExtension`, `ApkExtension` e `TestedExtension`, ampliando suas capacidades.
+On top of that, it inherits characteristics from other extensions, like `CommonExtension`, `ApkExtension` and `TestedExtension`, expanding its capabilities.
 
 ```kotlin
 interface ApplicationExtension :
@@ -57,13 +55,13 @@ interface ApplicationExtension :
 
 ### LibraryExtension
 
-Na criação de bibliotecas Android, a extensão `android` assume uma forma distinta.
+When building Android libraries, the `android` extension takes on a different form.
 
-Ela é uma representação da `LibraryExtension` quando o plugin `com.android.library` está aplicado.
+It's a representation of `LibraryExtension` when the `com.android.library` plugin is applied.
 
-A `LibraryExtension` é específica para o plugin de biblioteca Android e fornece meios para configurar e personalizar uma biblioteca Android, diferenciando-se dos projetos de aplicativos.
+`LibraryExtension` is specific to the Android library plugin and provides ways to configure and customize an Android library, setting it apart from application projects.
 
-Além disso, ela tmbém herda características da `CommonExtension` e `TestedExtension`, disponibilizando várias configurações e opções comuns a todos os tipos de projetos Android.
+Beyond that, it also inherits characteristics from `CommonExtension` and `TestedExtension`, exposing several configurations and options common to all types of Android projects.
 
 ```kotlin
 interface LibraryExtension :
@@ -78,9 +76,9 @@ interface LibraryExtension :
 
 ### CommonExtension
 
-Esta extensão serve como base para configurações compartilhadas entre diferentes tipos de projetos Android, como aplicativos, bibliotecas e testes instrumentados.
+This extension serves as the base for configuration shared across different types of Android projects, like apps, libraries and instrumented tests.
 
-`CommonExtension` não é apenas uma extensão. É uma interface genérica que define um conjunto de propriedades e métodos comuns a todos os projetos Android. Isso significa que ela estabelece um contrato de propriedades e métodos que devem estar disponíveis para qualquer extensão que dela herde.
+`CommonExtension` isn't just an extension. It's a generic interface that defines a set of properties and methods common to all Android projects. That means it establishes a contract of properties and methods that must be available to any extension that inherits from it.
 
 ```kotlin
 interface CommonExtension<
@@ -91,21 +89,21 @@ interface CommonExtension<
         AndroidResourcesT : AndroidResources> {}
 ```
 
-#### Por que é tão poderosa?
+#### Why is it so powerful?
 
-Em vez de definir configurações específicas para cada tipo de projeto (aplicativo, biblioteca, etc.) separadamente, pode-se confiar que certas configurações serão consistentes e compartilhadas entre os módulos.
+Instead of defining specific configuration for each type of project (app, library, etc.) separately, you can rely on certain settings being consistent and shared across modules.
 
-Isso não só reduz a complexidade mas também diminui a probabilidade de erros de configuração. Por exemplo, ao definir uma configuração de compilação comum para todos os módulos Android, fazendo isso através da `CommonExtension` garante-se que essa configuração seja aplicada de forma uniforme a todos.
+This not only reduces complexity but also lowers the chance of configuration mistakes. For example, when you define a common build configuration for all Android modules, doing it through `CommonExtension` guarantees that configuration is applied uniformly to all of them.
 
-Quando extensões específicas, como `ApplicationExtension` ou `LibraryExtension`, são criadas, elas implementam a `CommonExtension`, herdando todas as suas características.
+When specific extensions like `ApplicationExtension` or `LibraryExtension` are created, they implement `CommonExtension`, inheriting all of its characteristics.
 
-Assim, qualquer propriedade ou método definido em `CommonExtension` estará automaticamente disponível para qualquer outra extensão que dela herde. Isso assegura uma estrutura de base comum e consistente em todos os projetos Android.
+So any property or method defined in `CommonExtension` is automatically available to any other extension that inherits from it. This ensures a common, consistent base structure across all Android projects.
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/f4zpffe6luk77ineskff.png)
 
-## Extraíndo decorações comuns utilizando a `CommonExtensions`
+## Extracting common decorations using `CommonExtensions`
 
-**1 -** Dentro do arquivo `build-logic/decorations/android.kt`, crie o seguinte atributo:
+**1 -** Inside the `build-logic/decorations/android.kt` file, create the following attribute:
 
 ```kotlin
 import com.android.build.api.dsl.ApplicationExtension
@@ -120,18 +118,18 @@ private val Project.commonExtension: CommonExtension<*, *, *, *, *>
         ?: error("Android plugin not applied")
 ```
 
-Essa função irá se encarregar de se utilizar de uma das extensões `ApplicationExtension` ou `LibraryExtension` e utilizar da herança para retornar o tipo `CommonExtension<*, *, *, *, *>`
+This function takes care of picking one of the `ApplicationExtension` or `LibraryExtension` extensions and uses inheritance to return the `CommonExtension<*, *, *, *, *>` type.
 
-**2 -** Vamos criar uma função `private fun applyAndroidCommon()` e utilizar essa nosso novo atributo:
+**2 -** Let's create a `private fun applyAndroidCommon()` function and use our new attribute:
 
 ```kotlin
 private fun Project.applyAndroidCommon() =
     with(commonExtension) {
-      // this é CommonExtension<*, *, *, *, *>
+      // this is CommonExtension<*, *, *, *, *>
     }
 ```
 
-**3 -** Vamos trazer tudo que é compartilhado para dentro dessa função. Resultado final fica assim:
+**3 -** Let's bring everything that's shared into this function. The final result looks like this:
 
 ```kotlin
 private fun Project.applyAndroidCommon() =
@@ -170,7 +168,7 @@ private fun Project.applyAndroidCommon() =
     }
 ```
 
-**4 -** Vamos atualizar nossa `applyAndroidApp()`, mantendo as configurações específicas do `ApplicationExtension`, como `applicationId`, etc:
+**4 -** Let's update our `applyAndroidApp()`, keeping the `ApplicationExtension`-specific settings, like `applicationId`, etc:
 
 ```kotlin
 internal fun Project.applyAndroidApp() {
@@ -194,7 +192,7 @@ internal fun Project.applyAndroidApp() {
 }
 ```
 
-**5 -** Vamos fazer o mesmo com a `applyAndroidLibrary()`:
+**5 -** Let's do the same with `applyAndroidLibrary()`:
 
 ```kotlin
 internal fun Project.applyAndroidLibrary() {
@@ -211,8 +209,8 @@ internal fun Project.applyAndroidLibrary() {
 }
 ```
 
-> Note que a função `buildTypes` está disponível na `CommonExtensions`, mas a função `release` não está. Por hora, vamos duplicar essa parte, que será abordada no próximo artigo
+> Note that the `buildTypes` function is available on `CommonExtensions`, but the `release` function is not. For now, let's duplicate this part, which we'll cover in the next article.
 
-## Sucesso!
+## Success!
 
-Conseguimos dar um grande passo compartilhando os comportamentos utilizando `CommonExtension`.
+We took a big step forward by sharing behavior through `CommonExtension`.

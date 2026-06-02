@@ -1,6 +1,6 @@
 ---
-title: "Android Plataforma - Parte 7: Decorando o módulo 'app'"
-description: 'No artigo anterior, preparamos nossa plataforma para receber novas funcionalidades.'
+title: "Android Plataforma - Part 7: Decorating the 'app' module"
+description: 'In the previous article, we got our platform ready to take on new features.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -10,22 +10,20 @@ tags:
 series: 'android-plataforma'
 seriesOrder: 7
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Ff845mbutlo4un6a6k21e.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-7-decorando-o-modulo-app-2ah4'
-  devtoId: 1609871
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/7/decorating-android-app'
   reactions: 3
 ---
 
-No artigo anterior, preparamos nossa plataforma para receber novas funcionalidades.
+In the previous article, we got our platform ready to take on new features.
 
-Nesta edição, a primeira funcionalidade que adicionaremos é a decoração do módulo 'app'.
+In this edition, the first feature we'll add is decorating the 'app' module.
 
 ---
 
-Nosso objetivo é trazer toda a configuração Gradle da extensão `android` para dentro do nosso Plugin.
+Our goal is to bring all of the `android` extension's Gradle configuration inside our plugin.
 
 ```kotlin
 android {
@@ -72,25 +70,25 @@ android {
 }
 ```
 
-## Opções
+## Options
 
-Temos três opções para extrair essa configuração. **Optaremos pela última abordagem**, mas acho interessante apresentar todas para entendermos que há várias formas de atingir o mesmo objetivo.
+We have three options for extracting this configuration. **We'll go with the last approach**, but I think it's worth presenting all of them so we can see there are several ways to reach the same goal.
 
-### Opção 1: utilizando o plugin `kotlin-dsl-precompiled-script-plugins`
+### Option 1: using the `kotlin-dsl-precompiled-script-plugins` plugin
 
-Esse plugin pode ser aplicado em nosso `build-logic/build.gradle.kts`, podemos incluir scripts customizados, por exemplo `kplatform-android-app-build.gradle.kts`.
+This plugin can be applied in our `build-logic/build.gradle.kts`, where we can add custom scripts, for example `kplatform-android-app-build.gradle.kts`.
 
-Ao sincronizar, um plugin com nome `kplatform-android-app` estará disponível para ser aplicado
+Once you sync, a plugin named `kplatform-android-app` becomes available to be applied.
 
-Eu não sou fã desse método, por que:
+I'm not a fan of this method, because:
 
-1. Cada script funciona como um plugin novo. Conforme o projeto aumenta, fica um pesadelo lembrar todos os id's, pela minha experiência é meio chato de escalar (mas possível)
-2. Nosso `library` e `app` aplicam várias configurações similares. Com essa abordagem, é difícil reutilizar funções e utilitários para cada um deles, nos forçando a copiar e colar configurações.
-3. Se formos publicar nossa plataforma no maven, cada um desses plugins pre-compilados vira um artefato. Isso não é um problema caso considere desenvolver apenas para o projeto interno, mas se for considerar extrair sua plataforma para outro repositório, configurar essas coordenadas do Maven é desafiador.
+1. Each script acts as a new plugin. As the project grows, it becomes a nightmare to remember all the ids; in my experience it's a bit annoying to scale (but doable).
+2. Our `library` and `app` apply a lot of similar configuration. With this approach, it's hard to reuse functions and utilities across them, forcing us to copy and paste configuration.
+3. If we publish our platform to Maven, each of these precompiled plugins becomes an artifact. That's not a problem if you only plan to develop for the internal project, but if you ever consider extracting your platform into another repository, setting up those Maven coordinates is challenging.
 
-### Opção 2: criando um plugin especial para cada script
+### Option 2: creating a dedicated plugin for each script
 
-Assim como temos nosso plugin `KPlatformPlugin`, seria possível criar um plugin especial para cada script que queremos reutilizar. Algo assim:
+Just as we have our `KPlatformPlugin`, we could create a dedicated plugin for each script we want to reuse. Something like this:
 
 ```kotlin
 class AndroidAppPlugin : Plugin<Project> {
@@ -111,22 +109,22 @@ gradlePlugin {
 }
 ```
 
-Essa opção é super válida, porém temos duas grandes desvantagens:
+This option is perfectly valid, but it has two big downsides:
 
-1. Assim como a opção anterior, iriamos registrar vários plugins no classpath do projeto, o que pode ser confuso e chato de escalar
-2. Assim como na opção anterior, cada um desses plugins viram um novo artefato no Maven, o que pode virar uma dor de cabeça para deixar 100%.
+1. Just like the previous option, we'd register several plugins on the project's classpath, which can be confusing and annoying to scale.
+2. Just like the previous option, each of these plugins becomes a new artifact on Maven, which can turn into a headache to get fully right.
 
-### Opção 3: utilizar o padrão de 'decoration'
+### Option 3: use the 'decoration' pattern
 
-Eu vi essa abordagem pela primeira vez nesse repositório: [arkivanov/gradle-setup-plugin](https://github.com/arkivanov/gradle-setup-plugin) e adorei.
+I first saw this approach in this repository: [arkivanov/gradle-setup-plugin](https://github.com/arkivanov/gradle-setup-plugin) and I loved it.
 
-Basicamente, ao invés de termos vários plugins, temos apenas um, o raíz: `KPlatformPlugin`.
+Basically, instead of having several plugins, we have just one, the root one: `KPlatformPlugin`.
 
-Porém, a sacada é que criamos nossos plugins utilizando extension functions do Kotlin, por exemplo:
+The trick, though, is that we build our plugins using Kotlin extension functions, for example:
 
 ```kotlin
 class KPlatformPlugin : Plugin<Project> {
-    // Nosso plugin não faz literalmente nada. Serve apenas como ponto de entrada para nossas decorações
+    // Our plugin does literally nothing. It only serves as an entry point for our decorations
     override fun apply(project: Project) = Unit
 }
 
@@ -134,41 +132,41 @@ class KPlatformPlugin : Plugin<Project> {
 fun Project.androidApp() { ... }
 ```
 
-Perceba que nosso plugin serve apenas como um ponto de entrada, e a função `apply` retorna `Unit`.
+Notice that our plugin only serves as an entry point, and the `apply` function returns `Unit`.
 
-A mágica é que essas funções podem ser importadas como uma função qualquer nos nossos `build.gradle.kts`, deixando nosso código mais enxuto e evitar o boiler plate de lembrar/aplicar vários plugins diferentes por ai.
+The magic is that these functions can be imported like any regular function in our `build.gradle.kts` files, making our code leaner and avoiding the boilerplate of remembering and applying several different plugins all over the place.
 
-Essa abordagem, para mim, é a mais escalável, pois resolve todos os problemas apresentados nas soluções anteriores:
+For me, this approach is the most scalable one, because it solves every problem raised by the previous solutions:
 
-1. Compartilhar scripts entre plugins é super tranquilo
-2. Iremos expor apenas 1 plugin. Podemos aplicar esse plugin na raíz, e nunca mais se preocupar em aplicar nos outros módulos.
-3. Expondo apenas 1 plugin, nossas dependencias do Maven ficam super simples.
+1. Sharing scripts across plugins is super straightforward.
+2. We'll expose only 1 plugin. We can apply that plugin at the root and never worry about applying it in the other modules again.
+3. By exposing only 1 plugin, our Maven dependencies stay super simple.
 
 #### Decoration?
 
-Esse é um termo que eu cunhei, e não é necessariamente um padrão adotado (pois percebo que não tem um padrão, rs). Mesmo que não estejamos seguindo o padrão de decoração à risca, acredito que essa terminologia nos ajuda a entender que estamos, de fato, decorando nossos módulos com funções predefinidas.
+This is a term I coined, and it's not necessarily an established pattern (since I've noticed there isn't a standard one, heh). Even though we aren't following the decorator pattern to the letter, I believe this terminology helps us understand that we are, in fact, decorating our modules with predefined functions.
 
-## Decorando nosso módulo 'app'
+## Decorating our 'app' module
 
-Agora que já entendemos todas as opções disponíveis, vamos dar continuidade ao objetivo principal deste post.
+Now that we understand all the available options, let's get on with the main goal of this post.
 
-### Passo a passo
+### Step by step
 
-**1 -** Precisamos de acesso ao plugin do Android e do Kotlin como dependências do nosso `build-logic/build.gradle.kts`.
+**1 -** We need access to the Android and Kotlin plugins as dependencies of our `build-logic/build.gradle.kts`.
 
-Primeiro, navegue até o `libs.versions.toml` e inclua as declarações:
+First, head over to `libs.versions.toml` and add the declarations:
 
 ```toml
 [libraries]
 ...
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxComposeActivity" }
 
-# Adicione os plugins do Android e Kotlin para ser incluidas como dependencia
+# Add the Android and Kotlin plugins so they can be included as dependencies
 gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "androidBuildTools" }
 gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 ```
 
-**2 -** Sincronize o projeto. Agora, navegue até `build-logic/build.gradle.kts` e adicione essas duas dependências:
+**2 -** Sync the project. Now, head over to `build-logic/build.gradle.kts` and add these two dependencies:
 
 ```kotlin
 plugins {
@@ -182,9 +180,9 @@ dependencies {
 ..
 ```
 
-> Note que estamos utilizando `compileOnly`. Isso garante que, ao importar a nossa plataforma, não estaremos trazendo esses plugins como dependencia transitiva do projeto. Isso é especialmente importante caso você decida exportar sua plataforma para um repositório separado e expor via Maven
+> Note that we're using `compileOnly`. This makes sure that, when our platform is imported, we won't be pulling those plugins in as transitive dependencies of the project. This is especially important if you decide to export your platform to a separate repository and expose it via Maven.
 
-Tenha certeza de declarar o repositório do Google dentro do `build-logic/settings.gradle.kts`:
+Make sure to declare the Google repository inside `build-logic/settings.gradle.kts`:
 
 ```kotlin
 dependencyResolutionManagement {
@@ -196,15 +194,15 @@ dependencyResolutionManagement {
 }
 ```
 
-**3 -** Sincronize o projeto. Crie uma pasta chamada `decoration` dentro do `build-logic/src/main/kotlin`.
+**3 -** Sync the project. Create a folder called `decoration` inside `build-logic/src/main/kotlin`.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/y9yk99duigmkc4aq8vkn.png)
+![Project structure showing the new decoration folder](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/y9yk99duigmkc4aq8vkn.png)
 
-**4 -** Crie um arquivo chamado `android.kt`. Aqui é onde nossas decorações do Android irão morar.
+**4 -** Create a file called `android.kt`. This is where our Android decorations will live.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/l88dbg26zj278jylpask.png)
+![The android.kt file created inside the decoration folder](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/l88dbg26zj278jylpask.png)
 
-**5 -** Utilizaremos o padrão `internal fun applyX()`. Note que, tornando-a `internal`, estaremos protegendo essa função de quem consome nossa plataforma:
+**5 -** We'll use the `internal fun applyX()` pattern. Note that, by making it `internal`, we're protecting this function from whoever consumes our platform:
 
 ```kotlin
 package com.rsicarelli.kplatform.decoration
@@ -216,9 +214,9 @@ internal fun Project.applyAndroidApp() {
 }
 ```
 
-**6 -** Para manipular a extensão `Android`, teremos que utilizar a propriedade `Project.extensions.configure<ApplicationExtension>()`:
+**6 -** To manipulate the `Android` extension, we'll have to use the `Project.extensions.configure<ApplicationExtension>()` property:
 
-Isso é a mesma coisa de utilizar o `android {}` diretamente no `build.gradle.kts`.
+This is the same as using `android {}` directly in `build.gradle.kts`.
 
 ```kotlin
 import com.android.build.api.dsl.ApplicationExtension
@@ -232,9 +230,9 @@ internal fun Project.applyAndroidApp() {
 }
 ```
 
-> Verifique os imports! A função configure as vezes não é importada automaticamente. Na duvida, copie e cole o import manualmente
+> Check your imports! The `configure` function sometimes isn't imported automatically. When in doubt, copy and paste the import manually.
 
-**7 -** Dentro desse bloco, copie e cole o conteúdo:
+**7 -** Inside this block, copy and paste the content:
 
 ```kotlin
 
@@ -289,15 +287,15 @@ internal fun Project.applyAndroidApp() {
 }
 ```
 
-**8 -** Observe que o `kotlinOptions` e `libs.versions.composeKotlinCompilerExtension.get()` não funcionarão.
+**8 -** Notice that `kotlinOptions` and `libs.versions.composeKotlinCompilerExtension.get()` won't work.
 
-Para configurar o `kotlinOptions`, precisamos configurar a task `KotlinCompile`.
+To configure `kotlinOptions`, we need to configure the `KotlinCompile` task.
 
-Crie uma outra pasta dentro de `decoration` e por hora chame de `kotlin.kt`.
+Create another folder inside `decoration` and, for now, call it `kotlin.kt`.
 
-Utilizando o mesmo padrão `internal fun applyX()`:
+Using the same `internal fun applyX()` pattern:
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qsr1yfghpcd49tlq9z7c.png)
+![The kotlin.kt file inside the decoration folder](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qsr1yfghpcd49tlq9z7c.png)
 
 ```kotlin
 import org.gradle.api.Project
@@ -313,7 +311,7 @@ internal fun Project.applyKotlinOptions() {
 }
 ```
 
-**9 -** Retorne ao `applyAndroidApp()` e substitua o comentário do `kotlinOptions` por `applyKotlinOptions()`:
+**9 -** Go back to `applyAndroidApp()` and replace the `kotlinOptions` comment with `applyKotlinOptions()`:
 
 ```kotlin
 ..
@@ -330,15 +328,15 @@ buildFeatures {
 ..
 ```
 
-**10 -** Uma das limitações do composite build é que não temos acesso ao acessor `libs` que foi gerado dentro do kotlin DSL.
+**10 -** One of the limitations of composite builds is that we don't have access to the `libs` accessor that was generated inside the Kotlin DSL.
 
-Por hora, iremos precisar criar alguns utilitários para possibilitar utilizar as versões do nosso catálogo dento dos scripts.
+For now, we'll need to create some utilities to make it possible to use our catalog's versions inside the scripts.
 
-Crie um outro arquivo dentro de `decoration` chamado `project.kt`.
+Create another file inside `decoration` called `project.kt`.
 
-Inclua duas extensões: uma para resgatar o `libs`, e outra para encontrar a versão:
+Add two extensions: one to grab `libs`, and another to find the version:
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/dzdoygvjiiygoxindril.png)
+![The project.kt file with the libs and version extensions](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/dzdoygvjiiygoxindril.png)
 
 ```kotlin
 internal val Project.libs: VersionCatalog
@@ -347,7 +345,7 @@ internal val Project.libs: VersionCatalog
 internal fun VersionCatalog.version(name: String): String = findVersion(name).get().toString()
 ```
 
-**11 -** Volte para `applyAndroidApp()` e descomente a parte onde definimos a versão do compose compiler:
+**11 -** Go back to `applyAndroidApp()` and uncomment the part where we set the Compose compiler version:
 
 ```kotlin
 buildFeatures {
@@ -359,9 +357,9 @@ composeOptions {
 }
 ```
 
-> O nome da versão precisa ser o mesmo do nome da versão declarada no `libs.versions.toml`
+> The version name needs to match the name of the version declared in `libs.versions.toml`.
 
-**12 -** Verifique a implementação final e veja se está tudo certo:
+**12 -** Check the final implementation and make sure everything is right:
 
 ```kotlin
 
@@ -418,9 +416,9 @@ internal fun Project.applyAndroidApp() {
 }
 ```
 
-**13 -** Agora tá na hora de expormos nosso script para o mundo exterior.
+**13 -** Now it's time to expose our script to the outside world.
 
-Para isso, navegue até o arquivo `KPlatformPlugin.kt` e inclua uma nova função chamada `fun androidApp()`:
+To do that, head over to the `KPlatformPlugin.kt` file and add a new function called `fun androidApp()`:
 
 ```kotlin
 import com.rsicarelli.kplatform.decoration.applyAndroidApp
@@ -435,7 +433,7 @@ class KplatformPlugin : Plugin<Project> {
 fun Project.androidApp() = applyAndroidApp()
 ```
 
-**14 -** Sicronize o projeto. Navegue até `app/build.gradle.kts`, remova todo o bloco `android {}` e utilize nossa função que acabamos de criar:
+**14 -** Sync the project. Head over to `app/build.gradle.kts`, remove the entire `android {}` block, and use the function we just created:
 
 ```kotlin
 import com.rsicarelli.kplatform.androidApp
@@ -456,7 +454,7 @@ dependencies {
 }
 ```
 
-> Caso tenha problemas, garanta que o nosso plugin está sendo aplicado no `build.gradle.kts` raiz
+> If you run into problems, make sure our plugin is being applied in the root `build.gradle.kts`.
 
 ```kotlin
 plugins {
@@ -466,10 +464,10 @@ plugins {
 }
 ```
 
-## Sucesso!
+## Success!
 
-Você deve poder rodar o `app` normalmente em um device/emulador.
+You should be able to run the `app` normally on a device/emulator.
 
-Parabéns! Acabamos de simplificar muito nossas vidas. Só com isso, poderiamos até criar outro módulo nesse projeto `demoApp` por exemplo (não iremos criar), e reaproveitar todas essas configurações.
+Congratulations! We just made our lives a whole lot easier. With this alone, we could even create another module in this project, `demoApp` for example (we won't), and reuse all of this configuration.
 
-Próximo objetivo: fazer o mesmo com nossas configurações para library/biblioteca Android!
+Next goal: do the same with our configuration for the Android library!
