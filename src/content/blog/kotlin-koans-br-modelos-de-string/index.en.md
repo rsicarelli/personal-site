@@ -1,6 +1,6 @@
 ---
-title: 'Kotlin Koans BR: Modelos de String'
-description: 'O padrão a seguir corresponde a uma data no formato 13.06.1992 (dois dígitos, um ponto, dois dígitos, um ponto, quatro dígitos):'
+title: 'Kotlin Koans BR: String Templates'
+description: 'The pattern below matches a date in the format 13.06.1992 (two digits, a dot, two digits, a dot, four digits):'
 pubDate: 2024-03-07
 tags:
   - 'kotlin'
@@ -8,66 +8,64 @@ tags:
 series: 'kotlin-koans-br'
 seriesOrder: 5
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Funnkrkmrmqw59fx6yz5f.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-modelos-de-string-4kl0'
-  devtoId: 1783117
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
-### 🔗 [Tarefa](https://play.kotlinlang.org/koans/Introduction/String%20templates/Task.kt)
+### 🔗 [Task](https://play.kotlinlang.org/koans/Introduction/String%20templates/Task.kt)
 
-O padrão a seguir corresponde a uma data no formato `13.06.1992` (dois dígitos, um ponto, dois dígitos, um ponto, quatro dígitos):
+The pattern below matches a date in the format `13.06.1992` (two digits, a dot, two digits, a dot, four digits):
 
 ```kotlin
 fun getPattern() = """\d{2}\.\d{2}\.\d{4}"""
 ```
 
-Usando a variável `month`, reescreva esse padrão de forma que ele corresponda à data no formato `13 JUN 1992` (dois dígitos, um espaço em branco, uma abreviação de mês, um espaço em branco, quatro dígitos).
+Using the `month` variable, rewrite this pattern so that it matches the date in the format `13 JUN 1992` (two digits, a blank space, a month abbreviation, a blank space, four digits).
 
-## Caso de uso
+## Use case
 
-Em Kotlin, as [string templates](https://kotlinlang.org/docs/strings.html#string-templates) são uma maneira de combinar strings com variáveis ou expressões.
+In Kotlin, [string templates](https://kotlinlang.org/docs/strings.html#string-templates) are a way to combine strings with variables or expressions.
 
-Um modelo de string funciona como um espaço reservado no qual se pode inserir um cifrão `$` seguido do nome da variável ou expressão.
+A string template works like a placeholder where you can insert a dollar sign `$` followed by the name of the variable or expression.
 
-O valor real será colocado no espaço nesse modelo quando a string for utilizada.
+The real value is dropped into that spot in the template when the string is used.
 
 ```kotlin
-val nome = "Mel"
-println("Bom dia, $nome.") // Saída: Bom dia, Mel.
+val name = "Mel"
+println("Good morning, $name.") // Output: Good morning, Mel.
 ```
 
-Também se pode incluir expressões e chamar outros métodos, utilizando chaves `${}`.
+You can also include expressions and call other methods using curly braces `${}`.
 
 ```kotlin
-fun recuperaNome() = "Dani"
-val idade = 35
-println("Olá, ${recuperaNome()}. Você irá completar ${idade + 5} em cinco anos.") // Olá, Dani. Você irá completar 40 em cinco anos.
+fun getName() = "Dani"
+val age = 35
+println("Hi, ${getName()}. You'll turn ${age + 5} in five years.") // Hi, Dani. You'll turn 40 in five years.
 ```
 
-### Vantagens
+### Advantages
 
-- **Praticidade**: ajudam a criar mensagens sem precisar de funções ou variáveis alternativas.
-- **Melhora a leitura**: modelos de string são fáceis de entender, já que fica claro onde estão os valores das expressões.
+- **Convenience**: they help you build messages without needing extra functions or variables.
+- **Better readability**: string templates are easy to understand, since it's clear where the values from the expressions go.
 
-### Desvantagens
+### Disadvantages
 
-- **Complexidade**: quando se exagera no uso dos templates, a string pode ser difícil de entender.
-- **Riscos de segurança**: Ao inserir informações sensíveis diretamente nos templates, podem surgir brechas para problemas de segurança.
-- **Problemas de desempenho**: Em situações específicas, o uso excessivo de templates pode ser menos eficiente do que concatenar strings, especialmente em textos muito extensos.
+- **Complexity**: when you overuse templates, the string can become hard to read.
+- **Security risks**: inserting sensitive information directly into templates can open the door to security problems.
+- **Performance issues**: in specific situations, overusing templates can be less efficient than concatenating strings, especially with very long text.
 
-## Analogia
+## Analogy
 
-Imagine um mosaico, uma arte feita de fragmentos que formam uma imagem completa. Nesse mosaico, alguns espaços são deixados vazios para serem preenchidos posteriormente, conforme a escolha do artista.
+Picture a mosaic, a piece of art made of fragments that come together to form a complete image. In this mosaic, some spaces are left empty to be filled in later, according to the artist's choice.
 
-Os modelos de string em Kotlin têm uma dinâmica similar: as strings formam o mosaico completo, enquanto os espaços reservados (ou templates) representam os espaços vazios destinados a serem preenchidos com variáveis ou expressões.
+String templates in Kotlin work in a similar way: the strings form the complete mosaic, while the placeholders (or templates) represent the empty spaces meant to be filled with variables or expressions.
 
 ```kotlin
-val lugarEspecial = "Praia"
-println("Meu lugar especial é $lugarEspecial.")
+val specialPlace = "Beach"
+println("My special place is $specialPlace.")
 
-fun lugarFavorito() = "Montanhas"
-println("O lugar favorito da Carla é ${lugarFavorito()}.")
+fun favoritePlace() = "Mountains"
+println("Carla's favorite place is ${favoritePlace()}.")
 ```

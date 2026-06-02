@@ -1,6 +1,6 @@
 ---
-title: 'Kotlin Koans BR: Classes Seladas'
-description: 'Reutilize sua solução da tarefa anterior, mas substitua a interface pela interface sealed. Assim, você não precisará mais do bloco else na expressão when.'
+title: 'Kotlin Koans BR: Sealed Classes'
+description: 'Reuse your solution from the previous task, but replace the interface with a sealed interface. That way you no longer need the else branch in the when expression.'
 pubDate: 2024-03-07
 tags:
   - 'kotlin'
@@ -8,474 +8,472 @@ tags:
 series: 'kotlin-koans-br'
 seriesOrder: 11
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fsigsnosikvtvpuyqfe77.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-classes-seladas-50m0'
-  devtoId: 1783194
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 7
 ---
 
-### 🔗 [Tarefa](https://play.kotlinlang.org/koans/Classes/Sealed%20classes/Task.kt)
+### 🔗 [Task](https://play.kotlinlang.org/koans/Classes/Sealed%20classes/Task.kt)
 
-Reutilize sua solução da tarefa anterior, mas substitua a interface pela interface [`sealed`](https://kotlinlang.org/docs/sealed-classes.html). Assim, você não precisará mais do bloco `else` na expressão `when`.
+Reuse your solution from the previous task, but replace the interface with a [`sealed`](https://kotlinlang.org/docs/sealed-classes.html) interface. That way you no longer need the `else` branch in the `when` expression.
 
-### Casos de uso
+### Use cases
 
-[Sealed Classes e Interfaces](https://kotlinlang.org/docs/sealed-classes.html) em Kotlin são um recurso especial para criar um conjunto específico e limitado de classes relacionadas. São como caixas que contêm opções predefinidas e não permitem a criação de novas opções fora desse conjunto. Isso traz segurança e controle ao código, evitando erro e simplificando a compreensão.
+[Sealed classes and interfaces](https://kotlinlang.org/docs/sealed-classes.html) in Kotlin are a special feature for creating a specific, limited set of related classes. They're like boxes that hold predefined options and don't allow new options to be created outside that set. This brings safety and control to your code, preventing errors and making it easier to understand.
 
 ```kotlin
-sealed class InstrumentoMusical(
-    val nome: String,
-    val tipo: TipoInstrumento,
+sealed class MusicalInstrument(
+    val name: String,
+    val type: InstrumentType,
 ) {
-    data class Violao(val cordas: Int) : InstrumentoMusical("violão", Corda)
-    data class Bateria(val tambores: Int) : InstrumentoMusical("bateria", Percussao)
-    data class Piano(val teclas: Int) : InstrumentoMusical("piano", Tecla)
+    data class Guitar(val strings: Int) : MusicalInstrument("guitar", String)
+    data class Drums(val drumCount: Int) : MusicalInstrument("drums", Percussion)
+    data class Piano(val keys: Int) : MusicalInstrument("piano", Keys)
 }
 
-sealed interface TipoInstrumento
-data object Corda : TipoInstrumento
-data object Percussao : TipoInstrumento
-data object Tecla : TipoInstrumento
+sealed interface InstrumentType
+data object String : InstrumentType
+data object Percussion : InstrumentType
+data object Keys : InstrumentType
 ```
 
-#### Por que usar Sealed Classes?
+#### Why use sealed classes?
 
-Sealed Classes ajudam a definir um número fixo de estados ou tipos em uma estrutura de classes, ou interfaces. Elas asseguram que apenas certas subclasses sejam criadas, impedindo a adição inesperada de novos estados. Assim, classes externas não podem herdar dessas classes marcadas como sealed, a menos que estejam no mesmo arquivo.
+Sealed classes help define a fixed number of states or types within a structure of classes or interfaces. They guarantee that only certain subclasses can be created, preventing the unexpected addition of new states. As a result, external classes can't inherit from classes marked as sealed unless they're in the same file.
 
-Isso é prático quando só algumas variações específicas são aceitáveis. Por exemplo, em um app de pagamentos, as Sealed Classes podem representar estados como Aprovado, Recusado e Pendente, garantindo mais consistência e evitando erros no código.
+This is handy when only a few specific variations are acceptable. For example, in a payments app, sealed classes can represent states like Approved, Declined, and Pending, ensuring more consistency and preventing errors in your code.
 
-#### Sealed Class vs Sealed Interface
+#### Sealed class vs. sealed interface
 
-Ambas compartilham a mesma ideia e resolvem o mesmo problema. As principais diferenças são:
+Both share the same idea and solve the same problem. The main differences are:
 
-##### Sealed Class
+##### Sealed class
 
-- Pode ter propriedades e métodos, assim como qualquer outra classe.
-
-```kotlin
-sealed class StatusPedido(open val id: Int) {
-
-    fun estaAtivo(): Boolean = when (this) {
-        is AguardandoPagamento, is Enviado, is Processando -> true
-        is Cancelado, is Entregue -> false
-    }
-
-    data class AguardandoPagamento(override val id: Int) : StatusPedido(id)
-    data class Processando(override val id: Int, val dataEstimadaProcessamento: String) : StatusPedido(id)
-    data class Enviado(override val id: Int, val dataEstimadaEntrega: String, val codigoRastreamento: String) : StatusPedido(id)
-    data class Entregue(override val id: Int, val dataEntrega: String) : StatusPedido(id)
-    data class Cancelado(override val id: Int, val razao: String) : StatusPedido(id)
-}
-```
-
-##### Sealed Interface
-
-- Não pode ter propriedades com estado ou métodos com implementação (mas pode ter propriedades abstratas e métodos abstratos).
-- É a escolha ideal quando não há necessidade de compartilhar estado entre os subtipos.
+- Can have properties and methods, just like any other class.
 
 ```kotlin
-sealed interface Desconto {
+sealed class OrderStatus(open val id: Int) {
 
-    val aplicadoAs = System.currentTimeMillis()
-    fun calcularDesconto(preçoOriginal: Double): Double
-
-    data class DescontoFixo(val valor: Double) : Desconto {
-        override fun calcularDesconto(precoOriginal: Double) = precoOriginal - valor
+    fun isActive(): Boolean = when (this) {
+        is AwaitingPayment, is Shipped, is Processing -> true
+        is Cancelled, is Delivered -> false
     }
 
-    data class DescontoPercentual(private val percentual: Double) : Desconto {
-        override fun calcularDesconto(precoOriginal: Double) = precoOriginal * (1 - percentual / 100)
-    }
-
-    data object FreteGratis : Desconto {
-        override fun calcularDesconto(precoOriginal: Double) = precoOriginal
-    }
+    data class AwaitingPayment(override val id: Int) : OrderStatus(id)
+    data class Processing(override val id: Int, val estimatedProcessingDate: String) : OrderStatus(id)
+    data class Shipped(override val id: Int, val estimatedDeliveryDate: String, val trackingCode: String) : OrderStatus(id)
+    data class Delivered(override val id: Int, val deliveryDate: String) : OrderStatus(id)
+    data class Cancelled(override val id: Int, val reason: String) : OrderStatus(id)
 }
 ```
 
-#### Relação das Sealed Classes com Enums
+##### Sealed interface
 
-Enquanto Enums são usados para representar um conjunto fixo de valores constantes, as Sealed Classes podem representar um conjunto de tipos complexos com estados e comportamentos variados.
-
-As principais diferenças são:
-
-- **Hierarquia de Classes**: Enquanto Enums são uma lista plana de valores constantes, as Sealed Classes são uma hierarquia de classes. Isso significa que cada subclasse de uma Sealed Class pode ter propriedades e métodos específicos, proporcionando mais flexibilidade para modelar situações complexas.
+- Can't have stateful properties or methods with implementations (but it can have abstract properties and abstract methods).
+- It's the ideal choice when there's no need to share state between subtypes.
 
 ```kotlin
-sealed interface Reino
-data class Animalia(val classes: List<String>) : Reino
-data class Plantae(val familias: List<String>) : Reino
+sealed interface Discount {
 
-sealed class Habitat(val descricao: String)
-data object Terrestre : Habitat("na terra")
-data object Aquatico : Habitat("na água")
-data object Aereo : Habitat("no ar")
+    val appliedAt = System.currentTimeMillis()
+    fun calculateDiscount(originalPrice: Double): Double
 
-sealed class Organismo(val nome: String) {
-    data class Animal(val especie: String) : Organismo("Animal")
-    data class Planta(val tipo: String) : Organismo("Planta")
-    data object Microorganismo : Organismo("Microorganismo") {
-        const val descrição: String = "Pequeno e unicelular"
+    data class FixedDiscount(val amount: Double) : Discount {
+        override fun calculateDiscount(originalPrice: Double) = originalPrice - amount
     }
-}
 
-fun detalhes(organismo: Organismo, reino: Reino, habitat: Habitat): String {
-    return when (organismo) {
-        is Animal -> "Um $nome da espécie $especie pertencente ao reino $reino e vive $habitat."
-        is Planta -> "Uma $nome do tipo $tipo pertencente ao reino $reino e vive $habitat."
-        is Microorganismo -> "Um $nome - $descrição - pertencente ao reino $reino e vive $habitat."
+    data class PercentageDiscount(private val percentage: Double) : Discount {
+        override fun calculateDiscount(originalPrice: Double) = originalPrice * (1 - percentage / 100)
+    }
+
+    data object FreeShipping : Discount {
+        override fun calculateDiscount(originalPrice: Double) = originalPrice
     }
 }
 ```
 
-- **Agrupamento de Dados e Comportamentos**: Sealed Classes podem agrupar não apenas valores, mas também comportamentos específicos relacionados a cada estado ou tipo. Isso é vantajoso quando você precisa que cada estado ou tipo tenha métodos personalizados.
+#### How sealed classes relate to enums
+
+While enums are used to represent a fixed set of constant values, sealed classes can represent a set of complex types with varied states and behaviors.
+
+The main differences are:
+
+- **Class hierarchy**: While enums are a flat list of constant values, sealed classes are a hierarchy of classes. This means each subclass of a sealed class can have its own specific properties and methods, giving you more flexibility to model complex situations.
 
 ```kotlin
-sealed class FormaGeometrica {
-    data class Circulo(val raio: Double) : FormaGeometrica()
-    data class Retangulo(
-        val largura: Double,
-        val altura: Double,
-    ) : FormaGeometrica()
+sealed interface Kingdom
+data class Animalia(val classes: List<String>) : Kingdom
+data class Plantae(val families: List<String>) : Kingdom
 
-    fun calcularArea(): Double = when (this) {
-        is Circulo -> kotlin.math.PI * raio * raio
-        is Retangulo -> largura * altura
+sealed class Habitat(val description: String)
+data object Land : Habitat("on land")
+data object Water : Habitat("in water")
+data object Air : Habitat("in the air")
+
+sealed class Organism(val name: String) {
+    data class Animal(val species: String) : Organism("Animal")
+    data class Plant(val type: String) : Organism("Plant")
+    data object Microorganism : Organism("Microorganism") {
+        const val description: String = "Tiny and single-celled"
+    }
+}
+
+fun details(organism: Organism, kingdom: Kingdom, habitat: Habitat): String {
+    return when (organism) {
+        is Animal -> "An $name of the species $species belonging to the kingdom $kingdom and lives $habitat."
+        is Plant -> "A $name of the type $type belonging to the kingdom $kingdom and lives $habitat."
+        is Microorganism -> "A $name - $description - belonging to the kingdom $kingdom and lives $habitat."
+    }
+}
+```
+
+- **Grouping data and behaviors**: Sealed classes can group not only values, but also specific behaviors tied to each state or type. This is an advantage when you need each state or type to have custom methods.
+
+```kotlin
+sealed class GeometricShape {
+    data class Circle(val radius: Double) : GeometricShape()
+    data class Rectangle(
+        val width: Double,
+        val height: Double,
+    ) : GeometricShape()
+
+    fun calculateArea(): Double = when (this) {
+        is Circle -> kotlin.math.PI * radius * radius
+        is Rectangle -> width * height
     }
 }
 
 val main {
-    Circulo(5.0).calcularArea() == 78.53981633974483
-    Retangulo(3.0, 4.0).calcularArea() == 12.0
+    Circle(5.0).calculateArea() == 78.53981633974483
+    Rectangle(3.0, 4.0).calculateArea() == 12.0
 }
 ```
 
-- **Casos de Uso Mais Complexos**: Enquanto Enums são ideais para representar conjuntos simples de valores, as Sealed Classes são mais adequadas para casos de uso mais complexos, como modelar estados, tipos alternativos ou padrões de herança.
+- **More complex use cases**: While enums are ideal for representing simple sets of values, sealed classes are a better fit for more complex use cases, such as modeling states, alternative types, or inheritance patterns.
 
 ```kotlin
-sealed class ResultadoOperacao {
-    object Sucesso : ResultadoOperacao()
-    data class Erro(
-        val codigo: Int,
-        val mensagem: String,
-    ) : ResultadoOperacao()
+sealed class OperationResult {
+    object Success : OperationResult()
+    data class Error(
+        val code: Int,
+        val message: String,
+    ) : OperationResult()
 }
 
 fun main() {
-    val sucesso: ResultadoOperacao = Sucesso
-    val erro: ResultadoOperacao = Erro(404, "Página não encontrada")
+    val success: OperationResult = Success
+    val error: OperationResult = Error(404, "Page not found")
 }
 ```
 
-- **Controle Exclusivo**: Sealed Classes permitem um controle mais estrito sobre as subclasses permitidas. Cada caso da classe selada pode ter suas próprias subclasses, enquanto em Enums todos os casos compartilham a mesma estrutura.
+- **Exclusive control**: Sealed classes allow stricter control over the subclasses that are allowed. Each case of the sealed class can have its own subclasses, whereas in enums every case shares the same structure.
 
 ```kotlin
-sealed interface DiaDaSemana {
-    object Segunda : DiaDaSemana
-    object Terca : DiaDaSemana
-    object Quarta : DiaDaSemana
-    object Quinta : DiaDaSemana
-    object Sexta : DiaDaSemana
-    object Sabado : DiaDaSemana
-    object Domingo : DiaDaSemana
+sealed interface DayOfWeek {
+    object Monday : DayOfWeek
+    object Tuesday : DayOfWeek
+    object Wednesday : DayOfWeek
+    object Thursday : DayOfWeek
+    object Friday : DayOfWeek
+    object Saturday : DayOfWeek
+    object Sunday : DayOfWeek
 }
 
 fun main() {
-    require(Segunda is DiaDaSemana)
-    require(Sexta is DiaDaSemana)
-    require(Segunda is Sexta) // Não é verdade que Segunda é Sexta
+    require(Monday is DayOfWeek)
+    require(Friday is DayOfWeek)
+    require(Monday is Friday) // It isn't true that Monday is Friday
 }
 ```
 
-#### Sealed na Programação Funcional
+#### Sealed in functional programming
 
-A programação funcional enfatiza a composição de funções e o tratamento de dados imutáveis. Sealed Classes são usadas para definir estruturas de dados com estados limitados e previsíveis, seguindo os princípios da imutabilidade. Isso significa que, uma vez que um estado é definido por uma Sealed Class, ele não pode ser alterado diretamente - qualquer transformação resulta na criação de uma nova instância.
+Functional programming emphasizes function composition and working with immutable data. Sealed classes are used to define data structures with limited, predictable states, following the principles of immutability. This means that once a state is defined by a sealed class, it can't be changed directly - any transformation results in the creation of a new instance.
 
-A combinação de programação funcional e Sealed Classes promove a clareza, evita efeitos colaterais inesperados e simplifica o raciocínio sobre o comportamento do código. Ao modelar estados com Sealed Classes, você cria estruturas organizadas e encapsuladas que representam possíveis cenários, garantindo que a manipulação desses estados seja previsível e sem alterar os dados originais.
+Combining functional programming with sealed classes promotes clarity, avoids unexpected side effects, and makes it easier to reason about how your code behaves. By modeling states with sealed classes, you create organized, encapsulated structures that represent the possible scenarios, ensuring that handling those states is predictable and doesn't alter the original data.
 
 ```kotlin
-sealed interface EstadoPedido
-object Pendente : EstadoPedido
-object Preparando : EstadoPedido
-object Concluido : EstadoPedido
+sealed interface OrderState
+object Pending : OrderState
+object Preparing : OrderState
+object Completed : OrderState
 
-data class Pedido(
-    val numero: Int,
-    val estado: EstadoPedido,
+data class Order(
+    val number: Int,
+    val state: OrderState,
 ) {
-    fun atualizarEstado(novoEstado: EstadoPedido): Pedido =
-        this.copy(estado = novoEstado) //número será mantido
+    fun updateState(newState: OrderState): Order =
+        this.copy(state = newState) //number will be kept
 }
 
 fun main() {
-    val pedidoPendente = Pedido(1, Pendente)
-    val pedidoPreparando = Pedido(2, Preparando)
+    val pendingOrder = Order(1, Pending)
+    val preparingOrder = Order(2, Preparing)
 
-    val pedidoConcluido = pedidoPendente.atualizarEstado(Concluido)
-    val pedidoEmPreparo = pedidoPendente.atualizarEstado(Pendente)
+    val completedOrder = pendingOrder.updateState(Completed)
+    val orderInPreparation = pendingOrder.updateState(Pending)
 
-    println("Pedido #${pedidoConcluido.numero} está ${pedidoConcluido.estado}")
-    println("Pedido #${pedidoEmPreparo.numero} está ${pedidoEmPreparo.estado}")
+    println("Order #${completedOrder.number} is ${completedOrder.state}")
+    println("Order #${orderInPreparation.number} is ${orderInPreparation.state}")
 }
 ```
 
-##### Sealed, Kotlin e a forte tipagem
+##### Sealed, Kotlin, and strong typing
 
-A forte tipagem é uma característica fundamental em linguagens como Kotlin. Ela ajuda a evitar erros em tempo de compilação e a tornar o código mais seguro e legível. As Sealed Classes e Sealed Interfaces se encaixam perfeitamente nesse contexto, pois fornecem uma maneira de definir estruturas de dados de forma precisa e restrita. Isso evita que estados ou tipos inválidos sejam usados inadvertidamente, garantindo
-uma manipulação segura dos dados.
+Strong typing is a fundamental characteristic of languages like Kotlin. It helps prevent errors at compile time and makes code safer and more readable. Sealed classes and sealed interfaces fit perfectly into this context, because they provide a way to define data structures precisely and in a restricted way. This prevents invalid states or types from being used inadvertently, ensuring
+safe handling of your data.
 
 ```kotlin
-sealed interface StatusDoPedido
-data class EmAndamento(val tempoRestante: Int) : StatusDoPedido
-data class Concluido(val horaEntrega: String) : StatusDoPedido
+sealed interface OrderStatus
+data class InProgress(val timeRemaining: Int) : OrderStatus
+data class Completed(val deliveryTime: String) : OrderStatus
 
-fun atualizarStatusDoPedido(status: PedidoStatus) {
+fun updateOrderStatus(status: PedidoStatus) {
     when (status) {
-        is EmAndamento -> println("Pedido em andamento, tempo restante: ${pedido.tempoRestante} minutos")
-        is Concluido -> println("Pedido concluído, entregue às ${pedido.horaEntrega}")
+        is InProgress -> println("Order in progress, time remaining: ${pedido.tempoRestante} minutes")
+        is Completed -> println("Order completed, delivered at ${pedido.horaEntrega}")
     }
 }
 
 fun main() {
-    val pedidoEmAndamento = EmAndamento(tempoRestante = 15)
-    val pedidoConcluido = Concluido(horaEntrega = "20:30")
+    val inProgressOrder = InProgress(timeRemaining = 15)
+    val completedOrder = Completed(deliveryTime = "20:30")
 
-    atualizarPedidoStatus(pedidoEmAndamento)
-    atualizarPedidoStatus(pedidoConcluido)
+    updateOrderStatus(inProgressOrder)
+    updateOrderStatus(completedOrder)
 }
 ```
 
-##### Melhor suporte da IDE para tratar suas sealed
+##### Better IDE support for handling your sealed types
 
-Uma coisa bem legal das Sealed Classes é que se alinha com ao padrão funcional `when` (ou correspondência de padrões). Essa abordagem permite tratar de maneira exaustiva todos os casos possíveis, garantindo que todos os estados ou tipos sejam considerados.
+One really nice thing about sealed classes is that they line up with the functional `when` pattern (or pattern matching). This approach lets you handle all possible cases exhaustively, ensuring that every state or type is considered.
 
-Isso é especialmente útil quando se trabalha com funções puras, onde os dados são imutáveis e o tratamento de casos é crucial.
+This is especially useful when working with pure functions, where the data is immutable and handling each case is crucial.
 
-Sem contar que, ao adicionar um novo item (por exemplo, `Finalizado` utilizando o exemplo acima), o compilador irá alegar erro e forçar você a tratar esse novo caso. Importante sempre manter cuidado com `else`, já que "engoliria" qualquer novo tipo de sua hierarquia selada.
+On top of that, when you add a new item (for example, `Finished` using the example above), the compiler will flag an error and force you to handle that new case. Always be careful with `else`, since it would "swallow" any new type in your sealed hierarchy.
 
 ```kotlin
-sealed interface StatusDoPedido
-data class Finalizado(val tempo: Int) : StatusDoPedido
+sealed interface OrderStatus
+data class Finished(val time: Int) : OrderStatus
 
-fun atualizarStatusDoPedido(status: PedidoStatus) {
+fun updateOrderStatus(status: PedidoStatus) {
     when (status) {
-        //compilador vai reclamar que "Finalizado" deve ser tratado
-        is Finalizado -> println("Pedido finalizado ás ${status.tempo}")
+        //the compiler will complain that "Finished" must be handled
+        is Finished -> println("Order finished at ${status.time}")
     }
 }
 ```
 
-#### Data Object
+#### Data object
 
-A partir do Kotlin `1.9.0`, temos disponível um novo tipo de classe chamado `data object`. Esse tipo de classe brilha muito quando utilizada junto a sealed classes. Vamos entender o porquê
+Starting with Kotlin `1.9.0`, we have a new kind of class available called `data object`. This kind of class really shines when used together with sealed classes. Let's understand why.
 
 ```kotlin
 package com.rsicarelli.koansbr.classes.sealedClasses
 
-sealed interface Trabalho
-object Empresa : Trabalho
-object Faculdade : Trabalho
-object Escola : Trabalho
+sealed interface Work
+object Company : Work
+object College : Work
+object School : Work
 
-println(Empresa) //Vai imprimir com.rsicarelli.koansbr.classes.sealedClasses.Empresa@2fc14f68
+println(Company) //Will print com.rsicarelli.koansbr.classes.sealedClasses.Company@2fc14f68
 ```
 
-O motivo é que `object` em Kotlin é "puro", ou seja, não há nenhuma outra implementação extra do Kotlin acontecendo.
+The reason is that `object` in Kotlin is "plain" — in other words, there's no extra Kotlin implementation going on.
 
-Ou seja, num `object` não há uma função `toString()` definida e quando pedimos para printar o valor, recebemos o padrão:
+That is, an `object` has no defined `toString()` function, so when we ask to print its value, we get the default:
 
-`{pacote} + {NomeObjeto} + {@EndereçoMemória}`
+`{package} + {ObjectName} + {@MemoryAddress}`
 
-É aí que as `data object` entram em jogo:
+That's where `data object` comes into play:
 
 ```kotlin
 package com.rsicarelli.koansbr.classes.sealedClasses
 
-sealed interface Trabalho
-data object Empresa : Trabalho
-data object Faculdade : Trabalho
-data object Escola : Trabalho
+sealed interface Work
+data object Company : Work
+data object College : Work
+data object School : Work
 
-println(Faculdade) //Faculdade
+println(College) //College
 ```
 
-Apenas adicionando o modificador `data` a frente do meu `object`, já temos um resultado muito melhor no console.
+Just by adding the `data` modifier in front of my `object`, we already get a much nicer result in the console.
 
-Note que `toString()` é a única função implementada pelos `data object`. Funções como `equals()` e `hashCode()` irá se comportar igual a de qualquer outro objeto. Funções como `copy()` e `componentN()` não estão disponíveis.
+Note that `toString()` is the only function implemented by `data object`. Functions like `equals()` and `hashCode()` will behave just like they do for any other object. Functions like `copy()` and `componentN()` are not available.
 
-### Vantagens
+### Advantages
 
-- **Hierarquia explícita**: Sealed classes fornecem uma maneira clara e explícita de definir uma hierarquia limitada de classes relacionadas. Isso ajuda a comunicar a estrutura da hierarquia aos desenvolvedores que trabalham no código.
+- **Explicit hierarchy**: Sealed classes provide a clear, explicit way to define a limited hierarchy of related classes. This helps communicate the structure of the hierarchy to developers working on the code.
 
-- **Padrão de design**: Sealed classes seguem o padrão de design "State", permitindo representar diferentes estados ou variações de um tipo de forma organizada e mantendo a consistência em toda a hierarquia.
+- **Design pattern**: Sealed classes follow the "State" design pattern, letting you represent different states or variations of a type in an organized way while keeping consistency throughout the hierarchy.
 
-- **Exaustividade em when**: O uso de sealed classes em uma expressão when permite que o compilador faça verificações de exaustividade, garantindo que todos os casos possíveis sejam tratados. Isso ajuda a evitar erros em tempo de compilação.
+- **Exhaustiveness in when**: Using sealed classes in a when expression lets the compiler perform exhaustiveness checks, ensuring that all possible cases are handled. This helps prevent errors at compile time.
 
-- **Segurança em refatorações**: Sealed classes fornecem uma estrutura sólida para expansão futura sem quebrar o código existente. Adicionar novos casos é seguro, pois você precisa atualizar todas as partes do código que lidam com a expressão when.
+- **Safety during refactoring**: Sealed classes provide a solid structure for future expansion without breaking existing code. Adding new cases is safe, because you have to update every part of the code that deals with the when expression.
 
-### Desvantagens
+### Disadvantages
 
-- **Restrição da hierarquia**: Sealed classes limitam a hierarquia a um conjunto fixo de subclasses. Isso pode ser restritivo em cenários onde a hierarquia precisa ser expandida dinamicamente.
+- **Hierarchy restriction**: Sealed classes limit the hierarchy to a fixed set of subclasses. This can be restrictive in scenarios where the hierarchy needs to be expanded dynamically.
 
-- **Complexidade**: Hierarquias de classes muito complexas com muitos casos e comportamentos podem tornar o código difícil de entender e manter.
+- **Complexity**: Very complex class hierarchies with many cases and behaviors can make code hard to understand and maintain.
 
-- **Acoplamento**: Sealed classes podem levar a um nível mais alto de acoplamento, pois os casos devem ser conhecidos e definidos na classe selada. Isso pode dificultar a criação de componentes independentes.
+- **Coupling**: Sealed classes can lead to a higher level of coupling, since the cases must be known and defined in the sealed class. This can make it harder to create independent components.
 
 ```kotlin
-sealed class TipoMidia
-class Imagem(val url: String) : TipoMidia()
-class Video(val url: String) : TipoMidia()
-// Difícil adicionar novos tipos de mídia sem modificar a classe selada
+sealed class MediaType
+class Image(val url: String) : MediaType()
+class Video(val url: String) : MediaType()
+// Hard to add new media types without modifying the sealed class
 ```
 
-- **Uso impróprio**: Sealed classes podem ser usadas indevidamente, resultando em uma hierarquia desnecessariamente restrita ou criando mais complexidade do que o necessário.
+- **Improper use**: Sealed classes can be misused, resulting in an unnecessarily restricted hierarchy or creating more complexity than needed.
 
 ```kotlin
-sealed class EstadoCampo
-object EstadoVazio : EstadoCampo() // Uso desnecessário de sealed class
+sealed class FieldState
+object EmptyState : FieldState() // Unnecessary use of a sealed class
 ```
 
-- **Comportamentos complexos**: Casos de Sealed Classes que contêm lógica complexa ou múltiplos estados podem dificultar a compreensão do fluxo de controle do código.
+- **Complex behaviors**: Sealed class cases that contain complex logic or multiple states can make the code's control flow harder to follow.
 
 ```kotlin
-sealed class Resultado
-object Sucesso : Resultado()
-class Erro(val mensagem: String) : Resultado()
+sealed class Result
+object Success : Result()
+class Error(val message: String) : Result()
 
 @Test
-fun testCoberturaCasos() {
-    assertTrue(Sucesso is Resultado)
-    assertTrue(Erro("Erro ocorreu") is Resultado)
+fun testCaseCoverage() {
+    assertTrue(Success is Result)
+    assertTrue(Error("An error occurred") is Result)
 }
 ```
 
-- **Testes de Comportamentos**: Teste as funções e comportamentos específicos de cada caso de sealed class. Isso ajuda a garantir que a lógica interna de cada caso esteja funcionando como esperado.
+- **Behavior testing**: Test the specific functions and behaviors of each sealed class case. This helps ensure the internal logic of each case is working as expected.
 
 ```kotlin
-sealed class Cor
-object Vermelho : Cor()
-object Azul : Cor()
+sealed class Color
+object Red : Color()
+object Blue : Color()
 
-fun descreverCor(cor: Cor): String {
-    return when (cor) {
-        Vermelho -> "Cor vermelha"
-        Azul -> "Cor azul"
+fun describeColor(color: Color): String {
+    return when (color) {
+        Red -> "Red color"
+        Blue -> "Blue color"
     }
 }
 
-// Teste
+// Test
 @Test
-fun testComportamentos() {
-    assertEquals("Cor vermelha", descreverCor(Vermelho))
-    assertEquals("Cor azul", descreverCor(Azul))
+fun testBehaviors() {
+    assertEquals("Red color", describeColor(Red))
+    assertEquals("Blue color", describeColor(Blue))
 }
 ```
 
-- **Testes de Manipulação**: Se você tiver métodos de manipulação que alteram o estado de uma sealed class, teste como eles alteram corretamente a instância.
+- **Manipulation testing**: If you have manipulation methods that change the state of a sealed class, test that they alter the instance correctly.
 
 ```kotlin
-sealed class Forma
-object Quadrado : Forma()
-object Circulo : Forma()
+sealed class Shape
+object Square : Shape()
+object Circle : Shape()
 
-data class Coordenadas(val x: Int, val y: Int)
+data class Coordinates(val x: Int, val y: Int)
 
-fun moverForma(forma: Forma, coordenadas: Coordenadas): Coordenadas {
-    return when (forma) {
-        Quadrado -> Coordenadas(coordenadas.x + 2, coordenadas.y + 2)
-        Circulo -> Coordenadas(coordenadas.x - 1, coordenadas.y - 1)
+fun moveShape(shape: Shape, coordinates: Coordinates): Coordinates {
+    return when (shape) {
+        Square -> Coordinates(coordinates.x + 2, coordinates.y + 2)
+        Circle -> Coordinates(coordinates.x - 1, coordinates.y - 1)
     }
 }
 
-// Teste
+// Test
 @Test
-fun testManipulacao() {
-    val coordenadasIniciais = Coordenadas(3, 4)
-    assertEquals(Coordenadas(5, 6), moverForma(Quadrado, coordenadasIniciais))
-    assertEquals(Coordenadas(2, 3), moverForma(Circulo, coordenadasIniciais))
+fun testManipulation() {
+    val initialCoordinates = Coordinates(3, 4)
+    assertEquals(Coordinates(5, 6), moveShape(Square, initialCoordinates))
+    assertEquals(Coordinates(2, 3), moveShape(Circle, initialCoordinates))
 }
 ```
 
-- **Verificação de Valores**: Verifique se os valores estão sendo mantidos corretamente quando você muda o estado de uma sealed class. Isso garante a integridade dos dados.
+- **Value checking**: Check that values are being kept correctly when you change the state of a sealed class. This ensures data integrity.
 
 ```kotlin
-sealed class Moeda
-object Real : Moeda()
-object Dolar : Moeda()
+sealed class Currency
+object Real : Currency()
+object Dollar : Currency()
 
-data class Dinheiro(val valor: Double, val moeda: Moeda)
+data class Money(val amount: Double, val currency: Currency)
 
-// Teste
+// Test
 @Test
-fun testVerificacaoValores() {
-    val dinheiro = Dinheiro(50.0, Real)
-    val novoDinheiro = dinheiro.copy(moeda = Dolar)
-    assertEquals(50.0, dinheiro.valor)
-    assertEquals(Dolar, novoDinheiro.moeda)
+fun testValueChecking() {
+    val money = Money(50.0, Real)
+    val newMoney = money.copy(currency = Dollar)
+    assertEquals(50.0, money.amount)
+    assertEquals(Dollar, newMoney.currency)
 }
 ```
 
-- **Usar Factories**: Crie fábricas de testes para instâncias das sealed classes. Isso ajuda a centralizar a criação de instâncias e facilita a manutenção dos testes.
+- **Use factories**: Create test factories for instances of sealed classes. This helps centralize the creation of instances and makes tests easier to maintain.
 
 ```kotlin
 sealed class Animal
-object Cachorro : Animal()
-object Gato : Animal()
+object Dog : Animal()
+object Cat : Animal()
 
-data class Pet(val nome: String, val animal: Animal)
+data class Pet(val name: String, val animal: Animal)
 
-fun petFake(
-    nome: String = "Rex",
-    animal: Animal = Cachorro,
-) = Pet(nome, animal)
+fun fakePet(
+    name: String = "Rex",
+    animal: Animal = Dog,
+) = Pet(name, animal)
 
-// Teste
+// Test
 @Test
 fun testFactory() {
-    val petCachorro = petFake()
-    assertEquals("Rex", petCachorro.nome)
-    assertEquals(Cachorro, petCachorro.animal)
+    val dogPet = fakePet()
+    assertEquals("Rex", dogPet.name)
+    assertEquals(Dog, dogPet.animal)
 }
 ```
 
-- **Cenários de Erro**: Crie casos de teste para situações de erro, como tentar criar uma instância inválida. Verifique se exceções são lançadas conforme o esperado.
+- **Error scenarios**: Create test cases for error situations, such as trying to create an invalid instance. Check that exceptions are thrown as expected.
 
 ```kotlin
-sealed class ResultadoOperacao
-object Sucesso : ResultadoOperacao()
-class Erro(val mensagem: String) : ResultadoOperacao()
+sealed class OperationResult
+object Success : OperationResult()
+class Error(val message: String) : OperationResult()
 
-fun executarOperacao(sucesso: Boolean): ResultadoOperacao =
-    if (sucesso) Sucesso else Erro("Operação falhou")
+fun runOperation(succeeded: Boolean): OperationResult =
+    if (succeeded) Success else Error("Operation failed")
 
-// Teste
+// Test
 @Test
-fun testCenariosErro() {
-    assertTrue(executarOperacao(true) is Sucesso)
-    assertTrue(executarOperacao(false) is Erro)
+fun testErrorScenarios() {
+    assertTrue(runOperation(true) is Success)
+    assertTrue(runOperation(false) is Error)
 }
 ```
 
-- **Testes de Desempenho**: Se a manipulação de instâncias sealed for um aspecto crítico do sistema, crie testes de desempenho para garantir que as operações sejam executadas eficientemente.
+- **Performance testing**: If handling sealed instances is a critical aspect of the system, create performance tests to make sure the operations run efficiently.
 
 ```kotlin
-sealed class Trabalho
-object Projeto : Trabalho()
-object Tarefa : Trabalho()
+sealed class Work
+object Project : Work()
+object Task : Work()
 
-fun executarTrabalho(trabalho: Trabalho): String {
-    Thread.sleep(100) // Simula processamento
-    return when (trabalho) {
-        Projeto -> "Projeto concluído"
-        Tarefa -> "Tarefa finalizada"
+fun runWork(work: Work): String {
+    Thread.sleep(100) // Simulates processing
+    return when (work) {
+        Project -> "Project completed"
+        Task -> "Task finished"
     }
 }
 
-// Teste de Desempenho
-@Test(timeout = 500) // Limite de 500ms
-fun testDesempenho() {
-    assertEquals("Projeto concluído", executarTrabalho(Projeto))
+// Performance test
+@Test(timeout = 500) // 500ms limit
+fun testPerformance() {
+    assertEquals("Project completed", runWork(Project))
 }
 ```

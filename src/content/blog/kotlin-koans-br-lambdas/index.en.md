@@ -1,6 +1,6 @@
 ---
 title: 'Kotlin Koans BR: Lambdas'
-description: 'Passe um lambda para a função anypara verificar se a coleção contém um número par.'
+description: 'Pass a lambda to the any function to check whether the collection contains an even number.'
 pubDate: 2024-03-07
 tags:
   - 'kotlin'
@@ -8,75 +8,73 @@ tags:
 series: 'kotlin-koans-br'
 seriesOrder: 8
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fi79j8kpd34s9m5t1y524.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-lambdas-4pnl'
-  devtoId: 1783128
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
 ---
 
-## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Introduction/Lambdas/Task.kt)
+## 🔗 [Task](https://play.kotlinlang.org/koans/Introduction/Lambdas/Task.kt)
 
-Passe um lambda para a função [`any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/any.html)para verificar se a coleção contém um número par.
+Pass a lambda to the [`any`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/any.html) function to check whether the collection contains an even number.
 
-A função any, quando aplicada a uma coleção, recebe um predicado como argumento e retorna verdadeiro se pelo menos um elemento satisfizer a condição.
+When applied to a collection, the any function takes a predicate as its argument and returns true if at least one element satisfies the condition.
 
-## Caso de uso
+## Use case
 
-[Lambdas](https://kotlinlang.org/docs/lambdas.html#lambda-expressions-and-anonymous-functions) são funções anônimas que oferecem uma forma elegante e poderosa de representar ações ou comportamentos em Kotlin.
+[Lambdas](https://kotlinlang.org/docs/lambdas.html#lambda-expressions-and-anonymous-functions) are anonymous functions that offer an elegant and powerful way to represent actions or behaviors in Kotlin.
 
-O poder dos lambdas está na sua simplicidade. Elas permitem expressar uma ideia ou ação concisamente. Por exemplo, uma ação de somar dois números pode ser representada assim:
+The power of lambdas lies in their simplicity. They let you express an idea or action concisely. For example, the action of adding two numbers can be written like this:
 
 ```kotlin
-val soma: (Int, Int) -> Int = { x, y -> x + y }
-println(soma(5, 3))  // Saída: 8
+val sum: (Int, Int) -> Int = { x, y -> x + y }
+println(sum(5, 3))  // Output: 8
 ```
 
-- `(Int, Int) -> Int`: é a assinatura do lambda: recebe dois parâmetros `Int` e retorna outro `Int`.
-- `{ x, y -> x + y }` define o bloco de execução. Os parâmetros são nomeados antes do símbolo `->`. Em seguida, vem a expressão que fornece o resultado do tipo esperado.
+- `(Int, Int) -> Int`: this is the lambda's signature: it takes two `Int` parameters and returns another `Int`.
+- `{ x, y -> x + y }` defines the body. The parameters are named before the `->` symbol. Then comes the expression that produces the result of the expected type.
 
-### Lamba também é um tipo
+### A lambda is also a type
 
-Em Kotlin os lambdas são tratados de forma flexível, podendo, por exemplo, ser passadas como argumentos, retornadas por outras funções ou atribuídas a variáveis.
+In Kotlin, lambdas are treated flexibly: they can, for example, be passed as arguments, returned by other functions, or assigned to variables.
 
 ```kotlin
-val formulaTriangulo: (Polígono) -> Double = { it.base * it.altura / 2 }
-val formulaRetangulo: (Polígono) -> Double = { it.base * it.altura }
+val triangleFormula: (Polygon) -> Double = { it.base * it.height / 2 }
+val rectangleFormula: (Polygon) -> Double = { it.base * it.height }
 
-class Polígono(val base: Double, val altura: Double) {
-    fun calcularArea(formula: (Polígono) -> Double): Double {
-        return formula(this) //this representa "esta instancia"
+class Polygon(val base: Double, val height: Double) {
+    fun calculateArea(formula: (Polygon) -> Double): Double {
+        return formula(this) //this refers to "this instance"
     }
 }
 
-val triangulo = Polígono(base = 10.0, altura = 5.0)
-val retângulo = Polígono(base = 8.0, altura = 6.0)
+val triangle = Polygon(base = 10.0, height = 5.0)
+val rectangle = Polygon(base = 8.0, height = 6.0)
 
-println("Área triangulo: ${triangulo.calcularArea(formulaTriangulo)}")
-println("Área retângulo: ${retângulo.calcularArea(formulaRetangulo)}")
+println("Triangle area: ${triangle.calculateArea(triangleFormula)}")
+println("Rectangle area: ${rectangle.calculateArea(rectangleFormula)}")
 ```
 
-### O que é `it`?
+### What is `it`?
 
-Em Kotlin, quando lambdas possuem apenas um parâmetro, esse único parâmetro pode ser acessado implicitamente usando a
-palavra-chave `it`, sem precisar declará-lo explicitamente.
+In Kotlin, when a lambda has only one parameter, that single parameter can be accessed implicitly using the
+`it` keyword, without having to declare it explicitly.
 
 ```kotlin
-val numeros = listOf(1, 2, 3, 4, 5)
+val numbers = listOf(1, 2, 3, 4, 5)
 
-val impares = numbers.filter { numero -> numero % 2 == 0 }
-val pares = numbers.filter { it % 2 != 0 }
+val odds = numbers.filter { number -> number % 2 == 0 }
+val evens = numbers.filter { it % 2 != 0 }
 ```
 
-### Lambdas como último parâmetro
+### Lambdas as the last parameter
 
-Se um lambda for o último parâmetro de uma função, é possível fechar os `)` e colocar o lambda fora dos parênteses usando `{}`.
+If a lambda is the last parameter of a function, you can close the `)` and place the lambda outside the parentheses using `{}`.
 
 ```kotlin
-fun aplicarOperacao(a: Int, b: Int, operacao: (Int, Int) -> Int): Int = operacao(a, b)
+fun applyOperation(a: Int, b: Int, operation: (Int, Int) -> Int): Int = operation(a, b)
 
-aplicarOperacao(
+applyOperation(
     a = 5,
     b = 3
 ) { x, y ->
@@ -84,37 +82,37 @@ aplicarOperacao(
 }
 ```
 
-### Vantagens
+### Advantages
 
-- **Código conciso**: Lambdas simplificam a sintaxe das funções.
-- **[Funções de ordem superior](https://kotlinlang.org/docs/lambdas.html#higher-order-functions) e [programação funcional](https://pt.wikipedia.org/wiki/Programa%C3%A7%C3%A3o_funcional)**: lambdas permite a combinação de conceitos funcionais com programação imperativa
-- **Flexibilidade**: o comportamento pode ser passado como argumento usando lambdas.
-- **Integração Moderna**: Ótima compatibilidade com APIs 'kotlin-first', como o [Jetpack Compose](https://developer.android.com/jetpack/compose).
+- **Concise code**: Lambdas simplify function syntax.
+- **[Higher-order functions](https://kotlinlang.org/docs/lambdas.html#higher-order-functions) and [functional programming](https://en.wikipedia.org/wiki/Functional_programming)**: lambdas let you combine functional concepts with imperative programming.
+- **Flexibility**: behavior can be passed as an argument using lambdas.
+- **Modern integration**: Great compatibility with 'kotlin-first' APIs, such as [Jetpack Compose](https://developer.android.com/jetpack/compose).
 
-### Desvantagens
+### Disadvantages
 
-- **Desempenho**: Em alguns casos, lambdas podem ser menos eficientes, como captura intensiva de contexto.
-- **Legibilidade**: O uso exagerado pode complicar a compreensão.
-- **Depuração**: Lambdas podem gerar stacktraces complexas.
-- **Retrocompatibilidade**: Em versões anteriores ao Java 8, a retrocompatibilidade é limitada.
+- **Performance**: In some cases, lambdas can be less efficient, such as with intensive context capture.
+- **Readability**: Overusing them can make code harder to understand.
+- **Debugging**: Lambdas can produce complex stack traces.
+- **Backward compatibility**: In versions prior to Java 8, backward compatibility is limited.
 
-### Testabilidade
+### Testability
 
-- **Isolação**: é uma boa prática testar lambdas individualmente.
-- **Verificação**: Garanta que lambdas produzam resultados corretos para as entradas dadas.
-- **Cobertura**: Inclua tanto cenários comuns quanto "edge cases".
-- **Simplicidade**: Mantenha lambdas focados e simples. Refatore se se estiverem muito complexos.
+- **Isolation**: it's good practice to test lambdas individually.
+- **Verification**: Make sure lambdas produce correct results for the given inputs.
+- **Coverage**: Include both common scenarios and edge cases.
+- **Simplicity**: Keep lambdas focused and simple. Refactor them if they get too complex.
 
 ---
 
-## Analogia
+## Analogy
 
-### Lambdas e o Canivete Suíço
+### Lambdas and the Swiss Army knife
 
-- Ferramentas rápidas e versáteis para tarefas específicas.
-- Assim como cada função do canivete, lambdas atendem a necessidades pontuais no código.
+- Quick, versatile tools for specific tasks.
+- Just like each tool on the knife, lambdas meet one-off needs in your code.
 
-### Lambdas e RPG
+### Lambdas and RPGs
 
-- Uma "magia" que pode ser rapidamente adaptada conforme a situação.
-- Enfrentando um desafio específico? Crie uma magia no momento, sem ter que procurar na sua lista pré-definida de feitiços.
+- A "spell" that can be quickly adapted to the situation.
+- Facing a specific challenge? Craft a spell on the spot, without having to search your predefined list of spells.

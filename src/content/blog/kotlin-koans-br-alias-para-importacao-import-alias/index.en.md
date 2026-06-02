@@ -1,6 +1,6 @@
 ---
-title: 'Kotlin Koans BR: Alias para importação (import alias)'
-description: 'Ao importar uma classe ou função, você pode especificar um nome diferente para ela adicionando como NewName após a diretiva de importação. Isso pode ser…'
+title: 'Kotlin Koans BR: Import alias'
+description: 'When importing a class or function, you can give it a different name by adding as NewName after the import directive. This can be useful when…'
 pubDate: 2024-04-06
 tags:
   - 'kotlin'
@@ -10,25 +10,23 @@ tags:
 series: 'kotlin-koans-br'
 seriesOrder: 12
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F8vo0lk2yo1lsfe7y6ycw.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-alias-para-importacao-import-alias-5ahe'
-  devtoId: 1813348
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 3
 ---
 
-## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Classes/Rename%20on%20import/Task.kt)
+## 🔗 [Task](https://play.kotlinlang.org/koans/Classes/Rename%20on%20import/Task.kt)
 
-Ao [importar](https://kotlinlang.org/docs/packages.html#imports) uma classe ou função, você pode especificar um nome diferente para ela adicionando como NewName após a diretiva de importação. Isso pode ser útil se você quiser usar duas classes ou funções com nomes semelhantes de bibliotecas diferentes.
+When [importing](https://kotlinlang.org/docs/packages.html#imports) a class or function, you can give it a different name by adding as NewName after the import directive. This can be useful when you want to use two classes or functions with similar names from different libraries.
 
-Descomente o código e faça-o compilar. Renomeie `Random` do pacote Kotlin para `KRandom` e `Random` do pacote Java para `JRandom`.
+Uncomment the code and make it compile. Rename `Random` from the Kotlin package to `KRandom` and `Random` from the Java package to `JRandom`.
 
-## Introdução ao "rename imports" do Kotlin.
+## An introduction to Kotlin's "rename imports"
 
-Constantemente, durante o dia a dia do desenvolvimento, utilizamos diversas funções e classes que têm o mesmo nome.
+In everyday development, we constantly use different functions and classes that share the same name.
 
-Por exemplo, suponha que você precise usar o Random do pacote `kotlin.random` e, ao mesmo tempo, o `Random` do pacote `java.util`:
+For example, suppose you need to use `Random` from the `kotlin.random` package and, at the same time, `Random` from the `java.util` package:
 
 ```kotlin
 fun useDifferentRandomClasses(): String {
@@ -39,7 +37,7 @@ fun useDifferentRandomClasses(): String {
 }
 ```
 
-Aqui, você precisa fazer uma escolha: ou importar o `java.util` ou `kotlin.random`:
+Here you have to make a choice: either import `java.util` or `kotlin.random`:
 
 ```kotlin
 import kotlin.random.Random
@@ -50,7 +48,7 @@ fun useDifferentRandomClasses() {
 }
 ```
 
-ou...
+or...
 
 ```kotlin
 import java.util.Random
@@ -61,31 +59,31 @@ fun useDifferentRandomClasses(): String {
 }
 ```
 
-Ao tentar importar os 2, recebemos um erro na IDE:
+If we try to import both, we get an error in the IDE:
 
-![Conflito ao importar](https://github.com/rsicarelli/kotlin-koans-edu-br/blob/main/koans/src/commonMain/kotlin/com/rsicarelli/koansbr/classes/renameOnImport/resources/import-conflict-kotlin.png?raw=true)
+![Conflict when importing](https://github.com/rsicarelli/kotlin-koans-edu-br/blob/main/koans/src/commonMain/kotlin/com/rsicarelli/koansbr/classes/renameOnImport/resources/import-conflict-kotlin.png?raw=true)
 
-## Introduzindo o "import alias"
+## Introducing the "import alias"
 
-Existem duas formas de resolver esse problema. A primeira é você utilizar o "full qualifier", ou seja, declarar a classe que deseja usar juntamente com o pacote:
+There are two ways to solve this problem. The first is to use the "full qualifier", that is, to declare the class you want to use together with its package:
 
 ```kotlin
 kotlin.random.Random.nextInt(2)
 java.util.Random().nextInt(2)
 ```
 
-Essa abordagem é totalmente válida, mas requer um esforço cognitivo adicional para compreender a origem de cada instância de `Random`.
+This approach is perfectly valid, but it takes some extra mental effort to understand where each `Random` instance comes from.
 
-Há também uma preocupação estética e de organização. Imagine, por exemplo, que você tenha duas classes com o mesmo nome em seu repositório, e ambas estejam em pacotes extensos:
+There's also a concern about readability and organization. Imagine, for example, that you have two classes with the same name in your repository, and both live in long packages:
 
 ```kotlin
 val errorCore = br.com.rsicarelli.multiplatform.core.errorMessages.shared.apiErrors.Error
 val errorFeature = br.com.rsicarelli.multiplatform.feartures.home.errorMessages.shared.apiErrors.Error
 ```
 
-A leitura fica bastante prejudicada, o que causa problemas de compreensão.
+This is much harder to read, which makes the code more difficult to understand.
 
-É aqui que os _import aliases_ do Kotlin entram em jogo:
+This is where Kotlin's _import aliases_ come into play:
 
 ```kotlin
 import br.com.rsicarelli.multiplatform.core.errorMessages.shared.apiErrors.Error as CoreError
@@ -95,10 +93,10 @@ val errorCore = CoreError
 val errorFeature = FeatureError
 ```
 
-Dessa forma, os imports ficam organizados, reaproveitáveis, e você reduz o esforço cognitivo de ler e seguir seu código, tornando-o mais limpo e coeso!
+This way, your imports stay organized and reusable, and you reduce the mental effort of reading and following your code, making it cleaner and more cohesive!
 
-## Conclusão
+## Conclusion
 
-O import alias no Kotlin serve para ajudar a organizar melhor nosso código, além de resolver conflitos de import com classes e funções com o mesmo nome.
+The import alias in Kotlin helps us organize our code better, and it also resolves import conflicts between classes and functions that share the same name.
 
-Essa funcionalidade é poderosa e nos permite contextualizar melhor nosso código, auxiliando na leitura e compreensão.
+This feature is powerful and lets us give our code better context, making it easier to read and understand.

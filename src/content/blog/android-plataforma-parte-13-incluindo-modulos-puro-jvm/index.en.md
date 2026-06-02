@@ -1,7 +1,7 @@
 ---
-title: 'Android Plataforma - Parte 13: Incluindo módulos "puro JVM"'
-description: 'No último artigo, otimizamos a compilação dos módulos Android desativando diversas funcionalidades do Android Gradle Plugin (AGP).'
-summary: 'No último artigo, otimizamos a compilação dos módulos Android desativando diversas funcionalidades do Android Gradle Plugin (AGP).'
+title: 'Android Plataforma - Part 13: Including "pure JVM" modules'
+description: 'In the last article we sped up Android module builds by turning off several Android Gradle Plugin (AGP) features.'
+summary: 'In the last article we sped up Android module builds by turning off several Android Gradle Plugin (AGP) features.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -11,40 +11,38 @@ tags:
 series: 'android-plataforma'
 seriesOrder: 13
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fxiiw5fbp76p9gde68ci1.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-13-incluindo-modulos-puro-jvm-4f61'
-  devtoId: 1611083
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/13/jvm-only-modules'
   reactions: 2
 ---
 
-Neste artigo, discutiremos a distinção entre módulos puro JVM (`java-library`) e módulos Library Android (`com.android.library`), além de expandir nossa plataforma para suportar essa funcionalidade.
+In this article we'll look at the difference between pure JVM modules (`java-library`) and Android Library modules (`com.android.library`), and we'll extend our platform to support that feature.
 
 ---
 
-## O que são Módulos Puro JVM?
+## What are pure JVM modules?
 
-Módulos Puro JVM são aqueles que utilizam exclusivamente a JVM (Java Virtual Machine) para sua execução. Em outras palavras, não têm vínculo nem dependência direta com o Android.
+Pure JVM modules are modules that run exclusively on the JVM (Java Virtual Machine). In other words, they have no direct tie to or dependency on Android.
 
-Simplificando, são módulos puramente Java, isentos das especificidades e complexidades dos módulos Android.
+Put simply, they're purely Java modules, free of the specifics and complexity of Android modules.
 
-Como resultado, as compilações são mais eficientes, já que esses módulos não passam pelas etapas de compilação do Android Gradle Plugin (AGP).
+As a result, builds are more efficient, since these modules don't go through the Android Gradle Plugin (AGP) compilation steps.
 
-### Quando usar módulos puro JVM?
+### When should you use pure JVM modules?
 
-1. **Lógica de negócios:** Para códigos relacionados à lógica de negócios que não dependem diretamente do Android, como cálculos, validações ou manipulações de listas.
+1. **Business logic:** For business-logic code that doesn't depend directly on Android, such as calculations, validations, or list handling.
 
-2. **Bibliotecas Genéricas:** Se você está desenvolvendo uma biblioteca que pode ser usada tanto em projetos Android quanto em projetos Kotlin/JVM puros.
+2. **Generic libraries:** When you're building a library that can be used in both Android projects and pure Kotlin/JVM projects.
 
-3. **Módulos 'core'**: Módulos relacionados a banco de dados, rede, logging, que podem ser construídos puramente em Kotlin/JVM.
+3. **'core' modules:** Modules for things like databases, networking, or logging that can be built purely in Kotlin/JVM.
 
-## Decorando nossa plataforma para receber módulos puro JVM
+## Decorating our platform to handle pure JVM modules
 
-A proposta é adicionar um novo ponto de entrada chamado `jvmLibrary()` e decorá-lo com a função `applyJvmLibrary()`.
+The idea is to add a new entry point called `jvmLibrary()` and decorate it with the `applyJvmLibrary()` function.
 
-**1 -** Crie uma função `fun Project.applyJvmLibrary()` no arquivo `kotlin.kt`:
+**1 -** Create a `fun Project.applyJvmLibrary()` function in the `kotlin.kt` file:
 
 ```kotlin
 import org.gradle.api.JavaVersion
@@ -73,11 +71,11 @@ internal fun Project.applyKotlinOptions() {
 }
 ```
 
-**2 -** Vamos manter o padrão da nossa plataforma e possibilitar que os módulos configurem a compilação individualmente. Isso irá possibilitar algumas novas customizações que iremos aplicar no próximo post:
+**2 -** Let's stay consistent with our platform's pattern and let modules configure their build individually. This opens up some new customizations we'll apply in the next post:
 
-Pra não deixar os `Options` jogados por aí, vamos criar uma pasta `build-logic/src/../options` e trazer `AndroidOptions.kt` para lá.
+To avoid scattering the `Options` around, let's create a `build-logic/src/../options` folder and move `AndroidOptions.kt` into it.
 
-Crie uma classe `CompilationsOptions` e declare o conteúdo:
+Create a `CompilationsOptions` class and add this content:
 
 ```kotlin
 import org.gradle.api.JavaVersion
@@ -102,7 +100,7 @@ class CompilationOptionsBuilder {
 }
 ```
 
-**3 -** Vamos adaptar nossa função `applyJvmLibrary()` pra receber um `CompilationOptions`:
+**3 -** Let's adapt our `applyJvmLibrary()` function to take a `CompilationOptions`:
 
 ```kotlin
 import com.rsicarelli.kplatform.options.CompilationOptions
@@ -136,7 +134,7 @@ private fun Project.applyJavaCompatibility(javaVersion: JavaVersion) {
 }
 ```
 
-**4 -** Note que alteramos a assinatura da função `applyKotlinOptions` que está sendo compartilhada entre nossas decorações `android.kt`.
+**4 -** Notice that we changed the signature of the `applyKotlinOptions` function, which is shared across our `android.kt` decorations.
 
 ```kotlin
 internal fun Project.applyAndroidApp(
@@ -178,9 +176,9 @@ private fun Project.applyAndroidCommon(
     }
 ```
 
-### Expondo as novas APIs
+### Exposing the new APIs
 
-Agora, atualizaremos nosso `KPlatformPlugin.kt` com as novas definições:
+Now let's update our `KPlatformPlugin.kt` with the new definitions:
 
 ```kotlin
 fun Project.androidApp(
@@ -205,19 +203,19 @@ fun Project.jvmLibrary(builderAction: CompilationOptionsBuilder.() -> Unit = { }
     )
 ```
 
-## Criando um módulo JVM e aplicando as decorações da plataforma
+## Creating a JVM module and applying the platform decorations
 
-**1 -** Dentro de `core`, criaremos um novo módulo chamado `threading`.
+**1 -** Inside `core`, we'll create a new module called `threading`.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/81xtralh2ban3swg5isb.png)
+![Project structure showing the new threading module under core](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/81xtralh2ban3swg5isb.png)
 
-**2 -** Inclua esse novo módulo no `settings.gradle.kts`:
+**2 -** Add this new module to `settings.gradle.kts`:
 
 ```kotlin
 include(":app", ":features:details", ":features:home", ":core:designsystem", ":core:threading")
 ```
 
-**3 -** Sincronize o projeto. Em seguida, crie um arquivo `build.gradle.kts` e configure as opções desse módulo:
+**3 -** Sync the project. Then create a `build.gradle.kts` file and configure the module's options:
 
 ```kotlin
 import com.rsicarelli.kplatform.jvmLibrary
@@ -234,15 +232,15 @@ dependencies {
 }
 ```
 
-## Sucesso!
+## Success!
 
-A IDE informará se essa biblioteca é pura JVM.
+The IDE will tell you whether this library is pure JVM.
 
-Embora eu esteja usando o IntelliJ, o Android Studio também exibirá um ícone diferente
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/e3pvnqbr36fgmjw91v08.png)
+I'm using IntelliJ here, but Android Studio will also show a different icon
+![Android Studio displaying a different icon for the pure JVM module](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/e3pvnqbr36fgmjw91v08.png)
 
-No próximo artigo, aprenderemos a customizar nossas compilações para incorporar algumas das funcionalidades experimentais do compilador Kotlin.
+In the next article we'll learn how to customize our builds to enable some of the Kotlin compiler's experimental features.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/5afv0g9m07tkk60t7bta.png)
+![Project structure with the configured pure JVM module](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/5afv0g9m07tkk60t7bta.png)
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/tsfkotnkwv8xvdfu4305.png)
+![IDE icon indicating a pure JVM module](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/tsfkotnkwv8xvdfu4305.png)

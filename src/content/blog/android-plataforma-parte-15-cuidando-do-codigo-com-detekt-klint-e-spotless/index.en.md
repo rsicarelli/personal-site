@@ -1,7 +1,7 @@
 ---
-title: 'Android Plataforma - Parte 15: Cuidando do código com Detekt, Klint e Spotless'
-description: 'No último artigo, abordamos a capacidade de nossa plataforma aderir a funcionalidades experimentais em diferentes módulos.'
-summary: 'No último artigo, abordamos a capacidade de nossa plataforma aderir a funcionalidades experimentais em diferentes módulos.'
+title: 'Android Plataforma - Part 15: Taking care of your code with Detekt, ktlint and Spotless'
+description: 'In the last article we covered how our platform lets different modules opt into experimental features.'
+summary: 'In the last article we covered how our platform lets different modules opt into experimental features.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -11,36 +11,34 @@ tags:
 series: 'android-plataforma'
 seriesOrder: 15
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fqeipccc0f9v0d70smukv.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-15-cuidando-do-codigo-com-detekt-klint-e-spotless-50n7'
-  devtoId: 1611222
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/15/enhancing-code-quality'
   reactions: 2
 ---
 
-Agora, vamos explorar a garantia da qualidade do código através da integração de plugins.
+Now let's look at how to safeguard code quality by integrating a few plugins.
 
 ---
 
-## Por que focar em automatizar verificações do código?
+## Why bother automating code checks?
 
-Quando se trabalha em equipe, é vital ter padrões de estilo e nomenclatura para manter a consistência. Estabelecer um padrão sólido ajuda a reduzir a sobrecarga de decisões e facilita a colaboração.
+When you work as a team, having style and naming conventions is essential to stay consistent. Setting a solid standard reduces decision fatigue and makes collaboration easier.
 
-Pense assim: ao se juntar a uma orquestra, seguimos a pessoa contudora que dita ritmo da música. É o mesmo com nosso módulos; seguimos padrões preestabelecidos e acordados pelo time de forma automatizada.
+Think of it this way: when you join an orchestra, you follow the conductor who sets the tempo for the music. It's the same with our modules; we follow conventions that the team agreed on beforehand, applied automatically.
 
-Essa prática é especialmente útil para quando uma pessoa nova entra no time, além de que os acordos fiquem documentados e codificados, abertos para colaboração.
+This is especially helpful when someone new joins the team, and it also keeps those agreements documented, codified, and open to collaboration.
 
-## Incluíndo análise de código estático com Detekt
+## Adding static code analysis with Detekt
 
-O `Detekt` é talvez a ferramenta mais famosa em Kotlin para analisar o código e garantir que algumas práticas são aplicadas.
+`Detekt` is probably the most well-known tool in Kotlin for analyzing code and making sure certain practices are followed.
 
-Não iremos focar muito nas suas funcionalidades, vamos direto pra implementação
+We won't dwell too much on its features here; let's go straight to the implementation.
 
-### Passo a passo
+### Step by step
 
-**1 -** Vamos começar declarando o `detekt` no nossos `libs.versions.toml`:
+**1 -** Let's start by declaring `detekt` in our `libs.versions.toml`:
 
 ```toml
 [versions]
@@ -58,7 +56,7 @@ detektRules-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-lib
 arturbosch-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ```
 
-**2 -** Sincronize o projeto. Navegue até `build-logic/build.gradle.kts` e vamos compilar a dependencia do `detekt` na nossa plataforma:
+**2 -** Sync the project. Head over to `build-logic/build.gradle.kts` and let's compile the `detekt` dependency into our platform:
 
 ```kotlin
 dependencies {
@@ -68,9 +66,9 @@ dependencies {
 }
 ```
 
-**3 -** Sincronize o projeto. Agora, vamos declarar nossa DSL do `DetektOptions`.
+**3 -** Sync the project. Now let's declare our `DetektOptions` DSL.
 
-Crie um arquivo `DetektOptions` em `build-logic/src/../options`
+Create a `DetektOptions` file in `build-logic/src/../options`
 
 ```kotlin
 data class DetektOptions(
@@ -99,13 +97,13 @@ class DetektOptionsBuilder {
 }
 ```
 
-**4 -** Em seguida, crie um novo arquivo `detekt.kt` em `build-logic/src/.../decorations` e declare uma função `applyDetekt()`
+**4 -** Next, create a new `detekt.kt` file in `build-logic/src/.../decorations` and declare an `applyDetekt()` function
 
-Essa configurações impoe que:
+This configuration enforces that:
 
-1. Esse plugin só poderá ser chamado no `build.gradle.kts` da raíz
-2. Exista um arquivo `.detekt.yml` na raíz do projeto
-3. Exista um arquivo `.detekt-compose.yml` na raíz do projeto
+1. This plugin can only be called from the root `build.gradle.kts`
+2. A `.detekt.yml` file exists at the project root
+3. A `.detekt-compose.yml` file exists at the project root
 
 ```kotlin
 import com.rsicarelli.kplatform.options.DetektOptions
@@ -155,14 +153,14 @@ fun Project.addDetektPlugins(detektPlugins: List<String>) {
 
 ```
 
-**5 -** Em seguida. vamos expor essa decoração no `KPlatformPlugin.kt`:
+**5 -** Next, let's expose this decoration in `KPlatformPlugin.kt`:
 
 ```kotlin
 fun Project.detekt(builderAction: DetektBuilder = {}) =
     applyDetekt(DetektOptionsBuilder().apply(builderAction).build())
 ```
 
-**6 -** Sincronize o projeto. Em seguida, va até o `build.gradle.kts` da raiz do projeto, e inclua o plugin do `detekt`:
+**6 -** Sync the project. Next, go to the project's root `build.gradle.kts` and include the `detekt` plugin:
 
 ```kotlin
 plugins {
@@ -173,7 +171,7 @@ plugins {
 }
 ```
 
-**6 -** Sincronize o projeto. Em seguida, aplique a decoração `detekt()` no mesmo arquivo:
+**6 -** Sync the project. Next, apply the `detekt()` decoration in the same file:
 
 ```kotlin
 import com.rsicarelli.kplatform.detekt
@@ -188,38 +186,38 @@ plugins {
 detekt()
 ```
 
-**7 -** Vamos criar 2 arquivos na raíz do projeto: `.detekt.yml` e `.detekt-compose.yml`
+**7 -** Let's create 2 files at the project root: `.detekt.yml` and `.detekt-compose.yml`
 
 - [github.com/rsicarelli/kplatform/.detekt.yml](https://github.com/rsicarelli/kplatform/blob/13/enhancing-code-quality/.detekt.yml)
 - [github.com/rsicarelli/kplatform/.detekt-compose.yml](https://github.com/rsicarelli/kplatform/blob/13/enhancing-code-quality/.detekt-compose.yml)
 
-**8 -** Sincronize o projeto. Perceba que uma série de tasks `detektX` foram adicionadas no projeto:
+**8 -** Sync the project. Notice that a number of `detektX` tasks were added to the project:
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/pm2238ij1zni4t7dput9.png)
+![Gradle task list showing the detekt tasks](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/pm2238ij1zni4t7dput9.png)
 
-**8 -** Verifique que está funcionando rodando o seguinte comando.
+**8 -** Check that it's working by running the following command.
 
-Alternativamente, pode simplesmente dar um clique duplo na task `detekt` na lista de tasks do Gradle:
+Alternatively, you can simply double-click the `detekt` task in the Gradle task list:
 
 ```sh
 ./gradlew detekt
 ```
 
-Você vai perceber que vamos ter várias penalidades.
+You'll notice we get a bunch of violations.
 
-A seguir, vamos usar o Spotless para nos ajudar a reduzir a lista de faltas.
+Next, let's use Spotless to help us shrink that list of issues.
 
-## Adicionando o Spotless
+## Adding Spotless
 
-O spotless é outra ferramenta indispensável nos projetos Kotlin.
+Spotless is another indispensable tool in Kotlin projects.
 
-Seu objetivo é formatar seu código magicamente de acordo com um estilo de código/configurações pre estabelecidas.
+Its job is to magically format your code according to a predefined code style/settings.
 
-Novamente, não vamos focar muito nos detalhes da biblioteca, vamos direto ao uso
+Again, we won't go deep into the library's details; let's go straight to using it.
 
-### Passo a passo
+### Step by step
 
-**1 -** Declare as coordenadas do `spotless` no `libs.versions.toml`
+**1 -** Declare the `spotless` coordinates in `libs.versions.toml`
 
 ```toml
 [versions]
@@ -232,12 +230,12 @@ gradlePlugin-spotless = { module = "com.diffplug.spotless:spotless-plugin-gradle
 diffplug-spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 ```
 
-**2 -** Sincronize o projeto. Em seguida, vamos criar os arquivos `SpotlessOptions` na pasta `build-logic/src/.../options`:
+**2 -** Sync the project. Next, let's create the `SpotlessOptions` files in the `build-logic/src/.../options` folder:
 
-Aqui, nossa plataforma será capaz de:
+Here, our platform will be able to:
 
-1. Fornecer 2 configurações padrões para o projeto: `SpotlessKtsRule` e `SpotlessXmlRule`. Isso configura o spotless para nossos arquivos Gradle com extensão `.kts`, além de `.xml` do Android.
-2. Possibilta outras configurações de arquivos, de acordo com a necessidade de cada projeto.
+1. Provide 2 default settings for the project: `SpotlessKtsRule` and `SpotlessXmlRule`. This configures Spotless for our Gradle files with the `.kts` extension, as well as Android `.xml` files.
+2. Allow other file settings, depending on what each project needs.
 
 ```kotlin
 data class SpotlessOptions(
@@ -275,14 +273,14 @@ class SpotlessOptionsBuilder {
 }
 ```
 
-**3 -** Vamos criar um arquivo `spotless.kt` dentro de `build-logic/src/.../decorations` e declarar a função `applySpotless()`
+**3 -** Let's create a `spotless.kt` file inside `build-logic/src/.../decorations` and declare the `applySpotless()` function
 
-Note que:
+Note that:
 
-1. Estamos aplicando o Spotless no projeto raíz. Isso faz com que as formatações também aconteçam nos scripts da raíz, assim como na plataforma `build-logic`
-2. Estamos aplicando o Spotless também para todos os sub projetos.
-3. Estamos utilizando o `klint` como regras do `Spotless`
-4. O plugin assume que existe um arquivo `.editorconfig` na raíz do projeto
+1. We're applying Spotless to the root project. This makes formatting also happen on the root scripts, as well as on the `build-logic` platform.
+2. We're applying Spotless to all subprojects too.
+3. We're using `ktlint` as the rules for `Spotless`.
+4. The plugin assumes there's an `.editorconfig` file at the project root.
 
 ```kotlin
 import com.diffplug.gradle.spotless.SpotlessExtension
@@ -326,18 +324,18 @@ private fun Project.configureSpotlessPlugin(
 }
 ```
 
-**4 -** Crie um arquivo `.editorconfig` na raiz do projeto:
+**4 -** Create an `.editorconfig` file at the project root:
 
 - [github.com/rsicarelli/kplatform/.editorconfig](https://github.com/rsicarelli/kplatform/blob/13/enhancing-code-quality/.editorconfig)
 
-**5 -** Vamos expor essa decoração no `KPlatformPlugin.kt`:
+**5 -** Let's expose this decoration in `KPlatformPlugin.kt`:
 
 ```kotlin
 fun Project.spotless(builderAction: SpotlessBuilder = { }) =
     applySpotless(SpotlessOptionsBuilder().apply(builderAction).build())
 ```
 
-**6 -** Sincronize o projeto. Em seguida, navegue até `build.gradle.kts` da raiz do projeto e declare o plugin do spotless:
+**6 -** Sync the project. Next, go to the project's root `build.gradle.kts` and declare the spotless plugin:
 
 ```kotlin
 plugins {
@@ -349,7 +347,7 @@ plugins {
 }
 ```
 
-**7 -** Sincronize o projeto. Em seguida. altere o mesmo `build.gradle.kts` e aplique a decoração `spotless()`:
+**7 -** Sync the project. Next, edit that same `build.gradle.kts` and apply the `spotless()` decoration:
 
 ```kotlin
 import com.rsicarelli.kplatform.detekt
@@ -367,20 +365,22 @@ detekt()
 spotless()
 ```
 
-**8 -** Sincronize o projeto. Perceba que agora várias tasks `spotless` estarão disponíveis na lista de tarefas do Gradle:
+**8 -** Sync the project. Notice that several `spotless` tasks are now available in the Gradle task list:
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/8lnbvzudyiqmg3zwpg88.png)
+![Gradle task list showing the spotless tasks](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/8lnbvzudyiqmg3zwpg88.png)
 
-**9 -** Verifque o funcionamento rodando o comando, ou clique duplo na tarefa `spotlessApply` na lista de tarefas do Gradle:
+**9 -** Check that it works by running the command, or double-click the `spotlessApply` task in the Gradle task list:
 
 ```shell
 ./gradlew spotlessApply
 ```
 
-## Sucesso!
+## Success!
 
-O Spotless vai conseguir solucionar várias faltas automaticamente pra gente. Porém, tem algumas, como por exemplo nomeação dos arquivos, que não é suportado pelo Spotless.
+Spotless will fix a lot of the violations for us automatically. That said, there are a few, such as file naming, that Spotless doesn't support.
 
-Aproveitando, nessa branch, adicionei várias documentações para todas nossas API's da plataforma!
+While I was at it, in this branch I also added plenty of documentation for all of our platform APIs!
 
-No próximo artigo, iremos fechar o essa série de posts, e contar um pouquinho sobre os próximos passos!
+In the next article, we'll wrap up this series of posts and share a bit about what's coming next!
+</content>
+</invoke>
