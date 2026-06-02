@@ -9,9 +9,12 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Prose from '@/components/ui/Prose.astro';
 import Image from '@/components/ui/Image.astro';
+import JsonLd from '@/components/content/JsonLd.astro';
 import portrait from '@/assets/rodrigo-sicarelli.jpg';
 import { LOCALES, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
+import { canonicalUrl } from '@/lib/seo';
+import { personLd, breadcrumbLd } from '@/lib/jsonld';
 import { getLocalizedEntry } from '@/lib/content';
 import { render } from 'astro:content';
 
@@ -34,9 +37,21 @@ if (!page) throw new Error(`Missing 'about' page entry for locale "${locale}".`)
 if (!cv) throw new Error(`Missing 'cv' entry for locale "${locale}".`);
 const { Content } = await render(page);
 const { name, headline, location, email, summary, knowsAbout, profiles, work } = cv.data;
+
+// Structured data (#52/#59): the rich Person node — `sameAs` (entity reconciliation), `knowsAbout`
+// (topical authority), `worksFor` — lives here (and on the home graph), never duplicated per post.
+const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
+const jsonLd = [
+  personLd(cv.data, { url: pageUrl }),
+  breadcrumbLd([
+    { name: t('nav.home'), url: canonicalUrl('/', locale, Astro.site) },
+    { name: t('nav.about'), url: pageUrl },
+  ]),
+];
 ---
 
 <BaseLayout title={`${t('nav.about')} · ${t('site.title')}`} description={page.data.description}>
+  <JsonLd slot="head" schema={jsonLd} />
   <Container as="section" class="py-16">
     <Image
       src={portrait}

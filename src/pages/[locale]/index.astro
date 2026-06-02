@@ -9,9 +9,12 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Card from '@/components/ui/Card.astro';
 import RssLinks from '@/components/content/RssLinks.astro';
-import { LOCALES, type Locale } from '@/config/site';
+import JsonLd from '@/components/content/JsonLd.astro';
+import { LOCALES, SITE, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
-import { getLocalizedEntries } from '@/lib/content';
+import { canonicalUrl } from '@/lib/seo';
+import { websiteLd, personLd } from '@/lib/jsonld';
+import { getLocalizedEntries, getLocalizedEntry } from '@/lib/content';
 import { formatDate, isoDate } from '@/lib/datetime';
 
 export function getStaticPaths() {
@@ -20,6 +23,15 @@ export function getStaticPaths() {
 
 const locale = Astro.params.locale as Locale;
 const t = useTranslations(locale);
+
+// Site-wide graph (#52): WebSite + the rich Person, so the home page asserts the site/author
+// identity. The Person is the same node the About page emits — both built from the shared CV.
+const homeUrl = canonicalUrl('/', locale, Astro.site);
+const cv = await getLocalizedEntry('cv', locale, 'cv');
+const siteGraph = [
+  websiteLd({ url: homeUrl, name: SITE.title, locale }),
+  ...(cv ? [personLd(cv.entry.data, { url: canonicalUrl('/about', locale, Astro.site) })] : []),
+];
 
 const posts = (await getLocalizedEntries('blog', locale)).slice(0, 3);
 const projects = (await getLocalizedEntries('portfolio', locale))
@@ -34,6 +46,7 @@ const upcoming = (await getLocalizedEntries('events', locale))
 
 <BaseLayout title={t('site.title')} description={t('site.description')}>
   <RssLinks slot="head" locale={locale} />
+  <JsonLd slot="head" schema={siteGraph} />
   <Container class="py-16">
     <section>
       <h1 class="text-4xl font-bold tracking-tight">{t('home.heading')}</h1>

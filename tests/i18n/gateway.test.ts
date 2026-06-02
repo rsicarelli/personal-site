@@ -39,6 +39,8 @@ describe('neutral / gateway', () => {
   });
 
   it('only redirects via a gated inline script (invisible to crawlers)', () => {
-    expect(doc.querySelector('script')?.textContent).toContain('location.replace');
+    // The head also carries a JSON-LD script (#52); match the redirect by content, not by position.
+    const scripts = [...doc.querySelectorAll('script')];
+    expect(scripts.some((s) => s.textContent?.includes('location.replace'))).toBe(true);
   });
 });

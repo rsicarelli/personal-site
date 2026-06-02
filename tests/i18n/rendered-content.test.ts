@@ -30,9 +30,15 @@ describe('rendered localized pages', () => {
   it('renders navigation chrome in the route locale, not the other', () => {
     for (const p of pages) {
       const other = LOCALES.find((l) => l !== p.locale)!;
+      // Check the visible markup only: JSON-LD (#52) carries machine metadata whose schema.org
+      // property names (e.g. `knowsAbout`) contain the English marker "About" by spec, which is
+      // not a wrong-language leak. Strip those `<script type="application/ld+json">` blocks first.
+      const doc = parseHTML(p.html).document;
+      doc.querySelectorAll('script[type="application/ld+json"]').forEach((s) => s.remove());
+      const markup = doc.documentElement.outerHTML;
       // nav.about differs (About vs Sobre) and appears on every page — a strong language signal.
-      expect(p.html, p.relPath).toContain(ui[p.locale]['nav.about']);
-      expect(p.html, p.relPath).not.toContain(ui[other]['nav.about']);
+      expect(markup, p.relPath).toContain(ui[p.locale]['nav.about']);
+      expect(markup, p.relPath).not.toContain(ui[other]['nav.about']);
     }
   });
 

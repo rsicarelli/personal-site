@@ -8,8 +8,11 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Prose from '@/components/ui/Prose.astro';
 import LiteYouTube from '@/components/ui/LiteYouTube.astro';
-import { type Locale } from '@/config/site';
+import JsonLd from '@/components/content/JsonLd.astro';
+import { SITE, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
+import { canonicalUrl } from '@/lib/seo';
+import { eventLd, breadcrumbLd } from '@/lib/jsonld';
 import { localizedPaths } from '@/lib/content';
 import { youtubeId } from '@/lib/media';
 import { formatDate, isoDate } from '@/lib/datetime';
@@ -29,9 +32,21 @@ const dateLabel =
   endDate && endDate.getTime() !== startDate.getTime()
     ? `${formatDate(startDate, locale)} – ${formatDate(endDate, locale)}`
     : formatDate(startDate, locale);
+
+// Structured data (#52): Event (Offline when a venue is set, else VirtualLocation) + breadcrumb.
+const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
+const jsonLd = [
+  eventLd(entry.data, { url: pageUrl, locale, performerName: SITE.name }),
+  breadcrumbLd([
+    { name: t('nav.home'), url: canonicalUrl('/', locale, Astro.site) },
+    { name: t('nav.talks'), url: canonicalUrl('/talks', locale, Astro.site) },
+    { name: title, url: pageUrl },
+  ]),
+];
 ---
 
-<BaseLayout title={`${title} · ${t('site.title')}`} description={description}>
+<BaseLayout title={`${title} · ${t('site.title')}`} description={description} ogType="article">
+  <JsonLd slot="head" schema={jsonLd} />
   <Container as="article" class="py-16">
     <a
       href={`/${locale}/talks`}
