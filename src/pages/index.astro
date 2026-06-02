@@ -1,28 +1,66 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { Button } from '@/components/ui/button';
+/**
+ * Neutral locale gateway at `/` (#21). Intentionally NOT wrapped in BaseLayout — its Header is
+ * locale-bound, and `/` must stay language-neutral. Two things matter for SEO:
+ *
+ *  1. It is a real, crawlable 200 page with static links to BOTH locales, so Googlebot (which
+ *     crawls from US IPs with no Accept-Language) reaches `/en/` and `/pt-br/` from here. There
+ *     is NO server redirect — `astro.config.mjs` sets `redirectToDefaultLocale: false`.
+ *  2. The only client JS is a tiny inline soft-redirect that runs in real browsers to send a
+ *     visitor to their best-guess locale. Crawlers that don't execute JS simply see the links.
+ *
+ * The gateway advertises both locales + x-default via reciprocal hreflang (#23) so search
+ * engines discover the localized roots from `/` itself.
+ */
+import '../styles/global.css';
+import { SITE } from '@/config/site';
+
+const alternates = [
+  { hreflang: 'en', href: new URL('/en', Astro.site).href },
+  { hreflang: 'pt-BR', href: new URL('/pt-br', Astro.site).href },
+  { hreflang: 'x-default', href: new URL('/', Astro.site).href },
+];
 ---
 
-<BaseLayout
-  title="rsicarelli.com"
-  description="Foundation scaffold for rsicarelli.com — Astro, Tailwind v4, shadcn/ui."
->
-  <section class="mx-auto max-w-3xl px-6 py-16">
-    <h1 class="text-3xl font-bold tracking-tight">rsicarelli.com</h1>
-    <p class="text-muted-foreground mt-3 max-w-prose">
-      Foundation scaffold — Astro + Tailwind v4 + shadcn/ui on a themeable Oklch token skeleton.
-      Bilingual content, the finalized design system, and real pages land in the i18n, design, and
-      content epics.
-    </p>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>rsicarelli.com</title>
+    <meta name="description" content={SITE.description} />
+    <link rel="canonical" href={new URL('/', Astro.site).href} />
+    {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
+  </head>
+  <body class="min-h-dvh antialiased">
+    <main class="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center px-6 py-16">
+      <h1 class="font-mono text-2xl font-semibold tracking-tight">rsicarelli.com</h1>
+      <p class="text-muted-foreground mt-2">Choose your language · Escolha seu idioma</p>
+      <ul class="mt-6 flex flex-col gap-2 text-lg">
+        <li>
+          <a href="/en/" class="underline-offset-4 hover:underline">English</a>
+        </li>
+        <li>
+          <a href="/pt-br/" class="underline-offset-4 hover:underline">Português (Brasil)</a>
+        </li>
+      </ul>
+    </main>
 
     {
-      /* Proving island: a React shadcn/ui component, hydrated on load. The rest of the
-        page stays zero-JS — islands hydrate only where interactivity is needed. */
+      /* Soft, client-only locale detection. `location.replace` avoids a back-button trap and is
+        NOT a server 301/302, so crawlers and the static links above are unaffected. */
     }
-    <div class="mt-8 flex flex-wrap items-center gap-3">
-      <Button client:load>Primary</Button>
-      <Button variant="outline" client:load>Outline</Button>
-      <Button variant="ghost" client:load>Ghost</Button>
-    </div>
-  </section>
-</BaseLayout>
+    <script is:inline>
+      (function () {
+        try {
+          const nav = navigator.language || (navigator.languages && navigator.languages[0]) || 'en';
+          const target = nav.toLowerCase().indexOf('pt') === 0 ? '/pt-br/' : '/en/';
+          location.replace(target);
+        } catch {
+          /* leave the crawlable gateway in place */
+        }
+      })();
+    </script>
+  </body>
+</html>

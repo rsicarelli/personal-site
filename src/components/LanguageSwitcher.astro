@@ -1,0 +1,31 @@
+---
+/**
+ * Language switcher (#22) — plain Astro, zero JS. Links to the OTHER locale's URL for the
+ * current page, preserving the rest of the path (`/en/blog/x` ↔ `/pt-br/blog/x`). `stripLocale`
+ * drops the current locale segment so a path with no prefix still resolves to a valid target.
+ * The label is rendered in the CURRENT locale (on `/en/…` it offers "Português", and vice versa).
+ */
+import { LOCALES, DEFAULT_LOCALE, type Locale } from '@/config/site';
+import { useTranslations, stripLocale, hreflangOf } from '@/i18n/utils';
+
+interface Props {
+  /** Current route locale, threaded down from BaseLayout → Header. */
+  locale?: Locale;
+}
+
+const current = (Astro.props.locale ?? Astro.currentLocale ?? DEFAULT_LOCALE) as Locale;
+const other = LOCALES.find((l) => l !== current) ?? DEFAULT_LOCALE;
+const t = useTranslations(current);
+
+const logical = stripLocale(Astro.url.pathname, LOCALES);
+const otherHref = `/${other}${logical === '/' ? '' : logical}`;
+---
+
+<a
+  href={otherHref}
+  hreflang={hreflangOf(other)}
+  aria-label={t('lang.label')}
+  class="hover:text-foreground font-mono text-xs transition-colors"
+>
+  {t('lang.switchTo')}
+</a>

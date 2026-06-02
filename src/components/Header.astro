@@ -2,11 +2,13 @@
 /**
  * Primary navigation — labels come from the i18n dictionary (src/i18n/ui.ts), hrefs from the
  * central config (src/config/site.ts) and gain a `/<locale>` prefix at render. The locale is
- * passed down from BaseLayout (derived from the route). The language switcher (#22) is wired
- * in PR2. Routes other than Home/About are placeholders until the Content epic (#27).
+ * passed down from BaseLayout (derived from the route). The visible language switcher (#22)
+ * sits at the end of the nav. Routes other than Home/About are placeholders until the Content
+ * epic (#27).
  */
 import { NAV, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
 
 interface Props {
   locale: Locale;
@@ -34,6 +36,9 @@ const localized = (href: string) => `/${locale}${href === '/' ? '' : href}`;
           </li>
         ))
       }
+      <li class="border-border border-l pl-4">
+        <LanguageSwitcher locale={locale} />
+      </li>
     </ul>
   </nav>
 </header>
