@@ -20,6 +20,10 @@
  *   src/content/blog/<clean-slug>/index.pt.md
  *   src/content/series/<slug>.en.yaml  +  <slug>.pt.yaml
  * Prints a summary and a paste-ready "pending translations" checklist for the tracking issue.
+ *
+ * AFTER ingest, run `scripts/devto-canonical-writeback.mjs --apply` (#151) so each imported dev.to
+ * article declares our URL as its `canonical_url` — otherwise dev.to outranks our copies. See
+ * docs/seo-submission.md.
  */
 
 import { readdir, readFile, mkdir, writeFile } from 'node:fs/promises';

@@ -46,7 +46,29 @@ urlList}` to `https://api.indexnow.org/indexnow` (200/202 = accepted). It's safe
 - **Automate later (#60):** once Cloudflare Pages auto-deploys, wire `scripts/indexnow-submit.mjs`
   into a post-deploy hook / GitHub Action so every push that changes content pings IndexNow.
 
-## 4. One-time + recurring
+## 4. Canonical write-back to dev.to (#151) — _run after deploy (#60)_
+
+49 blog posts are mirrored from dev.to. Each is **self-canonical** to `rsicarelli.com`, but the
+dev.to originals (DA ~90) will win as canonical unless **they** point back to us. `scripts/devto-canonical-writeback.mjs`
+sets each dev.to article's `canonical_url` to its matching `rsicarelli.com` URL (same `/<locale>/blog/<slug>`
+form as our `<link rel="canonical">`), consolidating authority here — dev.to becomes the syndicated copy.
+
+```bash
+mise exec -- task devto:canonical                 # dry-run: print the 49 mappings (no network)
+SITE_URL=https://rsicarelli.com DEV_TO_API_KEY=xxxx \
+  node scripts/devto-canonical-writeback.mjs --apply   # write to dev.to (idempotent)
+```
+
+- `DEV_TO_API_KEY` is a **shell-only secret** (a dev.to "DEV Community API Key" from your dev.to
+  settings) — **never** committed and **not** an `astro:env` field. The script never logs it.
+- `--apply` GETs each article and only PUTs when the `canonical_url` differs, so it's safe to re-run.
+- **After each future `pnpm ingest:devto`**, re-run `--apply` so newly imported posts get their
+  canonical write-back. When you translate a placeholder (#143), **drop the `provenance`/`devtoId`
+  from the translated file** — the translation is not a dev.to article; the original keeps the id.
+- Verify in Search Console (URL Inspection) that our URLs — not the dev.to ones — are chosen as
+  canonical. Related: #143, #144.
+
+## 5. One-time + recurring
 
 - **Once:** verify GSC + Bing, submit the sitemap to both.
 - **Each deploy:** sitemaps refresh automatically; run the IndexNow ping (or let the #60 automation
