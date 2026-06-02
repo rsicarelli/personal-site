@@ -1,8 +1,11 @@
 // Flat ESLint config (ESLint 10).
 // TypeScript + Astro recommended rules; Prettier disables stylistic conflicts.
 // Type-checked rules are intentionally left off for now to keep lint fast — they can be
-// layered on once more app code exists. The jsx-a11y ruleset is deferred to the design
-// epic (#46): eslint-plugin-astro's bundled jsx-a11y config isn't ESLint 10-compatible yet.
+// layered on once more app code exists. Accessibility (#46): eslint-plugin-astro's
+// flat/jsx-a11y-recommended registers the full jsx-a11y ruleset globally (its last entry has
+// no `files` filter), so the 34 a11y rules run over both .astro templates and React islands
+// (.tsx) — a11y regressions fail CI. NB: eslint-plugin-jsx-a11y is a required peer dep of that
+// config (devDependency), not bundled — keep it installed.
 import { defineConfig } from 'eslint/config';
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
@@ -17,6 +20,8 @@ export default defineConfig([
   eslint.configs.recommended,
   tseslint.configs.recommended,
   astro.configs.recommended,
+  // a11y rules for .astro templates and React islands (see header note).
+  astro.configs['flat/jsx-a11y-recommended'],
   {
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },

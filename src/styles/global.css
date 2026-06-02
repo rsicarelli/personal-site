@@ -125,6 +125,24 @@
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
   }
+
+  /*
+   * Accessibility baseline (#46) — WCAG 2.2 Focus Appearance (2.4.13): a clearly visible
+   * keyboard focus indicator in the accent colour with an offset (contrast ≥3:1 vs both themes,
+   * verified in #41). Components that manage their own ring (e.g. Button via Tailwind utilities,
+   * which sit in a higher layer) override this; everything else — links, summary, etc. — inherits
+   * it. `:focus:not(:focus-visible)` suppresses the ring for mouse/touch so only keyboard shows it.
+   */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Keep focused targets clear of sticky edges if any are added later (Focus Not Obscured, 2.4.11). */
+  :target {
+    scroll-margin-top: 5rem;
+  }
 }
 
 /*

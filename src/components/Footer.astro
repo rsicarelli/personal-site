@@ -28,7 +28,10 @@ const year = new Date().getFullYear();
       {
         FOOTER_LINKS.map((item) => (
           <li>
-            <a href={localized(item.href)} class="hover:text-foreground transition-colors">
+            <a
+              href={localized(item.href)}
+              class="hover:text-foreground inline-flex min-h-6 items-center transition-colors"
+            >
               {t(item.key)}
             </a>
           </li>
