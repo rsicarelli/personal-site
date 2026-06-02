@@ -51,6 +51,8 @@ const total = groups.reduce((n, g) => n + g.entry.data.items.length, 0);
                   href={mediaUrl(item.file)}
                   download
                   rel="noopener"
+                  data-umami-event="material-download"
+                  data-umami-event-file={item.file}
                   class="border-border hover:bg-muted inline-flex shrink-0 items-center gap-1 rounded-md border px-3 py-1.5 font-mono text-xs transition-colors"
                 >
                   {t('materials.download')}
