@@ -30,15 +30,17 @@ describe('rendered localized pages', () => {
   it('renders navigation chrome in the route locale, not the other', () => {
     for (const p of pages) {
       const other = LOCALES.find((l) => l !== p.locale)!;
-      // Check the visible markup only: JSON-LD (#52) carries machine metadata whose schema.org
-      // property names (e.g. `knowsAbout`) contain the English marker "About" by spec, which is
-      // not a wrong-language leak. Strip those `<script type="application/ld+json">` blocks first.
+      // Scope to the site chrome (header + footer) where the nav renders. The content slot and head
+      // metadata are excluded on purpose: mirrored blog posts may show the ORIGINAL language's prose
+      // as a placeholder until translated (e.g. Portuguese body + description under /en/), so the
+      // other locale's common words (e.g. "Sobre") legitimately appear there — that's not a chrome
+      // leak. nav.about ("About" / "Sobre") lives in the header and differs across locales.
       const doc = parseHTML(p.html).document;
-      doc.querySelectorAll('script[type="application/ld+json"]').forEach((s) => s.remove());
-      const markup = doc.documentElement.outerHTML;
-      // nav.about differs (About vs Sobre) and appears on every page — a strong language signal.
-      expect(markup, p.relPath).toContain(ui[p.locale]['nav.about']);
-      expect(markup, p.relPath).not.toContain(ui[other]['nav.about']);
+      const chrome =
+        (doc.querySelector('header')?.outerHTML ?? '') +
+        (doc.querySelector('footer')?.outerHTML ?? '');
+      expect(chrome, p.relPath).toContain(ui[p.locale]['nav.about']);
+      expect(chrome, p.relPath).not.toContain(ui[other]['nav.about']);
     }
   });
 

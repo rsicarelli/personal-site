@@ -1,0 +1,76 @@
+---
+/**
+ * ArticleMeta (#31) — provenance chrome for a mirrored post: a link to the dev.to original, the
+ * companion source repo/branch, and the dev.to reaction count. The site is the canonical home, so
+ * the dev.to link is a plain `rel="nofollow"` cross-link (never a canonical pointing away).
+ *
+ * Graceful by design: every field is optional and the component renders NOTHING when the whole
+ * provenance object is absent/empty — so hand-authored posts with no provenance show no card.
+ * Zero-JS: brand glyphs are inline SVGs (no React island, no icon dependency).
+ */
+import { useTranslations } from '@/i18n/utils';
+import type { Locale } from '@/config/site';
+
+interface Provenance {
+  devtoUrl?: string;
+  devtoId?: number;
+  githubRepo?: string;
+  githubBranch?: string;
+  reactions?: number;
+}
+
+interface Props {
+  locale: Locale;
+  provenance?: Provenance;
+  class?: string;
+}
+
+const { locale, provenance = {}, class: className } = Astro.props;
+const t = useTranslations(locale);
+
+const { devtoUrl, githubRepo, githubBranch, reactions } = provenance;
+const sourceUrl = githubBranch ?? githubRepo;
+const hasReactions = typeof reactions === 'number' && reactions > 0;
+const hasAny = Boolean(devtoUrl || sourceUrl || hasReactions);
+
+const pill =
+  'inline-flex items-center gap-1.5 hover:text-foreground focus-visible:text-foreground transition-colors';
+---
+
+{
+  hasAny && (
+    <aside
+      class:list={[
+        'border-border bg-card text-muted-foreground flex flex-wrap items-center gap-x-5 gap-y-2 rounded-lg border px-4 py-3 text-sm',
+        className,
+      ]}
+    >
+      {devtoUrl && (
+        <a href={devtoUrl} rel="nofollow noopener" target="_blank" class={pill}>
+          <svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true">
+            <path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6l.02 2.44.04 2.45.56-.02c.41 0 .63-.07.83-.26.24-.24.26-.36.26-2.2 0-1.91-.02-1.96-.29-2.18zM0 4.94v14.12h24V4.94H0zM8.56 15.3c-.44.58-1.06.77-2.53.77H4.71V8.53h1.4c1.67 0 2.16.18 2.6.9.27.43.29.6.32 2.57.05 2.23-.02 2.73-.47 3.3zm5.09-5.47h-2.47v1.77h1.52v1.28l-.72.04-.75.03v1.77l1.22.03 1.2.04v1.28h-1.6c-1.53 0-1.6-.01-1.87-.3l-.3-.28v-3.16c0-3.02.01-3.18.25-3.48.23-.31.25-.31 1.88-.31h1.64v1.3zm4.68 5.45c-.17.43-.64.79-1.03.79-.18 0-.45-.15-.62-.34-.35-.39-1.7-5.78-1.53-6.1.16-.32.9-.4 1.1-.13.08.1.39 1.07.68 2.15l.53 1.97.59-2.16c.32-1.19.63-2.2.69-2.26.15-.15.86-.06 1.02.13.16.18-1.5 5.95-1.7 6.16z" />
+          </svg>
+          {t('blog.originallyOn')}
+        </a>
+      )}
+
+      {sourceUrl && (
+        <a href={sourceUrl} rel="noopener" target="_blank" class={pill}>
+          <svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.5 11.5 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+          </svg>
+          {t('blog.sourceCode')}
+        </a>
+      )}
+
+      {hasReactions && (
+        <span class="inline-flex items-center gap-1.5" aria-label={t('blog.reactions')}>
+          <svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+          </svg>
+          {reactions}
+        </span>
+      )}
+    </aside>
+  )
+}

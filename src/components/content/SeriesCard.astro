@@ -1,0 +1,37 @@
+---
+/**
+ * SeriesCard (#31) — one series in the blog spotlight grid. A linked `Card` with an optional cover
+ * (remote dev.to CDN image until R2, #R2), the series label, and its part count. Cover images are
+ * plain lazy `<img>` (remote, fixed aspect) rather than astro:assets, which only optimizes local files.
+ */
+import Card from '@/components/ui/Card.astro';
+
+interface Props {
+  href: string;
+  label: string;
+  count: number;
+  /** "parts" / "partes" — already localized by the caller. */
+  partsLabel: string;
+  coverUrl?: string;
+}
+
+const { href, label, count, partsLabel, coverUrl } = Astro.props;
+---
+
+<Card href={href} class="flex flex-col gap-3">
+  {
+    coverUrl && (
+      <img
+        src={coverUrl}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        class="border-border aspect-[2/1] w-full rounded-md border object-cover"
+      />
+    )
+  }
+  <div>
+    <h3 class="font-semibold tracking-tight">{label}</h3>
+    <p class="text-muted-foreground mt-1 font-mono text-xs">{count} {partsLabel}</p>
+  </div>
+</Card>

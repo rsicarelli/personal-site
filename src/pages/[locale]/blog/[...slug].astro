@@ -8,11 +8,18 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Prose from '@/components/ui/Prose.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
+import ArticleMeta from '@/components/content/ArticleMeta.astro';
 import { SITE, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
 import { canonicalUrl } from '@/lib/seo';
 import { blogPostingLd, breadcrumbLd } from '@/lib/jsonld';
-import { localizedPaths, commonBlogTagSlugs, slugifyTag } from '@/lib/content';
+import {
+  localizedPaths,
+  commonBlogTagSlugs,
+  slugifyTag,
+  getSeriesPosts,
+  getLocalizedEntry,
+} from '@/lib/content';
 import { formatDate, isoDate } from '@/lib/datetime';
 import { render } from 'astro:content';
 
@@ -22,22 +29,54 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const locale = Astro.params.locale as Locale;
+const slug = Astro.params.slug as string;
 const t = useTranslations(locale);
 const { Content, remarkPluginFrontmatter } = await render(entry);
 const minutes = remarkPluginFrontmatter.minutesRead as number;
 const tagPages = await commonBlogTagSlugs();
-const { title, description, pubDate, updatedDate, tags, cover, summary } = entry.data;
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  tags,
+  cover,
+  summary,
+  series,
+  translated,
+  provenance,
+} = entry.data;
+
+// Series context: the part badge (linking to the series landing) + prev/next-in-series nav, derived
+// from sibling posts ordered by `seriesOrder` (regenerates the ⬅️➡️ nav that ingestion strips).
+const seriesPosts = series ? await getSeriesPosts(locale, series) : [];
+const seriesInfo = series ? await getLocalizedEntry('series', locale, series) : undefined;
+const idx = seriesPosts.findIndex((p) => p.slug === slug);
+const prev = idx > 0 ? seriesPosts[idx - 1] : undefined;
+const next = idx >= 0 && idx < seriesPosts.length - 1 ? seriesPosts[idx + 1] : undefined;
 
 // Structured data (#52): BlogPosting + a Home → Blog → post breadcrumb. The post's cover (when
 // present) becomes both the OG image and BlogPosting.image; dates reuse the same UTC source as the
 // visible <time> elements. Author is name-only here; the rich Person node lives on /about.
 const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
-const coverUrl = cover ? new URL(cover.src, Astro.site).href : undefined;
+// OG/JSON-LD image must be self-hosted (the metadata suite asserts the rsicarelli.com origin), so we
+// use only the local optimized `cover`. Mirrored posts have none yet → BaseLayout's default brand
+// card; their remote dev.to `coverUrl` powers just the visible spotlight thumbnails until R2 (#R2).
+const ogImage = cover ? new URL(cover.src, Astro.site).href : undefined;
+const seriesUrl = series ? canonicalUrl(`/series/${series}`, locale, Astro.site) : undefined;
 const jsonLd = [
-  blogPostingLd(entry.data, { url: pageUrl, locale, authorName: SITE.name, image: coverUrl }),
+  blogPostingLd(entry.data, {
+    url: pageUrl,
+    locale,
+    authorName: SITE.name,
+    image: ogImage,
+    seriesName: seriesInfo?.entry.data.label,
+    seriesUrl,
+  }),
   breadcrumbLd([
     { name: t('nav.home'), url: canonicalUrl('/', locale, Astro.site) },
     { name: t('nav.blog'), url: canonicalUrl('/blog', locale, Astro.site) },
+    ...(series && seriesInfo ? [{ name: seriesInfo.entry.data.label, url: seriesUrl! }] : []),
     { name: title, url: pageUrl },
   ]),
 ];
@@ -47,7 +86,7 @@ const jsonLd = [
   title={`${title} · ${t('site.title')}`}
   description={description}
   ogType="article"
-  image={coverUrl}
+  image={ogImage}
 >
   <JsonLd slot="head" schema={jsonLd} />
   <Container as="article" class="py-16">
@@ -57,7 +96,20 @@ const jsonLd = [
     >
       ← {t('blog.allPosts')}
     </a>
-    <h1 class="mt-6 text-3xl font-bold tracking-tight text-balance">{title}</h1>
+    {
+      series && seriesInfo && (
+        <p class="mt-6 font-mono text-xs">
+          <a
+            href={`/${locale}/series/${series}`}
+            class="bg-secondary text-secondary-foreground hover:bg-secondary/70 inline-flex rounded-md px-1.5 py-0.5 transition-colors"
+          >
+            {seriesInfo.entry.data.label}
+            {entry.data.seriesOrder != null && ` · ${t('blog.part')} ${entry.data.seriesOrder}`}
+          </a>
+        </p>
+      )
+    }
+    <h1 class="mt-3 text-3xl font-bold tracking-tight text-balance">{title}</h1>
     <p class="text-muted-foreground mt-3 font-mono text-xs">
       {/* Visible byline (#59) — pairs with the BlogPosting.author Person ref; links to /about. */}
       {t('blog.by')}{' '}
@@ -92,6 +144,16 @@ const jsonLd = [
       )
     }
 
+    <ArticleMeta locale={locale} provenance={provenance} class="mt-6" />
+
+    {
+      translated === false && (
+        <p class="border-border text-muted-foreground mt-6 rounded-lg border border-dashed px-4 py-3 text-sm">
+          {t('blog.originalLanguage')}
+        </p>
+      )
+    }
+
     <Prose class="mt-8">
       <Content />
     </Prose>
@@ -121,6 +183,38 @@ const jsonLd = [
             )}
           </ul>
         </footer>
+      )
+    }
+
+    {
+      (prev || next) && (
+        <nav
+          aria-label={seriesInfo?.entry.data.label}
+          class="border-border mt-12 grid gap-4 border-t pt-6 sm:grid-cols-2"
+        >
+          {prev ? (
+            <a
+              href={`/${locale}/blog/${prev.slug}`}
+              class="group text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <span class="font-mono text-xs">← {t('blog.previousPart')}</span>
+              <span class="group-hover:text-foreground text-foreground mt-1 block font-medium">
+                {prev.entry.data.title}
+              </span>
+            </a>
+          ) : (
+            <span />
+          )}
+          {next && (
+            <a
+              href={`/${locale}/blog/${next.slug}`}
+              class="group text-muted-foreground hover:text-foreground transition-colors sm:text-right"
+            >
+              <span class="font-mono text-xs">{t('blog.nextPart')} →</span>
+              <span class="text-foreground mt-1 block font-medium">{next.entry.data.title}</span>
+            </a>
+          )}
+        </nav>
       )
     }
   </Container>

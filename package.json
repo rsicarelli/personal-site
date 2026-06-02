@@ -20,6 +20,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:i18n": "node scripts/check-locale-completeness.mjs",
+    "ingest:devto": "node scripts/ingest-devto.mjs && prettier --write 'src/content/blog/**/*.md' 'src/content/series/**/*.yaml'",
     "test": "vitest run",
     "test:i18n": "vitest run tests/i18n",
     "test:seo": "vitest run tests/seo",

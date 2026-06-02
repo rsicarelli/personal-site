@@ -38,6 +38,16 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
+  // Remote image hosts allowed for optimization / direct embedding. Blog posts mirrored from
+  // dev.to keep their cover + inline image URLs on dev.to's CDN until media is moved to R2 (#R2);
+  // these patterns let `coverUrl`/body images render without erroring. Drop them after the R2 move.
+  image: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'media2.dev.to' },
+      { protocol: 'https', hostname: 'dev-to-uploads.s3.amazonaws.com' },
+    ],
+  },
+
   // Blog reading time (#31): a remark plugin computes `minutesRead` from each post's prose and
   // exposes it on `render()`'s remarkPluginFrontmatter. MDX inherits the markdown remark plugins
   // by default, so blog .mdx posts get it too.

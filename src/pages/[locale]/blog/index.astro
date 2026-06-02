@@ -8,9 +8,15 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import RssLinks from '@/components/content/RssLinks.astro';
+import SeriesSpotlight from '@/components/content/SeriesSpotlight.astro';
 import { LOCALES, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
-import { getLocalizedEntries, commonBlogTagSlugs, slugifyTag } from '@/lib/content';
+import {
+  getLocalizedEntries,
+  getSeriesWithCounts,
+  commonBlogTagSlugs,
+  slugifyTag,
+} from '@/lib/content';
 import { formatDate, isoDate } from '@/lib/datetime';
 
 export async function getStaticPaths() {
@@ -21,6 +27,10 @@ const locale = Astro.params.locale as Locale;
 const t = useTranslations(locale);
 const posts = await getLocalizedEntries('blog', locale);
 const tagPages = await commonBlogTagSlugs();
+
+// Series spotlight leads the page; the slug→label map also drives each post's "Series · Part N" badge.
+const series = await getSeriesWithCounts(locale);
+const seriesLabel = new Map(series.map((s) => [s.slug, s.data.label]));
 ---
 
 <BaseLayout title={`${t('nav.blog')} · ${t('site.title')}`} description={t('site.description')}>
@@ -28,9 +38,11 @@ const tagPages = await commonBlogTagSlugs();
   <Container as="section" class="py-16">
     <h1 class="text-3xl font-bold tracking-tight">{t('nav.blog')}</h1>
 
+    <SeriesSpotlight locale={locale} series={series} />
+
     {posts.length === 0 && <p class="text-muted-foreground mt-6">{t('blog.empty')}</p>}
 
-    <ul class="mt-10 space-y-10">
+    <ul class="mt-12 space-y-10">
       {
         posts.map(({ slug, entry }) => (
           <li class="border-border border-b pb-10 last:border-0">
@@ -39,10 +51,17 @@ const tagPages = await commonBlogTagSlugs();
                 {entry.data.title}
               </a>
             </h2>
-            <p class="text-muted-foreground mt-1 font-mono text-xs">
+            <p class="text-muted-foreground mt-1 flex flex-wrap items-center gap-2 font-mono text-xs">
               <time datetime={isoDate(entry.data.pubDate)}>
                 {formatDate(entry.data.pubDate, locale)}
               </time>
+              {entry.data.series && seriesLabel.has(entry.data.series) && (
+                <span class="bg-secondary text-secondary-foreground rounded-md px-1.5 py-0.5">
+                  {seriesLabel.get(entry.data.series)}
+                  {entry.data.seriesOrder != null &&
+                    ` · ${t('blog.part')} ${entry.data.seriesOrder}`}
+                </span>
+              )}
             </p>
             <p class="text-muted-foreground mt-3 max-w-prose">{entry.data.description}</p>
             {entry.data.tags.length > 0 && (

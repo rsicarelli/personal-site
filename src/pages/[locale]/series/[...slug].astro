@@ -1,0 +1,90 @@
+---
+/**
+ * Series landing (#31) — one page per (locale, series): the series header (label, description,
+ * optional cover + repo) and its posts listed in reading order (`seriesOrder`, part 1 → N). Routes
+ * and draft-filtering go through the content spine; `localizedPaths('series')` yields both locales.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import { type Locale } from '@/config/site';
+import { useTranslations } from '@/i18n/utils';
+import { localizedPaths, getSeriesPosts } from '@/lib/content';
+import { formatDate, isoDate } from '@/lib/datetime';
+
+export async function getStaticPaths() {
+  return localizedPaths('series');
+}
+
+const { entry } = Astro.props;
+const locale = Astro.params.locale as Locale;
+const slug = Astro.params.slug as string;
+const t = useTranslations(locale);
+const { label, description, repo, coverUrl } = entry.data;
+const posts = await getSeriesPosts(locale, slug);
+---
+
+<BaseLayout title={`${label} · ${t('site.title')}`} description={description ?? label}>
+  <Container as="section" class="py-16">
+    <a
+      href={`/${locale}/blog`}
+      class="text-muted-foreground hover:text-foreground font-mono text-xs"
+    >
+      ← {t('blog.allPosts')}
+    </a>
+
+    {
+      coverUrl && (
+        <img
+          src={coverUrl}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          class="border-border mt-6 aspect-[2/1] w-full rounded-lg border object-cover"
+        />
+      )
+    }
+
+    <p class="text-muted-foreground mt-6 font-mono text-xs">{t('blog.series')}</p>
+    <h1 class="mt-1 text-3xl font-bold tracking-tight text-balance">{label}</h1>
+    {description && <p class="text-muted-foreground mt-3 max-w-prose">{description}</p>}
+    <p class="text-muted-foreground mt-2 font-mono text-xs">
+      {posts.length}{' '}{t('blog.parts')}
+      {
+        repo && (
+          <>
+            <span aria-hidden="true"> · </span>
+            <a href={repo} rel="noopener" target="_blank" class="hover:text-foreground underline">
+              {t('blog.sourceCode')}
+            </a>
+          </>
+        )
+      }
+    </p>
+
+    <h2 class="text-muted-foreground mt-10 text-xs font-semibold tracking-wide uppercase">
+      {t('blog.inThisSeries')}
+    </h2>
+    <ol class="mt-4 space-y-6">
+      {
+        posts.map(({ slug: postSlug, entry: post }, i) => (
+          <li class="border-border border-b pb-6 last:border-0">
+            <p class="text-muted-foreground font-mono text-xs">
+              {t('blog.part')} {post.data.seriesOrder ?? i + 1}
+            </p>
+            <h3 class="mt-1 text-lg font-semibold tracking-tight">
+              <a href={`/${locale}/blog/${postSlug}`} class="hover:text-primary transition-colors">
+                {post.data.title}
+              </a>
+            </h3>
+            <p class="text-muted-foreground mt-1 font-mono text-xs">
+              <time datetime={isoDate(post.data.pubDate)}>
+                {formatDate(post.data.pubDate, locale)}
+              </time>
+            </p>
+            <p class="text-muted-foreground mt-2 max-w-prose text-sm">{post.data.description}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Container>
+</BaseLayout>

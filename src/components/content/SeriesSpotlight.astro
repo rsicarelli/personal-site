@@ -1,0 +1,45 @@
+---
+/**
+ * SeriesSpotlight (#31) — the "Series" section that leads the blog index: a responsive grid of
+ * `SeriesCard`s. Renders NOTHING when there are no series with posts, so the blog index degrades
+ * cleanly to a plain post list. Data comes from `getSeriesWithCounts(locale)`.
+ */
+import SeriesCard from '@/components/content/SeriesCard.astro';
+import { useTranslations } from '@/i18n/utils';
+import type { Locale } from '@/config/site';
+import type { SeriesWithCount } from '@/lib/content';
+
+interface Props {
+  locale: Locale;
+  series: SeriesWithCount[];
+}
+
+const { locale, series } = Astro.props;
+const t = useTranslations(locale);
+---
+
+{
+  series.length > 0 && (
+    <section aria-labelledby="series-spotlight" class="mt-10">
+      <h2
+        id="series-spotlight"
+        class="text-muted-foreground text-xs font-semibold tracking-wide uppercase"
+      >
+        {t('blog.series')}
+      </h2>
+      <ul class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {series.map((s) => (
+          <li>
+            <SeriesCard
+              href={s.href}
+              label={s.data.label}
+              count={s.count}
+              partsLabel={t('blog.parts')}
+              coverUrl={s.data.coverUrl}
+            />
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
