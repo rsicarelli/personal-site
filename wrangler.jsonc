@@ -1,0 +1,17 @@
+{
+  // Cloudflare Pages config-as-code for rsicarelli.com.
+  //
+  // The site is a STATIC, zero-JS-by-default Astro build — Cloudflare Pages serves the prebuilt
+  // `dist/` directly. There is NO Astro server adapter and NO server runtime (see astro.config.mjs),
+  // so this file declares no `compatibility_flags`, no Functions, and no bindings.
+  //
+  // R2 (photos/downloads) is consumed as a PUBLIC bucket over its own custom domain
+  // (media.rsicarelli.com) via the `PUBLIC_MEDIA_BASE_URL` env var — it is NOT a Pages R2 binding.
+  //
+  // The canonical deploy path is Cloudflare Pages' native Git integration (push to `main` → build →
+  // deploy; PR previews per branch). This file pins the build output dir so the project is
+  // reproducible; the `deploy` npm script (wrangler pages deploy) is a manual escape hatch only.
+  "name": "personal-site",
+  "compatibility_date": "2026-06-01",
+  "pages_build_output_dir": "dist",
+}
