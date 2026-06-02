@@ -36,6 +36,10 @@ export const ui = {
     'blog.taggedWith': 'Posts tagged',
     'blog.allPosts': 'All posts',
     'blog.updated': 'Updated',
+    'projects.empty': 'No projects yet.',
+    'projects.viewSource': 'View source',
+    'projects.featured': 'Featured',
+    'projects.allProjects': 'All projects',
   },
   'pt-br': {
     'site.title': 'rsicarelli.com',
@@ -62,6 +66,10 @@ export const ui = {
     'blog.taggedWith': 'Posts marcados com',
     'blog.allPosts': 'Todos os posts',
     'blog.updated': 'Atualizado',
+    'projects.empty': 'Nenhum projeto ainda.',
+    'projects.viewSource': 'Ver código',
+    'projects.featured': 'Destaque',
+    'projects.allProjects': 'Todos os projetos',
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 

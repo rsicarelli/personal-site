@@ -1,0 +1,62 @@
+---
+/**
+ * Project detail (#33). One route per (locale, project) from the content spine. Renders the MDX
+ * write-up plus the tech stack and a link to the source repository.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { type Locale } from '@/config/site';
+import { useTranslations } from '@/i18n/utils';
+import { localizedPaths } from '@/lib/content';
+import { render } from 'astro:content';
+
+export async function getStaticPaths() {
+  return localizedPaths('portfolio');
+}
+
+const { entry } = Astro.props;
+const locale = Astro.params.locale as Locale;
+const t = useTranslations(locale);
+const { Content } = await render(entry);
+const { title, description, tech, repo } = entry.data;
+---
+
+<BaseLayout title={`${title} · ${t('site.title')}`} description={description}>
+  <article class="mx-auto max-w-3xl px-6 py-16">
+    <a
+      href={`/${locale}/projects`}
+      class="text-muted-foreground hover:text-foreground font-mono text-xs"
+    >
+      ← {t('projects.allProjects')}
+    </a>
+    <h1 class="mt-6 font-mono text-3xl font-bold tracking-tight">{title}</h1>
+    <p class="text-muted-foreground mt-3 max-w-prose">{description}</p>
+
+    {
+      tech.length > 0 && (
+        <ul class="text-muted-foreground mt-4 flex flex-wrap gap-2 font-mono text-xs">
+          {tech.map((item) => (
+            <li class="border-border rounded-full border px-2 py-0.5">{item}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    {
+      repo && (
+        <a
+          href={repo}
+          rel="noopener"
+          class="text-primary mt-6 inline-flex font-mono text-sm underline underline-offset-4"
+        >
+          {t('projects.viewSource')} ↗
+        </a>
+      )
+    }
+
+    <div
+      class="text-foreground mt-8 max-w-prose space-y-4 [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-semibold"
+    >
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
