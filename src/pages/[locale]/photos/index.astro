@@ -1,0 +1,59 @@
+---
+/**
+ * Photos gallery (#36). Galleries + captions come from the `photos` collection (per-locale YAML);
+ * the image binaries are resolved at render by `mediaUrl()` against PUBLIC_MEDIA_BASE_URL — local
+ * placeholders now, Cloudflare R2 later (#67), no code change. width/height are set to reserve
+ * space and avoid layout shift. Plain <img> for now; swaps to Epic 5's Image component when it lands.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { LOCALES, type Locale } from '@/config/site';
+import { useTranslations } from '@/i18n/utils';
+import { getLocalizedEntries } from '@/lib/content';
+import { mediaUrl } from '@/lib/media';
+
+export async function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const locale = Astro.params.locale as Locale;
+const t = useTranslations(locale);
+const galleries = await getLocalizedEntries('photos', locale);
+const total = galleries.reduce((n, g) => n + g.entry.data.items.length, 0);
+---
+
+<BaseLayout
+  title={`${t('footer.photos')} · ${t('site.title')}`}
+  description={t('site.description')}
+>
+  <section class="mx-auto max-w-3xl px-6 py-16">
+    <h1 class="text-3xl font-bold tracking-tight">{t('footer.photos')}</h1>
+
+    {total === 0 && <p class="text-muted-foreground mt-6">{t('photos.empty')}</p>}
+
+    {
+      galleries.map(({ entry }) => (
+        <div class="mt-12">
+          <h2 class="text-xl font-semibold tracking-tight">{entry.data.title}</h2>
+          {entry.data.description && (
+            <p class="text-muted-foreground mt-1 max-w-prose">{entry.data.description}</p>
+          )}
+          <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+            {entry.data.items.map((item) => (
+              <li class="border-border overflow-hidden rounded-lg border">
+                <img
+                  src={mediaUrl(item.src)}
+                  alt={item.alt}
+                  width={item.width}
+                  height={item.height}
+                  loading="lazy"
+                  decoding="async"
+                  class="h-auto w-full object-cover"
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </section>
+</BaseLayout>

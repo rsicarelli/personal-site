@@ -3,11 +3,11 @@
 title: Palestras e conferências
 description: Momentos de palestras, workshops e participações em conferências.
 items:
-  - src: photos/kotlinconf-2025-stage.jpg
+  - src: photos/kotlinconf-2025-stage.svg
     alt: Rodrigo no palco da KotlinConf 2025, em Copenhague.
-    width: 1600
-    height: 1067
-  - src: photos/kotlinconf-2025-audience.jpg
+    width: 1200
+    height: 800
+  - src: photos/kotlinconf-2025-audience.svg
     alt: Plateia durante a palestra de Kotlin Multiplatform na KotlinConf 2025.
-    width: 1600
-    height: 1067
+    width: 1200
+    height: 800
