@@ -19,9 +19,15 @@ interface Props {
   ogType?: 'website' | 'article';
   /** Override the social-card title; defaults to `title` minus the ` · {site}` brand suffix. */
   ogTitle?: string;
+  /**
+   * Keep this page out of the index (#152) — emits `robots: noindex, follow`. Used for the
+   * `translated: false` blog placeholders that show original-language content until translated:
+   * we don't want the wrong-language page indexed, but links should still be followed.
+   */
+  noindex?: boolean;
 }
 
-const { title, description, image, ogType, ogTitle } = Astro.props;
+const { title, description, image, ogType, ogTitle, noindex } = Astro.props;
 
 // Locale is derived from the route (`/en/…` → `en`, `/pt-br/…` → `pt-br`, bare `/` → default).
 // `<html lang>` needs the RFC-5646 form (`pt-BR`), while URLs keep the lowercase slug (`pt-br`).
@@ -114,6 +120,8 @@ const seoMeta = buildSeoMeta({
 
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    {/* Keep wrong-language placeholders out of the index (#152); still follow their links. */}
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
 
     {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}

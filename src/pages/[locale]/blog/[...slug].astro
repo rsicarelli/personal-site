@@ -87,6 +87,7 @@ const jsonLd = [
   description={description}
   ogType="article"
   image={ogImage}
+  noindex={translated === false}
 >
   <JsonLd slot="head" schema={jsonLd} />
   <Container as="article" class="py-16">
