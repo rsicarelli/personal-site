@@ -1,10 +1,13 @@
 # pnpm settings (pnpm 11 reads project settings from here, not package.json).
 # Allow the postinstall build scripts we trust — Astro's image pipeline (sharp)
 # and the esbuild native binary. Everything else stays blocked by default.
+# workerd (wrangler's local-runtime binary) is declined: we only use wrangler for
+# `pages deploy` and `r2 object`, which don't need it — local preview is `astro preview`.
 allowBuilds:
   esbuild: true
   msw: set this to true or false
   sharp: true
+  workerd: false
 minimumReleaseAgeExclude:
   - '@types/react@19.2.16'
   - react-dom@19.2.7
