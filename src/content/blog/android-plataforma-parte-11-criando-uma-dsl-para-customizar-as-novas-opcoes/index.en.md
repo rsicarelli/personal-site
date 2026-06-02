@@ -1,6 +1,6 @@
 ---
-title: 'Android Plataforma - Parte 11: Criando uma DSL para customizar as novas opções'
-description: 'No artigo anterior, parametrizamos os argumentos de applyAndroidApp() e appyAndroidLibary() com modelos.'
+title: 'Android Plataforma - Part 11: Building a DSL to customize the new options'
+description: 'In the previous article, we parameterized the arguments of applyAndroidApp() and appyAndroidLibary() with models.'
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -10,24 +10,22 @@ tags:
 series: 'android-plataforma'
 seriesOrder: 11
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Favuc64tchhyvt93ar1za.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-11-criando-uma-dsl-para-customizar-as-novas-opcoes-1m1e'
-  devtoId: 1611012
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/10-11/customizing-android-options'
   reactions: 2
 ---
 
-No artigo anterior, parametrizamos os argumentos de `applyAndroidApp()` e `appyAndroidLibary()` com modelos.
+In the previous article, we parameterized the arguments of `applyAndroidApp()` and `appyAndroidLibary()` with models.
 
-Agora, as funções `androidApp()` e `androidLibrary()` devem ser modificadas para aplicar as devidas decorações nos módulos.
+Now the `androidApp()` and `androidLibrary()` functions need to be modified to apply the right decorations to the modules.
 
 ---
 
-## Definindo os valores através de uma DSL
+## Setting the values through a DSL
 
-Dentro das nossas funções `androidApp()` e `androidLibrary()` poderiamos simplesmente aceitar um modelo:
+Inside our `androidApp()` and `androidLibrary()` functions, we could simply accept a model:
 
 ```kotlin
 fun Project.androidApp(androidAppOptions: AndroidAppOptions) = applyAndroidApp(androidAppOptions)
@@ -35,7 +33,7 @@ fun Project.androidApp(androidAppOptions: AndroidAppOptions) = applyAndroidApp(a
 fun Project.androidLibrary(androidLibraryOptions: AndroidLibraryOptions) = applyAndroidLibrary(androidLibraryOptions)
 ```
 
-Essa é uma abordagem totalmente válida! Porém, na hora de consumir, precisamos ter um "boilerplate" de definir uma nova classe:
+This is a perfectly valid approach! But when it comes to consuming it, we end up with the "boilerplate" of defining a new class:
 
 ```kotlin
     androidApp(
@@ -46,11 +44,11 @@ Essa é uma abordagem totalmente válida! Porém, na hora de consumir, precisamo
     )
 ```
 
-Isso é bem verboso, além de fugir um pouco do estilo "convencional" de DSL que encontramos nos arquivos `build.gradle.kts`.
+That's pretty verbose, and it also strays a bit from the "conventional" DSL style we find in `build.gradle.kts` files.
 
-Para solucionar esse problema, vamos introduzir uma DSL que cuide dessa customização de uma forma elegante e idiomática no Kotlin.
+To solve this, let's introduce a DSL that handles this customization in an elegant, idiomatic Kotlin way.
 
-Note que, aqui iremos definir os valores padrões da nossa plataforma.
+Note that here we'll define the default values for our platform.
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/7v2mwju1ebm1o7ebodow.png)
 
@@ -132,9 +130,9 @@ class ProguardOptionsBuilder(defaultFileName: String) {
 }
 ```
 
-### Expondo nossos `builder` nas funções `androidApp()` e `androidLibrary()`
+### Exposing our `builder` in the `androidApp()` and `androidLibrary()` functions
 
-Note que passamos uma lambda vazia como parametro, possibilitando o módulo simplesmente invocar com as opções pre-definidas.
+Note that we pass an empty lambda as a parameter, which lets the module simply call it with the predefined options.
 
 ```kotlin
 fun Project.androidApp(builderAction: AndroidAppOptionsBuilder.() -> Unit = { }) =
@@ -144,27 +142,27 @@ fun Project.androidLibrary(builderAction: AndroidLibraryOptionsBuilder.() -> Uni
     applyAndroidLibrary(AndroidLibraryOptionsBuilder().apply(builderAction).build())
 ```
 
-### Uso
+### Usage
 
-Uso é super flúido, olha só como podemos customizar `versionCode` e `versionName` no `app/build.gradle.kts`:
+Usage is super fluid—look how we can customize `versionCode` and `versionName` in `app/build.gradle.kts`:
 
 ```kotlin
 androidApp {
-    // this é o AndroidAppOptionsBuilder
+    // this is the AndroidAppOptionsBuilder
     versionCode = 1
     versionName = "1.0.0"
 
     proguardOptions {
-        // this é ProguardOptionsBuilder
+        // this is ProguardOptionsBuilder
         applyWithOptimizedVersion = true
     }
 }
 ```
 
-## Sucesso!
+## Success!
 
-Agora, nossa configuração está elegante com uma DSL expressiva e intuitiva, permitindo diversas customizações adaptáveis para diferentes cenários.
+Our configuration is now elegant, with an expressive and intuitive DSL that allows for plenty of customizations adaptable to different scenarios.
 
-Essa abordagem nos permite estabelecer comportamentos padrão para os módulos, mas também oferece uma DSL robusta para que o time consiga adicionar novas configurações conforme necessário.
+This approach lets us establish default behaviors for the modules, while also offering a robust DSL so the team can add new settings as needed.
 
-No próximo artigo, vamos adicionar uma decoração importantíssima para otimizar o tempo de compilação dos nossos módulos.
+In the next article, we'll add a really important decoration to optimize the build time of our modules.
