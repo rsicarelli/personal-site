@@ -1,6 +1,7 @@
 ---
 title: "Claude Code 101: Introduction to Agentic Programming"
 description: "September 2025. I was leading a critical dependency upgrade on a mobile app with millions of users. The kind of change that breaks tests in a cascade.…"
+summary: "September 2025. I was leading a critical dependency upgrade on a mobile app with millions of users. The kind of change that breaks tests in a cascade. The deadline was October: if it wasn't ready, the app wouldn't ship to the store."
 pubDate: 2026-04-06
 updatedDate: 2026-04-09
 tags:
@@ -15,8 +16,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/claude-code-10x"
   reactions: 6
 ---
-
-September 2025. I was leading a critical dependency upgrade on a mobile app with millions of users. The kind of change that breaks tests in a cascade. The deadline was October: if it wasn't ready, the app wouldn't ship to the store.
 
 The problem: nearly 10,000 tests needed to be adapted for the new version. Code owned by over 20 teams, spread across hundreds of modules.
 

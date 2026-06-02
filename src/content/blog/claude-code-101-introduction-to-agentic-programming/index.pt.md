@@ -1,6 +1,7 @@
 ---
 title: "Claude Code 101: Introdução à Programação Agêntica"
 description: "Setembro de 2025. Eu estava tocando a atualização de uma dependência crítica num app mobile com milhões de usuários. O tipo de mudança que quebra testes…"
+summary: "Setembro de 2025. Eu estava tocando a atualização de uma dependência crítica num app mobile com milhões de usuários. O tipo de mudança que quebra testes em cascata. O prazo era Outubro: se não ficasse pronto, o app não subia pra loja."
 pubDate: 2026-04-04
 updatedDate: 2026-04-09
 tags:
@@ -16,8 +17,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/claude-code-10x"
   reactions: 4
 ---
-
-Setembro de 2025. Eu estava tocando a atualização de uma dependência crítica num app mobile com milhões de usuários. O tipo de mudança que quebra testes em cascata. O prazo era Outubro: se não ficasse pronto, o app não subia pra loja.
 
 O problema: quase 10.000 testes precisavam ser adaptados pra nova versão. Código de mais de 20 times, espalhado por centenas de módulos. 
 

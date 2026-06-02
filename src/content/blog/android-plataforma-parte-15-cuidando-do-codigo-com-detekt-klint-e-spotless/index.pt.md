@@ -1,6 +1,7 @@
 ---
 title: "Android Plataforma - Parte 15: Cuidando do código com Detekt, Klint e Spotless"
 description: "No último artigo, abordamos a capacidade de nossa plataforma aderir a funcionalidades experimentais em diferentes módulos."
+summary: "No último artigo, abordamos a capacidade de nossa plataforma aderir a funcionalidades experimentais em diferentes módulos."
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -17,8 +18,6 @@ provenance:
   githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/15/enhancing-code-quality"
   reactions: 2
 ---
-
-No último artigo, abordamos a capacidade de nossa plataforma aderir a funcionalidades experimentais em diferentes módulos. 
 
 Agora, vamos explorar a garantia da qualidade do código através da integração de plugins.
 

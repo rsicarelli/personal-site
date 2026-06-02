@@ -1,6 +1,7 @@
 ---
 title: "Android Plataforma - Parte 16: Considerações finais"
 description: "Nos últimos artigos, construímos uma plataforma do zero, aprendendo e aplicando diversos conceitos com o objetivo de flexibilizar e escalar aplicações…"
+summary: "Nos últimos artigos, construímos uma plataforma do zero, aprendendo e aplicando diversos conceitos com o objetivo de flexibilizar e escalar aplicações multimodulares em Kotlin."
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -17,8 +18,6 @@ provenance:
   githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/main"
   reactions: 3
 ---
-
-Nos últimos artigos, construímos uma plataforma do zero, aprendendo e aplicando diversos conceitos com o objetivo de flexibilizar e escalar aplicações multimodulares em Kotlin.
 
 Gostaria de fazer algumas considerações finais sobre tudo o que foi abordado e sugerir alguns próximos passos para as séries futuras!
 

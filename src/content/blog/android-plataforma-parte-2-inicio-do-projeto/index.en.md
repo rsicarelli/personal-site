@@ -1,6 +1,7 @@
 ---
 title: "Android Plataforma - Parte 2: Início do Projeto"
 description: "Neste post, vamos explorar um projeto inicial, entender os desafios de manter os arquivos build.gradle.kts e descobrir como o conceito de Composite…"
+summary: "Neste post, vamos explorar um projeto inicial, entender os desafios de manter os arquivos build.gradle.kts e descobrir como o conceito de Composite Builds do Gradle pode auxiliar nessa jornada."
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -18,8 +19,6 @@ provenance:
   githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/1-2/introduction"
   reactions: 4
 ---
-
-Neste post, vamos explorar um projeto inicial, entender os desafios de manter os arquivos `build.gradle.kts` e descobrir como o conceito de **Composite Builds** do Gradle pode auxiliar nessa jornada.
 
 ---
 

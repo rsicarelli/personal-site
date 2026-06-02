@@ -1,6 +1,7 @@
 ---
 title: "Android Plataforma - Parte 3: Compartilhando scripts do Gradle"
 description: "No artigo anterior, entendemos quais os desafios que um projeto multi-modular traz: a da manutenção e reutilização dos arquivos do Gradle. Vamos entender…"
+summary: "No artigo anterior, entendemos quais os desafios que um projeto multi-modular traz: a da manutenção e reutilização dos arquivos do Gradle. Vamos entender melhor como resolver esse problema analisando dois conceitos: o buildSrc e os Composite Builds."
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -17,8 +18,6 @@ provenance:
   githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/3-4/composite-build"
   reactions: 6
 ---
-
-No artigo anterior, entendemos quais os desafios que um projeto multi-modular traz: a da manutenção e reutilização dos arquivos do Gradle. Vamos entender melhor como resolver esse problema analisando dois conceitos: o `buildSrc` e os **Composite Builds**.
 
 ---
 

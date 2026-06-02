@@ -1,6 +1,7 @@
 ---
 title: "KMP 101: Aprendendo sobre o uso do Gradle no Kotlin Multiplataforma"
 description: "No último artigo, criamos um projeto utilizando o KMP Wizard e, sem muitos esforços, executamos nosso app em aparelhos Android, iOS e Desktop."
+summary: "No último artigo, criamos um projeto utilizando o KMP Wizard e, sem muitos esforços, executamos nosso app em aparelhos Android, iOS e Desktop."
 pubDate: 2023-12-01
 updatedDate: 2024-01-27
 tags:
@@ -18,8 +19,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/KMP-101"
   reactions: 9
 ---
-
-No último artigo, criamos um projeto utilizando o KMP Wizard e, sem muitos esforços, executamos nosso app em aparelhos Android, iOS e Desktop.
 
 Dessa vez, vamos nos aprofundar em um aspecto fundamental do KMP: o Plugin KMP para Gradle.
 

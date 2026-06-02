@@ -1,6 +1,7 @@
 ---
 title: "KMP 101: Entendendo e configurando o ambiente dev no Kotlin Multiplataforma"
 description: "O desenvolvimento de software é um processo complexo que exige não apenas habilidade e criatividade, mas também um ambiente de desenvolvimento bem…"
+summary: "O desenvolvimento de software é um processo complexo que exige não apenas habilidade e criatividade, mas também um ambiente de desenvolvimento bem configurado."
 pubDate: 2023-11-29
 updatedDate: 2024-01-27
 tags:
@@ -17,8 +18,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/KMP-101"
   reactions: 14
 ---
-
-O desenvolvimento de software é um processo complexo que exige não apenas habilidade e criatividade, mas também um ambiente de desenvolvimento bem configurado.
 
 No mundo do Kotlin Multiplataforma, esta necessidade é ainda mais evidente: configurar adequadamente o ambiente de desenvolvimento para KMP é crucial para garantir que devs possam aproveitar ao máximo as capacidades multiplataforma da linguagem.
 

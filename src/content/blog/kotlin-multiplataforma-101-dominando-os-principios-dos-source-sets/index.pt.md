@@ -1,6 +1,7 @@
 ---
 title: "KMP 101: Dominando os princípios dos Source Sets"
 description: "No último artigo (🔗 KMP 101: Entendendo como o Kotlin compila para multiplas plataformas), aprendemos sobre o frontend, IR e backend do compilador do…"
+summary: "No último artigo (🔗 KMP 101: Entendendo como o Kotlin compila para multiplas plataformas), aprendemos sobre o frontend, IR e backend do compilador do Kotlin."
 pubDate: 2023-11-24
 updatedDate: 2024-01-27
 tags:
@@ -17,8 +18,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/KMP-101"
   reactions: 11
 ---
-
-No último artigo (🔗 [KMP 101: Entendendo como o Kotlin compila para multiplas plataformas](https://dev.to/rsicarelli/kotlin-multiplataforma-101-entendendo-como-o-kotlin-compila-para-multiplas-plataformas-5hba)), aprendemos sobre o frontend, IR e backend do compilador do Kotlin.
 
 Dessa vez, vamos entender um conceito-chave para codar em KMP: os *source sets*
 

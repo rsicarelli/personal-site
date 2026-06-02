@@ -1,6 +1,7 @@
 ---
 title: "Android Plataforma - Parte 0: Introdução à Série"
 description: "No mundo do desenvolvimento Android, enfrentamos um fluxo contínuo de novidades: novos dispositivos, atualizações do SDK e uma variedade de bibliotecas e…"
+summary: "No mundo do desenvolvimento Android, enfrentamos um fluxo contínuo de novidades: novos dispositivos, atualizações do SDK e uma variedade de bibliotecas e ferramentas que são lançadas todos os dias."
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -17,8 +18,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/kotlin-gradle-android-platform"
   reactions: 10
 ---
-
-No mundo do desenvolvimento Android, enfrentamos um fluxo contínuo de novidades: novos dispositivos, atualizações do SDK e uma variedade de bibliotecas e ferramentas que são lançadas todos os dias. 
 
 Junte a isso as constantes alterações, depreciações e a pressão do negócio para entregar funcionalidades que atendam às necessidades dos clientes. Este cenário volátil torna-se um desafio para manter nosso código organizado, eficiente e escalável.
 

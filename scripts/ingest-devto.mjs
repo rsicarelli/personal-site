@@ -153,13 +153,8 @@ function stripMarkdown(s) {
     .trim();
 }
 
-/**
- * A description for the post. dev.to's `description` is auto-derived from the top of the body, which
- * for these posts is the nav header or the TOC — junk. So derive from the FIRST real prose paragraph
- * of the cleaned body instead (skipping headings, quotes, lists, images), capped for SEO. Falls back
- * to the dev.to value only when no prose paragraph is found.
- */
-function deriveDescription(body, fallback) {
+/** The first real prose paragraph of the cleaned body (skips headings, quotes, lists, images, fences). */
+function firstParagraph(body) {
   const buf = [];
   for (const raw of body.split('\n')) {
     const l = raw.trim();
@@ -170,15 +165,46 @@ function deriveDescription(body, fallback) {
     }
     buf.push(l);
   }
-  let d = stripMarkdown(buf.join(' '));
+  return stripMarkdown(buf.join(' '));
+}
+
+/**
+ * A description for the post. dev.to's `description` is auto-derived from the top of the body, which
+ * for these posts is the nav header or the TOC — junk. So derive from the FIRST real prose paragraph
+ * of the cleaned body instead, capped for SEO. Falls back to the dev.to value only when no prose found.
+ */
+function deriveDescription(body, fallback) {
+  let d = firstParagraph(body);
   if (d.length < 40 && fallback) d = stripMarkdown(fallback);
   if (d.length > 157) d = d.slice(0, 154).replace(/\s+\S*$/, '') + '…';
   return d;
 }
 
+const STRUCTURAL = /^(?:#{1,6}\s|>|!\[|[-*+]\s|\d+\.\s|---|\*\*\*|```|\||<)/;
+
+/**
+ * Lift the opening paragraph into the answer-first capsule (#56) and REMOVE it from the body, so the
+ * styled lede isn't visibly repeated by the prose. Only when the body starts with a self-contained
+ * prose paragraph of 120–300 chars (skips posts that open with a heading/list/short instruction —
+ * e.g. the koans). Returns `{ summary, body }`; `summary` is undefined when nothing was lifted.
+ */
+function liftLede(body) {
+  const lines = body.split('\n');
+  let i = 0;
+  while (i < lines.length && lines[i].trim() === '') i++; // skip leading blanks
+  if (i >= lines.length || STRUCTURAL.test(lines[i].trim())) return { summary: undefined, body };
+  const start = i;
+  while (i < lines.length && lines[i].trim() !== '' && !STRUCTURAL.test(lines[i].trim())) i++;
+  const lede = stripMarkdown(lines.slice(start, i).join(' '));
+  if (lede.length < 120 || lede.length > 300) return { summary: undefined, body };
+  while (i < lines.length && lines[i].trim() === '') i++; // drop the blank gap after the lede
+  return { summary: lede, body: lines.slice(i).join('\n').trim() + '\n' };
+}
+
 /** Build YAML frontmatter + body for one `.md` file. */
 function renderFile(data) {
   const fm = ['---', `title: ${scalar(data.title)}`, `description: ${scalar(data.description)}`];
+  if (data.summary) fm.push(`summary: ${scalar(data.summary)}`);
   fm.push(`pubDate: ${data.pubDate}`);
   if (data.updatedDate && data.updatedDate !== data.pubDate)
     fm.push(`updatedDate: ${data.updatedDate}`);
@@ -280,9 +306,13 @@ for (const members of groups.values()) {
       githubBranch: src.cleaned.branch,
       reactions: sm.reactions > 0 ? sm.reactions : undefined,
     };
+    // description comes from the ORIGINAL opening (meta/SERP); liftLede may move that opening into
+    // the visible answer-first capsule and strip it from the body to avoid an on-page repeat.
+    const { summary, body: ledeBody } = liftLede(src.cleaned.body);
     const file = renderFile({
       title: sm.title,
       description: deriveDescription(src.cleaned.body, sm.description),
+      summary,
       pubDate: dateOnly(sm.publishedAt),
       updatedDate: dateOnly(sm.editedAt),
       tags: sm.tags,
@@ -291,7 +321,7 @@ for (const members of groups.values()) {
       coverUrl: sm.coverImage ?? undefined,
       translated: member ? undefined : false,
       provenance,
-      body: src.cleaned.body,
+      body: ledeBody,
     });
     await writeFile(join(bundleDir, `index.${SUFFIX[locale]}.md`), file);
     created++;

@@ -1,6 +1,7 @@
 ---
 title: "Android Plataforma - Parte 1: Modularização"
 description: "A eficiência no desenvolvimento de software é essencial nos projetos atuais. Neste artigo, discutiremos a modularização em projetos Kotlin/Android, o…"
+summary: "A eficiência no desenvolvimento de software é essencial nos projetos atuais. Neste artigo, discutiremos a modularização em projetos Kotlin/Android, o papel vital do Gradle para otimizar compilações e os desafios de gerir múltiplos módulos."
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -18,8 +19,6 @@ provenance:
   githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/1-2/introduction"
   reactions: 6
 ---
-
-A eficiência no desenvolvimento de software é essencial nos projetos atuais. Neste artigo, discutiremos a modularização em projetos Kotlin/Android, o papel vital do Gradle para otimizar compilações e os desafios de gerir múltiplos módulos.
 
 Para lidar com essa complexidade, apresentaremos o conceito de "plataforma" em desenvolvimento, ilustrando como uma plataforma estruturada pode simplificar a gestão de dependências e configurações.
 

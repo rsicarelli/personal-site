@@ -1,6 +1,7 @@
 ---
 title: "Claude Code 101: Demystifying Language Models"
 description: "In the previous article, we built the entire factory: the evolution from manual production to autonomous machines, the ecosystem of agentic tools, the…"
+summary: "In the previous article, we built the entire factory: the evolution from manual production to autonomous machines, the ecosystem of agentic tools, the three pillars (prompt, context, and harness engineering). You know what the factory does, who works in it, and even how much revenue it pulls in."
 pubDate: 2026-04-09
 tags:
   - "ai"
@@ -14,8 +15,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/claude-code-10x"
   reactions: 1
 ---
-
-In the [previous article](https://dev.to/rsicarelli/claude-code-101-introduction-to-agentic-programming-3p83), we built the entire factory: the evolution from manual production to autonomous machines, the ecosystem of agentic tools, the three pillars (prompt, context, and harness engineering). You know what the factory does, who works in it, and even how much revenue it pulls in.
 
 But the machines in the factory build things. And to understand how they build, the best analogy I know is LEGO. Standardized pieces that snap together one at a time, following (or ignoring) a manual, on a desk with limited space.
 

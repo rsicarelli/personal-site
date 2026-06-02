@@ -1,6 +1,7 @@
 ---
 title: "Android Plataforma - Parte 8: Decorando os módulos 'library'"
 description: "No último post, apresentamos a primeira decoração na Plataforma e fizemos toda a configuração do nosso módulo app usando Kotlin DSL."
+summary: "No último post, apresentamos a primeira decoração na Plataforma e fizemos toda a configuração do nosso módulo app usando Kotlin DSL."
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -17,8 +18,6 @@ provenance:
   githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/8/decorating-android-library"
   reactions: 3
 ---
-
-No último post, apresentamos a primeira decoração na Plataforma e fizemos toda a configuração do nosso módulo app usando Kotlin DSL.
 
 Agora, vamos estender essa configuração para os módulos designsystem, home e details.
 

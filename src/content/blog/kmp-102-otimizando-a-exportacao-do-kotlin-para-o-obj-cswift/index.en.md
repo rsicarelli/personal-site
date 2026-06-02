@@ -1,6 +1,7 @@
 ---
 title: "KMP-102 - Otimizando o Kotlin para o Obj-c/Swift"
 description: "No último post, aprendemos como utilizar código Kotlin no Swift. Aprendemos sobre algumas técnicas para melhorar o codigo exportado para o Swift, e como…"
+summary: "No último post, aprendemos como utilizar código Kotlin no Swift. Aprendemos sobre algumas técnicas para melhorar o codigo exportado para o Swift, e como as anotações como @HiddenFromObjC e @HidesFromObjC controlam a visibilidade do código no Swift."
 pubDate: 2025-01-18
 updatedDate: 2025-03-07
 tags:
@@ -18,10 +19,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/KMP-101"
   reactions: 16
 ---
-
-No último post, aprendemos como utilizar código Kotlin no Swift.
-Aprendemos sobre algumas técnicas para melhorar o codigo exportado para o Swift,
-e como as anotações como `@HiddenFromObjC` e `@HidesFromObjC` controlam a visibilidade do código no Swift.
 
 Nesse post, vamos aprofundar sobre como essa exportação funciona e o impacto no nosso código gerado.
 

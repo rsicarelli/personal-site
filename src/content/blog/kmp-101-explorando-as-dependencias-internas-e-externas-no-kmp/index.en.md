@@ -1,6 +1,7 @@
 ---
 title: "KMP 101: Explorando as dependências internas e externas no KMP (fim da série)"
 description: "Nos artigos anteriores, estabelecemos uma base sobre o Kotlin Multiplatform (KMP) e como ele compila para múltiplas plataformas."
+summary: "Nos artigos anteriores, estabelecemos uma base sobre o Kotlin Multiplatform (KMP) e como ele compila para múltiplas plataformas."
 pubDate: 2024-01-27
 tags:
   - "kmp"
@@ -16,8 +17,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/KMP-101"
   reactions: 8
 ---
-
-Nos artigos anteriores, estabelecemos uma base sobre o Kotlin Multiplatform (KMP) e como ele compila para múltiplas plataformas.
 
 Neste artigo, vamos explorar o uso de bibliotecas _open-source_, compreender sua aplicabilidade em nossos projetos e, por fim, sua implementação.
 

@@ -1,6 +1,7 @@
 ---
 title: "Android Plataforma - Parte 13: Incluindo módulos \"puro JVM\""
 description: "No último artigo, otimizamos a compilação dos módulos Android desativando diversas funcionalidades do Android Gradle Plugin (AGP)."
+summary: "No último artigo, otimizamos a compilação dos módulos Android desativando diversas funcionalidades do Android Gradle Plugin (AGP)."
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -18,8 +19,6 @@ provenance:
   githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/13/jvm-only-modules"
   reactions: 2
 ---
-
-No último artigo, otimizamos a compilação dos módulos Android desativando diversas funcionalidades do Android Gradle Plugin (AGP).
 
 Neste artigo, discutiremos a distinção entre módulos puro JVM (`java-library`) e módulos Library Android (`com.android.library`), além de expandir nossa plataforma para suportar essa funcionalidade.
 

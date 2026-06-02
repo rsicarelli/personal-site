@@ -1,6 +1,7 @@
 ---
 title: "KMP 101: Introdução ao paradigma da Multiplataforma"
 description: "Usamos diariamente uma variedade de aplicativos em dispositivos como celulares, relógios, TVs e computadores, inseridos em um amplo ecossistema digital."
+summary: "Usamos diariamente uma variedade de aplicativos em dispositivos como celulares, relógios, TVs e computadores, inseridos em um amplo ecossistema digital."
 pubDate: 2023-11-14
 updatedDate: 2024-01-27
 tags:
@@ -18,8 +19,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/KMP-101"
   reactions: 18
 ---
-
-Usamos diariamente uma variedade de aplicativos em dispositivos como celulares, relógios, TVs e computadores, inseridos em um amplo ecossistema digital.
 
 Essa diversidade de plataformas exige estratégias de desenvolvimento que proporcionem atualizações simultâneas e experiências de usuário uniformes.
 

@@ -1,6 +1,7 @@
 ---
 title: "KMP 101: Criando e executando seu primeiro projeto multiplataforma no Fleet"
 description: "Nos últimos artigos, focamos em diversos conceitos-chave do KMP e entendemos desde o paradigma multiplataforma, até a configuração do ambiente."
+summary: "Nos últimos artigos, focamos em diversos conceitos-chave do KMP e entendemos desde o paradigma multiplataforma, até a configuração do ambiente."
 pubDate: 2023-12-01
 updatedDate: 2024-01-27
 tags:
@@ -18,8 +19,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/KMP-101"
   reactions: 9
 ---
-
-Nos últimos artigos, focamos em diversos conceitos-chave do KMP e entendemos desde o paradigma multiplataforma, até a configuração do ambiente.
 
 Dessa vez, vamos colocar a mão na massa efetivamente, e criar nosso primeiro "Olá mundo" em Android, iOS e Desktop!
 

@@ -1,6 +1,7 @@
 ---
 title: "KMP-102 - Modularização no KMP"
 description: "No último artigo, entramos em detalhes e aprendemos sobre as peculiaridades do código exportado nos headers do Objective-C, assim como as boas práticas…"
+summary: "No último artigo, entramos em detalhes e aprendemos sobre as peculiaridades do código exportado nos headers do Objective-C, assim como as boas práticas quanto ao que exportar."
 pubDate: 2025-03-07
 tags:
   - "kotlin"
@@ -16,8 +17,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/KMP-101"
   reactions: 23
 ---
-
-No último artigo, entramos em detalhes e aprendemos sobre as peculiaridades do código exportado nos headers do Objective-C, assim como as boas práticas quanto ao que exportar.
 
 Neste artigo, vamos entender melhor o comportamento da modularização em projetos KMP, e como isso pode ser feito de forma eficiente e organizada.
 

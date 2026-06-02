@@ -1,6 +1,7 @@
 ---
 title: "KMP-102 - Utilizando Código Kotlin no Swift"
 description: "No último post, aprendemos a criar um XCFramework a partir de código Kotlin e exploramos algumas características dos tipos de build gerados."
+summary: "No último post, aprendemos a criar um XCFramework a partir de código Kotlin e exploramos algumas características dos tipos de build gerados."
 pubDate: 2024-10-11
 tags:
   - "kotlin"
@@ -17,8 +18,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/KMP-101"
   reactions: 7
 ---
-
-No último post, aprendemos a criar um `XCFramework` a partir de código Kotlin e exploramos algumas características dos tipos de build gerados.
 
 Com isso, podemos avançar e aprender como o código Kotlin compilado para Objective-C funciona e como consumi-lo no iOS.
 

@@ -52,11 +52,22 @@ export function websiteLd(opts: { url: string; name: string; locale: Locale }): 
 /** BlogPosting — one per post. `dateModified` falls back to `pubDate` when never updated. */
 export function blogPostingLd(
   data: CollectionEntry<'blog'>['data'],
-  opts: { url: string; locale: Locale; authorName: string; image?: string },
+  opts: {
+    url: string;
+    locale: Locale;
+    authorName: string;
+    image?: string;
+    /** Series display name → `isPartOf` a CreativeWorkSeries (set for series posts). */
+    seriesName?: string;
+    /** Series landing URL, attached to the CreativeWorkSeries node when present. */
+    seriesUrl?: string;
+  },
 ): JsonLdNode {
   return {
     '@type': 'BlogPosting',
     headline: data.title,
+    // `abstract` is the answer-first capsule when present; `description` stays the meta/SERP snippet.
+    ...(data.summary ? { abstract: data.summary } : {}),
     description: data.description,
     inLanguage: hreflangOf(opts.locale),
     datePublished: isoDate(data.pubDate),
@@ -66,6 +77,17 @@ export function blogPostingLd(
     author: { '@type': 'Person', name: opts.authorName },
     ...(data.tags.length ? { keywords: data.tags } : {}),
     ...(opts.image ? { image: opts.image } : {}),
+    // Series membership (#31) → a CreativeWorkSeries the post `isPartOf`, with its part position.
+    ...(opts.seriesName
+      ? {
+          isPartOf: {
+            '@type': 'CreativeWorkSeries',
+            name: opts.seriesName,
+            ...(opts.seriesUrl ? { url: opts.seriesUrl } : {}),
+          },
+          ...(data.seriesOrder != null ? { position: data.seriesOrder } : {}),
+        }
+      : {}),
   };
 }
 

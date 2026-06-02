@@ -1,6 +1,7 @@
 ---
 title: "KMP 101: Como compartilhar código no KMP - conectando plataformas com expect e actual"
 description: "Nos últimos artigos, aprofundamos nos bastidores do Kotlin Multiplataforma: seu paradigma, a arquitetura do compilador, os source sets, o ambiente de…"
+summary: "Nos últimos artigos, aprofundamos nos bastidores do Kotlin Multiplataforma: seu paradigma, a arquitetura do compilador, os source sets, o ambiente de desenvolvimento, a criação e execução de um projeto exemplo, e o papel fundamental do Gradle."
 pubDate: 2023-12-13
 updatedDate: 2024-01-27
 tags:
@@ -17,8 +18,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/KMP-101"
   reactions: 11
 ---
-
-Nos últimos artigos, aprofundamos nos bastidores do Kotlin Multiplataforma: seu paradigma, a arquitetura do compilador, os source sets, o ambiente de desenvolvimento, a criação e execução de um projeto exemplo, e o papel fundamental do Gradle.
 
 Agora, vamos emergir à superfície do KMP, desvendando as palavras reservadas `actual` e `expect` e como elas facilitam o compartilhamento de código.
 

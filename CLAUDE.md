@@ -94,4 +94,18 @@ App scaffold (Astro) is the next step. No app code yet.
   `Image`/`lite-youtube`). Pages consume semantic token classes and those components — never add
   tokens or duplicate them.
 
+### Answer-first writing (Epic 6 — SEO/GEO/AEO)
+
+- **Lead with the answer.** Give blog posts a `summary` (the answer-first capsule, ≤320 chars): a
+  1–3 sentence direct answer rendered as a visible lede above the prose. It's distinct from
+  `description` (the meta/OG/SERP snippet) — the on-page answer and the snippet may differ. This is
+  the highest-leverage GEO/AEO formatting lever.
+- **Structure for scanning:** an answer capsule, then `##`/`###` sections, lists and tables. For
+  Q&A, drop a `<Faq>` (`@/components/content/Faq.astro`) into the MDX — it renders an accessible
+  `<dl>` AND emits FAQPage JSON-LD (in-body, since MDX can't reach the head slot). Author the
+  `items` per locale so the FAQ stays bilingual.
+- **Structured data is schema-driven:** JSON-LD comes from the Zod frontmatter via
+  `src/lib/jsonld.ts` + `JsonLd.astro`; per-locale OG/Twitter + canonical from `src/lib/seo.ts` via
+  BaseLayout. Don't hand-write `<meta>`/`ld+json` in pages — extend those libs.
+
 > The global `~/.claude/CLAUDE.md` (RTK) still applies; this file is additive and project-scoped.

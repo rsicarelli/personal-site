@@ -1,6 +1,7 @@
 ---
 title: "Android Plataforma - Parte 4: Composite Build"
 description: "Nos artigos anteriores, compreendemos a importância da modularidade e como os Composite Builds são a escolha certa para escalar projetos Kotlin."
+summary: "Nos artigos anteriores, compreendemos a importância da modularidade e como os Composite Builds são a escolha certa para escalar projetos Kotlin."
 pubDate: 2023-09-27
 updatedDate: 2023-11-27
 tags:
@@ -17,8 +18,6 @@ provenance:
   githubBranch: "https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/3-4/composite-build"
   reactions: 3
 ---
-
-Nos artigos anteriores, compreendemos a importância da modularidade e como os Composite Builds são a escolha certa para escalar projetos Kotlin.
 
 Incrementaremos o projeto inicial com a criação e inclusão de um composite build.
 

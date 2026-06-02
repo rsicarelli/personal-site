@@ -1,6 +1,7 @@
 ---
 title: "KMP 101: Entendendo como o Kotlin compila para múltiplas plataformas"
 description: "No último post (🔗 KMP 101: Introdução ao paradigma da multiplataforma), exploramos o paradigma multiplataforma e como o KMP se destaca no ecossistema."
+summary: "No último post (🔗 KMP 101: Introdução ao paradigma da multiplataforma), exploramos o paradigma multiplataforma e como o KMP se destaca no ecossistema."
 pubDate: 2023-11-21
 updatedDate: 2024-01-27
 tags:
@@ -18,8 +19,6 @@ provenance:
   githubRepo: "https://github.com/rsicarelli/KMP-101"
   reactions: 13
 ---
-
-No último post ([🔗 KMP 101: Introdução ao paradigma da multiplataforma](https://dev.to/rsicarelli/kotlin-multiplataforma-101-introducao-ao-paradigma-da-multiplataforma-eo3)), exploramos o paradigma multiplataforma e como o KMP se destaca no ecossistema.
 
 Neste artigo, vamos desvendar os conceitos básicos do compilador Kotlin e sua capacidade de compilar para múltiplas plataformas.
 

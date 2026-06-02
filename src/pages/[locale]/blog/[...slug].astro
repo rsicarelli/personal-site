@@ -34,8 +34,18 @@ const t = useTranslations(locale);
 const { Content, remarkPluginFrontmatter } = await render(entry);
 const minutes = remarkPluginFrontmatter.minutesRead as number;
 const tagPages = await commonBlogTagSlugs();
-const { title, description, pubDate, updatedDate, tags, cover, series, translated, provenance } =
-  entry.data;
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  tags,
+  cover,
+  summary,
+  series,
+  translated,
+  provenance,
+} = entry.data;
 
 // Series context: the part badge (linking to the series landing) + prev/next-in-series nav, derived
 // from sibling posts ordered by `seriesOrder` (regenerates the ⬅️➡️ nav that ingestion strips).
@@ -49,12 +59,24 @@ const next = idx >= 0 && idx < seriesPosts.length - 1 ? seriesPosts[idx + 1] : u
 // present) becomes both the OG image and BlogPosting.image; dates reuse the same UTC source as the
 // visible <time> elements. Author is name-only here; the rich Person node lives on /about.
 const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
-const coverUrl = cover ? new URL(cover.src, Astro.site).href : undefined;
+// OG/JSON-LD image must be self-hosted (the metadata suite asserts the rsicarelli.com origin), so we
+// use only the local optimized `cover`. Mirrored posts have none yet → BaseLayout's default brand
+// card; their remote dev.to `coverUrl` powers just the visible spotlight thumbnails until R2 (#R2).
+const ogImage = cover ? new URL(cover.src, Astro.site).href : undefined;
+const seriesUrl = series ? canonicalUrl(`/series/${series}`, locale, Astro.site) : undefined;
 const jsonLd = [
-  blogPostingLd(entry.data, { url: pageUrl, locale, authorName: SITE.name, image: coverUrl }),
+  blogPostingLd(entry.data, {
+    url: pageUrl,
+    locale,
+    authorName: SITE.name,
+    image: ogImage,
+    seriesName: seriesInfo?.entry.data.label,
+    seriesUrl,
+  }),
   breadcrumbLd([
     { name: t('nav.home'), url: canonicalUrl('/', locale, Astro.site) },
     { name: t('nav.blog'), url: canonicalUrl('/blog', locale, Astro.site) },
+    ...(series && seriesInfo ? [{ name: seriesInfo.entry.data.label, url: seriesUrl! }] : []),
     { name: title, url: pageUrl },
   ]),
 ];
@@ -64,7 +86,7 @@ const jsonLd = [
   title={`${title} · ${t('site.title')}`}
   description={description}
   ogType="article"
-  image={coverUrl}
+  image={ogImage}
 >
   <JsonLd slot="head" schema={jsonLd} />
   <Container as="article" class="py-16">
@@ -89,6 +111,16 @@ const jsonLd = [
     }
     <h1 class="mt-3 text-3xl font-bold tracking-tight text-balance">{title}</h1>
     <p class="text-muted-foreground mt-3 font-mono text-xs">
+      {/* Visible byline (#59) — pairs with the BlogPosting.author Person ref; links to /about. */}
+      {t('blog.by')}{' '}
+      <a
+        href={`/${locale}/about`}
+        rel="author"
+        class="hover:text-foreground underline underline-offset-4"
+      >
+        {SITE.name}
+      </a>
+      <span aria-hidden="true"> · </span>
       <time datetime={isoDate(pubDate)}>{formatDate(pubDate, locale)}</time>
       <span aria-hidden="true"> · </span>{minutes}
       {t('blog.minRead')}
@@ -102,6 +134,15 @@ const jsonLd = [
         )
       }
     </p>
+
+    {
+      /* Answer-first capsule (#56): the direct-answer lede, GEO/AEO's top formatting lever. */
+      summary && (
+        <p class="text-foreground border-primary mt-6 border-l-2 pl-4 text-lg text-pretty">
+          {summary}
+        </p>
+      )
+    }
 
     <ArticleMeta locale={locale} provenance={provenance} class="mt-6" />
 
