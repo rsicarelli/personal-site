@@ -1,0 +1,45 @@
+name: Security tests
+
+# Rendered-output security tests (Vitest over dist/**): currently the CSP inline-script hash guard
+# (#77), which asserts public/_headers allow-lists exactly the inline scripts the build emits — so an
+# Astro upgrade or component edit that changes a hashed inline script can't silently break the live
+# site's Content-Security-Policy. Standalone workflow (separate from the required CI Summary): builds
+# the site then runs the suite.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/_headers'
+      - 'tests/security/**'
+      - 'astro.config.mjs'
+      - 'vitest.config.ts'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/security-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/_headers'
+      - 'tests/security/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  security-tests:
+    name: Security rendered-output tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      # Reuses the mise-pinned toolchain (Node/pnpm/go-task from mise.toml).
+      - uses: ./.github/actions/setup
+      - run: task build
+      - run: pnpm vitest run tests/security
