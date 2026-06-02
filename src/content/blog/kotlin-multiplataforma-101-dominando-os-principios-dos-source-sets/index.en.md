@@ -1,7 +1,7 @@
 ---
-title: 'KMP 101: Dominando os princípios dos Source Sets'
-description: 'No último artigo (🔗 KMP 101: Entendendo como o Kotlin compila para multiplas plataformas), aprendemos sobre o frontend, IR e backend do compilador do…'
-summary: 'No último artigo (🔗 KMP 101: Entendendo como o Kotlin compila para multiplas plataformas), aprendemos sobre o frontend, IR e backend do compilador do Kotlin.'
+title: 'KMP 101: Mastering the Principles of Source Sets'
+description: 'In the last article, we learned about the Kotlin compiler frontend, IR, and backend. Now we dig into source sets — the key concept for writing KMP code.'
+summary: 'In the last article (🔗 KMP 101: Understanding How Kotlin Compiles for Multiple Platforms), we learned about the frontend, IR, and backend of the Kotlin compiler.'
 pubDate: 2023-11-24
 updatedDate: 2024-01-27
 tags:
@@ -12,149 +12,147 @@ tags:
 series: 'kmp-101'
 seriesOrder: 3
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F6xa5d4gzb1kl52b68rhd.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-multiplataforma-101-dominando-os-principios-dos-source-sets-4pg'
-  devtoId: 1677323
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 11
 ---
 
-Dessa vez, vamos entender um conceito-chave para codar em KMP: os _source sets_
+This time, let's understand a key concept for writing KMP code: _source sets_.
 
 ---
 
-## Introdução aos _source sets_ no KMP
+## Introduction to _source sets_ in KMP
 
-Os _source sets_ no Kotlin são essenciais para o desenvolvimento multiplataforma. Utilizando uma arquitetura hierárquica, os _source sets_ nos permitem organizar nosso código-fonte, declarar dependências específicas para cada alvo e também nos permitem configurar opções de compilação de forma isolada para diferentes plataformas em um mesmo projeto.
+_Source sets_ in Kotlin are essential to multiplatform development. Using a hierarchical architecture, _source sets_ let us organize our source code, declare target-specific dependencies, and configure compilation options in isolation for different platforms within a single project.
 
-Pense em um _source set_ no KMP como uma 'pasta especial' em um projeto, onde cada pasta tem um propósito (ou plataforma) específico. Por exemplo, a pasta "comum" contém arquivos usados em todas as plataformas, enquanto pastas específicas, como "android" ou "iOS", abrigam arquivos exclusivos para essas plataformas.
+Think of a _source set_ in KMP as a 'special folder' in a project, where each folder serves a specific purpose (or platform). For example, the "common" folder holds files used across every platform, while platform-specific folders like "android" or "iOS" hold files exclusive to those platforms.
 
-O compilador do Kotlin identifica essas pastas especiais e se encarrega de compilar seu conteúdo (código-fonte), conforme as estratégias de compilação exploradas em 🔗 [KMP 101: Entendendo como o Kotlin compila para multiplas plataformas](https://dev.to/rsicarelli/kotlin-multiplataforma-101-entendendo-como-o-kotlin-compila-para-multiplas-plataformas-5hba).
+The Kotlin compiler recognizes these special folders and takes care of compiling their contents (source code), following the compilation strategies explored in 🔗 [KMP 101: Understanding How Kotlin Compiles for Multiple Platforms](https://dev.to/rsicarelli/kotlin-multiplataforma-101-entendendo-como-o-kotlin-compila-para-multiplas-plataformas-5hba).
 
-## Entendendo a função e a estrutura básica de um _source set_
+## Understanding the role and basic structure of a _source set_
 
-Cada _source set_ em um projeto multiplataforma possui **um nome único** e contém um conjunto de arquivos de código-fonte e recursos (arquivos, ícones, etc). Ele especifica **um alvo** (_target_) para o qual o código será compilado.
+Every _source set_ in a multiplatform project has **a unique name** and contains a set of source code files and resources (files, icons, etc.). It specifies **a target** the code will compile to.
 
-Assumindo que as configurações necessárias foram aplicadas (as quais abordaremos em artigos futuros), a estrutura de pastas abaixo orienta o compilador do Kotlin a:
+Assuming the necessary configuration has been applied (which we'll cover in future articles), the folder structure below tells the Kotlin compiler to:
 
-1. Inicializar e compilar os seguintes alvos: `android`, `iOS`, `watchOS`, `tvOS`, `js`, `wasm` e `desktop`.
-2. Compilar o código-fonte dentro do _source set_ `common` para todas as plataformas, tornando os membros do arquivo `Common.kt` disponíveis nativamente para cada plataforma definida.
-3. Ao final da compilação, gerar arquivos específicos para cada plataforma (`.class`, `.so`, `.js`, `.wasm`), com todos os membros do `Common.kt` disponíveis.
+1. Initialize and compile the following targets: `android`, `iOS`, `watchOS`, `tvOS`, `js`, `wasm`, and `desktop`.
+2. Compile the source code inside the `common` _source set_ for every platform, making the members of the `Common.kt` file natively available to each defined platform.
+3. At the end of compilation, generate platform-specific files (`.class`, `.so`, `.js`, `.wasm`), with every member of `Common.kt` available.
 
-![Estrutura basica source set](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp101-sourcesets-basic.png?raw=true)
+![Basic source set structure](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp101-sourcesets-basic.png?raw=true)
 
-### A natureza hierárquica dos _source sets_
+### The hierarchical nature of _source sets_
 
-Os _source sets_ do KMP funcionam como uma árvore genealógica.
+KMP _source sets_ work like a family tree.
 
-Na base da árvore, temos os ancestrais comuns (o _source set_ `commonMain`), cujas características são compartilhadas por todos na família. À medida que avançamos para os galhos, encontramos os _source sets_ intermediários, que representam ramos da família com características únicas compartilhadas por um subconjunto de membros (por exemplo, `apple` ou `native`).
+At the root of the tree, we have the common ancestors (the `commonMain` _source set_), whose traits are shared by everyone in the family. As we move out to the branches, we find the intermediate _source sets_, which represent family branches with unique traits shared by a subset of members (for example, `apple` or `native`).
 
-Finalmente, nas extremidades dos galhos, estão os membros individuais da família (os _source sets_ específicos da plataforma, como `iosArm64` ou `iosSimulatorArm64`), cada um com suas próprias características únicas.
+Finally, at the tips of the branches sit the individual family members (the platform-specific _source sets_, like `iosArm64` or `iosSimulatorArm64`), each with its own unique traits.
 
-Isso permite organizar uma hierarquia de _source sets_ intermediários com total controle do que cada _source set_ irá compartilhar.
+This lets you organize a hierarchy of intermediate _source sets_ with full control over what each _source set_ shares.
 
-![Hierarquia padrão do KMP](https://kotlinlang.org/docs/images/default-hierarchy-example.svg)
+![KMP default hierarchy](https://kotlinlang.org/docs/images/default-hierarchy-example.svg)
 
-## _Source sets_ comuns vs. específicos
+## Common vs. platform-specific _source sets_
 
-No KMP, a distinção entre _source sets_ comuns e específicos de plataforma é fundamental para entender como o código é compartilhado e gerenciado entre diferentes alvos.
+In KMP, the distinction between common and platform-specific _source sets_ is fundamental to understanding how code is shared and managed across different targets.
 
-### _Source set_ comum (`commonMain`)
+### Common _source set_ (`commonMain`)
 
-O _source set_ comum, geralmente localizados no diretório `commonMain`, representa a base do compartilhamento de código no Kotlin Multiplataforma. Aqui, você escreve o código Kotlin que é compartilhado entre todas as plataformas-alvo do projeto. Este código pode incluir lógica de negócios, modelos de dados, e funcionalidades agnósticas em relação à plataforma subjacente.
+The common _source set_, usually located in the `commonMain` directory, is the foundation of code sharing in Kotlin Multiplatform. Here you write the Kotlin code that is shared across all of the project's target platforms. This code can include business logic, data models, and functionality that is agnostic to the underlying platform.
 
-É importante notar que, embora este código seja compartilhado, ele não deve conter nenhuma funcionalidade ou chamada de API que seja específica a uma plataforma. O compilador Kotlin assegura isso, evitando o uso de funções ou classes específicas de plataforma no código comum, uma vez que esse código é compilado para diferentes alvos.
+It's worth noting that, although this code is shared, it must not contain any functionality or API call that is platform-specific. The Kotlin compiler enforces this, preventing the use of platform-specific functions or classes in common code, since that code is compiled for different targets.
 
-### _Source sets_ específicos de plataforma
+### Platform-specific _source sets_
 
-Enquanto o código comum oferece uma grande vantagem na reutilização de código, nem tudo pode ser generalizado para todas as plataformas. É aqui que entram os _source sets_ específicos de plataforma, como `androidMain`, `iosMain`, `desktopMain`, entre outros. Esses _source sets_ contêm código específico para uma plataforma, sendo compilados apenas para seu respectivo alvo.
+While common code offers a major advantage in code reuse, not everything can be generalized to every platform. This is where platform-specific _source sets_ come in, such as `androidMain`, `iosMain`, `desktopMain`, and others. These _source sets_ contain platform-specific code and are compiled only for their respective target.
 
-Por exemplo, o _source set_ `androidMain` pode conter chamadas de API Android, enquanto `iosMain` pode utilizar APIs específicas do iOS. Isso permite que você tire proveito das características e APIs únicas de cada plataforma, mantendo simultaneamente, uma base de código comum significativa no `commonMain`.
+For example, the `androidMain` _source set_ can contain Android API calls, while `iosMain` can use iOS-specific APIs. This lets you take advantage of each platform's unique features and APIs while keeping a significant common codebase in `commonMain`.
 
-### Escolhendo entre comum e específico
+### Choosing between common and specific
 
-Ao desenvolver um projeto Kotlin Multiplataforma, uma parte significativa do seu esforço será dedicada a decidir o que vai ao código comum e o que precisa ser implementado de forma específica para cada plataforma. A regra geral é maximizar o código comum, recorrendo a _source sets_ específicos de plataforma apenas quando for necessário acessar funcionalidades ou APIs que não estão disponíveis de forma genérica.
+When developing a Kotlin Multiplatform project, a significant part of your effort goes into deciding what belongs in common code and what needs to be implemented specifically for each platform. The general rule is to maximize common code, falling back to platform-specific _source sets_ only when you need to access functionality or APIs that aren't available generically.
 
-Essa abordagem não só simplifica a manutenção do código, como também assegura a consistência em todas as plataformas, aproveitando ao máximo o potencial do Kotlin Multiplataforma.
+This approach not only simplifies code maintenance but also ensures consistency across all platforms, making the most of Kotlin Multiplatform's potential.
 
-## _Source set_ intermediário
+## Intermediate _source set_
 
-Vamos supor que temos um projeto KMP com os _source sets_ `commonMain`, `androidMain` e `appleMain`. Dentro do _source set_ comum, temos uma interface definida chamada `InterfaceComum` que funciona como um contrato ao qual todas as plataformas precisam aderir.
+Let's say we have a KMP project with the `commonMain`, `androidMain`, and `appleMain` _source sets_. Inside the common _source set_, we have an interface called `InterfaceComum` that acts as a contract every platform must adhere to.
 
-Derivando da `InterfaceComum`, temos `InterfaceApple` e `InterfaceAndroid`: a `InterfaceApple` adiciona funcionalidades específicas para o ecossistema Apple, enquanto `InterfaceAndroid` faz o mesmo para dispositivos Android.
+Deriving from `InterfaceComum`, we have `InterfaceApple` and `InterfaceAndroid`: `InterfaceApple` adds functionality specific to the Apple ecosystem, while `InterfaceAndroid` does the same for Android devices.
 
-Esse design garante que, embora compartilhemos a lógica comum pela `InterfaceComum`, cada plataforma pode ter suas próprias extensões e funcionalidades, mantendo a separação e a especialização do código conforme necessário.
+This design ensures that, even though we share the common logic through `InterfaceComum`, each platform can have its own extensions and functionality, keeping the code separated and specialized as needed.
 
-Esse conceito é chamado de [intermediary _source sets_](https://kotlinlang.org/docs/multiplatform-discover-project.html#intermediate-source-sets):
+This concept is called [intermediary _source sets_](https://kotlinlang.org/docs/multiplatform-discover-project.html#intermediate-source-sets):
 
-> Um _source set_ intermediário é um conjunto de _source set_ que compila para alguns, mas não para todos os alvos do projeto.
+> An intermediate _source set_ is a _source set_ that compiles to some, but not all, of the project's targets.
 
-![Exemplo *source sets*](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/mermaid-diagram-2023-11-24-110205.png?raw=true)
+![Source sets example](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/mermaid-diagram-2023-11-24-110205.png?raw=true)
 
-## _Source set_ de teste
+## Test _source set_
 
-Os testes no Kotlin Multiplataforma também são tratados como um _source set_. O que significa que cada plataforma pode ter seus próprios testes específicos se utilizando, por exemplo, o SDK nativo ou outras bibliotecas open source nativas.
+Tests in Kotlin Multiplatform are also treated as a _source set_. That means each platform can have its own platform-specific tests using, for example, the native SDK or other native open source libraries.
 
-O _source set_ comum também pode (e deve!) ter seus próprios testes, porém você irá precisar utilizar outras bibliotecas KMP para a escrita multiplataforma, como, por exemplo, o [🔗 kotlin.test](https://kotlinlang.org/api/latest/kotlin.test/), [🔗 turbine](https://github.com/cashapp/turbine) ou [🔗 assertk](https://github.com/willowtreeapps/assertk).
+The common _source set_ can (and should!) have its own tests too, but you'll need to use other KMP libraries for multiplatform test authoring, such as [🔗 kotlin.test](https://kotlinlang.org/api/latest/kotlin.test/), [🔗 turbine](https://github.com/cashapp/turbine), or [🔗 assertk](https://github.com/willowtreeapps/assertk).
 
-![Exemplo *source sets*](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/test-source-set-kmp.png?raw=true)
+![Test source sets example](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/test-source-set-kmp.png?raw=true)
 
-## Gerenciando dependências nos _source sets_
+## Managing dependencies in _source sets_
 
-Em projetos Kotlin Multiplataforma, a gestão eficiente de dependências nos _source sets_ é crucial para manter a modularidade e a eficiência do código.
+In Kotlin Multiplatform projects, managing dependencies efficiently across _source sets_ is crucial to keeping the code modular and efficient.
 
-O KMP nos permite ter controle individual das dependências de cada _source set_, nos possibilitando ainda criar relações/dependências entre elas.
+KMP lets us control each _source set_'s dependencies individually, and even create relationships/dependencies between them.
 
-### Dependências no _source set_ comum
+### Dependencies in the common _source set_
 
-No _source set_ comum (`commonMain`), as dependências incluem bibliotecas utilizáveis em todas as plataformas suportadas pelo projeto. Estas bibliotecas fornecem funcionalidades que são independentes de qualquer plataforma específica, como lógica de negócios, algoritmos ou utilitários comuns. A inclusão de uma biblioteca no source set comum significa que essa funcionalidade estará disponível para todos os alvos do projeto, promovendo a reutilização do código e a consistência entre plataformas.
+In the common _source set_ (`commonMain`), dependencies include libraries usable across every platform the project supports. These libraries provide functionality that is independent of any specific platform, such as business logic, algorithms, or common utilities. Including a library in the common source set means that functionality is available to all of the project's targets, promoting code reuse and consistency across platforms.
 
-Isso significa que, ao declarar uma depêndencia comum, todos os outros _source sets_ também terão essa dependencia, que, por sua vez, é uma dependência KMP que oferece funcionalidades agnósticas de plataforma.
+This means that, when you declare a common dependency, all the other _source sets_ get that dependency too — which, in turn, is a KMP dependency offering platform-agnostic functionality.
 
-### Dependências em _source sets_ específicos
+### Dependencies in platform-specific _source sets_
 
-Contrastando com o _source set_ comum, os _source sets_ específicos de plataforma, como `androidMain` ou `iosMain`, focam em dependências que são relevantes apenas para uma plataforma particular. Essas dependências são utilizadas para acessar APIs, bibliotecas ou recursos que são exclusivos a uma plataforma, permitindo que os desenvolvedores aproveitem as funcionalidades nativas e otimizem a experiência do usuário em cada plataforma.
+In contrast to the common _source set_, platform-specific _source sets_ like `androidMain` or `iosMain` focus on dependencies that are relevant only to a particular platform. These dependencies are used to access APIs, libraries, or resources that are exclusive to a platform, allowing developers to leverage native features and optimize the user experience on each platform.
 
-![Exemplo *source sets*](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/mermaid-diagram-2023-11-24-125307.png?raw=true)
+![Dependencies source sets example](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/mermaid-diagram-2023-11-24-125307.png?raw=true)
 
-## Convenções adotadas pela comunidade
+## Conventions adopted by the community
 
-O KMP é extremamente flexível, nos possibilitando nomear e manipular nossos _source sets_ como preferirmos.
+KMP is extremely flexible, letting us name and manipulate our _source sets_ however we prefer.
 
-Porém, no decorrer dos anos, a comunidade foi adotando algumas convenções, e o próprio KMP foi se adequando ao redor dessas convenções, oferecendo algumas facilidades na configuração do projeto. Vamos explorar as principais delas
+Over the years, though, the community has adopted some conventions, and KMP itself has adapted around them, offering some conveniences in project configuration. Let's explore the main ones.
 
-### 1: Nomes utilizando "camelCase"
+### 1: Names using "camelCase"
 
-A comunidade geralmente adota a nomenclatura `cammelCase` para a definição dos _source sets_.
+The community generally adopts `cammelCase` naming for defining _source sets_.
 
-### 2: Sufixo "main"
+### 2: The "main" suffix
 
-O diretório `main` em projetos que utilizam linguagens da JVM, como Java e Kotlin, é tradicionalmente usado para armazenar o código-fonte principal da aplicação. Este diretório é parte de uma estrutura de pastas convencional, onde `main` geralmente contém os pacotes e classes que implementam a lógica principal do programa.
+The `main` directory in projects that use JVM languages such as Java and Kotlin is traditionally used to store the application's main source code. This directory is part of a conventional folder structure, where `main` typically holds the packages and classes that implement the program's core logic.
 
-Em projetos KMP, essa tradição foi levada adiante e se utiliza o `main` como sufixo para declarar nossos _source sets_: `commonMain`, `androidMain`, `nativeMain`, `desktopMain`, etc.
+In KMP projects, this tradition was carried forward, and `main` is used as a suffix to declare our _source sets_: `commonMain`, `androidMain`, `nativeMain`, `desktopMain`, etc.
 
-### 3: Código compartilhado usando o `commonMain`
+### 3: Shared code using `commonMain`
 
-O código compartilhado geralmente reside em um _source set_ chamado `commonMain`. Não é comum, mas alguns projetos também adotam a nomenclatura `sharedMain`.
+Shared code usually lives in a _source set_ called `commonMain`. It's not common, but some projects also adopt the `sharedMain` naming.
 
-### 4: Utilizando os "Source set conventions"
+### 4: Using the "Source set conventions"
 
-Como aprendemos, o próprio KMP foi se ajustando ao redor dessas definições da comunidade.
+As we learned, KMP itself has adjusted around these community definitions.
 
-A partir do Kotlin `1.9.20`, o plugin Gradle do KMP oferece **um modelo de hierarquia padrão**, que contém _source sets_ intermediários predefinidos para casos de uso comuns. Esse modelo é automaticamente configurado com base nos alvos especificados no projeto.
+Starting with Kotlin `1.9.20`, the KMP Gradle plugin offers **a default hierarchy template**, which contains predefined intermediate _source sets_ for common use cases. This template is automatically configured based on the targets specified in the project.
 
-Dentro do KPM Gradle Plugin, temos uma classe chamada [🔗 KotlinMultiplatformSourceSetConventions](https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformSourceSetConventions.kt) que reduz e muito a tarefa tediosa de definir e controlar os _source sets_:
+Inside the KPM Gradle Plugin, there's a class called [🔗 KotlinMultiplatformSourceSetConventions](https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformSourceSetConventions.kt) that greatly reduces the tedious task of defining and controlling _source sets_:
 
-| Source Set          | Plataforma  |
+| Source Set          | Platform    |
 | ------------------- | ----------- |
 | `androidMain`       | Android     |
 | `androidNativeMain` | Android     |
 | `androidNativeTest` | Android     |
 | `appleMain`         | Apple       |
 | `appleTest`         | Apple       |
-| `commonMain`        | Comum       |
-| `commonTest`        | Comum       |
+| `commonMain`        | Common      |
+| `commonTest`        | Common      |
 | `iosMain`           | iOS         |
 | `iosTest`           | iOS         |
 | `jsMain`            | JavaScript  |
@@ -167,8 +165,8 @@ Dentro do KPM Gradle Plugin, temos uma classe chamada [🔗 KotlinMultiplatformS
 | `macosTest`         | macOS       |
 | `mingwMain`         | Windows     |
 | `mingwTest`         | Windows     |
-| `nativeMain`        | Nativo      |
-| `nativeTest`        | Nativo      |
+| `nativeMain`        | Native      |
+| `nativeTest`        | Native      |
 | `tvosMain`          | tvOS        |
 | `tvosTest`          | tvOS        |
 | `wasmJsMain`        | WebAssembly |
@@ -180,27 +178,27 @@ Dentro do KPM Gradle Plugin, temos uma classe chamada [🔗 KotlinMultiplatformS
 
 ---
 
-## Conclusão
+## Conclusion
 
-Neste artigo, exploramos o conceito vital de _source sets_ no KMP, desvendando como eles facilitam a organização do código, a declaração de dependências específicas para cada plataforma e a configuração de opções de compilação de forma isolada. Compreendemos a distinção entre _source sets_ comuns e específicos, a importância dos _source sets_ intermediários, e como gerenciar eficientemente as dependências para manter a modularidade e eficiência do código.
+In this article, we explored the vital concept of _source sets_ in KMP, uncovering how they make it easier to organize code, declare platform-specific dependencies, and configure compilation options in isolation. We understood the distinction between common and platform-specific _source sets_, the importance of intermediate _source sets_, and how to manage dependencies efficiently to keep the code modular and efficient.
 
-A flexibilidade e o poder do KMP nos permitem criar aplicações robustas e eficientes, maximizando a reutilização do código e mantendo a consistência em todas as plataformas. A adoção das convenções da comunidade e a compreensão profunda da estrutura de _source sets_ são essenciais para qualquer dev que busca aproveitar ao máximo o potencial do Kotlin Multiplataforma.
+KMP's flexibility and power let us build robust, efficient applications, maximizing code reuse and keeping consistency across all platforms. Adopting the community conventions and deeply understanding the _source set_ structure are essential for any dev looking to get the most out of Kotlin Multiplatform's potential.
 
-No nosso próximo artigo, mergulharemos no Plugin do KMP para Gradle, explorando como ele nos ajuda a configurar e gerenciar nossos projetos multiplataforma de maneira eficiente.
+In our next article, we'll dive into the KMP Gradle Plugin, exploring how it helps us configure and manage our multiplatform projects efficiently.
 
-Até a próxima!
-
----
-
-> 🤖 Artigo foi escrito com o auxílio do ChatGPT 4, utilizando o plugin Web.
->
-> As fontes e o conteúdo são revisados para garantir a relevância das informações fornecidas, assim como as fontes utilizadas em cada prompt.
->
-> No entanto, caso encontre alguma informação incorreta ou acredite que algum crédito está faltando, por favor, entre em contato!
+See you next time!
 
 ---
 
-> Referencias
+> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
+>
+> The sources and content are reviewed to ensure the relevance of the information provided, as well as the sources used in each prompt.
+>
+> However, if you find any incorrect information or believe a credit is missing, please get in touch!
+
+---
+
+> References
 >
 > - [Hierarchical project structure | Kotlin Documentation](https://kotlinlang.org/docs/multiplatform-hierarchy.html)
 > - [The basics of Kotlin Multiplatform project structure | Kotlin Documentation](https://kotlinlang.org/docs/multiplatform-basic-project-structure.html)

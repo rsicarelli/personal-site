@@ -1,7 +1,7 @@
 ---
-title: 'KMP 101: Entendendo e configurando o ambiente dev no Kotlin Multiplataforma'
-description: 'O desenvolvimento de software é um processo complexo que exige não apenas habilidade e criatividade, mas também um ambiente de desenvolvimento bem…'
-summary: 'O desenvolvimento de software é um processo complexo que exige não apenas habilidade e criatividade, mas também um ambiente de desenvolvimento bem configurado.'
+title: 'KMP 101: Understanding and Setting Up the Dev Environment in Kotlin Multiplatform'
+description: 'Software development is a complex process that demands not only skill and creativity, but also a well-configured development environment.'
+summary: 'Software development is a complex process that demands not only skill and creativity, but also a well-configured development environment.'
 pubDate: 2023-11-29
 updatedDate: 2024-01-27
 tags:
@@ -12,254 +12,252 @@ tags:
 series: 'kmp-101'
 seriesOrder: 4
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F0t84i8fyf43p302il6u3.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-101-guia-pratico-para-configurar-e-entender-o-ambiente-no-kotlin-multiplataforma-2jcn'
-  devtoId: 1682822
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 14
 ---
 
-No mundo do Kotlin Multiplataforma, esta necessidade é ainda mais evidente: configurar adequadamente o ambiente de desenvolvimento para KMP é crucial para garantir que devs possam aproveitar ao máximo as capacidades multiplataforma da linguagem.
+In the world of Kotlin Multiplatform, this need is even more apparent: properly setting up the development environment for KMP is crucial to make sure developers can get the most out of the language's multiplatform capabilities.
 
-Neste artigo, vamos explorar os componentes chave desse ambiente, desde a escolha do JDK até o uso de IDEs específicas, proporcionando um guia prático para configurar seu ambiente para projetos KMP.
+In this article, we'll explore the key components of that environment, from choosing a JDK to using specific IDEs, providing a practical guide for setting up your environment for KMP projects.
 
 ---
 
-## Exigências das plataformas
+## Platform requirements
 
-Como uma ferramenta destinada ao desenvolvimento nativo, o KMP exige uma configuração de ambiente semelhante àquela usada em métodos de desenvolvimento convencionais.
+As a tool aimed at native development, KMP requires an environment setup similar to the one used in conventional development methods.
 
-Por exemplo, para a família Apple usando Kotlin/Native, é fundamental ter um Mac com Xcode instalado.
+For example, for the Apple family using Kotlin/Native, having a Mac with Xcode installed is essential.
 
-Por outro lado, para outras plataformas, como web, desktop ou Android, sistemas operacionais como Windows ou Linux são suficientes.
+For other platforms, on the other hand, such as web, desktop, or Android, operating systems like Windows or Linux are enough.
 
-Dada a abrangência do KMP, escolhemos o Mac como o sistema operacional para este e os próximos artigos.
+Given the breadth of KMP, we've chosen the Mac as the operating system for this and the upcoming articles.
 
-## JDK como requisito mínimo no KMP
+## The JDK as a minimum requirement in KMP
 
-Um aspecto crucial no desenvolvimento multiplataforma com Kotlin, independentemente do sistema operacional, é a necessidade de um [JDK (Java Development Kit)](https://en.wikipedia.org/wiki/Java_Development_Kit). O JDK é vital em várias etapas do desenvolvimento Kotlin, como:
+A crucial aspect of multiplatform development with Kotlin, regardless of the operating system, is the need for a [JDK (Java Development Kit)](https://en.wikipedia.org/wiki/Java_Development_Kit). The JDK is vital at several stages of Kotlin development, such as:
 
-- **Compilação para Bytecode:** Assim como o Java, o Kotlin é uma linguagem de alto nível compilada para bytecode. Esse processo de compilação, realizado pelo compilador Java incluído no JDK, é crucial para executar o código Kotlin em uma JVM (Java Virtual Machine), especialmente em plataformas baseadas em JVM, como backend e Android.
+- **Compilation to bytecode:** Just like Java, Kotlin is a high-level language compiled to bytecode. This compilation process, carried out by the Java compiler included in the JDK, is crucial for running Kotlin code on a JVM (Java Virtual Machine), especially on JVM-based platforms like backend and Android.
 
-- **Interdependência de JDK e IDEs:** Dada a integração profunda do Kotlin com ambientes de desenvolvimento como IntelliJ IDEA e Android Studio, o JDK é usado para realizar tarefas essenciais como a execução de tarefas do [Gradle](https://gradle.org/), uma ferramenta fundamental para a construção de projetos Kotlin Multiplataforma.
+- **Interdependence of the JDK and IDEs:** Given Kotlin's deep integration with development environments like IntelliJ IDEA and Android Studio, the JDK is used to perform essential tasks such as running [Gradle](https://gradle.org/) tasks, a fundamental tool for building Kotlin Multiplatform projects.
 
-### JDK e suas versões
+### The JDK and its versions
 
-Escolher a versão correta do JDK depende muito das dependências do seu projeto, desde o nível de infraestrutura, como a versão do Kotlin e Gradle, até bibliotecas open-source.
+Choosing the right JDK version depends heavily on your project's dependencies, from the infrastructure level, such as the Kotlin and Gradle versions, all the way to open-source libraries.
 
-Por padrão, o compilador [Kotlin/JVM produz bytecode compatível com Java 8](https://kotlinlang.org/docs/faq.html#which-versions-of-jvm-does-kotlin-target). Contudo, para usufruir das otimizações presentes em versões mais recentes do Java, você pode definir explicitamente a versão alvo do Java, que varia de 9 a 21.
+By default, the [Kotlin/JVM compiler produces bytecode compatible with Java 8](https://kotlinlang.org/docs/faq.html#which-versions-of-jvm-does-kotlin-target). However, to take advantage of the optimizations available in newer versions of Java, you can explicitly set the target Java version, which ranges from 9 to 21.
 
-Optar pelas versões mais recentes do JDK oferece vantagens significativas, incluindo melhor compatibilidade com atualizações recentes de linguagens e frameworks, otimizações de desempenho, acesso a recursos mais atuais, reforço na segurança por correções de vulnerabilidades e alinhamento com as práticas mais recentes da comunidade de desenvolvimento.
+Opting for newer JDK versions offers significant advantages, including better compatibility with recent language and framework updates, performance optimizations, access to more current features, stronger security through vulnerability fixes, and alignment with the latest practices in the development community.
 
-Como dev KMP, é comum precisar de múltiplas versões do JDK no seu ambiente de desenvolvimento, desde a mais antiga `JDK8/1.8` até versões mais recentes como `JDK17`, `JDK20` ou `JDK21`.
+As a KMP developer, it's common to need multiple JDK versions in your development environment, from the oldest `JDK8/1.8` to newer ones like `JDK17`, `JDK20`, or `JDK21`.
 
-### Diversidade de distribuidores do JDK
+### A variety of JDK distributors
 
-A variedade de fornecedores de JDK para Mac é uma resposta às alterações nas políticas da Oracle e à procura por opções mais versáteis e adaptáveis a diferentes necessidades. Alguns exemplos incluem:
+The variety of JDK vendors for Mac is a response to changes in Oracle's policies and the demand for more versatile options adaptable to different needs. Some examples include:
 
-- **[JetBrains Runtime](https://github.com/JetBrains/JetBrainsRuntime):** Uma versão do OpenJDK disponível para Windows, Mac OS X e Linux. Oferece recursos como redefinição aprimorada de classes, um framework para navegadores baseados em Chromium (JCEF) e melhorias na renderização de fontes e suporte a HiDPI.
+- **[JetBrains Runtime](https://github.com/JetBrains/JetBrainsRuntime):** A version of OpenJDK available for Windows, Mac OS X, and Linux. It offers features like enhanced class redefinition, a framework for Chromium-based browsers (JCEF), and improvements in font rendering and HiDPI support.
 
-- **[AdoptOpenJDK](https://adoptium.net/en-GB/):** Fornece binários do OpenJDK com a JVM HotSpot ou OpenJ9, desenvolvida pela IBM. Segue a programação de atualizações do OpenJDK, oferecendo atualizações regulares de recursos e segurança.
+- **[AdoptOpenJDK](https://adoptium.net/en-GB/):** Provides OpenJDK binaries with the HotSpot JVM or OpenJ9, developed by IBM. It follows the OpenJDK update schedule, offering regular feature and security updates.
 
-- **[Amazon Corretto](https://aws.amazon.com/corretto/?filtered-posts.sort-by=item.additionalFields.createdDate&filtered-posts.sort-order=desc):** Distribuição certificada do OpenJDK pela Amazon, livre para uso em produção sob licença GPL + CE. Disponível para Linux, macOS e Windows, com atualizações trimestrais.
+- **[Amazon Corretto](https://aws.amazon.com/corretto/?filtered-posts.sort-by=item.additionalFields.createdDate&filtered-posts.sort-order=desc):** Amazon's certified OpenJDK distribution, free for production use under the GPL + CE license. Available for Linux, macOS, and Windows, with quarterly updates.
 
-- **[Zulu da Azul Systems](https://www.azul.com/downloads/#zulu):** Build certificado do JDK para múltiplas plataformas, incluindo macOS. Gratuito para download e uso, com atualizações de segurança e correções de bugs disponíveis mediante assinatura do Zulu Enterprise.
+- **[Zulu by Azul Systems](https://www.azul.com/downloads/#zulu):** A certified JDK build for multiple platforms, including macOS. Free to download and use, with security updates and bug fixes available through a Zulu Enterprise subscription.
 
-> [🔗 Lista de distribuidores do JDK do SDKMAN!](https://sdkman.io/jdks)
+> [🔗 SDKMAN!'s list of JDK distributors](https://sdkman.io/jdks)
 
-## Configurando seu Mac para o ambiente KMP
+## Setting up your Mac for the KMP environment
 
-Vamos seguir a [documentação oficial](https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-setup.html) para configurar o ambiente, utilizando as tecnologias a seguir:
+We'll follow the [official documentation](https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-setup.html) to set up the environment, using the following technologies:
 
-- [Homebrew](https://brew.sh/): Será utilizado para facilitar a instalação de scripts.
-- [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/): Uma ferramenta eficaz para gerenciar IDEs da JetBrains, desenvolvida em KMP.
-- [kdoctor](https://github.com/Kotlin/kdoctor): Uma ferramenta da JetBrains que realiza diagnósticos do ambiente KMP.
-- [Xcode](https://developer.apple.com/xcode/resources/): Fundamental para acessar ferramentas específicas da Apple.
-- [SDKMAN!](https://sdkman.io/): Usado para gerenciar diferentes versões do JDK.
+- [Homebrew](https://brew.sh/): Used to make installing scripts easier.
+- [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/): An effective tool for managing JetBrains IDEs, built with KMP.
+- [kdoctor](https://github.com/Kotlin/kdoctor): A JetBrains tool that runs diagnostics on the KMP environment.
+- [Xcode](https://developer.apple.com/xcode/resources/): Essential for accessing Apple-specific tools.
+- [SDKMAN!](https://sdkman.io/): Used to manage different JDK versions.
 
-### 1. Instalando o `kdoctor`
+### 1. Installing `kdoctor`
 
-Assumindo que você já tenha o [Homebrew](https://brew.sh/) instalado, use o seguinte comando para instalar o `kdoctor` e executá-lo no terminal. Esse comando será útil durante o processo para verificar se a configuração foi bem-sucedida.
+Assuming you already have [Homebrew](https://brew.sh/) installed, use the following command to install `kdoctor` and run it in the terminal. This command will come in handy throughout the process to check whether the setup was successful.
 
 ```shell
 brew install kdoctor && kdoctor
 ```
 
-### 2. Instalando o JetBrains Toolbox
+### 2. Installing JetBrains Toolbox
 
-Instale o [Toolbox](https://www.jetbrains.com/toolbox-app/) com o comando abaixo.
+Install [Toolbox](https://www.jetbrains.com/toolbox-app/) with the command below.
 
 ```shell
 brew install --cask jetbrains-toolbox
 ```
 
-### 3. Preparando o ambiente KMP com o JDK
+### 3. Preparing the KMP environment with the JDK
 
-O JDK é um requisito essencial para programar em KMP, e a configuração do JDK no Mac pode ser desafiadora, especialmente se você desejar ter múltiplas versões instaladas. O [SDKMAN!](https://sdkman.io) simplifica este processo, oferecendo uma CLI que facilita a instalação e a troca entre diferentes versões e distribuidores de JDKs.
+The JDK is an essential requirement for programming in KMP, and configuring the JDK on a Mac can be challenging, especially if you want to have multiple versions installed. [SDKMAN!](https://sdkman.io) simplifies this process, offering a CLI that makes it easy to install and switch between different JDK versions and distributors.
 
-|     | Passo                                             | Descrição                                      |
-| --- | ------------------------------------------------- | ---------------------------------------------- |
-| 1   | Instale o SDKMAN! seguindo a documentação oficial | [sdkman.io/install](https://sdkman.io/install) |
-| 2   | Instale o JDK 17.0.9-jbr                          | `sdk install java 17.0.9-jbr`                  |
-| 3   | Defina a versão global do JDK                     | `sdk default java 17.0.9-jbr`                  |
-| 4   | Verifique a versão atual do JDK                   | `sdk current java`                             |
-| 5   | Para instalar outras versões, repita o processo   | `sdk list java`                                |
-| 6   | Verifique se a configuração foi bem-sucedida      | `kdoctor`                                      |
+|     | Step                                          | Description                                    |
+| --- | --------------------------------------------- | ---------------------------------------------- |
+| 1   | Install SDKMAN! following the official docs   | [sdkman.io/install](https://sdkman.io/install) |
+| 2   | Install JDK 17.0.9-jbr                        | `sdk install java 17.0.9-jbr`                  |
+| 3   | Set the global JDK version                    | `sdk default java 17.0.9-jbr`                  |
+| 4   | Check the current JDK version                 | `sdk current java`                             |
+| 5   | To install other versions, repeat the process | `sdk list java`                                |
+| 6   | Check whether the setup was successful        | `kdoctor`                                      |
 
-### 4. Preparando o ambiente Android no KMP
+### 4. Preparing the Android environment in KMP
 
-Para desenvolver para Android em Kotlin Multiplataforma, é necessário configurar adequadamente o ambiente. Isso inclui a instalação do [Android Studio](https://developer.android.com/studio), que fornece ferramentas essenciais para o desenvolvimento Android, como o [Android SDK](https://en.wikipedia.org/wiki/Android_SDK) e um [Emulador](https://developer.android.com/studio/run/emulator).
+To develop for Android in Kotlin Multiplatform, you need to set up the environment properly. This includes installing [Android Studio](https://developer.android.com/studio), which provides essential tools for Android development, such as the [Android SDK](https://en.wikipedia.org/wiki/Android_SDK) and an [Emulator](https://developer.android.com/studio/run/emulator).
 
-|     | Passo                                      | Descrição                                                              |
-| --- | ------------------------------------------ | ---------------------------------------------------------------------- |
-| 1   | Instale o Android Studio pelo Toolbox      | Procure por "Android Studio" na lista do Toolbox                       |
-| 2   | Ou instale o Android Studio via Homebrew   | `brew install --cask android-studio`                                   |
-| 3   | Conclua a instalação do Android Studio     | Abra o app do Android Studio e siga o passo a passo para a instalação. |
-| 4   | Verifique se a instalação foi bem-sucedida | `kdoctor`                                                              |
+|     | Step                                     | Description                                                    |
+| --- | ---------------------------------------- | -------------------------------------------------------------- |
+| 1   | Install Android Studio through Toolbox   | Search for "Android Studio" in the Toolbox list                |
+| 2   | Or install Android Studio via Homebrew   | `brew install --cask android-studio`                           |
+| 3   | Finish installing Android Studio         | Open the Android Studio app and follow the step-by-step setup. |
+| 4   | Check whether the installation succeeded | `kdoctor`                                                      |
 
-### 5. Preparando o ambiente Apple no KMP
+### 5. Preparing the Apple environment in KMP
 
-Para ambientes da Apple, precisamos da coleção de ferramentas do Xcode.
+For Apple environments, we need the Xcode toolset.
 
-|     | Passo                                         | Descrição                                                                                                              |
-| --- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| 1   | Verifique o mapa de compatibilidade do Kotlin | [🔗 Guia de compatibilidade](https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#version-compatibility) |
-| 2   | Instale o Xcode                               | [🔗 Xcode na App Store](https://apps.apple.com/app/xcode/id497799835)                                                  |
-| 3   | Abra o Xcode                                  | Procure e abra app do Xcode nas suas aplicações.                                                                       |
-| 4   | Aceitar os termos de uso da Apple             | Siga os passos para concluir a instalação no Xcode. <br/> Você deve ir avançando até ver a tela de criar um projeto.   |
-| 5   | Verifique se deu certo                        | `kdoctor`                                                                                                              |
+|     | Step                               | Description                                                                                                                    |
+| --- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | Check the Kotlin compatibility map | [🔗 Compatibility guide](https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#version-compatibility)             |
+| 2   | Install Xcode                      | [🔗 Xcode on the App Store](https://apps.apple.com/app/xcode/id497799835)                                                      |
+| 3   | Open Xcode                         | Find and open the Xcode app in your applications.                                                                              |
+| 4   | Accept Apple's terms of use        | Follow the steps to complete the installation in Xcode. <br/> You should keep going until you see the create-a-project screen. |
+| 5   | Check whether it worked            | `kdoctor`                                                                                                                      |
 
-> ℹ️ O KMP não precisa do Xcode aberto para funcionar. Após a configuração, você pode fechar o Xcode se preferir.
+> ℹ️ KMP doesn't need Xcode open to work. After setup, you can close Xcode if you prefer.
 
-#### 5.1 (Opcional) Configure o CocoaPods
+#### 5.1 (Optional) Set up CocoaPods
 
-Opcionalmente, você pode realizar a configuração do CocoaPods. Não iremos precisar para esse artigo. Mas caso precise, siga a [🔗 documentação oficial](https://kotlinlang.org/docs/native-cocoapods.html).
+Optionally, you can set up CocoaPods. We won't need it for this article. But if you do need it, follow the [🔗 official documentation](https://kotlinlang.org/docs/native-cocoapods.html).
 
-### ✅ Verificando o ambiente KMP
+### ✅ Verifying the KMP environment
 
-Ao rodar o `kdoctor`, é importante que nenhum erro em vermelho apareça. Já que nosso foco é o mínimo para o funcionamento, itens em amarelo não é necessariamente um problema por hora.
+When you run `kdoctor`, it's important that no errors in red show up. Since our focus is the bare minimum needed to get things working, items in yellow aren't necessarily a problem for now.
 
-## Escolhendo o ambiente de desenvolvimento integrado (IDE)
+## Choosing the integrated development environment (IDE)
 
-Nesta etapa, estamos quase prontos para iniciar um novo projeto em KMP. Só falta entendermos um pouco melhor sobre as ferramentas disponíveis para uso atualmente (novembro de 2023)
+At this point, we're almost ready to start a new KMP project. We just need to understand a bit more about the tools available for use today (November 2023).
 
-Devido à profunda integração nativa do KMP, gerenciar múltiplas bases de código apresenta desafios práticos, tais como:
+Due to KMP's deep native integration, managing multiple codebases brings practical challenges, such as:
 
-- A capacidade de buscar uma referência em arquivos Swift ou JavaScript e encontrar a declaração correspondente em Kotlin.
-- A habilidade de executar seu projeto em um emulador.
-- Suporte a depuração de código, independente da linguagem.
-- Execução de testes com relatórios de sucesso e falha, além de logs no console.
-- Ferramentas de análise, como desempenho, qualidade de código, etc.
+- The ability to search for a reference in Swift or JavaScript files and find the corresponding declaration in Kotlin.
+- The ability to run your project on an emulator.
+- Code debugging support, regardless of the language.
+- Running tests with success and failure reports, plus console logs.
+- Analysis tools, such as performance, code quality, and so on.
 
-A tabela a seguir mapeia o suporte atual a cada linguagem no mundo KMP:
+The following table maps out the current support for each language in the KMP world:
 
-| IDE                                                                       | Kotlin | Swift | JS/TS | Gratuíto |
-| ------------------------------------------------------------------------- | ------ | ----- | ----- | -------- |
-| [Android Studio](https://developer.android.com/studio)                    | ✅     |       |       | ✅       |
-| [IntelliJ Ultimate](https://www.jetbrains.com/idea/download/?section=mac) | ✅     |       | ✅    |          |
-| [Xcode](https://developer.apple.com/xcode/)                               |        | ✅    |       | ✅       |
-| [VSCode](https://code.visualstudio.com/)                                  |        |       | ✅    | ✅       |
-| [Fleet (Preview Beta)](https://www.jetbrains.com/fleet/) 🔥               | ✅     | ✅    | ✅    | ✅       |
+| IDE                                                                       | Kotlin | Swift | JS/TS | Free |
+| ------------------------------------------------------------------------- | ------ | ----- | ----- | ---- |
+| [Android Studio](https://developer.android.com/studio)                    | ✅     |       |       | ✅   |
+| [IntelliJ Ultimate](https://www.jetbrains.com/idea/download/?section=mac) | ✅     |       | ✅    |      |
+| [Xcode](https://developer.apple.com/xcode/)                               |        | ✅    |       | ✅   |
+| [VSCode](https://code.visualstudio.com/)                                  |        |       | ✅    | ✅   |
+| [Fleet (Preview Beta)](https://www.jetbrains.com/fleet/) 🔥               | ✅     | ✅    | ✅    | ✅   |
 
-Vamos elaborar um pouco sobre cada uma dessas opções.
+Let's go into a bit more detail on each of these options.
 
 ### Android Studio
 
-Android Studio é amplamente apreciado pela comunidade Android, oferecendo excelente suporte para o ecossistema Android. Baseado no _[IntelliJ Community](https://www.jetbrains.com/products/compare/?product=idea&product=idea-ce)_ e mantido pela Google, ele é especialmente adaptado para uma integração completa com o Android. Esta opção é popular, gratuita e atualmente recomendada pela JetBrains para desenvolvimento KMP.
+Android Studio is widely appreciated by the Android community, offering excellent support for the Android ecosystem. Based on _[IntelliJ Community](https://www.jetbrains.com/products/compare/?product=idea&product=idea-ce)_ and maintained by Google, it's specially tailored for full integration with Android. This option is popular, free, and currently recommended by JetBrains for KMP development.
 
-O suporte ao KMP no Android Studio requer a instalação manual do plugin [🔗 Kotlin Multiplatform Mobile](https://kotlinlang.org/docs/multiplatform-plugin-releases.html).
+KMP support in Android Studio requires manually installing the [🔗 Kotlin Multiplatform Mobile](https://kotlinlang.org/docs/multiplatform-plugin-releases.html) plugin.
 
 ### IntelliJ Ultimate
 
-O IntelliJ Ultimate é um ambiente robusto não só para Kotlin, mas também para uma série de frameworks (Spring, React/Native, Angular, Vue.js, Django, etc) e outras linguagens (HTML, Ruby, PHP, Go, SQL, Markdown, etc), com recursos suficientes para preencher um artigo inteiro.
+IntelliJ Ultimate is a robust environment not just for Kotlin, but also for a range of frameworks (Spring, React/Native, Angular, Vue.js, Django, etc.) and other languages (HTML, Ruby, PHP, Go, SQL, Markdown, etc.), with enough features to fill an entire article.
 
-Esta versão é paga, portanto, mais adequada para devs experientes que buscam uma IDE como ferramenta de produtividade completa para escalar projetos.
+This version is paid, so it's better suited for experienced developers looking for an IDE as a complete productivity tool to scale projects.
 
-Contudo, em termos de suporte KMP, o IntelliJ Ultimate não oferece grandes vantagens em comparação ao Android Studio, que provavelmente possui a maioria das funcionalidades e suporte ao KMP disponíveis no IntelliJ Ultimate.
+That said, in terms of KMP support, IntelliJ Ultimate doesn't offer big advantages over Android Studio, which probably has most of the KMP features and support available in IntelliJ Ultimate.
 
 ### VSCode
 
-Caso você esteja em um ambiente web/js e planeja adotar o KMP, você vai precisar usar outras ferramentas como VSCode, ou até outras pagas como WebStorm e o próprio IntelliJ Ultimate.
+If you're in a web/JS environment and plan to adopt KMP, you'll need to use other tools like VSCode, or even paid ones like WebStorm and IntelliJ Ultimate itself.
 
-Com as ferramentas atuais, pode ser que você nem precise trabalhar com código JS, já que Kotlin/JS tem excelente suporte no IntelliJ e no Android Studio, permitindo escrever todo o código em Kotlin utilizando [🔗 wrappers](https://github.com/JetBrains/kotlin-wrappers).
+With today's tooling, you might not even need to work with JS code, since Kotlin/JS has excellent support in IntelliJ and Android Studio, letting you write all your code in Kotlin using [🔗 wrappers](https://github.com/JetBrains/kotlin-wrappers).
 
 ### Xcode
 
-Independentemente do uso do IntelliJ ou Android Studio, o Xcode é necessário para navegar por código Swift/Obj-C. O Xcode, a IDE gratuita da Apple (embora requeira um Mac), é essencial no ambiente KMP.
+Regardless of whether you use IntelliJ or Android Studio, Xcode is required to navigate Swift/Obj-C code. Xcode, Apple's free IDE (although it requires a Mac), is essential in the KMP environment.
 
-A frequência de uso do Xcode varia conforme o projeto. Por exemplo:
+How often you use Xcode varies by project. For example:
 
-| Frequência de Uso | Contexto                        | Detalhes                                                                                                                                                                   |
-| ----------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Moderado          | Bibliotecas KMP                 | Criação de bibliotecas multiplataforma com código comum e implementações específicas para JVM, web e plataformas nativas, utilizadas como dependências em outros projetos. |
-| Mais Frequente    | Repositórios Swift adotando KMP | Em projetos existentes em Swift que estão migrando para KMP, o uso do Xcode é intensivo.                                                                                   |
-| Frequente         | Análises de desempenho          | Uso das ferramentas do Xcode para realizar análises de desempenho na aplicação.                                                                                            |
-| Frequente         | Aplicações KMP Android e iOS    | Compartilhamento de código entre plataformas móveis para implementar lógica de aplicativos como rede, armazenamento de dados e validação, análises e cálculos.             |
-| Variável          | Aplicações Desktop              | Compartilhamento de UIs entre plataformas desktop como Windows, macOS e Linux usando Compose Multiplatform.                                                                |
+| Usage Frequency | Context                  | Details                                                                                                                                                             |
+| --------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Moderate        | KMP libraries            | Building multiplatform libraries with common code and platform-specific implementations for JVM, web, and native platforms, used as dependencies in other projects. |
+| More frequent   | Swift repos adopting KMP | In existing Swift projects migrating to KMP, Xcode usage is intensive.                                                                                              |
+| Frequent        | Performance analysis     | Using Xcode's tools to run performance analysis on the application.                                                                                                 |
+| Frequent        | KMP Android and iOS apps | Sharing code across mobile platforms to implement app logic such as networking, data storage, validation, analytics, and calculations.                              |
+| Variable        | Desktop apps             | Sharing UIs across desktop platforms like Windows, macOS, and Linux using Compose Multiplatform.                                                                    |
 
-Devs frequentemente criticam a experiência do Xcode, especialmente em comparação ao IntelliJ ou Android Studio, e o desafio de manter duas IDEs poderosas em execução simultânea.
+Developers often criticize the Xcode experience, especially compared to IntelliJ or Android Studio, and the challenge of keeping two powerful IDEs running at the same time.
 
-Como uma alternativa ao Xcode, a JetBrains desenvolveu o [AppCode](https://www.jetbrains.com/objc/), mas enfrentou diversos problemas e não teve aceitação significativa na comunidade KPM. Em dezembro de 2022, a JetBrains anunciou oficialmente a aposentadoria do AppCode.
+As an alternative to Xcode, JetBrains developed [AppCode](https://www.jetbrains.com/objc/), but it ran into several issues and didn't gain significant traction in the KMP community. In December 2022, JetBrains officially announced AppCode's retirement.
 
 ### Fleet
 
-Lançado em novembro de 2021, Fleet surgiu como uma proposta similar ao VSCode, sendo um editor de texto leve e flexível.
+Launched in November 2021, Fleet emerged as a proposal similar to VSCode, being a lightweight and flexible text editor.
 
-Dois anos depois, em novembro de 2023, [🔗 foi anunciado](https://blog.jetbrains.com/kotlin/2023/11/kotlin-multiplatform-tooling-in-fleet/) o suporte Multiplataforma no Fleet, trazendo uma série de recursos notáveis:
+Two years later, in November 2023, [🔗 multiplatform support in Fleet was announced](https://blog.jetbrains.com/kotlin/2023/11/kotlin-multiplatform-tooling-in-fleet/), bringing a series of notable features:
 
-- **Fácil integração e execução do app** Ao abrir um projeto KMP, o Fleet configura automaticamente as execuções para Android, iOS e Desktop, baseado no arquivo de build do projeto.
+- **Easy app integration and execution:** When you open a KMP project, Fleet automatically configures run configurations for Android, iOS, and Desktop, based on the project's build file.
 
-- **Poliglota:** Fleet permite trabalhar com código nativo em projetos multiplataforma sem mudar de editor, oferecendo suporte aprimorado para edição de código Swift e integração com projetos Xcode.
+- **Polyglot:** Fleet lets you work with native code in multiplatform projects without switching editors, offering enhanced support for editing Swift code and integration with Xcode projects.
 
-- **Navegação de código:** Permite navegação cruzada entre Swift e Kotlin, facilitando a localização de declarações e usos de funções entre as linguagens.
+- **Code navigation:** It allows cross-navigation between Swift and Kotlin, making it easier to locate function declarations and usages across languages.
 
-- **Refatoração:** Suporta refatorações que afetam tanto módulos Kotlin quanto Swift.
+- **Refactoring:** It supports refactorings that affect both Kotlin and Swift modules.
 
-- **Depuração integrada:** Com suporte ferramentas como pontos de interrupção (break-points) tanto em Swift quando em Kotlin, além da visualização de valores e pilhas de chamadas.
+- **Integrated debugging:** With support for tools like breakpoints in both Swift and Kotlin, plus inspecting values and call stacks.
 
-Fleet se apresenta como uma ferramenta poderosa para desenvolvimento multiplataforma, unificando diferentes linguagens e plataformas em um ambiente integrado.
+Fleet presents itself as a powerful tool for multiplatform development, unifying different languages and platforms into one integrated environment.
 
-#### Fleet em "Beta Preview"
+#### Fleet in "Beta Preview"
 
-Atualmente, o acesso ao Fleet é gratuito, pois a ferramenta ainda está em fase experimental. Também vale notar que inúmeras ferramentas de análises para aplicações para a família Apple ainda são exclusivas do Xcode.
+For now, access to Fleet is free, since the tool is still in an experimental phase. It's also worth noting that many analysis tools for Apple-family apps are still exclusive to Xcode.
 
-> [📹 Veja o Fleet em ação: Build Apps for iOS, Android, and Desktop With Compose Multiplatform](https://www.youtube.com/watch?v=IGuVIRZzVTk)
+> [📹 See Fleet in action: Build Apps for iOS, Android, and Desktop With Compose Multiplatform](https://www.youtube.com/watch?v=IGuVIRZzVTk)
 
-### Afinal, qual escolher?
+### So, which one should you choose?
 
-Se você está começando com o KMP, sugiro a utilização do Fleet que conta com um suporte excelente para iniciantes.
+If you're just getting started with KMP, I suggest using Fleet, which has excellent support for beginners.
 
-Caso você pretenda adotar o KMP em produção, você irá precisar utilizar as outras IDEs como Android Studio, IntelliJ e Xcode.
+If you plan to adopt KMP in production, you'll need to use the other IDEs like Android Studio, IntelliJ, and Xcode.
 
-| IDE            | Uso recomendado                                               | Característica                                                                                  |
-| -------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| IntelliJ       | Ideal para projetos complexos e para devs experientes.        | Ampla gama de recursos, suporte a plugins de vários frameworks e linguagens, etc.               |
-| Android Studio | Recomendado para desenvolvimento Android e aplicações mobile. | Integração com Android SDK, ferramentas de UI, análise de desempenho para apps em Android, etc. |
-| Xcode          | Essencial para desenvolvimento iOS e macOS.                   | Ferramentas nativas Apple, interface intuitiva, análise de desempenho para família Apple, etc.  |
-| Fleet          | Boa escolha para iniciantes e projetos mais leves.            | Interface simplificada e pensado para desenvolvimento KMP.                                      |
+| IDE            | Recommended use                                            | Characteristic                                                                           |
+| -------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| IntelliJ       | Ideal for complex projects and for experienced developers. | A wide range of features, plugin support for various frameworks and languages, etc.      |
+| Android Studio | Recommended for Android development and mobile apps.       | Integration with the Android SDK, UI tools, performance analysis for Android apps, etc.  |
+| Xcode          | Essential for iOS and macOS development.                   | Native Apple tools, intuitive interface, performance analysis for the Apple family, etc. |
+| Fleet          | A good choice for beginners and lighter projects.          | A simplified interface designed for KMP development.                                     |
 
-## Conclusão
+## Conclusion
 
-Este artigo ofereceu uma visão abrangente sobre a configuração do ambiente de desenvolvimento com Kotlin Multiplataforma. Discutimos desde a seleção do JDK ideal até a escolha da IDE mais adequada, incluindo o emergente Fleet, que se destaca como uma opção promissora, especialmente para iniciantes.
+This article offered a comprehensive look at setting up the development environment for Kotlin Multiplatform. We discussed everything from selecting the right JDK to choosing the most suitable IDE, including the emerging Fleet, which stands out as a promising option, especially for beginners.
 
-A seleção cuidadosa das ferramentas e configurações corretas não apenas simplifica o processo de desenvolvimento, mas também eleva significativamente a eficiência e a produtividade.
+Carefully selecting the right tools and configurations not only simplifies the development process, but also significantly boosts efficiency and productivity.
 
-No próximo artigo, abordaremos outro aspecto fundamental do KMP: o Plugin do Gradle, uma ferramenta chave para aproveitar ao máximo o potencial do desenvolvimento multiplataforma.
+In the next article, we'll cover another fundamental aspect of KMP: the Gradle Plugin, a key tool for getting the most out of multiplatform development's potential.
 
-Até a próxima!
-
----
-
-> 🤖 Artigo foi escrito com o auxílio do ChatGPT 4, utilizando o plugin Web.
->
-> As fontes e o conteúdo são revisados para garantir a relevância das informações fornecidas, assim como as fontes utilizadas em cada prompt.
->
-> No entanto, caso encontre alguma informação incorreta ou acredite que algum crédito está faltando, por favor, entre em contato!
+See you next time!
 
 ---
 
-> Referências:
+> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
+>
+> The sources and content are reviewed to ensure the relevance of the information provided, as well as the sources used in each prompt.
+>
+> However, if you find any incorrect information or believe a credit is missing, please get in touch!
+
+---
+
+> References:
 >
 > - [An Overview of JDK Vendors - DZone](https://dzone.com/articles/an-overview-on-jdk-vendors)
 > - [Android Developers - Kotlin Multiplatform](https://developer.android.com/kotlin/multiplatform)

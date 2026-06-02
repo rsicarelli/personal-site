@@ -30,7 +30,9 @@ describe('buildCanonicalMap', () => {
   });
 
   it('skips the placeholders and the hand-authored posts', () => {
-    expect(result.skippedPlaceholder).toBe(45);
+    // Shrinks as translations land (#143): each translated placeholder drops its `devtoId` and
+    // `translated: false`, so it stops counting here (it becomes a `skippedNoId` instead).
+    expect(result.skippedPlaceholder).toBe(32);
     expect(result.skippedNoId).toBeGreaterThan(0);
   });
 
