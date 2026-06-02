@@ -1,0 +1,38 @@
+---
+/**
+ * Generic content pages (#35/#39) — Contact, Uses, Now and any future simple page in the `pages`
+ * collection get one localized route each (`/en/contact`, `/pt-br/uses`, …) with no bespoke
+ * template. Prose + links live in the MDX; this just renders it in the layout shell.
+ *
+ * Bespoke routes (About, which renders structured CV data) are EXCLUDED here so the catch-all
+ * never double-emits a path Astro also builds from a more specific route — a duplicate static
+ * path is a hard build error. Astro already prefers `about.astro` over this rest route, but the
+ * exclude list keeps the intent explicit and the build deterministic.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { localizedPaths } from '@/lib/content';
+import { render } from 'astro:content';
+
+export async function getStaticPaths() {
+  // `pages` slugs that have their own bespoke route and must not also render through this
+  // catch-all. Declared inside getStaticPaths: Astro extracts this function into an isolated
+  // prerender chunk that only captures its imports, not module-scope frontmatter consts.
+  const bespoke = new Set(['about']);
+  const paths = await localizedPaths('pages');
+  return paths.filter((p) => !bespoke.has(p.params.slug));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<BaseLayout title={entry.data.title} description={entry.data.description}>
+  <section class="mx-auto max-w-3xl px-6 py-16">
+    <h1 class="text-3xl font-bold tracking-tight">{entry.data.title}</h1>
+    <div
+      class="text-muted-foreground [&_a]:text-foreground mt-4 max-w-prose space-y-4 [&_a]:underline [&_a]:underline-offset-4"
+    >
+      <Content />
+    </div>
+  </section>
+</BaseLayout>
