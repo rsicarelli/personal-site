@@ -1,6 +1,6 @@
 # Task runner for rsicarelli.com (https://taskfile.dev).
 # Thin, discoverable wrappers around the pnpm scripts so day-to-day commands and the
-# Definition of Done are one `task <name>` away. Node/pnpm/task are pinned in .tool-versions
+# Definition of Done are one `task <name>` away. Node/pnpm/task are pinned in mise.toml
 # (mise) — run `mise install` once, then `task --list`.
 version: '3'
 

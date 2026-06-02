@@ -41,7 +41,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
-      # Reuses the mise-pinned toolchain (Node/pnpm/go-task from .tool-versions).
+      # Reuses the mise-pinned toolchain (Node/pnpm/go-task from mise.toml).
       - uses: ./.github/actions/setup
       - run: task build
       # ubuntu-latest ships google-chrome-stable, which @lhci/cli's chrome-launcher auto-detects.

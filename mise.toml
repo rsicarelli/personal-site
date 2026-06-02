@@ -1,0 +1,10 @@
+# Toolchain pinned for mise (https://mise.jdx.dev). This replaces the asdf-style `.tool-versions`:
+# Cloudflare Pages' v2 build system auto-installs every entry in a `.tool-versions` via asdf and has
+# no `go-task` plugin, so it failed the build. mise, the CI setup action (jdx/mise-action), and the
+# githooks all auto-discover this file instead. On Cloudflare Pages the Node version comes from the
+# NODE_VERSION build var and pnpm from package.json's `packageManager` field — Pages never needs task
+# (its build command is `pnpm build`). Run `mise install` once after clone, then `task --list`.
+[tools]
+node = "24.16.0"
+pnpm = "11.5.0"
+task = "3.51.1"

@@ -41,7 +41,7 @@ content.config.ts   # Collection schemas (Zod)  ·  astro.config.mjs  ·  Taskfi
 
 ## Local development
 
-Toolchain is pinned with [mise](https://mise.jdx.dev) (`.tool-versions`: Node, pnpm, go-task).
+Toolchain is pinned with [mise](https://mise.jdx.dev) (`mise.toml`: Node, pnpm, go-task).
 
 ```
 mise install      # provision Node + pnpm + task
