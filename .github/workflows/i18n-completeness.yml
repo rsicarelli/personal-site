@@ -1,0 +1,39 @@
+name: i18n completeness
+
+# Bilingual is firm constraint #1: fail any PR where a content entry is missing a locale
+# (.en or .pt). This is a standalone check (its own file, separate from ci.yml) that wraps
+# `task i18n:check` → scripts/check-locale-completeness.mjs. See issue #24.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/content/**'
+      - 'scripts/check-locale-completeness.mjs'
+      - 'Taskfile.yml'
+      - 'package.json'
+      - '.github/workflows/i18n-completeness.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/content/**'
+      - 'scripts/check-locale-completeness.mjs'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  i18n-completeness:
+    name: Locale completeness
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      # Reuses the mise-pinned toolchain (Node/pnpm/go-task from .tool-versions) so CI runs the
+      # exact `task` command developers run locally — no hardcoded tool versions here.
+      - uses: ./.github/actions/setup
+      - run: task i18n:check
