@@ -20,7 +20,9 @@ const locale = Astro.params.locale as Locale;
 const t = useTranslations(locale);
 const posts = await getLocalizedEntries('blog', locale);
 const tagPages = await commonBlogTagSlugs();
-const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long' });
+// timeZone UTC: content dates are date-only (UTC midnight); local-zone formatting would shift the
+// calendar day.
+const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long', timeZone: 'UTC' });
 ---
 
 <BaseLayout title={`${t('nav.blog')} · ${t('site.title')}`} description={t('site.description')}>

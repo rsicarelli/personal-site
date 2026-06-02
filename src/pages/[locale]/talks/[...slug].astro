@@ -24,7 +24,9 @@ const t = useTranslations(locale);
 const { Content } = await render(entry);
 const { title, description, startDate, endDate, location, url, slides, video } = entry.data;
 const videoId = video ? youtubeId(video) : null;
-const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long' });
+// timeZone UTC: content dates are date-only (UTC midnight); local-zone formatting would shift the
+// calendar day (e.g. a 2024-07-29 talk showing as Jul 28).
+const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long', timeZone: 'UTC' });
 const dateLabel =
   endDate && endDate.getTime() !== startDate.getTime()
     ? `${df.format(startDate)} – ${df.format(endDate)}`

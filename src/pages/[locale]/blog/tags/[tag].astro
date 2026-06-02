@@ -51,7 +51,9 @@ export async function getStaticPaths() {
 const locale = Astro.params.locale as Locale;
 const { label, posts } = Astro.props;
 const t = useTranslations(locale);
-const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long' });
+// timeZone UTC: content dates are date-only (UTC midnight); local-zone formatting would shift the
+// calendar day.
+const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long', timeZone: 'UTC' });
 ---
 
 <BaseLayout
