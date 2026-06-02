@@ -26,6 +26,7 @@
     "test:seo": "vitest run tests/seo",
     "test:watch": "vitest",
     "lighthouse": "lhci autorun",
+    "lighthouse:prod": "lhci autorun --config=lighthouserc.prod.json",
     "deploy": "wrangler pages deploy dist --project-name personal-site"
   },
   "dependencies": {

@@ -77,6 +77,11 @@ tasks:
       - task: build
       - pnpm lighthouse
 
+  lighthouse:prod:
+    desc: Core Web Vitals budget against the LIVE origin (https://rsicarelli.com; needs Chrome)
+    cmds:
+      - pnpm lighthouse:prod
+
   devto:canonical:
     desc: 'Dry-run the dev.to canonical_url write-back (#151). Add `-- --apply` (with DEV_TO_API_KEY) to write.'
     cmds:
