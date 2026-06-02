@@ -1,14 +1,15 @@
 ---
 /**
- * Localized home page — one static route per locale (`/en/`, `/pt-br/`). `getStaticPaths`
- * enumerates LOCALES, so the `[locale]` param is always a valid locale at build time and any
- * other segment 404s. Strings come from the i18n dictionary (#26); real content sections land
- * with the Content epic (#27).
+ * Home hub (#29) — one localized route per locale (`/en/`, `/pt-br/`). Aggregates the content
+ * collections through the spine: latest posts, featured projects and upcoming talks, each linking
+ * to its section. Sections render only when they have content (draft-filtered in prod). Strings
+ * come from the i18n dictionary; cards/layout adopt Epic 5's components as they land.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import RssLinks from '@/components/content/RssLinks.astro';
 import { LOCALES, type Locale } from '@/config/site';
-import { useTranslations } from '@/i18n/utils';
+import { useTranslations, hreflangOf } from '@/i18n/utils';
+import { getLocalizedEntries } from '@/lib/content';
 
 export function getStaticPaths() {
   return LOCALES.map((locale) => ({ params: { locale } }));
@@ -16,12 +17,124 @@ export function getStaticPaths() {
 
 const locale = Astro.params.locale as Locale;
 const t = useTranslations(locale);
+const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'medium' });
+
+const posts = (await getLocalizedEntries('blog', locale)).slice(0, 3);
+const projects = (await getLocalizedEntries('portfolio', locale))
+  .filter((p) => p.entry.data.featured)
+  .slice(0, 3);
+const now = new Date();
+const upcoming = (await getLocalizedEntries('events', locale))
+  .filter((e) => (e.entry.data.endDate ?? e.entry.data.startDate) >= now)
+  .sort((a, b) => a.entry.data.startDate.getTime() - b.entry.data.startDate.getTime())
+  .slice(0, 2);
 ---
 
 <BaseLayout title={t('site.title')} description={t('site.description')}>
   <RssLinks slot="head" locale={locale} />
-  <section class="mx-auto max-w-3xl px-6 py-16">
-    <h1 class="text-3xl font-bold tracking-tight">{t('home.heading')}</h1>
-    <p class="text-muted-foreground mt-3 max-w-prose">{t('home.intro')}</p>
-  </section>
+  <div class="mx-auto max-w-3xl px-6 py-16">
+    <section>
+      <h1 class="text-4xl font-bold tracking-tight">{t('home.heading')}</h1>
+      <p class="text-muted-foreground mt-4 max-w-prose text-lg">{t('home.intro')}</p>
+    </section>
+
+    {
+      posts.length > 0 && (
+        <section class="mt-16">
+          <div class="flex items-baseline justify-between gap-3">
+            <h2 class="text-xl font-semibold tracking-tight">{t('home.latestPosts')}</h2>
+            <a
+              href={`/${locale}/blog`}
+              class="text-muted-foreground hover:text-foreground font-mono text-xs"
+            >
+              {t('blog.allPosts')} →
+            </a>
+          </div>
+          <ul class="mt-6 space-y-6">
+            {posts.map(({ slug, entry }) => (
+              <li class="border-border border-b pb-6 last:border-0">
+                <h3 class="font-semibold tracking-tight">
+                  <a href={`/${locale}/blog/${slug}`} class="hover:text-primary transition-colors">
+                    {entry.data.title}
+                  </a>
+                </h3>
+                <p class="text-muted-foreground mt-1 font-mono text-xs">
+                  <time datetime={entry.data.pubDate.toISOString()}>
+                    {df.format(entry.data.pubDate)}
+                  </time>
+                </p>
+                <p class="text-muted-foreground mt-2 max-w-prose text-sm">
+                  {entry.data.description}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      projects.length > 0 && (
+        <section class="mt-16">
+          <div class="flex items-baseline justify-between gap-3">
+            <h2 class="text-xl font-semibold tracking-tight">{t('home.featuredProjects')}</h2>
+            <a
+              href={`/${locale}/projects`}
+              class="text-muted-foreground hover:text-foreground font-mono text-xs"
+            >
+              {t('projects.allProjects')} →
+            </a>
+          </div>
+          <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+            {projects.map(({ slug, entry }) => (
+              <li class="border-border bg-card rounded-lg border p-4">
+                <h3 class="font-mono font-semibold tracking-tight">
+                  <a
+                    href={`/${locale}/projects/${slug}`}
+                    class="hover:text-primary transition-colors"
+                  >
+                    {entry.data.title}
+                  </a>
+                </h3>
+                <p class="text-muted-foreground mt-1 text-sm">{entry.data.description}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      upcoming.length > 0 && (
+        <section class="mt-16">
+          <div class="flex items-baseline justify-between gap-3">
+            <h2 class="text-xl font-semibold tracking-tight">{t('home.upcomingTalks')}</h2>
+            <a
+              href={`/${locale}/talks`}
+              class="text-muted-foreground hover:text-foreground font-mono text-xs"
+            >
+              {t('talks.allTalks')} →
+            </a>
+          </div>
+          <ul class="mt-6 space-y-6">
+            {upcoming.map(({ slug, entry }) => (
+              <li class="border-border border-b pb-6 last:border-0">
+                <h3 class="font-semibold tracking-tight">
+                  <a href={`/${locale}/talks/${slug}`} class="hover:text-primary transition-colors">
+                    {entry.data.title}
+                  </a>
+                </h3>
+                <p class="text-muted-foreground mt-1 font-mono text-xs">
+                  <time datetime={entry.data.startDate.toISOString()}>
+                    {df.format(entry.data.startDate)}
+                  </time>
+                  {entry.data.location && <span> · {entry.data.location}</span>}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </div>
 </BaseLayout>
