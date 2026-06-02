@@ -1,0 +1,43 @@
+name: IndexNow
+
+# Ping Bing/IndexNow with the sitemap URLs on every content change to main (#54/#146), so the
+# changed pages get re-crawled fast. Bing's index backs ChatGPT search, so this is a GEO lever.
+# Runs in parallel with Cloudflare Pages' native deploy — harmless, since IndexNow only schedules a
+# later crawl. No secret needed: the served public/<key>.txt verifies ownership.
+#
+# Standalone workflow (not part of the required CI Summary). `workflow_dispatch` allows a manual
+# re-submission of the full sitemap.
+
+on:
+  push:
+    branches: [main]
+    # Only ping when published URLs could have changed.
+    paths:
+      - 'src/content/**'
+      - 'src/pages/**'
+      - 'public/**'
+      - 'astro.config.mjs'
+  workflow_dispatch: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  indexnow:
+    name: Submit sitemap URLs to IndexNow
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      # Reuses the mise-pinned toolchain + installs deps.
+      - uses: ./.github/actions/setup
+      # Build to produce dist/sitemap-0.xml, which the script reads for the URL list.
+      - run: task build
+      # The script POSTs by default (--dry-run is the opt-out); SITE_URL targets the live origin.
+      - run: node scripts/indexnow-submit.mjs
+        env:
+          SITE_URL: https://rsicarelli.com
