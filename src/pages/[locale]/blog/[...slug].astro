@@ -22,7 +22,9 @@ const t = useTranslations(locale);
 const { Content, remarkPluginFrontmatter } = await render(entry);
 const minutes = remarkPluginFrontmatter.minutesRead as number;
 const tagPages = await commonBlogTagSlugs();
-const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long' });
+// timeZone UTC: content dates are date-only (UTC midnight); local-zone formatting would shift the
+// calendar day.
+const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long', timeZone: 'UTC' });
 const { title, description, pubDate, updatedDate, tags } = entry.data;
 ---
 

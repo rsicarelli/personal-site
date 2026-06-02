@@ -17,7 +17,9 @@ export async function getStaticPaths() {
 
 const locale = Astro.params.locale as Locale;
 const t = useTranslations(locale);
-const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'medium' });
+// timeZone UTC: content dates are date-only (UTC midnight); local-zone formatting would shift the
+// calendar day (e.g. a 2024-07-29 talk showing as Jul 28).
+const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'medium', timeZone: 'UTC' });
 
 const now = new Date();
 /** An event is "past" once its end (or start, if single-day) is before today. */

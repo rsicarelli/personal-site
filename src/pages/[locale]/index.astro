@@ -19,7 +19,9 @@ export function getStaticPaths() {
 
 const locale = Astro.params.locale as Locale;
 const t = useTranslations(locale);
-const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'medium' });
+// timeZone UTC: content dates are date-only (stored as UTC midnight); formatting in the local
+// zone would shift them a day (e.g. a 2024-07-29 talk showing as Jul 28). Keep the calendar day.
+const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'medium', timeZone: 'UTC' });
 
 const posts = (await getLocalizedEntries('blog', locale)).slice(0, 3);
 const projects = (await getLocalizedEntries('portfolio', locale))
