@@ -9,6 +9,7 @@
 import { NAV, LOCALES, type Locale } from '@/config/site';
 import { useTranslations, stripLocale } from '@/i18n/utils';
 import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 interface Props {
   locale: Locale;
@@ -46,6 +47,9 @@ const isActive = (href: string) =>
           </li>
         ))
       }
+      <li>
+        <ThemeToggle client:load label={t('theme.toggle')} />
+      </li>
       <li class="border-border border-l pl-4">
         <LanguageSwitcher locale={locale} />
       </li>
