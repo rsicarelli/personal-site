@@ -15,6 +15,9 @@
 import '../styles/global.css';
 import { SITE, DEFAULT_LOCALE } from '@/config/site';
 import { buildSeoMeta } from '@/lib/seo';
+import { websiteLd, personLd } from '@/lib/jsonld';
+import { getLocalizedEntry } from '@/lib/content';
+import JsonLd from '@/components/content/JsonLd.astro';
 
 const canonical = new URL('/', Astro.site).href;
 const alternates = [
@@ -34,6 +37,16 @@ const seoMeta = buildSeoMeta({
   type: 'website',
   siteName: SITE.title,
 });
+
+// Site/author identity for the gateway too (#52) — same WebSite + Person graph as the localized
+// home, built from the default-locale CV so `sameAs`/`knowsAbout` stay consistent.
+const cv = await getLocalizedEntry('cv', DEFAULT_LOCALE, 'cv');
+const siteGraph = [
+  websiteLd({ url: canonical, name: SITE.title, locale: DEFAULT_LOCALE }),
+  ...(cv
+    ? [personLd(cv.entry.data, { url: new URL(`/${DEFAULT_LOCALE}/about`, Astro.site).href })]
+    : []),
+];
 ---
 
 <!doctype html>
@@ -47,6 +60,7 @@ const seoMeta = buildSeoMeta({
     <link rel="canonical" href={canonical} />
     {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
     {seoMeta.map((m) => <meta property={m.property} name={m.name} content={m.content} />)}
+    <JsonLd schema={siteGraph} />
   </head>
   <body class="min-h-dvh antialiased">
     <main class="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center px-6 py-16">

@@ -1,0 +1,24 @@
+---
+/**
+ * Emits a single `<script type="application/ld+json">` for the document head (#52). Pass it through
+ * the BaseLayout head slot: `<JsonLd slot="head" schema={blogPostingLd(...)} />`. Accepts one node
+ * or an array — both are wrapped in one `@graph` document so a page emits exactly one JSON-LD
+ * block. Lives in page-owned space (src/components/content/), beside RssLinks.
+ *
+ * `@context` is applied once at the document root; the `jsonld.ts` builders return context-free
+ * nodes. The `<` escape prevents a `</script>` sequence in any string field from breaking out of
+ * the script element (JSON.stringify does not escape `<`).
+ */
+import type { JsonLdNode } from '@/lib/jsonld';
+
+interface Props {
+  schema: JsonLdNode | JsonLdNode[];
+}
+
+const { schema } = Astro.props;
+const graph = Array.isArray(schema) ? schema : [schema];
+const doc = { '@context': 'https://schema.org', '@graph': graph };
+const json = JSON.stringify(doc).replace(/</g, '\\u003c');
+---
+
+<script type="application/ld+json" is:inline set:html={json} />

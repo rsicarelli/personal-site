@@ -6,8 +6,11 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Prose from '@/components/ui/Prose.astro';
-import { type Locale } from '@/config/site';
+import JsonLd from '@/components/content/JsonLd.astro';
+import { SITE, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
+import { canonicalUrl } from '@/lib/seo';
+import { creativeWorkLd, breadcrumbLd } from '@/lib/jsonld';
 import { localizedPaths } from '@/lib/content';
 import { render } from 'astro:content';
 
@@ -19,10 +22,28 @@ const { entry } = Astro.props;
 const locale = Astro.params.locale as Locale;
 const t = useTranslations(locale);
 const { Content } = await render(entry);
-const { title, description, tech, repo } = entry.data;
+const { title, description, tech, repo, cover } = entry.data;
+
+// Structured data (#52): SoftwareSourceCode (repo present) or CreativeWork, plus a breadcrumb.
+const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
+const coverUrl = cover ? new URL(cover.src, Astro.site).href : undefined;
+const jsonLd = [
+  creativeWorkLd(entry.data, { url: pageUrl, locale, authorName: SITE.name, image: coverUrl }),
+  breadcrumbLd([
+    { name: t('nav.home'), url: canonicalUrl('/', locale, Astro.site) },
+    { name: t('nav.projects'), url: canonicalUrl('/projects', locale, Astro.site) },
+    { name: title, url: pageUrl },
+  ]),
+];
 ---
 
-<BaseLayout title={`${title} · ${t('site.title')}`} description={description}>
+<BaseLayout
+  title={`${title} · ${t('site.title')}`}
+  description={description}
+  ogType="article"
+  image={coverUrl}
+>
+  <JsonLd slot="head" schema={jsonLd} />
   <Container as="article" class="py-16">
     <a
       href={`/${locale}/projects`}

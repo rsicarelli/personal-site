@@ -7,8 +7,11 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Prose from '@/components/ui/Prose.astro';
-import { type Locale } from '@/config/site';
+import JsonLd from '@/components/content/JsonLd.astro';
+import { SITE, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
+import { canonicalUrl } from '@/lib/seo';
+import { blogPostingLd, breadcrumbLd } from '@/lib/jsonld';
 import { localizedPaths, commonBlogTagSlugs, slugifyTag } from '@/lib/content';
 import { formatDate, isoDate } from '@/lib/datetime';
 import { render } from 'astro:content';
@@ -23,10 +26,30 @@ const t = useTranslations(locale);
 const { Content, remarkPluginFrontmatter } = await render(entry);
 const minutes = remarkPluginFrontmatter.minutesRead as number;
 const tagPages = await commonBlogTagSlugs();
-const { title, description, pubDate, updatedDate, tags } = entry.data;
+const { title, description, pubDate, updatedDate, tags, cover } = entry.data;
+
+// Structured data (#52): BlogPosting + a Home → Blog → post breadcrumb. The post's cover (when
+// present) becomes both the OG image and BlogPosting.image; dates reuse the same UTC source as the
+// visible <time> elements. Author is name-only here; the rich Person node lives on /about.
+const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
+const coverUrl = cover ? new URL(cover.src, Astro.site).href : undefined;
+const jsonLd = [
+  blogPostingLd(entry.data, { url: pageUrl, locale, authorName: SITE.name, image: coverUrl }),
+  breadcrumbLd([
+    { name: t('nav.home'), url: canonicalUrl('/', locale, Astro.site) },
+    { name: t('nav.blog'), url: canonicalUrl('/blog', locale, Astro.site) },
+    { name: title, url: pageUrl },
+  ]),
+];
 ---
 
-<BaseLayout title={`${title} · ${t('site.title')}`} description={description}>
+<BaseLayout
+  title={`${title} · ${t('site.title')}`}
+  description={description}
+  ogType="article"
+  image={coverUrl}
+>
+  <JsonLd slot="head" schema={jsonLd} />
   <Container as="article" class="py-16">
     <a
       href={`/${locale}/blog`}
