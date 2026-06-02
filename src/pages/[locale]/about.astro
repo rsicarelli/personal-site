@@ -1,37 +1,173 @@
 ---
 /**
- * Localized About page (#23 demo) — one static route per locale (`/en/about`, `/pt-br/about`).
- * Exercises the real URL-locale → content-suffix pipeline: the `pt-br` route loads `about.pt.mdx`
- * and `en` loads `about.en.mdx` via `contentSuffix`. Proves hreflang on a non-home route and the
- * switcher preserving a deep path. Richer page content (Person JSON-LD, CV) lands in #27/#52.
+ * About / CV (#30). Bespoke route (NOT the generic [...slug] catch-all): it renders the prose
+ * intro from the `pages` collection AND the structured CV from the `cv` collection (→ Person /
+ * knowsAbout / sameAs JSON-LD later, #52). A print stylesheet + a "Save as PDF" button give a
+ * dependency-free, always-current, locale-aware résumé export via the browser's own print-to-PDF.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { LOCALES, type Locale } from '@/config/site';
-import { contentSuffix } from '@/i18n/utils';
-import { getCollection, render } from 'astro:content';
+import { useTranslations } from '@/i18n/utils';
+import { getLocalizedEntry } from '@/lib/content';
+import { render } from 'astro:content';
 
 export async function getStaticPaths() {
-  const pages = await getCollection('pages');
-  // The glob loader slugifies entry ids (dropping dots: `about.en` → `abouten`), so match on
-  // `filePath` — the real filename — which reliably carries the `.<suffix>.mdx` locale marker.
-  return LOCALES.map((locale) => {
-    const suffix = contentSuffix(locale);
-    const entry = pages.find((p) => p.filePath?.endsWith(`/about.${suffix}.mdx`));
-    return { params: { locale }, props: { entry } };
-  });
+  return Promise.all(
+    LOCALES.map(async (locale) => ({
+      params: { locale },
+      props: {
+        page: (await getLocalizedEntry('pages', locale, 'about'))?.entry,
+        cv: (await getLocalizedEntry('cv', locale, 'cv'))?.entry,
+      },
+    })),
+  );
 }
 
-const { entry } = Astro.props;
+const { page, cv } = Astro.props;
 const locale = Astro.params.locale as Locale;
-if (!entry) throw new Error(`Missing 'about' page entry for locale "${locale}".`);
-const { Content } = await render(entry);
+const t = useTranslations(locale);
+if (!page) throw new Error(`Missing 'about' page entry for locale "${locale}".`);
+if (!cv) throw new Error(`Missing 'cv' entry for locale "${locale}".`);
+const { Content } = await render(page);
+const { name, headline, location, email, summary, knowsAbout, profiles, work } = cv.data;
 ---
 
-<BaseLayout title={entry.data.title} description={entry.data.description}>
+<BaseLayout title={`${t('nav.about')} · ${t('site.title')}`} description={page.data.description}>
   <section class="mx-auto max-w-3xl px-6 py-16">
-    <h1 class="text-3xl font-bold tracking-tight">{entry.data.title}</h1>
+    <h1 class="text-3xl font-bold tracking-tight">{page.data.title}</h1>
     <div class="text-muted-foreground mt-4 max-w-prose space-y-4">
       <Content />
     </div>
+
+    <!-- Structured CV -->
+    <div id="cv" class="border-border mt-16 border-t pt-10">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight">{name}</h2>
+          <p class="text-muted-foreground mt-1">{headline}</p>
+          <p class="text-muted-foreground mt-1 font-mono text-xs">
+            {location}
+            {
+              email && (
+                <>
+                  <span aria-hidden="true"> · </span>
+                  <a
+                    href={`mailto:${email}`}
+                    class="hover:text-foreground underline underline-offset-4"
+                  >
+                    {email}
+                  </a>
+                </>
+              )
+            }
+          </p>
+        </div>
+        <button
+          id="print-cv"
+          type="button"
+          class="border-border hover:bg-muted inline-flex shrink-0 items-center rounded-md border px-3 py-1.5 font-mono text-xs transition-colors print:hidden"
+        >
+          {t('cv.print')}
+        </button>
+      </div>
+
+      {summary && <p class="text-foreground mt-6 max-w-prose">{summary}</p>}
+
+      {
+        knowsAbout.length > 0 && (
+          <div class="mt-8">
+            <h3 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+              {t('cv.knowsAbout')}
+            </h3>
+            <ul class="mt-3 flex flex-wrap gap-2 font-mono text-xs">
+              {knowsAbout.map((topic) => (
+                <li class="border-border rounded-full border px-2 py-0.5">{topic}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      {
+        work.length > 0 && (
+          <div class="mt-8">
+            <h3 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+              {t('cv.experience')}
+            </h3>
+            <ul class="mt-4 space-y-6">
+              {work.map((job) => (
+                <li>
+                  <div class="flex flex-wrap items-baseline justify-between gap-2">
+                    <p class="font-semibold">
+                      {job.role} · <span class="font-normal">{job.company}</span>
+                    </p>
+                    <p class="text-muted-foreground font-mono text-xs">
+                      {job.startDate} – {job.endDate ?? t('cv.present')}
+                    </p>
+                  </div>
+                  {job.summary && (
+                    <p class="text-muted-foreground mt-1 max-w-prose">{job.summary}</p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      {
+        profiles.length > 0 && (
+          <div class="mt-8">
+            <h3 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+              {t('cv.elsewhere')}
+            </h3>
+            <ul class="mt-3 flex flex-wrap gap-4 font-mono text-sm">
+              {profiles.map((profile) => (
+                <li>
+                  <a
+                    href={profile.url}
+                    rel="me noopener"
+                    class="text-primary underline underline-offset-4"
+                  >
+                    {profile.network} ↗
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
   </section>
 </BaseLayout>
+
+<script is:inline>
+  document.getElementById('print-cv')?.addEventListener('click', () => window.print());
+</script>
+
+<style is:global>
+  /* CV print export (#30): strip the site chrome and print just the résumé, in the current locale,
+     using the browser's own Save-as-PDF. Targets the layout landmarks (header/footer) emitted by
+     the BaseLayout shell — if Epic 5 restructures them, coordinate on a shared `print:hidden`. */
+  @media print {
+    header,
+    footer {
+      display: none !important;
+    }
+    main,
+    main section {
+      margin: 0 !important;
+      padding: 0 !important;
+      max-width: none !important;
+    }
+    /* The prose intro and back-links are screen context; the résumé is what prints. */
+    #cv {
+      border: 0 !important;
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
+    a {
+      text-decoration: none !important;
+    }
+  }
+</style>

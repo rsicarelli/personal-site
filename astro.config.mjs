@@ -1,9 +1,10 @@
 // @ts-check
-import { defineConfig, envField } from 'astro/config';
+import { defineConfig, envField, fontProviders } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -32,6 +33,13 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
+  // Blog reading time (#31): a remark plugin computes `minutesRead` from each post's prose and
+  // exposes it on `render()`'s remarkPluginFrontmatter. MDX inherits the markdown remark plugins
+  // by default, so blog .mdx posts get it too.
+  markdown: {
+    remarkPlugins: [remarkReadingTime],
+  },
+
   // Typed runtime configuration (astro:env). Import these from `astro:env/client` (or
   // `astro:env/server` for secrets) instead of reading import.meta.env directly, so missing
   // or malformed values fail the build. Real values live in an untracked .env — see
@@ -49,8 +57,46 @@ export default defineConfig({
         access: 'public',
         optional: true,
       }),
+      // Base URL for photos/downloads (#36/#37). Defaults to the local `public/media/` dir so dev
+      // works with placeholder assets; flips to the Cloudflare R2 public base in the Hosting epic
+      // (#67) via .env — no code change. Media itself never lives in git (we avoid Git LFS).
+      PUBLIC_MEDIA_BASE_URL: envField.string({
+        context: 'client',
+        access: 'public',
+        default: '/media',
+      }),
     },
   },
+
+  // Self-hosted variable fonts (#43). Astro's Fonts API downloads the woff2 at build via the
+  // Google provider and serves them from our own origin (NO runtime font CDN), generating the
+  // @font-face rules, fallback-metric overrides (cuts CLS), and the preload links emitted by the
+  // <Font> component in BaseLayout. Inter is the editorial body face; JetBrains Mono is the
+  // "monospace accent" (brand, nav labels, code). Both subset to Latin + Latin-Extended so the
+  // full pt-BR diacritics (ã õ á é ç …) render. `weights` are variable-font ranges (one file
+  // each), `display: swap` avoids invisible text. Wired to --font-sans / --font-mono in global.css.
+  fonts: [
+    {
+      provider: fontProviders.google(),
+      name: 'Inter',
+      cssVariable: '--font-inter',
+      weights: ['100 900'],
+      styles: ['normal', 'italic'],
+      subsets: ['latin', 'latin-ext'],
+      display: 'swap',
+      fallbacks: ['system-ui', 'sans-serif'],
+    },
+    {
+      provider: fontProviders.google(),
+      name: 'JetBrains Mono',
+      cssVariable: '--font-jetbrains-mono',
+      weights: ['400 700'],
+      styles: ['normal'],
+      subsets: ['latin', 'latin-ext'],
+      display: 'swap',
+      fallbacks: ['ui-monospace', 'monospace'],
+    },
+  ],
 
   // i18n routing (#20). Subdirectory URLs /en/ + /pt-br/ (never ccTLD/subdomain/?lang=).
   // `prefixDefaultLocale: true` prefixes English too, so `/` is a neutral, crawlable gateway.

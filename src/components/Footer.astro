@@ -21,14 +21,17 @@ const year = new Date().getFullYear();
 
 <footer class="border-border mt-16 border-t">
   <div
-    class="text-muted-foreground mx-auto flex max-w-3xl flex-col gap-2 px-6 py-8 text-sm sm:flex-row sm:items-center sm:justify-between"
+    class="text-muted-foreground container-content flex flex-col gap-2 py-8 text-sm sm:flex-row sm:items-center sm:justify-between"
   >
     <p>© {year} Rodrigo Sicarelli</p>
     <ul class="flex items-center gap-4">
       {
         FOOTER_LINKS.map((item) => (
           <li>
-            <a href={localized(item.href)} class="hover:text-foreground transition-colors">
+            <a
+              href={localized(item.href)}
+              class="hover:text-foreground inline-flex min-h-6 items-center transition-colors"
+            >
               {t(item.key)}
             </a>
           </li>

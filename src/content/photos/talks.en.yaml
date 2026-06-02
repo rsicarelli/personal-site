@@ -1,0 +1,13 @@
+# Sample gallery (English) — validates the `photos` schema. `src` paths are resolved at render by
+# mediaUrl() against PUBLIC_MEDIA_BASE_URL; the images themselves live in R2/public/media, not git.
+title: Talks & conferences
+description: Moments from talks, workshops and conference participations.
+items:
+  - src: photos/kotlinconf-2025-stage.jpg
+    alt: Rodrigo on stage at KotlinConf 2025 in Copenhagen.
+    width: 1600
+    height: 1067
+  - src: photos/kotlinconf-2025-audience.jpg
+    alt: Audience during the Kotlin Multiplatform talk at KotlinConf 2025.
+    width: 1600
+    height: 1067

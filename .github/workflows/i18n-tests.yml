@@ -1,0 +1,41 @@
+name: i18n tests
+
+# Rendered-output i18n tests (Vitest over dist/**): wrong-language gates, hreflang reciprocity,
+# the neutral gateway, and the language switcher. Standalone workflow (its own file, separate from
+# ci.yml) that builds the site then runs the suite. See issue #105.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'astro.config.mjs'
+      - 'vitest.config.ts'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/i18n-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  i18n-tests:
+    name: i18n rendered-output tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      # Reuses the mise-pinned toolchain (Node/pnpm/go-task from .tool-versions).
+      - uses: ./.github/actions/setup
+      - run: task build
+      - run: pnpm test:i18n

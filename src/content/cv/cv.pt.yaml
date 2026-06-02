@@ -11,9 +11,12 @@ knowsAbout:
   - Swift
   - TypeScript
   - Gradle
+email: rodrigo.sicarelli@gmail.com
 profiles:
   - network: GitHub
     url: https://github.com/rsicarelli
+  - network: LinkedIn
+    url: https://linkedin.com/in/rsicarelli
 work:
   - company: Stone
     role: Staff Software Engineer (Mobile Platform)

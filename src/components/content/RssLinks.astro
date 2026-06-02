@@ -1,0 +1,22 @@
+---
+/**
+ * Per-locale RSS autodiscovery `<link>` for the document head. Place it into a page via the
+ * BaseLayout `head` slot: `<RssLinks slot="head" locale={locale} />`. Lives in page-owned space
+ * (src/components/content/) — it's content wiring, not part of Epic 5's design-system components.
+ */
+import { ui } from '@/i18n/ui';
+import type { Locale } from '@/config/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={`${ui[locale]['site.title']} — RSS`}
+  href={`/${locale}/rss.xml`}
+/>

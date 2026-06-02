@@ -1,0 +1,84 @@
+---
+/**
+ * Talk / event detail (#34). One route per (locale, event) from the content spine. Renders the
+ * recording through the lightweight YouTube facade (loads on click), plus date, location, slides
+ * and the event page. The facade is a page-owned stub; it swaps to Epic 5's lite-youtube later.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LiteYoutube from '@/components/content/LiteYoutube.astro';
+import { type Locale } from '@/config/site';
+import { useTranslations, hreflangOf } from '@/i18n/utils';
+import { localizedPaths } from '@/lib/content';
+import { render } from 'astro:content';
+
+export async function getStaticPaths() {
+  return localizedPaths('events');
+}
+
+const { entry } = Astro.props;
+const locale = Astro.params.locale as Locale;
+const t = useTranslations(locale);
+const { Content } = await render(entry);
+const { title, description, startDate, endDate, location, url, slides, video } = entry.data;
+const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long' });
+const dateLabel =
+  endDate && endDate.getTime() !== startDate.getTime()
+    ? `${df.format(startDate)} – ${df.format(endDate)}`
+    : df.format(startDate);
+---
+
+<BaseLayout title={`${title} · ${t('site.title')}`} description={description}>
+  <article class="mx-auto max-w-3xl px-6 py-16">
+    <a
+      href={`/${locale}/talks`}
+      class="text-muted-foreground hover:text-foreground font-mono text-xs"
+    >
+      ← {t('talks.allTalks')}
+    </a>
+    <h1 class="mt-6 text-3xl font-bold tracking-tight text-balance">{title}</h1>
+    <p class="text-muted-foreground mt-3 font-mono text-xs">
+      <time datetime={startDate.toISOString()}>{dateLabel}</time>
+      {location && <span> · {location}</span>}
+    </p>
+
+    {
+      video && (
+        <div class="mt-8">
+          <LiteYoutube url={video} title={title} />
+        </div>
+      )
+    }
+
+    <p class="text-muted-foreground mt-8 max-w-prose">{description}</p>
+
+    <div class="mt-6 flex flex-wrap gap-4 font-mono text-sm">
+      {
+        slides && (
+          <a href={slides} rel="noopener" class="text-primary underline underline-offset-4">
+            {t('talks.slides')} ↗
+          </a>
+        )
+      }
+      {
+        video && (
+          <a href={video} rel="noopener" class="text-primary underline underline-offset-4">
+            {t('talks.watch')} ↗
+          </a>
+        )
+      }
+      {
+        url && (
+          <a href={url} rel="noopener" class="text-primary underline underline-offset-4">
+            {t('talks.eventPage')} ↗
+          </a>
+        )
+      }
+    </div>
+
+    <div
+      class="text-foreground mt-8 max-w-prose space-y-4 [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-semibold"
+    >
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

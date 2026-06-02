@@ -6,9 +6,10 @@
  * sits at the end of the nav. Routes other than Home/About are placeholders until the Content
  * epic (#27).
  */
-import { NAV, type Locale } from '@/config/site';
-import { useTranslations } from '@/i18n/utils';
+import { NAV, LOCALES, type Locale } from '@/config/site';
+import { useTranslations, stripLocale } from '@/i18n/utils';
 import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 interface Props {
   locale: Locale;
@@ -19,10 +20,16 @@ const t = useTranslations(locale);
 
 /** Prefix a logical href with the current locale: `/` → `/en`, `/blog` → `/en/blog`. */
 const localized = (href: string) => `/${locale}${href === '/' ? '' : href}`;
+
+// Active-section wayfinding: compare the locale-stripped path so it works on /en/ and /pt-br/.
+// A section is active on its index and any nested route (`/blog` → also `/blog/my-post`).
+const current = stripLocale(Astro.url.pathname, LOCALES);
+const isActive = (href: string) =>
+  href === '/' ? current === '/' : current === href || current.startsWith(`${href}/`);
 ---
 
 <header class="border-border border-b">
-  <nav aria-label="Primary" class="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
+  <nav aria-label="Primary" class="container-content flex items-center justify-between py-4">
     <a href={localized('/')} class="font-mono text-sm font-semibold tracking-tight">
       rsicarelli.com
     </a>
@@ -30,12 +37,19 @@ const localized = (href: string) => `/${locale}${href === '/' ? '' : href}`;
       {
         NAV.slice(1).map((item) => (
           <li>
-            <a href={localized(item.href)} class="hover:text-foreground transition-colors">
+            <a
+              href={localized(item.href)}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              class="hover:text-foreground aria-[current=page]:text-primary inline-flex min-h-6 items-center transition-colors aria-[current=page]:font-medium"
+            >
               {t(item.key)}
             </a>
           </li>
         ))
       }
+      <li>
+        <ThemeToggle client:load label={t('theme.toggle')} />
+      </li>
       <li class="border-border border-l pl-4">
         <LanguageSwitcher locale={locale} />
       </li>

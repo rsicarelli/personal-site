@@ -1,0 +1,72 @@
+---
+/**
+ * Blog index (#31) — one localized listing per locale (`/en/blog`, `/pt-br/blog`), newest first,
+ * via the content spine (draft-filtered in prod). Tags link to their archive only when the tag
+ * exists in both locales (kept honest by `commonBlogTagSlugs`). Post covers and richer cards adopt
+ * Epic 5's Image/card components when they land; this is plain semantic-token markup until then.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import RssLinks from '@/components/content/RssLinks.astro';
+import { LOCALES, type Locale } from '@/config/site';
+import { useTranslations, hreflangOf } from '@/i18n/utils';
+import { getLocalizedEntries, commonBlogTagSlugs, slugifyTag } from '@/lib/content';
+
+export async function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const locale = Astro.params.locale as Locale;
+const t = useTranslations(locale);
+const posts = await getLocalizedEntries('blog', locale);
+const tagPages = await commonBlogTagSlugs();
+const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long' });
+---
+
+<BaseLayout title={`${t('nav.blog')} · ${t('site.title')}`} description={t('site.description')}>
+  <RssLinks slot="head" locale={locale} />
+  <section class="mx-auto max-w-3xl px-6 py-16">
+    <h1 class="text-3xl font-bold tracking-tight">{t('nav.blog')}</h1>
+
+    {posts.length === 0 && <p class="text-muted-foreground mt-6">{t('blog.empty')}</p>}
+
+    <ul class="mt-10 space-y-10">
+      {
+        posts.map(({ slug, entry }) => (
+          <li class="border-border border-b pb-10 last:border-0">
+            <h2 class="text-xl font-semibold tracking-tight">
+              <a href={`/${locale}/blog/${slug}`} class="hover:text-primary transition-colors">
+                {entry.data.title}
+              </a>
+            </h2>
+            <p class="text-muted-foreground mt-1 font-mono text-xs">
+              <time datetime={entry.data.pubDate.toISOString()}>
+                {df.format(entry.data.pubDate)}
+              </time>
+            </p>
+            <p class="text-muted-foreground mt-3 max-w-prose">{entry.data.description}</p>
+            {entry.data.tags.length > 0 && (
+              <ul class="mt-4 flex flex-wrap gap-2 text-xs">
+                {entry.data.tags.map((tag) =>
+                  tagPages.has(slugifyTag(tag)) ? (
+                    <li>
+                      <a
+                        href={`/${locale}/blog/tags/${slugifyTag(tag)}`}
+                        class="border-border text-muted-foreground hover:text-foreground rounded-full border px-2 py-0.5 transition-colors"
+                      >
+                        {tag}
+                      </a>
+                    </li>
+                  ) : (
+                    <li class="text-muted-foreground border-border rounded-full border px-2 py-0.5">
+                      {tag}
+                    </li>
+                  ),
+                )}
+              </ul>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>

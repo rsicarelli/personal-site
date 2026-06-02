@@ -1,16 +1,30 @@
 /*
- * Global stylesheet — Tailwind CSS v4 (CSS-first) + the design-token skeleton.
+ * Global stylesheet — Tailwind CSS v4 (CSS-first) + the design tokens.
  *
  * Tokens are defined as Oklch CSS variables on :root / .dark and exposed to Tailwind
  * utilities through `@theme inline` (so `bg-background`, `text-foreground`, `ring-ring`,
  * etc. resolve to these variables and re-point per theme). This is the SINGLE source of
  * truth for color — shadcn/ui components consume the same variables.
  *
- * Scope of this skeleton (#7): structure + a neutral baseline so the layout is themeable.
- * The finalized palette — deep-slate base + one distinctive accent (research §05) — and the
- * persisted dark/light toggle land in the Design System epic (#41 / #42). Self-hosted
- * variable fonts (Inter / IBM Plex, full pt-BR diacritics) land in #43; until then the
- * --font-sans / --font-mono seams below resolve to a system stack.
+ * Palette (#41): deep-slate base (#0f172a family, hue ~265) + one signature accent —
+ * electric indigo/violet (hue ~280). We KEEP shadcn's token names (--background,
+ * --primary, --ring, …) and re-point them; semantic mapping (research §05):
+ *
+ *   research semantic  →  shadcn var          role
+ *   bg                 →  --background        page background
+ *   text               →  --foreground        primary text
+ *   surface            →  --card / --popover   elevated surfaces
+ *   muted text         →  --muted-foreground   secondary text
+ *   accent (signature) →  --primary + --ring   links, primary actions, focus ring
+ *   accent-contrast    →  --primary-foreground text on the accent
+ *   border / focus     →  --border / --ring    dividers / focus indicator
+ *
+ * (shadcn's own `--accent` is its subtle hover/surface token, NOT our signature color.)
+ * The accent flips dark→light across themes (dark accent in light mode for link/button
+ * contrast on white; light accent in dark mode for contrast on slate) so it hits WCAG
+ * 2.2 AA in BOTH roles and themes: body text ≥4.5:1, focus ring / non-text ≥3:1.
+ * Self-hosted variable fonts (Inter + JetBrains Mono, pt-BR diacritics) land in #43; until
+ * then the --font-sans / --font-mono seams below resolve to a system stack.
  */
 @import 'tailwindcss';
 @import 'tw-animate-css';
@@ -21,54 +35,61 @@
 :root {
   --radius: 0.625rem;
 
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* Light theme — near-white bg, deep-slate ink, dark-indigo accent for contrast on white. */
+  --background: oklch(0.985 0.002 247);
+  --foreground: oklch(0.21 0.04 265);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.21 0.04 265);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.21 0.04 265);
+  --primary: oklch(0.5 0.19 280);
+  --primary-foreground: oklch(0.985 0.005 280);
+  --secondary: oklch(0.968 0.007 247);
+  --secondary-foreground: oklch(0.21 0.04 265);
+  --muted: oklch(0.968 0.007 247);
+  --muted-foreground: oklch(0.45 0.04 257);
+  --accent: oklch(0.968 0.007 247);
+  --accent-foreground: oklch(0.21 0.04 265);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: oklch(0.922 0.013 255);
+  --input: oklch(0.87 0.02 252);
+  --ring: oklch(0.5 0.19 280);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  /* Dark theme — deep-slate (#0f172a family) bg, near-white ink, light-indigo accent. */
+  --background: oklch(0.19 0.035 265);
+  --foreground: oklch(0.97 0.005 247);
+  --card: oklch(0.23 0.038 264);
+  --card-foreground: oklch(0.97 0.005 247);
+  --popover: oklch(0.23 0.038 264);
+  --popover-foreground: oklch(0.97 0.005 247);
+  --primary: oklch(0.72 0.16 280);
+  --primary-foreground: oklch(0.2 0.04 265);
+  --secondary: oklch(0.27 0.04 260);
+  --secondary-foreground: oklch(0.97 0.005 247);
+  --muted: oklch(0.27 0.04 260);
+  --muted-foreground: oklch(0.71 0.04 256);
+  --accent: oklch(0.27 0.04 260);
+  --accent-foreground: oklch(0.97 0.005 247);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 18%);
+  --ring: oklch(0.72 0.16 280);
 }
 
 @theme inline {
-  /* Font seams — system stack now; self-hosted variable fonts arrive in #43. */
+  /*
+   * Font seams (#43) — self-hosted variable fonts via Astro's Fonts API. The --font-inter /
+   * --font-jetbrains-mono vars are registered in astro.config.mjs and already resolve to the
+   * family name + metric-matched fallbacks; the trailing system stacks are a final safety net.
+   */
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
+    var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-mono:
-    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+    var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -103,5 +124,178 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
+  }
+
+  /*
+   * Accessibility baseline (#46) — WCAG 2.2 Focus Appearance (2.4.13): a clearly visible
+   * keyboard focus indicator in the accent colour with an offset (contrast ≥3:1 vs both themes,
+   * verified in #41). Components that manage their own ring (e.g. Button via Tailwind utilities,
+   * which sit in a higher layer) override this; everything else — links, summary, etc. — inherits
+   * it. `:focus:not(:focus-visible)` suppresses the ring for mouse/touch so only keyboard shows it.
+   */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Keep focused targets clear of sticky edges if any are added later (Focus Not Obscured, 2.4.11). */
+  :target {
+    scroll-margin-top: 5rem;
+  }
+}
+
+/*
+ * Layout tracks (#45). Two centered widths with a responsive gutter: `container-content` is the
+ * editorial reading measure (~65ch, the site default) and `container-wide` is for galleries and
+ * wide media. The names are hyphenated on purpose so Tailwind's built-in utility of the same
+ * stem is never emitted. Both are @utility classes — usable directly in .astro, pages, and MDX
+ * with no import — and are wrapped by Container.astro for ergonomics. Each owns only horizontal
+ * width + gutter; vertical rhythm (py-*) stays on the consuming element.
+ */
+:root {
+  --measure-content: 48rem; /* editorial reading column (was the repeated max-w-3xl) */
+  --measure-wide: 72rem; /* galleries, wide media, multi-column layouts */
+}
+
+@utility container-content {
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--measure-content);
+  padding-inline: 1.5rem;
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility container-wide {
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--measure-wide);
+  padding-inline: 1.5rem;
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+}
+
+/*
+ * Prose (#44) — typographic defaults for long-form MDX (blog posts, about, pages). Apply via the
+ * `prose` class or the Prose.astro wrapper around a rendered <Content />. Minimalist-editorial:
+ * full-contrast body ink (foreground, not muted), a comfortable ~68ch measure and 1.7 line-height,
+ * accent links, mono code. It only styles flow content — width/centering stay with the container.
+ */
+.prose {
+  max-width: 68ch;
+  color: var(--foreground);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  text-wrap: pretty;
+
+  & > * + * {
+    margin-block-start: 1.25em;
+  }
+
+  & h1,
+  & h2,
+  & h3,
+  & h4 {
+    color: var(--foreground);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  & h2 {
+    margin-block-start: 2em;
+    font-size: 1.5rem;
+  }
+
+  & h3 {
+    margin-block-start: 1.6em;
+    font-size: 1.25rem;
+  }
+
+  & h4 {
+    margin-block-start: 1.4em;
+    font-size: 1.0625rem;
+  }
+
+  & a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+
+  & a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  & strong {
+    font-weight: 600;
+  }
+
+  & ul,
+  & ol {
+    padding-inline-start: 1.5rem;
+  }
+
+  & ul {
+    list-style: disc;
+  }
+
+  & ol {
+    list-style: decimal;
+  }
+
+  & li + li {
+    margin-block-start: 0.375em;
+  }
+
+  & :not(pre) > code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--muted);
+    padding: 0.15em 0.35em;
+    border-radius: var(--radius-sm);
+  }
+
+  & pre {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+  }
+
+  & pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  & blockquote {
+    border-inline-start: 3px solid var(--primary);
+    padding-inline-start: 1rem;
+    color: var(--muted-foreground);
+    font-style: italic;
+  }
+
+  & hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin-block: 2.5em;
+  }
+
+  & img {
+    border-radius: var(--radius-md);
+  }
+
+  & :is(h1, h2, h3, h4):first-child {
+    margin-block-start: 0;
   }
 }

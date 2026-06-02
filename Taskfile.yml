@@ -60,6 +60,17 @@ tasks:
     cmds:
       - pnpm check:i18n
 
+  test:
+    desc: Run the test suite (Vitest) — rendered tests assume dist/ is already built
+    cmds:
+      - pnpm test
+
+  test:i18n:
+    desc: i18n tests — build the site, then assert on the rendered dist/** output
+    cmds:
+      - task: build
+      - pnpm test:i18n
+
   check:
     desc: All quality gates — typecheck + lint + format check
     cmds:
@@ -68,12 +79,13 @@ tasks:
       - task: fmt:check
 
   dod:
-    desc: Definition of Done — format, run every gate + i18n completeness, then build (run before committing)
+    desc: Definition of Done — format, every gate + i18n completeness, build, then tests (run before committing)
     cmds:
       - task: fmt
       - task: check
       - task: i18n:check
       - task: build
+      - task: test
 
   hooks:install:
     desc: Enable the version-controlled .githooks/ directory (pre-commit DOD gate)
