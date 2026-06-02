@@ -6,6 +6,7 @@
  * Epic 5's Image/card components when they land; this is plain semantic-token markup until then.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
 import RssLinks from '@/components/content/RssLinks.astro';
 import { LOCALES, type Locale } from '@/config/site';
 import { useTranslations, hreflangOf } from '@/i18n/utils';
@@ -24,7 +25,7 @@ const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long' });
 
 <BaseLayout title={`${t('nav.blog')} · ${t('site.title')}`} description={t('site.description')}>
   <RssLinks slot="head" locale={locale} />
-  <section class="mx-auto max-w-3xl px-6 py-16">
+  <Container as="section" class="py-16">
     <h1 class="text-3xl font-bold tracking-tight">{t('nav.blog')}</h1>
 
     {posts.length === 0 && <p class="text-muted-foreground mt-6">{t('blog.empty')}</p>}
@@ -68,5 +69,5 @@ const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long' });
         ))
       }
     </ul>
-  </section>
+  </Container>
 </BaseLayout>

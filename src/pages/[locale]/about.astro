@@ -6,6 +6,8 @@
  * dependency-free, always-current, locale-aware résumé export via the browser's own print-to-PDF.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Prose from '@/components/ui/Prose.astro';
 import Image from '@/components/ui/Image.astro';
 import portrait from '@/assets/rodrigo-sicarelli.jpg';
 import { LOCALES, type Locale } from '@/config/site';
@@ -35,7 +37,7 @@ const { name, headline, location, email, summary, knowsAbout, profiles, work } =
 ---
 
 <BaseLayout title={`${t('nav.about')} · ${t('site.title')}`} description={page.data.description}>
-  <section class="mx-auto max-w-3xl px-6 py-16">
+  <Container as="section" class="py-16">
     <Image
       src={portrait}
       alt="Rodrigo Sicarelli"
@@ -45,9 +47,9 @@ const { name, headline, location, email, summary, knowsAbout, profiles, work } =
       class="border-border mb-6 size-40 rounded-full border object-cover"
     />
     <h1 class="text-3xl font-bold tracking-tight">{page.data.title}</h1>
-    <div class="text-muted-foreground mt-4 max-w-prose space-y-4">
+    <Prose class="mt-4">
       <Content />
-    </div>
+    </Prose>
 
     <!-- Structured CV -->
     <div id="cv" class="border-border mt-16 border-t pt-10">
@@ -148,7 +150,7 @@ const { name, headline, location, email, summary, knowsAbout, profiles, work } =
         )
       }
     </div>
-  </section>
+  </Container>
 </BaseLayout>
 
 <script>

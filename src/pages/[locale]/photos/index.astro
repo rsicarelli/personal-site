@@ -6,6 +6,7 @@
  * space and avoid layout shift. Plain <img> for now; swaps to Epic 5's Image component when it lands.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
 import { LOCALES, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
 import { getLocalizedEntries } from '@/lib/content';
@@ -25,7 +26,7 @@ const total = galleries.reduce((n, g) => n + g.entry.data.items.length, 0);
   title={`${t('footer.photos')} · ${t('site.title')}`}
   description={t('site.description')}
 >
-  <section class="mx-auto max-w-3xl px-6 py-16">
+  <Container as="section" class="py-16">
     <h1 class="text-3xl font-bold tracking-tight">{t('footer.photos')}</h1>
 
     {total === 0 && <p class="text-muted-foreground mt-6">{t('photos.empty')}</p>}
@@ -55,5 +56,5 @@ const total = galleries.reduce((n, g) => n + g.entry.data.items.length, 0);
         </div>
       ))
     }
-  </section>
+  </Container>
 </BaseLayout>

@@ -5,6 +5,8 @@
  * placeholders now, Cloudflare R2 later (#67), no code change. The binaries never live in git.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Card from '@/components/ui/Card.astro';
 import { LOCALES, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
 import { getLocalizedEntries } from '@/lib/content';
@@ -24,7 +26,7 @@ const total = groups.reduce((n, g) => n + g.entry.data.items.length, 0);
   title={`${t('footer.materials')} · ${t('site.title')}`}
   description={t('site.description')}
 >
-  <section class="mx-auto max-w-3xl px-6 py-16">
+  <Container as="section" class="py-16">
     <h1 class="text-3xl font-bold tracking-tight">{t('footer.materials')}</h1>
 
     {total === 0 && <p class="text-muted-foreground mt-6">{t('materials.empty')}</p>}
@@ -38,7 +40,7 @@ const total = groups.reduce((n, g) => n + g.entry.data.items.length, 0);
           )}
           <ul class="mt-6 space-y-3">
             {entry.data.items.map((item) => (
-              <li class="border-border bg-card flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
+              <Card as="li" class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p class="font-medium">{item.title}</p>
                   {item.description && (
@@ -54,11 +56,11 @@ const total = groups.reduce((n, g) => n + g.entry.data.items.length, 0);
                   {t('materials.download')}
                   {item.kind && <span class="text-muted-foreground uppercase">· {item.kind}</span>}
                 </a>
-              </li>
+              </Card>
             ))}
           </ul>
         </div>
       ))
     }
-  </section>
+  </Container>
 </BaseLayout>

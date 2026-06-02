@@ -16,3 +16,19 @@ export function mediaUrl(path: string): string {
   const rel = path.replace(/^\/+/, '');
   return `${base}/${rel}`;
 }
+
+/**
+ * Extract the YouTube video id from a watch / share / embed URL, for the `ui/LiteYouTube` facade
+ * (which takes the bare id, not a URL). Returns null if it isn't a recognizable YouTube URL.
+ */
+export function youtubeId(raw: string): string | null {
+  try {
+    const u = new URL(raw);
+    if (u.hostname === 'youtu.be') return u.pathname.slice(1) || null;
+    if (u.searchParams.get('v')) return u.searchParams.get('v');
+    const embed = u.pathname.match(/\/embed\/([^/?]+)/);
+    return embed ? embed[1] : null;
+  } catch {
+    return null;
+  }
+}

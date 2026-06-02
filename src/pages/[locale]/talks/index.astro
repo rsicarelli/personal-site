@@ -5,6 +5,7 @@
  * links surface inline. Semantic-token markup; the YouTube facade lives on the detail page.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
 import { LOCALES, type Locale } from '@/config/site';
 import { useTranslations, hreflangOf } from '@/i18n/utils';
 import { getLocalizedEntries } from '@/lib/content';
@@ -36,7 +37,7 @@ const dateRange = (data: CollectionEntry<'events'>['data']) => {
 ---
 
 <BaseLayout title={`${t('nav.talks')} · ${t('site.title')}`} description={t('site.description')}>
-  <section class="mx-auto max-w-3xl px-6 py-16">
+  <Container as="section" class="py-16">
     <h1 class="text-3xl font-bold tracking-tight">{t('nav.talks')}</h1>
 
     {all.length === 0 && <p class="text-muted-foreground mt-6">{t('talks.empty')}</p>}
@@ -77,5 +78,5 @@ const dateRange = (data: CollectionEntry<'events'>['data']) => {
           ),
       )
     }
-  </section>
+  </Container>
 </BaseLayout>
