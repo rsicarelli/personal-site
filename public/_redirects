@@ -1,0 +1,14 @@
+# Cloudflare Pages redirects — PATH-based only.
+#
+# What does NOT belong here:
+#   * Host canonicalization (www <-> apex) — _redirects cannot match on hostname. That lives in
+#     a Cloudflare Redirect Rule in the dashboard (see docs/deploy-runbook.md, #65).
+#   * Any IP/locale-based redirect — NEVER. Googlebot crawls from US IPs with no Accept-Language
+#     and must reach both /en/ and /pt-br/. Locale detection stays the client-side soft redirect
+#     on the neutral, crawlable gateway at / (src/pages/index.astro) — never a server 30x.
+#
+# trailingSlash is 'ignore' (astro.config.mjs), so no trailing-slash normalization is needed.
+# Unmatched paths fall through to the bilingual 404 (dist/404.html), which Pages serves
+# automatically — no rule required.
+#
+# Add path-level redirects below as content moves. None needed at launch.
