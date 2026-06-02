@@ -12,11 +12,19 @@ knowsAbout:
   - TypeScript
   - Gradle
 email: rodrigo.sicarelli@gmail.com
+# Entity-reconciliation profiles → Person.sameAs (#59) + the visible "Elsewhere" links.
+# GitHub/LinkedIn are confirmed; X/Sessionize/Stone are best-guess URLs — CONFIRM and correct.
 profiles:
   - network: GitHub
     url: https://github.com/rsicarelli
   - network: LinkedIn
     url: https://linkedin.com/in/rsicarelli
+  - network: X
+    url: https://x.com/rsicarelli
+  - network: Sessionize
+    url: https://sessionize.com/rodrigo-sicarelli
+  - network: Stone
+    url: https://www.stone.com.br
 work:
   - company: Stone
     role: Staff Software Engineer (Mobile Platform)
