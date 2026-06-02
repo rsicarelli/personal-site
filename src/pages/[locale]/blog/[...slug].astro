@@ -5,6 +5,8 @@
  * archive only when the tag exists in both locales. Prose styling adopts Epic 5's typography later.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Prose from '@/components/ui/Prose.astro';
 import { type Locale } from '@/config/site';
 import { useTranslations, hreflangOf } from '@/i18n/utils';
 import { localizedPaths, commonBlogTagSlugs, slugifyTag } from '@/lib/content';
@@ -25,7 +27,7 @@ const { title, description, pubDate, updatedDate, tags } = entry.data;
 ---
 
 <BaseLayout title={`${title} · ${t('site.title')}`} description={description}>
-  <article class="mx-auto max-w-3xl px-6 py-16">
+  <Container as="article" class="py-16">
     <a
       href={`/${locale}/blog`}
       class="text-muted-foreground hover:text-foreground font-mono text-xs"
@@ -48,11 +50,9 @@ const { title, description, pubDate, updatedDate, tags } = entry.data;
       }
     </p>
 
-    <div
-      class="text-foreground mt-8 max-w-prose space-y-4 [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-semibold"
-    >
+    <Prose class="mt-8">
       <Content />
-    </div>
+    </Prose>
 
     {
       tags.length > 0 && (
@@ -81,5 +81,5 @@ const { title, description, pubDate, updatedDate, tags } = entry.data;
         </footer>
       )
     }
-  </article>
+  </Container>
 </BaseLayout>

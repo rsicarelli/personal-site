@@ -6,6 +6,8 @@
  * come from the i18n dictionary; cards/layout adopt Epic 5's components as they land.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Card from '@/components/ui/Card.astro';
 import RssLinks from '@/components/content/RssLinks.astro';
 import { LOCALES, type Locale } from '@/config/site';
 import { useTranslations, hreflangOf } from '@/i18n/utils';
@@ -32,7 +34,7 @@ const upcoming = (await getLocalizedEntries('events', locale))
 
 <BaseLayout title={t('site.title')} description={t('site.description')}>
   <RssLinks slot="head" locale={locale} />
-  <div class="mx-auto max-w-3xl px-6 py-16">
+  <Container class="py-16">
     <section>
       <h1 class="text-4xl font-bold tracking-tight">{t('home.heading')}</h1>
       <p class="text-muted-foreground mt-4 max-w-prose text-lg">{t('home.intro')}</p>
@@ -87,7 +89,7 @@ const upcoming = (await getLocalizedEntries('events', locale))
           </div>
           <ul class="mt-6 grid gap-4 sm:grid-cols-2">
             {projects.map(({ slug, entry }) => (
-              <li class="border-border bg-card rounded-lg border p-4">
+              <Card as="li">
                 <h3 class="font-mono font-semibold tracking-tight">
                   <a
                     href={`/${locale}/projects/${slug}`}
@@ -97,7 +99,7 @@ const upcoming = (await getLocalizedEntries('events', locale))
                   </a>
                 </h3>
                 <p class="text-muted-foreground mt-1 text-sm">{entry.data.description}</p>
-              </li>
+              </Card>
             ))}
           </ul>
         </section>
@@ -136,5 +138,5 @@ const upcoming = (await getLocalizedEntries('events', locale))
         </section>
       )
     }
-  </div>
+  </Container>
 </BaseLayout>

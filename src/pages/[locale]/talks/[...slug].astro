@@ -5,10 +5,13 @@
  * and the event page. The facade is a page-owned stub; it swaps to Epic 5's lite-youtube later.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import LiteYoutube from '@/components/content/LiteYoutube.astro';
+import Container from '@/components/ui/Container.astro';
+import Prose from '@/components/ui/Prose.astro';
+import LiteYouTube from '@/components/ui/LiteYouTube.astro';
 import { type Locale } from '@/config/site';
 import { useTranslations, hreflangOf } from '@/i18n/utils';
 import { localizedPaths } from '@/lib/content';
+import { youtubeId } from '@/lib/media';
 import { render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -20,6 +23,7 @@ const locale = Astro.params.locale as Locale;
 const t = useTranslations(locale);
 const { Content } = await render(entry);
 const { title, description, startDate, endDate, location, url, slides, video } = entry.data;
+const videoId = video ? youtubeId(video) : null;
 const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long' });
 const dateLabel =
   endDate && endDate.getTime() !== startDate.getTime()
@@ -28,7 +32,7 @@ const dateLabel =
 ---
 
 <BaseLayout title={`${title} · ${t('site.title')}`} description={description}>
-  <article class="mx-auto max-w-3xl px-6 py-16">
+  <Container as="article" class="py-16">
     <a
       href={`/${locale}/talks`}
       class="text-muted-foreground hover:text-foreground font-mono text-xs"
@@ -41,13 +45,7 @@ const dateLabel =
       {location && <span> · {location}</span>}
     </p>
 
-    {
-      video && (
-        <div class="mt-8">
-          <LiteYoutube url={video} title={title} />
-        </div>
-      )
-    }
+    {videoId && <LiteYouTube id={videoId} title={title} class="mt-8" />}
 
     <p class="text-muted-foreground mt-8 max-w-prose">{description}</p>
 
@@ -75,10 +73,8 @@ const dateLabel =
       }
     </div>
 
-    <div
-      class="text-foreground mt-8 max-w-prose space-y-4 [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-semibold"
-    >
+    <Prose class="mt-8">
       <Content />
-    </div>
-  </article>
+    </Prose>
+  </Container>
 </BaseLayout>

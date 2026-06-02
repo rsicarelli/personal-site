@@ -5,6 +5,7 @@
  * has a real sibling on the other locale. Tags are language-neutral and shown verbatim.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
 import { LOCALES, type Locale } from '@/config/site';
 import { useTranslations, hreflangOf } from '@/i18n/utils';
 import { getLocalizedEntries, commonBlogTagSlugs, slugifyTag } from '@/lib/content';
@@ -57,7 +58,7 @@ const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long' });
   title={`${t('blog.taggedWith')} ${label} · ${t('site.title')}`}
   description={`${t('blog.taggedWith')} ${label}`}
 >
-  <section class="mx-auto max-w-3xl px-6 py-16">
+  <Container as="section" class="py-16">
     <a
       href={`/${locale}/blog`}
       class="text-muted-foreground hover:text-foreground font-mono text-xs"
@@ -85,5 +86,5 @@ const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'long' });
         ))
       }
     </ul>
-  </section>
+  </Container>
 </BaseLayout>

@@ -4,6 +4,8 @@
  * tokens; they swap to Epic 5's card component when it lands. Repo links open the source on GitHub.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Card from '@/components/ui/Card.astro';
 import { LOCALES, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
 import { getLocalizedEntries } from '@/lib/content';
@@ -20,7 +22,7 @@ const projects = (await getLocalizedEntries('portfolio', locale)).sort(
 ---
 
 <BaseLayout title={`${t('nav.projects')} · ${t('site.title')}`} description={t('site.description')}>
-  <section class="mx-auto max-w-3xl px-6 py-16">
+  <Container as="section" class="py-16">
     <h1 class="text-3xl font-bold tracking-tight">{t('nav.projects')}</h1>
 
     {projects.length === 0 && <p class="text-muted-foreground mt-6">{t('projects.empty')}</p>}
@@ -28,7 +30,7 @@ const projects = (await getLocalizedEntries('portfolio', locale)).sort(
     <ul class="mt-10 grid gap-6 sm:grid-cols-2">
       {
         projects.map(({ slug, entry }) => (
-          <li class="border-border bg-card flex flex-col rounded-lg border p-5">
+          <Card as="li" class="flex flex-col">
             <div class="flex items-baseline justify-between gap-3">
               <h2 class="font-mono text-lg font-semibold tracking-tight">
                 <a
@@ -61,9 +63,9 @@ const projects = (await getLocalizedEntries('portfolio', locale)).sort(
                 {t('projects.viewSource')} ↗
               </a>
             )}
-          </li>
+          </Card>
         ))
       }
     </ul>
-  </section>
+  </Container>
 </BaseLayout>

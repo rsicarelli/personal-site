@@ -4,6 +4,8 @@
  * write-up plus the tech stack and a link to the source repository.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Prose from '@/components/ui/Prose.astro';
 import { type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
 import { localizedPaths } from '@/lib/content';
@@ -21,7 +23,7 @@ const { title, description, tech, repo } = entry.data;
 ---
 
 <BaseLayout title={`${title} · ${t('site.title')}`} description={description}>
-  <article class="mx-auto max-w-3xl px-6 py-16">
+  <Container as="article" class="py-16">
     <a
       href={`/${locale}/projects`}
       class="text-muted-foreground hover:text-foreground font-mono text-xs"
@@ -53,10 +55,8 @@ const { title, description, tech, repo } = entry.data;
       )
     }
 
-    <div
-      class="text-foreground mt-8 max-w-prose space-y-4 [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-semibold"
-    >
+    <Prose class="mt-8">
       <Content />
-    </div>
-  </article>
+    </Prose>
+  </Container>
 </BaseLayout>
