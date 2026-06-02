@@ -1,0 +1,20 @@
+---
+/**
+ * Prose (#44) — wraps rendered long-form MDX so headings, links, code, lists, and blockquotes
+ * pick up the editorial typographic defaults defined by the `.prose` class in global.css.
+ *
+ *   import { render } from 'astro:content';
+ *   const { Content } = await render(entry);
+ *   <Prose><Content /></Prose>
+ *
+ * Sits inside a Container for width/centering; Prose owns only typography (and a ~68ch measure).
+ */
+interface Props {
+  /** Extra classes merged after `prose`. */
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={['prose', className]}><slot /></div>

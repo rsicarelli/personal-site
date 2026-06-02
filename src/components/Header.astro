@@ -6,8 +6,8 @@
  * sits at the end of the nav. Routes other than Home/About are placeholders until the Content
  * epic (#27).
  */
-import { NAV, type Locale } from '@/config/site';
-import { useTranslations } from '@/i18n/utils';
+import { NAV, LOCALES, type Locale } from '@/config/site';
+import { useTranslations, stripLocale } from '@/i18n/utils';
 import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
 
 interface Props {
@@ -19,6 +19,12 @@ const t = useTranslations(locale);
 
 /** Prefix a logical href with the current locale: `/` → `/en`, `/blog` → `/en/blog`. */
 const localized = (href: string) => `/${locale}${href === '/' ? '' : href}`;
+
+// Active-section wayfinding: compare the locale-stripped path so it works on /en/ and /pt-br/.
+// A section is active on its index and any nested route (`/blog` → also `/blog/my-post`).
+const current = stripLocale(Astro.url.pathname, LOCALES);
+const isActive = (href: string) =>
+  href === '/' ? current === '/' : current === href || current.startsWith(`${href}/`);
 ---
 
 <header class="border-border border-b">
@@ -30,7 +36,11 @@ const localized = (href: string) => `/${locale}${href === '/' ? '' : href}`;
       {
         NAV.slice(1).map((item) => (
           <li>
-            <a href={localized(item.href)} class="hover:text-foreground transition-colors">
+            <a
+              href={localized(item.href)}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              class="hover:text-foreground aria-[current=page]:text-primary transition-colors aria-[current=page]:font-medium"
+            >
               {t(item.key)}
             </a>
           </li>
