@@ -1,0 +1,28 @@
+---
+title: Kotlin Multiplatform in production
+description: What it actually takes to ship Kotlin Multiplatform across iOS and Android in a real product.
+pubDate: 2026-05-15
+tags:
+  - kotlin
+  - kmp
+  - mobile
+---
+
+Kotlin Multiplatform has moved well past the experiment phase. Sharing business logic across iOS
+and Android is no longer a bet — it's a practical default for teams that want one source of truth
+for the parts of the app that aren't the UI.
+
+## Where it pays off
+
+The biggest wins come from sharing the layers that change the most and break the most: networking,
+serialization, persistence, and domain logic. Keeping those in one place means a bug is fixed once
+and a feature ships to both platforms at the same time.
+
+## What still needs care
+
+Build setup, native interop, and dependency alignment are where teams lose time. Pinning the
+toolchain and treating the shared module like a real library — versioned, tested, documented — is
+what separates a smooth rollout from a painful one.
+
+This is a sample post that exercises the blog template, tags and reading time. Real writing
+follows.

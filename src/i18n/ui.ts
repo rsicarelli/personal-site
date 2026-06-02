@@ -30,6 +30,12 @@ export const ui = {
     'footer.materials': 'Materials',
     'lang.switchTo': 'Português',
     'lang.label': 'Switch language',
+    'blog.empty': 'No posts published yet.',
+    'blog.minRead': 'min read',
+    'blog.tags': 'Tags',
+    'blog.taggedWith': 'Posts tagged',
+    'blog.allPosts': 'All posts',
+    'blog.updated': 'Updated',
   },
   'pt-br': {
     'site.title': 'rsicarelli.com',
@@ -50,6 +56,12 @@ export const ui = {
     'footer.materials': 'Materiais',
     'lang.switchTo': 'English',
     'lang.label': 'Trocar idioma',
+    'blog.empty': 'Nenhum post publicado ainda.',
+    'blog.minRead': 'min de leitura',
+    'blog.tags': 'Tags',
+    'blog.taggedWith': 'Posts marcados com',
+    'blog.allPosts': 'Todos os posts',
+    'blog.updated': 'Atualizado',
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 
