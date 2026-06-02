@@ -1,0 +1,81 @@
+---
+/**
+ * Talks / Events index (#34) — split into Upcoming (soonest first) and Past (most recent first)
+ * by today's date at build time. Each entry links to its detail page; slides/recording/event
+ * links surface inline. Semantic-token markup; the YouTube facade lives on the detail page.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { LOCALES, type Locale } from '@/config/site';
+import { useTranslations, hreflangOf } from '@/i18n/utils';
+import { getLocalizedEntries } from '@/lib/content';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const locale = Astro.params.locale as Locale;
+const t = useTranslations(locale);
+const df = new Intl.DateTimeFormat(hreflangOf(locale), { dateStyle: 'medium' });
+
+const now = new Date();
+/** An event is "past" once its end (or start, if single-day) is before today. */
+const endOf = (data: CollectionEntry<'events'>['data']) => data.endDate ?? data.startDate;
+const all = await getLocalizedEntries('events', locale);
+const upcoming = all
+  .filter((e) => endOf(e.entry.data) >= now)
+  .sort((a, b) => a.entry.data.startDate.getTime() - b.entry.data.startDate.getTime());
+const past = all.filter((e) => endOf(e.entry.data) < now); // already newest-first from the spine
+
+const dateRange = (data: CollectionEntry<'events'>['data']) => {
+  const { startDate, endDate } = data;
+  return endDate && endDate.getTime() !== startDate.getTime()
+    ? `${df.format(startDate)} – ${df.format(endDate)}`
+    : df.format(startDate);
+};
+---
+
+<BaseLayout title={`${t('nav.talks')} · ${t('site.title')}`} description={t('site.description')}>
+  <section class="mx-auto max-w-3xl px-6 py-16">
+    <h1 class="text-3xl font-bold tracking-tight">{t('nav.talks')}</h1>
+
+    {all.length === 0 && <p class="text-muted-foreground mt-6">{t('talks.empty')}</p>}
+
+    {
+      [
+        { label: t('talks.upcoming'), items: upcoming },
+        { label: t('talks.past'), items: past },
+      ].map(
+        (group) =>
+          group.items.length > 0 && (
+            <div class="mt-12">
+              <h2 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                {group.label}
+              </h2>
+              <ul class="mt-6 space-y-8">
+                {group.items.map(({ slug, entry }) => (
+                  <li class="border-border border-b pb-8 last:border-0">
+                    <h3 class="text-xl font-semibold tracking-tight">
+                      <a
+                        href={`/${locale}/talks/${slug}`}
+                        class="hover:text-primary transition-colors"
+                      >
+                        {entry.data.title}
+                      </a>
+                    </h3>
+                    <p class="text-muted-foreground mt-1 font-mono text-xs">
+                      <time datetime={entry.data.startDate.toISOString()}>
+                        {dateRange(entry.data)}
+                      </time>
+                      {entry.data.location && <span> · {entry.data.location}</span>}
+                    </p>
+                    <p class="text-muted-foreground mt-2 max-w-prose">{entry.data.description}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ),
+      )
+    }
+  </section>
+</BaseLayout>

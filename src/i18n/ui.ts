@@ -41,6 +41,13 @@ export const ui = {
     'projects.viewSource': 'View source',
     'projects.featured': 'Featured',
     'projects.allProjects': 'All projects',
+    'talks.upcoming': 'Upcoming',
+    'talks.past': 'Past',
+    'talks.empty': 'No talks yet.',
+    'talks.slides': 'Slides',
+    'talks.watch': 'Watch recording',
+    'talks.eventPage': 'Event page',
+    'talks.allTalks': 'All talks',
   },
   'pt-br': {
     'site.title': 'rsicarelli.com',
@@ -72,6 +79,13 @@ export const ui = {
     'projects.viewSource': 'Ver código',
     'projects.featured': 'Destaque',
     'projects.allProjects': 'Todos os projetos',
+    'talks.upcoming': 'Próximas',
+    'talks.past': 'Anteriores',
+    'talks.empty': 'Nenhuma palestra ainda.',
+    'talks.slides': 'Slides',
+    'talks.watch': 'Ver gravação',
+    'talks.eventPage': 'Página do evento',
+    'talks.allTalks': 'Todas as palestras',
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 
