@@ -18,6 +18,15 @@
  * `window.__umamiBound` flag (mirrors the BaseLayout theme script's `__themeSwapBound`) because
  * inline scripts can re-run on swap. The body is injected with `set:html` (like JsonLd.astro) so it
  * ships verbatim as client JS — emitted only when analytics is enabled.
+ *
+ * Events (#73, locale-agnostic labels):
+ *  - `outbound-link` — a single document-level, capture-phase click listener (bound ONCE, not per
+ *    `astro:page-load`, which would duplicate it each swap). It catches every cross-origin `<a>`
+ *    site-wide (no central Link component needed). It SKIPS anchors carrying `[data-umami-event]`
+ *    or `[download]`, so the materials download link (cross-host R2 + download attr + its own
+ *    `material-download` event) is counted once as a download, never double-fired as outbound.
+ *  - `material-download` is declared declaratively on the materials `<a>` (Umami's built-in
+ *    delegation); `video-play` is fired from LiteYouTube's `activate()`.
  */
 import { PUBLIC_UMAMI_SRC, PUBLIC_UMAMI_WEBSITE_ID } from 'astro:env/client';
 
@@ -27,6 +36,16 @@ const trackerJs = `(() => {
   if (window.__umamiBound) return;
   window.__umamiBound = true;
   document.addEventListener('astro:page-load', () => window.umami?.track());
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    if (a.hasAttribute('data-umami-event') || a.hasAttribute('download')) return;
+    let url;
+    try { url = new URL(a.href, location.href); } catch { return; }
+    if (url.origin === location.origin) return;
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+    window.umami?.track('outbound-link', { url: url.href });
+  }, true);
 })();`;
 ---
 

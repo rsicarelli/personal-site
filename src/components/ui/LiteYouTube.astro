@@ -80,6 +80,9 @@ query.set('autoplay', '1');
       iframe.loading = 'lazy';
       iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;';
       this.replaceChildren(iframe);
+      // Analytics (#73): record an actual talk-video play. No-op when Umami is absent (dev/CI) —
+      // this lives in the always-shipped facade script, not an analytics-only bundle.
+      window.umami?.track('video-play', { id: this.dataset.id, title: this.dataset.title });
     }
   }
 
