@@ -5,7 +5,9 @@ import { hreflangOf } from '@/i18n/utils';
 
 function alternates(html: string) {
   const doc = parseHTML(html).document;
-  return [...doc.querySelectorAll('link[rel="alternate"]')]
+  // Scope to hreflang-bearing links: `rel="alternate"` is also valid for feed links
+  // (`type="application/rss+xml"`), which carry no hreflang and aren't language alternates.
+  return [...doc.querySelectorAll('link[rel="alternate"][hreflang]')]
     .map((l) => ({ hreflang: l.getAttribute('hreflang')!, href: l.getAttribute('href')! }))
     .sort((a, b) => a.hreflang.localeCompare(b.hreflang));
 }
