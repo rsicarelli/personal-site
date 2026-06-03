@@ -124,6 +124,10 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
+    /* Defense-in-depth: a stray wide child can never force a horizontal scroll of the page.
+       `clip` (not `hidden`) clips without creating a scroll container, so `position: sticky`
+       descendants and scroll anchoring keep working. */
+    overflow-x: clip;
   }
 
   /*
@@ -213,6 +217,7 @@
   font-size: 1.0625rem;
   line-height: 1.75;
   text-wrap: pretty;
+  overflow-wrap: break-word; /* long URLs / unbroken tokens wrap instead of overflowing on mobile */
 
   & > * + * {
     margin-block-start: 1.25em;
@@ -316,6 +321,27 @@
 
   & img {
     border-radius: var(--radius-md);
+  }
+
+  /* Tables scroll horizontally on narrow screens instead of overflowing the page. `display: block`
+     is the pragmatic MDX choice — authors don't have to wrap tables in a scroll container. */
+  & table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+
+  & :is(th, td) {
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: start;
+  }
+
+  & th {
+    font-weight: 600;
+    background: var(--muted);
   }
 
   & :is(h1, h2, h3, h4):first-child {
