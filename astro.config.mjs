@@ -107,6 +107,14 @@ export default defineConfig({
         access: 'public',
         optional: true,
       }),
+      // Newsletter (#197) — gates the footer signup form. Set to 'true' once the server-side
+      // BUTTONDOWN_API_KEY secret is configured (dashboard). The secret itself is NOT astro:env —
+      // it's read by the /api/subscribe Pages Function via context.env. See docs/newsletter.md.
+      PUBLIC_NEWSLETTER_ENABLED: envField.string({
+        context: 'client',
+        access: 'public',
+        optional: true,
+      }),
       // Base URL for photos/downloads (#36/#37). Defaults to the local `public/media/` dir so dev
       // works with placeholder assets; flips to the Cloudflare R2 public base in the Hosting epic
       // (#67) via .env — no code change. Media itself never lives in git (we avoid Git LFS).
