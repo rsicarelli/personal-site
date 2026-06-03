@@ -64,7 +64,7 @@ O chat era mais versátil que o autocomplete: explicava conceitos, sugeria refat
 
 É como ter um consultor muito bom sentado ao seu lado. Alguém que lê qualquer manual em segundos e tem resposta pra quase tudo. Só que esse consultor não pode tocar nas máquinas. O trabalho manual continua sendo seu.
 
-![Autocomplete vs Chat](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part1/assets/pt-br/part1-01-autocomplete-vs-chat-9413.png?raw=true)
+![Autocomplete vs Chat](https://media.rsicarelli.com/blog/101/part1/pt-br/part1-01-autocomplete-vs-chat-2468.png)
 
 ### Por que assistência não bastava
 
@@ -80,7 +80,7 @@ Em 2024, a pergunta natural veio: **e se a IA pudesse fazer mais do que sugerir?
 
 Olhando pra trás, a evolução das ferramentas de IA para código segue quatro fases bem definidas. Cada fase é como um upgrade na fábrica: primeiro vem a esteira, depois o consultor, depois máquinas melhores, até chegar nas que operam sozinhas.
 
-![A evolução da codificação com IA](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part1/assets/pt-br/part1-02-evolution-timeline-e86c.png?raw=true)
+![A evolução da codificação com IA](https://media.rsicarelli.com/blog/101/part1/pt-br/part1-02-evolution-timeline-dfa6.png)
 
 As fases 1 e 2 já vimos. O salto real começa na fase 3.
 
@@ -111,7 +111,7 @@ O que faz algo ser "agêntico"? Cinco coisas:
 4. **Raciocínio em loop**: itera, não responde uma vez só
 5. **Autocorreção**: erra, percebe, ajusta e tenta de novo
 
-![O loop agêntico](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part1/assets/pt-br/part1-03-agentic-loop-49e9.png?raw=true)
+![O loop agêntico](https://media.rsicarelli.com/blog/101/part1/pt-br/part1-03-agentic-loop-1e70.png)
 
 Aqui é onde a analogia da fábrica muda completamente. Você não está mais na linha de produção apertando parafuso e movendo peça. Agora você **projeta** a fábrica. Programa as máquinas, configura os controles de qualidade, supervisiona a produção. Os agentes executam, reportam problemas e se autocorrigem. Sua produtividade deixa de ser limitada pela velocidade das suas mãos e passa a depender da qualidade das suas instruções.
 
@@ -176,7 +176,7 @@ No desenvolvimento tradicional, você é simultaneamente o cérebro e as mãos d
 
 Na programação agêntica, o papel muda. Você define o objetivo, fornece contexto, configura o ambiente. O agente executa. Você está no início (definição) e no fim (revisão). O ciclo do meio é autônomo.
 
-![Antes vs Depois](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part1/assets/pt-br/part1-04-before-after-ee3b.png?raw=true)
+![Antes vs Depois](https://media.rsicarelli.com/blog/101/part1/pt-br/part1-04-before-after-94ba.png)
 
 Eu sei o que você pode estar pensando: "então a IA faz o trabalho e eu fico... fazendo o quê?"
 
@@ -196,7 +196,7 @@ O segundo é **context engineering**. É a disciplina de curar o que o agente sa
 
 O terceiro é **harness engineering**, a configuração de tudo que envolve e orquestra o agente: hooks de automação, MCP servers pra conectar serviços externos, permissões, ferramentas customizadas. Na fábrica, é a infraestrutura: as esteiras, os sensores, o sistema de segurança. A fábrica que mais produz não é a que tem a melhor mão de obra, é a que tem a melhor estrutura ao redor.
 
-![Os três pilares](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part1/assets/pt-br/part1-05-three-pillars-1e08.png?raw=true)
+![Os três pilares](https://media.rsicarelli.com/blog/101/part1/pt-br/part1-05-three-pillars-bbd4.png)
 
 ### Os números — bons e ruins
 

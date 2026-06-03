@@ -63,7 +63,7 @@ Chat was more versatile than autocomplete: it explained concepts, suggested refa
 
 It's like having a really good consultant sitting next to you. Someone who reads any manual in seconds and has an answer for almost anything. Except this consultant can't touch the machines. The manual work is still on you.
 
-![Autocomplete vs Chat](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part1/assets/en/part1-01-autocomplete-vs-chat-fd31.png?raw=true)
+![Autocomplete vs Chat](https://media.rsicarelli.com/blog/101/part1/en/part1-01-autocomplete-vs-chat-48b1.png)
 
 ### Why assistance wasn't enough
 
@@ -79,7 +79,7 @@ In 2024, the natural question came: **what if AI could do more than suggest?**
 
 Looking back, the evolution of AI tools for code follows four distinct phases. Each phase is like an upgrade to the factory: first comes the conveyor belt, then the consultant, then better machines, until you reach ones that operate on their own.
 
-![The Evolution of AI-Assisted Coding](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part1/assets/en/part1-02-evolution-timeline-1de7.png?raw=true)
+![The Evolution of AI-Assisted Coding](https://media.rsicarelli.com/blog/101/part1/en/part1-02-evolution-timeline-b31d.png)
 
 We've already covered phases 1 and 2. The real leap starts at phase 3.
 
@@ -110,7 +110,7 @@ What makes something "agentic"? Five things:
 4. **Loop reasoning**: iterates, doesn't just respond once
 5. **Self-correction**: makes mistakes, notices, adjusts, and tries again
 
-![The agentic loop](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part1/assets/en/part1-03-agentic-loop-a4aa.png?raw=true)
+![The agentic loop](https://media.rsicarelli.com/blog/101/part1/en/part1-03-agentic-loop-d9dd.png)
 
 This is where the factory analogy changes completely. You're no longer on the production line tightening bolts and moving parts. Now you **design** the factory. You program the machines, set up quality controls, oversee production. The agents execute, report problems, and self-correct. Your productivity is no longer limited by the speed of your hands; it depends on the quality of your instructions.
 
@@ -175,7 +175,7 @@ In traditional development, you are simultaneously the brain and the hands of th
 
 In agentic programming, the role changes. You define the goal, provide context, configure the environment. The agent executes. You're at the beginning (definition) and at the end (review). The middle cycle is autonomous.
 
-![Before vs After](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part1/assets/en/part1-04-before-after-8e44.png?raw=true)
+![Before vs After](https://media.rsicarelli.com/blog/101/part1/en/part1-04-before-after-90c1.png)
 
 I know what you might be thinking: "so the AI does the work and I just... do what?"
 
@@ -195,7 +195,7 @@ The second is **context engineering**. It's the discipline of curating what the 
 
 The third is **harness engineering**: the configuration of everything that surrounds and orchestrates the agent. Automation hooks, MCP servers to connect external services, permissions, custom tools. In the factory, it's the infrastructure: the conveyor belts, the sensors, the safety systems. The factory that produces the most isn't the one with the best workforce; it's the one with the best structure around it.
 
-![The three pillars](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part1/assets/en/part1-05-three-pillars-3866.png?raw=true)
+![The three pillars](https://media.rsicarelli.com/blog/101/part1/en/part1-05-three-pillars-8cd4.png)
 
 ### The numbers: good and bad
 

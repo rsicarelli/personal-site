@@ -5,6 +5,7 @@ import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
+import { rehypeR2Images } from './src/lib/rehype-r2-images.mjs';
 import { placeholderBlogPaths } from './scripts/placeholder-posts.mjs';
 
 // `translated: false` placeholder posts (#152) are `robots: noindex, follow`. Drop them from the
@@ -63,6 +64,9 @@ export default defineConfig({
   // by default, so blog .mdx posts get it too.
   markdown: {
     remarkPlugins: [remarkReadingTime],
+    // Rewrite R2-hosted blog `<img>`s (media.rsicarelli.com) to responsive Cloudflare edge-transform
+    // markup with baked dimensions (#186). Inherited by MDX via the integration's extendMarkdownConfig.
+    rehypePlugins: [rehypeR2Images],
   },
 
   // Typed runtime configuration (astro:env). Import these from `astro:env/client` (or
