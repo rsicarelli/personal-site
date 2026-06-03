@@ -37,10 +37,7 @@ const links = NAV.slice(1);
 ---
 
 <header class="border-border relative border-b">
-  <nav
-    aria-label="Primary"
-    class="container-content flex items-center justify-between gap-4 py-4"
-  >
+  <nav aria-label="Primary" class="container-content flex items-center justify-between gap-4 py-4">
     <a href={localized('/')} class="font-mono text-sm font-semibold tracking-tight">
       rsicarelli.com
     </a>
@@ -69,7 +66,9 @@ const links = NAV.slice(1);
         <LanguageSwitcher locale={locale} />
       </span>
 
-      {/* Mobile disclosure — <summary> must be the direct child of <details> to act as the toggle. */}
+      {
+        /* Mobile disclosure — <summary> must be the direct child of <details> to act as the toggle. */
+      }
       <details class="group sm:hidden [&_summary::-webkit-details-marker]:hidden">
         <summary
           aria-label={t('nav.menu')}
