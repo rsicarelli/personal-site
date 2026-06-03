@@ -2,9 +2,15 @@
 /**
  * Primary navigation — labels come from the i18n dictionary (src/i18n/ui.ts), hrefs from the
  * central config (src/config/site.ts) and gain a `/<locale>` prefix at render. The locale is
- * passed down from BaseLayout (derived from the route). The visible language switcher (#22)
- * sits at the end of the nav. Routes other than Home/About are placeholders until the Content
- * epic (#27).
+ * passed down from BaseLayout (derived from the route).
+ *
+ * Responsive layout (#mobile): the brand, the theme toggle and the visible language switcher (#22)
+ * always sit in the bar. Below `sm` the page links collapse behind a hamburger built from a native
+ * `<details>`/`<summary>` disclosure (zero JS, keyboard + aria-expanded for free); they expand into
+ * a dropdown panel anchored under the header. At `≥sm` the links render inline and the disclosure
+ * is hidden. The header is not `transition:persist`ed, so ClientRouter re-renders it closed on every
+ * navigation — no reset wiring needed. The inline script below is pure enhancement (Escape /
+ * tap-outside to close); the menu still works with it disabled.
  */
 import { NAV, LOCALES, type Locale } from '@/config/site';
 import { useTranslations, stripLocale } from '@/i18n/utils';
@@ -26,33 +32,121 @@ const localized = (href: string) => `/${locale}${href === '/' ? '' : href}`;
 const current = stripLocale(Astro.url.pathname, LOCALES);
 const isActive = (href: string) =>
   href === '/' ? current === '/' : current === href || current.startsWith(`${href}/`);
+
+const links = NAV.slice(1);
 ---
 
-<header class="border-border border-b">
-  <nav aria-label="Primary" class="container-content flex items-center justify-between py-4">
+<header class="border-border relative border-b">
+  <nav
+    aria-label="Primary"
+    class="container-content flex items-center justify-between gap-4 py-4"
+  >
     <a href={localized('/')} class="font-mono text-sm font-semibold tracking-tight">
       rsicarelli.com
     </a>
-    <ul class="text-muted-foreground flex items-center gap-4 text-sm">
-      {
-        NAV.slice(1).map((item) => (
-          <li>
-            <a
-              href={localized(item.href)}
-              aria-current={isActive(item.href) ? 'page' : undefined}
-              class="hover:text-foreground aria-[current=page]:text-primary inline-flex min-h-6 items-center transition-colors aria-[current=page]:font-medium"
-            >
-              {t(item.key)}
-            </a>
-          </li>
-        ))
-      }
-      <li>
-        <ThemeToggle client:load label={t('theme.toggle')} />
-      </li>
-      <li class="border-border border-l pl-4">
+
+    <div class="text-muted-foreground flex items-center gap-3 text-sm sm:gap-4">
+      {/* Desktop links — inline at ≥sm, hidden on mobile (collapsed into the panel below). */}
+      <ul class="hidden items-center gap-4 sm:flex">
+        {
+          links.map((item) => (
+            <li>
+              <a
+                href={localized(item.href)}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                class="hover:text-foreground aria-[current=page]:text-primary inline-flex min-h-6 items-center transition-colors aria-[current=page]:font-medium"
+              >
+                {t(item.key)}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      {/* Always-visible controls — kept OUTSIDE the <details> so tapping them never toggles it. */}
+      <ThemeToggle client:load label={t('theme.toggle')} />
+      <span class="sm:border-border sm:border-l sm:pl-4">
         <LanguageSwitcher locale={locale} />
-      </li>
-    </ul>
+      </span>
+
+      {/* Mobile disclosure — <summary> must be the direct child of <details> to act as the toggle. */}
+      <details class="group sm:hidden [&_summary::-webkit-details-marker]:hidden">
+        <summary
+          aria-label={t('nav.menu')}
+          class="hover:text-foreground inline-flex size-9 cursor-pointer list-none items-center justify-center rounded-md transition-colors"
+        >
+          <svg
+            class="size-5 group-open:hidden"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="4" x2="20" y1="6" y2="6"></line>
+            <line x1="4" x2="20" y1="12" y2="12"></line>
+            <line x1="4" x2="20" y1="18" y2="18"></line>
+          </svg>
+          <svg
+            class="hidden size-5 group-open:block"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </summary>
+
+        {/* Dropdown panel — anchored under the header (relative), full-width, overlays content. */}
+        <ul
+          class="bg-background border-border absolute inset-x-0 top-full z-50 flex flex-col gap-1 border-b px-6 pt-2 pb-4 shadow-sm"
+        >
+          {
+            links.map((item) => (
+              <li>
+                <a
+                  href={localized(item.href)}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                  class="hover:bg-accent hover:text-foreground aria-[current=page]:text-primary block rounded-md px-2 py-2 transition-colors aria-[current=page]:font-medium"
+                >
+                  {t(item.key)}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </details>
+    </div>
   </nav>
 </header>
+
+{
+  /* Progressive enhancement (#mobile): close the open disclosure on Escape or a tap outside it.
+  Document-scoped + idempotent so it survives ClientRouter swaps; the <details> still opens/closes
+  natively with this disabled. */
+}
+<script is:inline>
+  (() => {
+    if (window.__navMenuBound) return;
+    window.__navMenuBound = true;
+    const openMenu = () => document.querySelector('header details[open]');
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const d = openMenu();
+      if (d) d.open = false;
+    });
+    document.addEventListener('pointerdown', (e) => {
+      const d = openMenu();
+      if (d && !d.contains(e.target)) d.open = false;
+    });
+  })();
+</script>
