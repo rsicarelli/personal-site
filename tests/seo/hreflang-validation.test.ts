@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { parseHTML } from 'linkedom';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { collectLocalePages, DIST, LOCALES, type RenderedPage } from '../i18n/_helpers';
+import { collectLocalePages, DIST, LOCALES, type Locale } from '../i18n/_helpers';
 import { hreflangOf } from '@/i18n/utils';
 import { placeholderBlogPaths } from '../../scripts/placeholder-posts.mjs';
 
@@ -15,6 +15,10 @@ import { placeholderBlogPaths } from '../../scripts/placeholder-posts.mjs';
  * pages, the neutral gateway `/`, AND the XML sitemap — and is strict about ISO/RFC-5646 codes
  * (the #1 hreflang error after non-reciprocity, per Ahrefs' 374k-domain study). A malformed code
  * (`pt-br` instead of `pt-BR`, `en_US`, an unknown locale) or a dangling alternate fails CI here.
+ *
+ * Perf: every page is parsed with linkedom exactly ONCE in `beforeAll` (the whole-graph reciprocity
+ * check would otherwise re-parse each page several times and exceed the default test timeout as the
+ * site grows).
  */
 
 /** The ONLY hreflang values this bilingual site may emit. Anything else is a malformed/ISO error. */
@@ -24,9 +28,15 @@ interface Alternate {
   hreflang: string;
   href: string;
 }
+interface Parsed {
+  relPath: string;
+  locale: Locale;
+  logicalPath: string;
+  canonical: string;
+  alts: Alternate[];
+}
 
-function inPageAlternates(html: string): Alternate[] {
-  const doc = parseHTML(html).document;
+function altsOf(doc: ReturnType<typeof parseHTML>['document']): Alternate[] {
   // `rel="alternate"` is also valid for RSS (`type="application/rss+xml"`); scope to hreflang links.
   return [...doc.querySelectorAll('link[rel="alternate"][hreflang]')].map((l) => ({
     hreflang: l.getAttribute('hreflang')!,
@@ -34,31 +44,32 @@ function inPageAlternates(html: string): Alternate[] {
   }));
 }
 
-function canonicalOf(html: string): string {
-  return (
-    parseHTML(html).document.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? ''
-  );
-}
-
-let pages: RenderedPage[];
-let gatewayHtml: string;
+let parsed: Parsed[];
+let gatewayAlts: Alternate[];
 
 beforeAll(async () => {
-  pages = await collectLocalePages();
-  gatewayHtml = await readFile(join(DIST, 'index.html'), 'utf8');
+  const pages = await collectLocalePages();
+  parsed = pages.map((p) => {
+    const doc = parseHTML(p.html).document;
+    return {
+      relPath: p.relPath,
+      locale: p.locale,
+      logicalPath: p.logicalPath,
+      canonical: doc.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? '',
+      alts: altsOf(doc),
+    };
+  });
+  gatewayAlts = altsOf(parseHTML(await readFile(join(DIST, 'index.html'), 'utf8')).document);
 });
 
 describe('hreflang ISO/RFC-5646 code validity', () => {
   it('every in-page alternate uses a valid code (en / pt-BR / x-default) — no malformed ISO codes', () => {
     const surfaces = [
-      ...pages.map((p) => ({ id: p.relPath, html: p.html })),
-      {
-        id: 'index.html (gateway)',
-        html: gatewayHtml,
-      },
+      ...parsed.map((p) => ({ id: p.relPath, alts: p.alts })),
+      { id: 'index.html (gateway)', alts: gatewayAlts },
     ];
-    for (const { id, html } of surfaces) {
-      for (const alt of inPageAlternates(html)) {
+    for (const { id, alts } of surfaces) {
+      for (const alt of alts) {
         expect(VALID_HREFLANG.has(alt.hreflang), `${id}: invalid hreflang "${alt.hreflang}"`).toBe(
           true,
         );
@@ -69,8 +80,8 @@ describe('hreflang ISO/RFC-5646 code validity', () => {
   });
 
   it('every alternate href is an absolute https URL on the canonical origin', () => {
-    for (const p of pages) {
-      for (const alt of inPageAlternates(p.html)) {
+    for (const p of parsed) {
+      for (const alt of p.alts) {
         expect(alt.href, `${p.relPath}: relative hreflang href`).toMatch(
           /^https:\/\/rsicarelli\.com\//,
         );
@@ -84,16 +95,15 @@ describe('hreflang reciprocity across the whole page graph', () => {
     // Map canonical URL → its alternate set, for every localized page. Reciprocity holds iff a
     // page named as someone's alternate exists AND carries the byte-identical alternate set.
     const byCanonical = new Map<string, string>(); // canonical → JSON(sorted alternates)
-    for (const p of pages) {
-      const alts = inPageAlternates(p.html)
+    const altKey = (alts: Alternate[]) =>
+      alts
         .map((a) => `${a.hreflang} ${a.href}`)
         .sort()
         .join('\n');
-      byCanonical.set(canonicalOf(p.html), alts);
-    }
-    for (const p of pages) {
-      const mine = byCanonical.get(canonicalOf(p.html));
-      for (const alt of inPageAlternates(p.html)) {
+    for (const p of parsed) byCanonical.set(p.canonical, altKey(p.alts));
+    for (const p of parsed) {
+      const mine = byCanonical.get(p.canonical);
+      for (const alt of p.alts) {
         if (alt.hreflang === 'x-default') continue; // x-default may target the neutral gateway
         const theirs = byCanonical.get(alt.href);
         expect(
@@ -106,10 +116,8 @@ describe('hreflang reciprocity across the whole page graph', () => {
   });
 
   it('each page advertises exactly one alternate per locale plus a single x-default', () => {
-    for (const p of pages) {
-      const langs = inPageAlternates(p.html)
-        .map((a) => a.hreflang)
-        .sort();
+    for (const p of parsed) {
+      const langs = p.alts.map((a) => a.hreflang).sort();
       expect(langs, p.relPath).toEqual([...LOCALES.map(hreflangOf), 'x-default'].sort());
     }
   });
@@ -136,16 +144,13 @@ describe('sitemap hreflang validity', () => {
 
   it('every localized page canonical appears as a sitemap <loc>', () => {
     const locs = new Set([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]));
-    for (const p of pages) {
+    const norm = (u: string) => u.replace(/\/$/, '');
+    for (const p of parsed) {
       // `translated: false` placeholders are noindex and intentionally absent from the sitemap
       // (#173); their canonical still resolves, just not as a <loc>. Skip them here.
       if (placeholders.has(`/${p.locale}${p.logicalPath}`)) continue;
-      const canonical = canonicalOf(p.html);
-      // Sitemap <loc>s carry a trailing slash (`trailingSlash: 'ignore'` emits the dir form);
-      // canonicals are slash-agnostic. Compare on the normalized (trailing-slash-stripped) form.
-      const norm = (u: string) => u.replace(/\/$/, '');
-      const present = [...locs].some((loc) => norm(loc) === norm(canonical));
-      expect(present, `${p.relPath}: canonical ${canonical} missing from sitemap`).toBe(true);
+      const present = [...locs].some((loc) => norm(loc) === norm(p.canonical));
+      expect(present, `${p.relPath}: canonical ${p.canonical} missing from sitemap`).toBe(true);
     }
   });
 });
