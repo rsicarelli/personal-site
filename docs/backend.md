@@ -42,6 +42,28 @@ check** — it reports `{ ok, db, time }` where `db` is `true` only when the D1 
    `db:true` means the binding is live. With no binding, the endpoint still returns `ok:true` /
    `db:false` (so the route is safe to ship before the DB exists).
 
+## Endpoints
+
+| Route                  | What it does                                                                           |
+| ---------------------- | -------------------------------------------------------------------------------------- |
+| `GET /api/health`      | binding check — `{ ok, db, time }`                                                     |
+| `POST /api/view`       | cookieless view count (#200) — `{ "path": "/en/blog/<slug>" }`; same-origin only       |
+| `GET /api/view?path=…` | read the aggregate `{ path, views }` (author/future use — no on-page number by design) |
+
+**View counting (#200)** dedups a reader with `SHA-256(dailySalt + path + IP + UA)` where
+`dailySalt = SHA-256(VIEW_SALT_SECRET + UTC-date)` — raw IP/UA are never stored and the salt rotates
+daily (no KV/cron). Only **allowlisted** paths (from the build-time `/engagement/slugs.json`) are
+counted. Requires one extra owner-only secret:
+
+- Add **`VIEW_SALT_SECRET`** (a long random string, e.g. `openssl rand -hex 32`) in Cloudflare Pages →
+  **Settings → Variables and Secrets**, **type Secret**, for **Production AND Preview**.
+
+Verify after deploy (open a post, wait ~3s, then):
+
+```bash
+curl "https://rsicarelli.com/api/view?path=/en/blog/<slug>"   # {"path":"…","views":N} — increments
+```
+
 ## Local development (optional)
 
 Pages Functions don't run under `astro dev`. To exercise them locally, build then serve with a local

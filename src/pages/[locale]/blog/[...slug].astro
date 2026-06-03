@@ -9,6 +9,7 @@ import Container from '@/components/ui/Container.astro';
 import Prose from '@/components/ui/Prose.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
 import ArticleMeta from '@/components/content/ArticleMeta.astro';
+import ViewBeacon from '@/components/content/ViewBeacon.astro';
 import ShareButtons from '@/components/content/ShareButtons.astro';
 import PostDiscuss from '@/components/content/PostDiscuss.astro';
 import Comments from '@/components/content/Comments.astro';
@@ -154,6 +155,8 @@ const jsonLd = [
     }
 
     <ArticleMeta locale={locale} provenance={provenance} class="mt-6" />
+
+    <ViewBeacon path={new URL(pageUrl).pathname} />
 
     {
       translated === false && (

@@ -24,6 +24,9 @@ email is the communication channel required by **LGPD Art. 41 §1**.
 Only aggregate, anonymous signals:
 
 - Page views and visitor counts per page.
+- **Per-post view counts**, tallied first-party in our own database. A reader is de-duplicated with a
+  daily-rotating salted hash of IP + browser — the **raw IP is never stored**, there are no cookies
+  and no client-side storage, and no number is shown on the page.
 - A few interaction events — material downloads, outbound link clicks, and talk-video plays — counted
   as totals, never tied to a person.
 - Approximate, coarse location (country) and referrer, derived without storing your IP address.
