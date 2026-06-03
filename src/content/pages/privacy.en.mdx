@@ -1,14 +1,25 @@
 ---
 title: Privacy
-description: How rsicarelli.com handles analytics — privacy-first, cookieless, no consent banner.
+description: How rsicarelli.com handles your data — privacy-first, cookieless, no consent banner.
 draft: false
 ---
 
-This site uses privacy-first, cookieless analytics. It sets **no cookies**, collects **no personal
-data**, and therefore shows **no consent banner**. The numbers exist only so I can see which writing,
-talks and projects are useful — never to identify or profile you.
+This site is built privacy-first. It sets **no cookies**, runs **cookieless analytics**, and stores
+nothing on your device except a single **functional theme preference**. Because nothing here tracks
+or profiles you, there is **no consent banner**. Any data exists only so I can see which writing,
+talks and projects are useful — never to identify you.
 
-## What's measured
+This notice covers the whole site, including community features (comments, reactions, newsletter)
+that are rolling out under the site's engagement plan; each section is updated as a feature goes live.
+
+## Who is responsible, and how to reach me
+
+This is a personal site operated by **Rodrigo Sicarelli** (São Paulo, Brazil). For any
+privacy question or to exercise your data rights, email **hello@rsicarelli.com**. As a
+small-scale individual operator, no formal Data Protection Officer (DPO) is appointed; this
+email is the communication channel required by **LGPD Art. 41 §1**.
+
+## What's measured (analytics)
 
 Only aggregate, anonymous signals:
 
@@ -17,31 +28,74 @@ Only aggregate, anonymous signals:
   as totals, never tied to a person.
 - Approximate, coarse location (country) and referrer, derived without storing your IP address.
 
-## The tools
+## Storage on your device
 
-- **[Umami](https://umami.is)** — an open-source, cookieless analytics tool. It identifies a visit
-  with a daily-rotating salted hash of your IP address and user-agent; the **IP address itself is
-  never stored**, and the hash resets every day, so visits can't be linked across days or sites.
-- **Cloudflare Web Analytics** — a cookieless baseline measured through the browser's Performance API.
-  It uses no cookies, no client-side storage, and no fingerprinting.
+- A `theme` value in `localStorage` that remembers your light/dark preference. It is **functional**,
+  not tracking — strictly necessary for a setting you asked for — and is read before paint to avoid a
+  flash of the wrong theme. It is never sent anywhere.
+- **Nothing else**: no cookies and no other `localStorage` for tracking, before or after you interact.
 
-## What is _not_ collected
+## Third parties
 
-- No cookies and no `localStorage` for tracking.
-- No cross-site or cross-device tracking.
-- No personally identifiable information (name, email, precise location).
-- No behavioural profiles, and no advertising or data sale of any kind.
+| Service                       | Purpose                           | Data & privacy posture                                                    |
+| ----------------------------- | --------------------------------- | ------------------------------------------------------------------------- |
+| **Cloudflare**                | hosting / CDN + Web Analytics     | cookieless edge measurement; no client storage, no fingerprinting         |
+| **[Umami](https://umami.is)** | open-source, cookieless analytics | daily-rotating salted hash of IP + user-agent; the **IP is never stored** |
+
+### Community features (rolling out)
+
+These are part of the site's engagement plan and are documented here as each one launches:
+
+- **Comments — Giscus (GitHub Discussions).** When enabled, signing in to comment is handled by
+  **GitHub**; comments live in this site's GitHub Discussions and are subject to GitHub's privacy
+  policy. Giscus sets **no cookies on this domain** — only an encrypted token in `localStorage`
+  _after_ you sign in. You can delete your own comments on GitHub at any time.
+- **Anti-spam — Cloudflare Turnstile.** Protects forms (e.g. newsletter) from abuse. In its default
+  mode it sets **no cookies** and does no cross-site tracking; it issues a one-time token validated
+  server-side.
+- **Newsletter.** Opt-in only, with **double opt-in** confirmation; you can unsubscribe from any
+  email. We store the minimum needed to send it and never share or sell it.
+
+If any of these introduces device storage beyond the functional theme key, this page is updated
+before it ships.
+
+## Legal bases
+
+- **Aggregate analytics:** legitimate interest (LGPD Art. 7 IX / GDPR Art. 6(1)(f)) — measuring
+  audience without identifying anyone.
+- **Functional theme storage:** strictly necessary for a service you requested.
+- **Newsletter / comments:** your consent (you opt in); withdrawable at any time.
+
+## Retention and data minimization
+
+- Analytics are stored only as **aggregates**; the daily analytics salt is rotated and **deleted
+  every 24 hours**, so visits can't be linked across days.
+- Raw IP addresses are **not** logged long-term.
+- Where an avatar is ever shown from an email, only a **hashed** form of the email is stored, never
+  the raw address.
+
+## Your rights
+
+The site is operated from Brazil, so Brazil's **LGPD** always applies; if you're in the EU/UK, the
+**GDPR / UK GDPR** gives you the same core rights. Under **LGPD Art. 18** and **GDPR Arts. 15–20** you
+can request **access**, **correction**, **deletion**, **portability**, and **objection** to processing
+of your personal data. Email
+**hello@rsicarelli.com** and I'll respond within the legal window (about **15 days** under
+the LGPD; **30 days** under the GDPR). For comments stored in GitHub Discussions, you can also delete
+them directly via your GitHub account.
 
 ## Why there's no consent banner
 
-Because the analytics here are genuinely anonymous and cookieless, no consent banner is required:
+Because the analytics here are genuinely anonymous and cookieless, and the only device storage is the
+functional theme preference, no consent banner is required:
 
-- **Brazil (LGPD):** anonymized data falls outside the law's definition of personal data
-  (Art. 12). Brazil's data-protection authority (ANPD), in its _Guia Orientativo sobre Cookies_,
-  also recognises aggregate audience measurement as a legitimate interest of the site operator
-  (Art. 7, IX) — and cookieless tools sidestep the cookie question entirely.
-- **EU/UK (GDPR & ePrivacy/PECR):** storing no information on your device and processing no personal
-  data means there is no cookie or consent obligation to satisfy.
+- **Brazil (LGPD):** anonymized data falls outside the law's definition of personal data (Art. 12).
+  The ANPD's _Guia Orientativo sobre Cookies_ recognises aggregate audience measurement as a
+  legitimate interest (Art. 7 IX), and cookieless tools sidestep the cookie question entirely.
+- **EU/UK (GDPR & ePrivacy/PECR):** storing no non-essential information on your device and processing
+  no personal data means there is no cookie or consent obligation to satisfy.
 
 If this ever changes — for example, if paid content later needs account-based analytics — this page
-will be updated first, and any consent mechanism will be added before such tracking begins.
+will be updated first, and any consent mechanism added before such tracking begins.
+
+_Last updated: 2026-06._

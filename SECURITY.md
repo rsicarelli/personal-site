@@ -10,7 +10,7 @@ Please **do not** open a public issue for a security problem.
 - Preferred: open a private report via GitHub →
   [**Report a vulnerability**](https://github.com/rsicarelli/personal-site/security/advisories/new)
   (GitHub Security Advisories).
-- Or email **rodrigo.sicarelli@gmail.com** with the details and reproduction steps.
+- Or email **hello@rsicarelli.com** with the details and reproduction steps.
 
 You'll get an acknowledgement as soon as possible. There's no bounty program — this is a personal
 site — but credit is happily given for responsibly disclosed issues.

@@ -1,15 +1,27 @@
 ---
 title: Privacidade
-description: Como o rsicarelli.com lida com analytics — focado em privacidade, sem cookies e sem banner de consentimento.
+description: Como o rsicarelli.com lida com seus dados — focado em privacidade, sem cookies e sem banner de consentimento.
 draft: false
 ---
 
-Este site usa analytics focado em privacidade e sem cookies. Ele **não usa cookies**, **não coleta
-dados pessoais** e, por isso, **não exibe banner de consentimento**. Os números existem apenas para
-eu saber quais textos, palestras e projetos são úteis — nunca para identificar ou criar um perfil de
+Este site é feito com privacidade em primeiro lugar. Ele **não usa cookies**, roda **analytics sem
+cookies** e não guarda nada no seu dispositivo além de uma única **preferência funcional de tema**.
+Como nada aqui rastreia ou cria um perfil de você, **não há banner de consentimento**. Os dados
+existem apenas para eu saber quais textos, palestras e projetos são úteis — nunca para identificar
 você.
 
-## O que é medido
+Este aviso cobre o site inteiro, incluindo recursos de comunidade (comentários, reações, newsletter)
+que estão sendo lançados aos poucos dentro do plano de engajamento do site; cada seção é atualizada
+conforme o recurso entra no ar.
+
+## Quem é responsável e como falar comigo
+
+Este é um site pessoal operado por **Rodrigo Sicarelli** (São Paulo, Brasil). Para qualquer dúvida de
+privacidade ou para exercer seus direitos, escreva para **hello@rsicarelli.com**. Como operador
+individual de pequeno porte, nenhum Encarregado / DPO formal é nomeado; este email é o canal de
+comunicação exigido pelo **Art. 41 §1 da LGPD**.
+
+## O que é medido (analytics)
 
 Apenas sinais agregados e anônimos:
 
@@ -18,34 +30,80 @@ Apenas sinais agregados e anônimos:
   vídeos de palestras — contados como totais, nunca associados a uma pessoa.
 - Localização aproximada e genérica (país) e referenciador, obtidos sem armazenar seu endereço IP.
 
-## As ferramentas
+## Armazenamento no seu dispositivo
 
-- **[Umami](https://umami.is)** — uma ferramenta de analytics open-source e sem cookies. Ela
-  identifica uma visita com um hash salgado e rotacionado diariamente do seu endereço IP e
-  user-agent; o **endereço IP em si nunca é armazenado**, e o hash é redefinido todos os dias, de
-  modo que visitas não podem ser ligadas entre dias ou sites.
-- **Cloudflare Web Analytics** — uma base sem cookies, medida pela Performance API do navegador. Não
-  usa cookies, nem armazenamento no cliente, nem fingerprinting.
+- Um valor `theme` no `localStorage` que lembra sua preferência de tema claro/escuro. Ele é
+  **funcional**, não rastreamento — estritamente necessário para uma configuração que você pediu — e
+  é lido antes da renderização para evitar um piscar do tema errado. Nunca é enviado a lugar nenhum.
+- **Nada além disso**: sem cookies e sem outro `localStorage` para rastreamento, antes ou depois de
+  você interagir.
 
-## O que _não_ é coletado
+## Terceiros
 
-- Sem cookies e sem `localStorage` para rastreamento.
-- Sem rastreamento entre sites ou entre dispositivos.
-- Sem informações que identifiquem você (nome, email, localização precisa).
-- Sem perfis comportamentais e sem qualquer venda de dados ou uso publicitário.
+| Serviço                       | Finalidade                          | Postura de dados e privacidade                                                         |
+| ----------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------- |
+| **Cloudflare**                | hospedagem / CDN + Web Analytics    | medição sem cookies na borda; sem armazenamento no cliente, sem fingerprinting         |
+| **[Umami](https://umami.is)** | analytics open-source e sem cookies | hash salgado e rotacionado diariamente de IP + user-agent; o **IP nunca é armazenado** |
+
+### Recursos de comunidade (em lançamento)
+
+Fazem parte do plano de engajamento do site e são documentados aqui conforme cada um entra no ar:
+
+- **Comentários — Giscus (GitHub Discussions).** Quando ativado, o login para comentar é feito pelo
+  **GitHub**; os comentários ficam nas GitHub Discussions deste site e seguem a política de
+  privacidade do GitHub. O Giscus **não define cookies neste domínio** — apenas um token criptografado
+  no `localStorage` _depois_ que você faz login. Você pode apagar seus próprios comentários no GitHub
+  a qualquer momento.
+- **Antispam — Cloudflare Turnstile.** Protege formulários (ex.: newsletter) contra abuso. No modo
+  padrão, **não define cookies** e não faz rastreamento entre sites; emite um token de uso único
+  validado no servidor.
+- **Newsletter.** Apenas por opt-in, com confirmação em **dupla etapa (double opt-in)**; você pode
+  cancelar a inscrição em qualquer email. Guardamos o mínimo necessário para enviá-la e nunca a
+  compartilhamos ou vendemos.
+
+Se algum desses passar a usar armazenamento no dispositivo além da chave funcional de tema, esta
+página será atualizada antes de ele entrar no ar.
+
+## Bases legais
+
+- **Analytics agregado:** legítimo interesse (Art. 7º IX da LGPD / Art. 6(1)(f) do GDPR) — medir
+  audiência sem identificar ninguém.
+- **Armazenamento funcional de tema:** estritamente necessário para um serviço que você solicitou.
+- **Newsletter / comentários:** seu consentimento (você opta por participar); revogável a qualquer
+  momento.
+
+## Retenção e minimização de dados
+
+- O analytics é guardado apenas como **agregados**; o salt diário do analytics é rotacionado e
+  **apagado a cada 24 horas**, de modo que visitas não podem ser ligadas entre dias.
+- Endereços IP brutos **não** são registrados a longo prazo.
+- Onde um avatar venha a ser exibido a partir de um email, apenas uma forma **hasheada** do email é
+  armazenada, nunca o endereço bruto.
+
+## Seus direitos
+
+O site é operado do Brasil, então a **LGPD** sempre se aplica; se você está na UE/Reino Unido, o
+**GDPR / UK GDPR** garante os mesmos direitos essenciais. Pelo **Art. 18 da LGPD** e pelos
+**Arts. 15–20 do GDPR**, você pode solicitar **acesso**, **correção**, **eliminação**,
+**portabilidade** e **oposição** ao tratamento dos seus dados pessoais.
+Escreva para **hello@rsicarelli.com** e responderei dentro do prazo legal (cerca de **15 dias**
+na LGPD; **30 dias** no GDPR). Para comentários guardados nas GitHub Discussions, você também pode
+apagá-los diretamente pela sua conta do GitHub.
 
 ## Por que não há banner de consentimento
 
-Como o analytics aqui é genuinamente anônimo e sem cookies, nenhum banner de consentimento é
-necessário:
+Como o analytics aqui é genuinamente anônimo e sem cookies, e o único armazenamento no dispositivo é a
+preferência funcional de tema, nenhum banner de consentimento é necessário:
 
-- **Brasil (LGPD):** dados anonimizados ficam fora da definição de dado pessoal da lei (Art. 12). A
-  Autoridade Nacional de Proteção de Dados (ANPD), em seu _Guia Orientativo sobre Cookies_, também
-  reconhece a medição de audiência agregada como um legítimo interesse do controlador (Art. 7º, IX)
-  — e ferramentas sem cookies dispensam a questão dos cookies por completo.
-- **UE/Reino Unido (GDPR & ePrivacy/PECR):** não armazenar nenhuma informação no seu dispositivo e
-  não tratar dados pessoais significa que não há obrigação de cookie ou consentimento a cumprir.
+- **Brasil (LGPD):** dados anonimizados ficam fora da definição de dado pessoal da lei (Art. 12). O
+  _Guia Orientativo sobre Cookies_ da ANPD reconhece a medição de audiência agregada como legítimo
+  interesse (Art. 7º IX), e ferramentas sem cookies dispensam a questão dos cookies por completo.
+- **UE/Reino Unido (GDPR & ePrivacy/PECR):** não armazenar nenhuma informação não essencial no seu
+  dispositivo e não tratar dados pessoais significa que não há obrigação de cookie ou consentimento a
+  cumprir.
 
-Se isso algum dia mudar — por exemplo, se conteúdo pago precisar futuramente de analytics por conta
-— esta página será atualizada primeiro, e qualquer mecanismo de consentimento será adicionado antes
-de tal rastreamento começar.
+Se isso algum dia mudar — por exemplo, se conteúdo pago precisar futuramente de analytics por conta —
+esta página será atualizada primeiro, e qualquer mecanismo de consentimento será adicionado antes de
+tal rastreamento começar.
+
+_Última atualização: 2026-06._
