@@ -9,6 +9,7 @@ import Container from '@/components/ui/Container.astro';
 import Prose from '@/components/ui/Prose.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
 import ArticleMeta from '@/components/content/ArticleMeta.astro';
+import ShareButtons from '@/components/content/ShareButtons.astro';
 import { SITE, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
 import { canonicalUrl } from '@/lib/seo';
@@ -161,6 +162,8 @@ const jsonLd = [
     <Prose class="mt-8">
       <Content />
     </Prose>
+
+    <ShareButtons url={pageUrl} title={title} locale={locale} class="mt-10" />
 
     {
       tags.length > 0 && (
