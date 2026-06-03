@@ -1,7 +1,8 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"],
+  "comment-exclude": "functions/** are Cloudflare Pages Functions — a separate runtime/build (#199), not part of the Astro app's typecheck; Cloudflare bundles them with their own esbuild.",
+  "exclude": ["dist", "functions"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

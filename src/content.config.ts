@@ -5,6 +5,13 @@ import { defineCollection } from 'astro:content';
 // script filters hint-level diagnostics (`--minimumSeverity warning`).
 import { z } from 'astro:schema';
 import { glob } from 'astro/loaders';
+import { isHttpUrl } from '@/lib/url';
+
+/**
+ * Author-supplied URL that renders into an `href`/`src` — constrained to http(s) only (security
+ * hardening, #199 audit). `z.url()` alone accepts `javascript:`/`data:` schemes; this rejects them.
+ */
+const httpUrl = () => z.string().refine(isHttpUrl, { message: 'must be an http(s) URL' });
 
 /*
  * Content collections (Astro Content Layer + Zod) — skeleton per research §04.
@@ -36,13 +43,13 @@ const base = z.object({
 const provenance = z
   .object({
     /** The dev.to original — shown as an "originally published" cross-link (never rel=canonical). */
-    devtoUrl: z.url().optional(),
+    devtoUrl: httpUrl().optional(),
     /** dev.to numeric article id — the target for the later `canonical_url` write-back script. */
     devtoId: z.number().int().optional(),
     /** Companion source repository for the post (series-level, denormalized for convenience). */
-    githubRepo: z.url().optional(),
+    githubRepo: httpUrl().optional(),
     /** Per-post branch/tree link parsed from the article body header (richer than the repo root). */
-    githubBranch: z.url().optional(),
+    githubBranch: httpUrl().optional(),
     /** dev.to reaction count at import time — a light social proof signal, not kept in sync. */
     reactions: z.number().int().optional(),
   })
@@ -63,7 +70,7 @@ const blog = defineCollection({
        */
       summary: z.string().max(320).optional(),
       /** Remote cover URL (dev.to CDN) until media moves to R2 (#R2). Distinct from local `cover`. */
-      coverUrl: z.url().optional(),
+      coverUrl: httpUrl().optional(),
       /**
        * Series membership. The value is a series *slug* (e.g. `kmp-101`) matched against the
        * `series` collection by its filePath-derived slug — NOT an Astro `reference()`, because the
@@ -86,10 +93,10 @@ const blog = defineCollection({
        */
       discuss: z
         .object({
-          hn: z.url().optional(),
-          reddit: z.url().optional(),
-          lobsters: z.url().optional(),
-          mastodon: z.url().optional(),
+          hn: httpUrl().optional(),
+          reddit: httpUrl().optional(),
+          lobsters: httpUrl().optional(),
+          mastodon: httpUrl().optional(),
         })
         .optional(),
       provenance,
@@ -101,7 +108,7 @@ const portfolio = defineCollection({
   schema: ({ image }) =>
     base.extend({
       /** Source repository → SoftwareSourceCode.codeRepository. */
-      repo: z.url().optional(),
+      repo: httpUrl().optional(),
       tech: z.array(z.string()).default([]),
       featured: z.boolean().default(false),
       cover: image().optional(),
@@ -115,13 +122,13 @@ const events = defineCollection({
     endDate: z.coerce.date().optional(),
     location: z.string().optional(),
     /** Talk/event landing page. */
-    url: z.url().optional(),
+    url: httpUrl().optional(),
     /** Kind of appearance → maps to a schema.org Event subtype later (#52). */
     kind: z.enum(['talk', 'workshop', 'panel', 'conference']).default('talk'),
     /** Slide deck URL (Speaker Deck / Google Slides / PDF). */
-    slides: z.url().optional(),
+    slides: httpUrl().optional(),
     /** Recording URL (a YouTube watch URL → rendered through a facade, #34). */
-    video: z.url().optional(),
+    video: httpUrl().optional(),
   }),
 });
 
@@ -142,7 +149,7 @@ const cv = defineCollection({
     /** Topical authority → Person.knowsAbout (§04/§06). */
     knowsAbout: z.array(z.string()).default([]),
     /** Entity reconciliation → Person.sameAs. */
-    profiles: z.array(z.object({ network: z.string(), url: z.url() })).default([]),
+    profiles: z.array(z.object({ network: z.string(), url: httpUrl() })).default([]),
     work: z
       .array(
         z.object({
@@ -217,9 +224,9 @@ const series = defineCollection({
     /** Spotlight ordering (lower = first); ties fall back to post count then slug. */
     order: z.number().int().optional(),
     /** Companion repository for the whole series → shown on the series landing. */
-    repo: z.url().optional(),
+    repo: httpUrl().optional(),
     /** Remote cover URL (dev.to CDN) until media moves to R2 (#R2). */
-    coverUrl: z.url().optional(),
+    coverUrl: httpUrl().optional(),
   }),
 });
 
