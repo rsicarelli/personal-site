@@ -61,6 +61,10 @@ These are part of the site's engagement plan and are documented here as each one
   Buttondown through a server-side API call, so there is **no third-party JavaScript or cookie** on
   this site. Your email is stored at Buttondown solely to send the newsletter; you can unsubscribe from
   any email, and it is never shared or sold.
+- **Reactions — anonymous, first-party.** The emoji reactions on a post are anonymous and stored only
+  as per-post totals in our own database. A reaction is de-duplicated with the same daily-rotating
+  salted hash of IP + browser used for view counts — the **raw IP is never stored**, and there are no
+  cookies and no client-side storage.
 
 If any of these introduces device storage beyond the functional theme key, this page is updated
 before it ships.

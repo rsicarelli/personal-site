@@ -10,7 +10,8 @@
  * No enumeration leak — "already subscribed" looks like success, and Buttondown errors are never
  * echoed to the client. A GET returns 405.
  */
-import { isSameOrigin } from '../_lib/view';
+import { isSameOrigin, utcDate, dailySalt } from '../_lib/view';
+import { checkRateLimit, type RateLimitDB } from '../_lib/ratelimit';
 import {
   isValidEmail,
   isHoneypotFilled,
@@ -21,6 +22,10 @@ import {
 
 interface Env {
   BUTTONDOWN_API_KEY?: string;
+  /** Optional D1 binding — enables the shared per-IP rate limiter (#202) when present. */
+  DB?: RateLimitDB;
+  /** Server secret seeding the rate-limit salt (shared with view/react). */
+  VIEW_SALT_SECRET?: string;
 }
 type Ctx = { request: Request; env: Env };
 
@@ -48,6 +53,21 @@ export async function onRequestPost(context: Ctx): Promise<Response> {
     asJson ? json({ ok: false }, status) : new Response(null, { status });
 
   if (!isSameOrigin(request.headers.get('Origin'), request.url)) return fail(403);
+
+  // Per-IP rate limit (#202) — a no-op until a D1 binding is added; honeypot + double opt-in remain
+  // the primary spam defense. Bounds subscription-bombing volume when the DB is bound.
+  if (env.DB) {
+    const ip = request.headers.get('CF-Connecting-IP') ?? '';
+    const salt = await dailySalt(env.VIEW_SALT_SECRET ?? '', utcDate());
+    const rl = await checkRateLimit(env.DB, {
+      salt,
+      ip,
+      bucket: 'subscribe',
+      limit: 10,
+      windowSec: 60,
+    });
+    if (!rl.allowed) return fail(429);
+  }
 
   let input;
   try {

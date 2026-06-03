@@ -1,0 +1,122 @@
+---
+/**
+ * Reactions (#201) — anonymous, cookieless emoji reactions for a blog post.
+ *
+ * Server-renders the four reaction buttons with a reserved count box (no CLS); the live per-emoji
+ * numbers are filled in by the inline `<script>`, which GETs `/api/react?path=…` on load and POSTs a
+ * reaction on click (optimistic, then reconciled from the authoritative response). No cookies, no
+ * client storage — the server dedups by a daily salted hash. Reacting requires JS; the post reads
+ * fine without it, just without the buttons being interactive.
+ *
+ * The emoji palette here MUST match the server allowlist in `functions/_lib/react.ts`
+ * (`REACTION_EMOJI`). The inline script reads everything from `data-*` (no Astro interpolation), so
+ * its emitted bytes — and thus the CSP hash in `public/_headers` — are identical on every page.
+ */
+import { useTranslations } from '@/i18n/utils';
+import type { UIKey } from '@/i18n/ui';
+import type { Locale } from '@/config/site';
+
+interface Props {
+  /** The post's locale path, e.g. `/en/blog/<slug>` (the server validates it against the allowlist). */
+  path: string;
+  locale: Locale;
+  class?: string;
+}
+const { path, locale, class: className } = Astro.props;
+const t = useTranslations(locale);
+
+// Keep in sync with `REACTION_EMOJI` in functions/_lib/react.ts.
+const REACTIONS: { emoji: string; labelKey: UIKey }[] = [
+  { emoji: '👍', labelKey: 'blog.reactions.like' },
+  { emoji: '🎉', labelKey: 'blog.reactions.celebrate' },
+  { emoji: '❤️', labelKey: 'blog.reactions.love' },
+  { emoji: '🚀', labelKey: 'blog.reactions.inspiring' },
+];
+
+const button =
+  'group inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm transition-colors hover:border-foreground/30 hover:bg-secondary aria-pressed:border-primary aria-pressed:text-foreground';
+---
+
+<section
+  data-reactions
+  data-reactions-path={path}
+  aria-label={t('blog.reactions.heading')}
+  class:list={['flex flex-wrap items-center gap-3', className]}
+>
+  <span class="text-muted-foreground text-sm font-medium">{t('blog.reactions.heading')}</span>
+  <div class="flex flex-wrap gap-2">
+    {
+      REACTIONS.map(({ emoji, labelKey }) => (
+        <button
+          type="button"
+          data-reaction-emoji={emoji}
+          aria-pressed="false"
+          aria-label={t(labelKey)}
+          class={button}
+        >
+          <span aria-hidden="true">{emoji}</span>
+          <span
+            data-reaction-count
+            class="text-muted-foreground group-aria-pressed:text-foreground inline-block min-w-[1.25ch] text-right text-xs tabular-nums"
+          />
+        </button>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  // Progressive enhancement for Reactions (#201). Bound on `astro:page-load` (fires on first load AND
+  // each View Transition swap). Reads the path + emoji from `data-*` only (no interpolation), so the
+  // emitted bytes — and the CSP hash — are stable across pages. No cookies, no client storage; server
+  // dedups by a daily salted hash, and the authoritative counts in each response reconcile the
+  // optimistic +1 (a repeat tap that the server doesn't count snaps back).
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-reactions]').forEach((root) => {
+      if (root.dataset.enhanced) return;
+      root.dataset.enhanced = '1';
+      const path = root.getAttribute('data-reactions-path');
+      if (!path) return;
+      const buttons = root.querySelectorAll<HTMLButtonElement>('[data-reaction-emoji]');
+
+      const paint = (counts: Record<string, number>) => {
+        buttons.forEach((btn) => {
+          const emoji = btn.getAttribute('data-reaction-emoji') ?? '';
+          const span = btn.querySelector<HTMLElement>('[data-reaction-count]');
+          const n = counts[emoji];
+          if (span) span.textContent = typeof n === 'number' && n > 0 ? String(n) : '';
+        });
+      };
+
+      fetch('/api/react?path=' + encodeURIComponent(path))
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => {
+          if (d && d.counts) paint(d.counts);
+        })
+        .catch(() => {});
+
+      const reacted = new Set<string>();
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const emoji = btn.getAttribute('data-reaction-emoji');
+          if (!emoji || reacted.has(emoji)) return;
+          reacted.add(emoji);
+          btn.setAttribute('aria-pressed', 'true');
+          // Optimistic +1 (reconciled below from the server's authoritative counts).
+          const span = btn.querySelector<HTMLElement>('[data-reaction-count]');
+          if (span) span.textContent = String((parseInt(span.textContent || '0', 10) || 0) + 1);
+          fetch('/api/react', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ path, emoji }),
+          })
+            .then((r) => (r.ok ? r.json() : null))
+            .then((d) => {
+              if (d && d.counts) paint(d.counts);
+            })
+            .catch(() => {});
+        });
+      });
+    });
+  });
+</script>

@@ -76,6 +76,7 @@ describe('blogPostingLd', () => {
     tags: ['kotlin', 'kmp'],
     translated: true,
     comments: true,
+    reactions: true,
   };
   it('maps headline/dates and a name-only author', () => {
     const b = blogPostingLd(data, { url: URL_, locale: 'en', authorName: 'Rodrigo Sicarelli' });

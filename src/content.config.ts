@@ -87,6 +87,8 @@ const blog = defineCollection({
       translated: z.boolean().default(true),
       /** Opt a post out of the Giscus comment thread (#195). Comments are on by default. */
       comments: z.boolean().default(true),
+      /** Opt a post out of anonymous emoji reactions (#201). Reactions are on by default. */
+      reactions: z.boolean().default(true),
       /**
        * Off-site discussion links (#196) — surfaced as a "Discuss on…" row. Every field optional;
        * standalone posts omit the whole object and only the "Reply via email" link shows.
