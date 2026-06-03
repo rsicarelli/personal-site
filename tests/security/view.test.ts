@@ -7,7 +7,7 @@ import {
   dailySalt,
   dedupKey,
 } from '../../functions/_lib/view';
-import { onRequestPost, onRequestGet, _clearManifestCache } from '../../functions/api/view';
+import { onRequestPost, _clearManifestCache } from '../../functions/api/view';
 
 /**
  * Cookieless view counter (#200) — pure helpers + the endpoint's security/dedup behavior.
@@ -56,16 +56,13 @@ describe('view helpers', () => {
 
 // --- endpoint behavior (mock D1 + stubbed manifest fetch) ---
 
-function mockDB(inserted: boolean, views = 0) {
+function mockDB(inserted: boolean) {
   const stmt = {
     bind() {
       return stmt;
     },
     async run() {
       return { meta: { changes: inserted ? 1 : 0 } };
-    },
-    async first() {
-      return { count: views };
     },
   };
   return { prepare: () => stmt };
@@ -131,31 +128,13 @@ describe('POST /api/view', () => {
     });
     expect((await res.json()).counted).toBe(false);
   });
-});
 
-describe('GET /api/view', () => {
-  beforeEach(() => {
-    _clearManifestCache();
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async () => new Response(JSON.stringify({ paths: ['/en/blog/x'] }))),
-    );
-  });
-  afterEach(() => vi.unstubAllGlobals());
-
-  it('returns the aggregate for an allowlisted path', async () => {
-    const res = await onRequestGet({
-      request: new Request('https://rsicarelli.com/api/view?path=/en/blog/x'),
-      env: { DB: mockDB(false, 42) },
+  it('does not leak the count back to the caller (only ok/counted)', async () => {
+    const res = await onRequestPost({
+      request: post('/en/blog/x'),
+      env: { DB: mockDB(true), VIEW_SALT_SECRET: 's' },
     });
-    expect(await res.json()).toMatchObject({ path: '/en/blog/x', views: 42 });
-  });
-
-  it('404s an unknown path', async () => {
-    const res = await onRequestGet({
-      request: new Request('https://rsicarelli.com/api/view?path=/en/blog/nope'),
-      env: { DB: mockDB(false) },
-    });
-    expect(res.status).toBe(404);
+    const body = await res.json();
+    expect(Object.keys(body).sort()).toEqual(['counted', 'ok']);
   });
 });

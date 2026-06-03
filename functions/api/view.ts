@@ -1,8 +1,9 @@
 /**
  * Cookieless view counter (#200) — Cloudflare Pages Function.
  *
- * POST `/api/view` {"path":"/en/blog/<slug>"} counts a post view; GET `/api/view?path=…` returns the
- * aggregate (author/future use — there is NO on-page number by design, per the engagement strategy).
+ * POST `/api/view` {"path":"/en/blog/<slug>"} counts a post view. There is **no public read endpoint
+ * and no on-page number** — counts are private to the author (read directly from D1, e.g. with
+ * `wrangler d1 execute`), per the engagement strategy. A GET to this route returns 405.
  *
  * Privacy: no cookies, no client storage; the visitor is deduped by a one-way hash
  * `SHA-256(dailySalt + path + IP + UA)` where `dailySalt = SHA-256(VIEW_SALT_SECRET + UTC-date)` —
@@ -17,7 +18,6 @@ import { normalizePath, isBotUA, isSameOrigin, utcDate, dailySalt, dedupKey } fr
 interface D1Stmt {
   bind(...vals: unknown[]): D1Stmt;
   run(): Promise<{ meta?: { changes?: number } }>;
-  first(): Promise<Record<string, unknown> | null>;
 }
 interface D1Like {
   prepare(sql: string): D1Stmt;
@@ -108,18 +108,4 @@ export async function onRequestPost(context: Ctx): Promise<Response> {
   }
 
   return json({ ok: true, counted });
-}
-
-export async function onRequestGet(context: Ctx): Promise<Response> {
-  const { request, env } = context;
-  const path = normalizePath(new URL(request.url).searchParams.get('path') ?? '');
-  const allowed = await allowedPaths(request);
-  if (!allowed.has(path)) return new Response(null, { status: 404 });
-  if (!env.DB) return json({ path, views: 0 }, 'public, max-age=60');
-
-  const row = await env.DB.prepare("SELECT count FROM counters WHERE slug = ?1 AND kind = 'view'")
-    .bind(path)
-    .first();
-  const views = typeof row?.count === 'number' ? row.count : 0;
-  return json({ path, views }, 'public, max-age=60, s-maxage=60');
 }
