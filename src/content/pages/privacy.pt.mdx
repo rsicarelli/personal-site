@@ -26,6 +26,10 @@ comunicação exigido pelo **Art. 41 §1 da LGPD**.
 Apenas sinais agregados e anônimos:
 
 - Visualizações de página e contagem de visitantes por página.
+- **Contagem de visualizações por post**, registrada de forma própria (first-party) no nosso banco de
+  dados. Um leitor é deduplicado por um hash salgado e rotacionado diariamente de IP + navegador — o
+  **IP bruto nunca é armazenado**, não há cookies nem armazenamento no cliente, e nenhum número é
+  exibido na página.
 - Alguns eventos de interação — downloads de materiais, cliques em links externos e reproduções de
   vídeos de palestras — contados como totais, nunca associados a uma pessoa.
 - Localização aproximada e genérica (país) e referenciador, obtidos sem armazenar seu endereço IP.

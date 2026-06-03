@@ -42,6 +42,31 @@ check** — it reports `{ ok, db, time }` where `db` is `true` only when the D1 
    `db:true` means the binding is live. With no binding, the endpoint still returns `ok:true` /
    `db:false` (so the route is safe to ship before the DB exists).
 
+## Endpoints
+
+| Route             | What it does                                                                     |
+| ----------------- | -------------------------------------------------------------------------------- |
+| `GET /api/health` | binding check — `{ ok, db, time }`                                               |
+| `POST /api/view`  | cookieless view count (#200) — `{ "path": "/en/blog/<slug>" }`; same-origin only |
+
+**View counting (#200)** dedups a reader with `SHA-256(dailySalt + path + IP + UA)` where
+`dailySalt = SHA-256(VIEW_SALT_SECRET + UTC-date)` — raw IP/UA are never stored and the salt rotates
+daily (no KV/cron). Only **allowlisted** paths (from the build-time `/engagement/slugs.json`) are
+counted. The POST returns only `{ ok, counted }` — it never echoes the total.
+
+**Counts are private — there is NO public read endpoint** (no on-page number by design). Read them
+yourself directly from D1:
+
+```bash
+npx wrangler d1 execute personal-site-engagement --remote \
+  --command "SELECT slug, count FROM counters WHERE kind='view' ORDER BY count DESC LIMIT 50;"
+```
+
+Requires one extra owner-only secret:
+
+- Add **`VIEW_SALT_SECRET`** (a long random string, e.g. `openssl rand -hex 32`) in Cloudflare Pages →
+  **Settings → Variables and Secrets**, **type Secret**, for **Production AND Preview**.
+
 ## Local development (optional)
 
 Pages Functions don't run under `astro dev`. To exercise them locally, build then serve with a local

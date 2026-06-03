@@ -1,0 +1,37 @@
+---
+/**
+ * ViewBeacon (#200) — fires a cookieless view count for a post. Renders nothing visible: a hidden
+ * `data-view-path` holder + one value-free inline `<script>` (bound once on `astro:page-load`, like
+ * ShareButtons) that POSTs `{ path }` to `/api/view` after a short dwell. No client storage — the
+ * server dedups by a daily salted hash. The script reads the path from the `data-*` attribute, so its
+ * bytes are identical on every page → a single CSP hash (allow-listed in `public/_headers`).
+ */
+interface Props {
+  /** The post's locale path, e.g. `/en/blog/<slug>` (server validates it against the allowlist). */
+  path: string;
+}
+const { path } = Astro.props;
+---
+
+<span data-view-path={path} hidden></span>
+
+<script>
+  // Bound once (bundled module script); fires on first load AND each View Transition swap. The
+  // per-element `viewSent` guard prevents a double count; the ~2.5s dwell skips instant bounces and
+  // prefetches. No cookies/localStorage — uniqueness is handled server-side.
+  document.addEventListener('astro:page-load', () => {
+    const el = document.querySelector<HTMLElement>('[data-view-path]');
+    if (!el || el.dataset.viewSent) return;
+    const path = el.getAttribute('data-view-path');
+    if (!path) return;
+    el.dataset.viewSent = '1';
+    setTimeout(() => {
+      fetch('/api/view', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ path }),
+        keepalive: true,
+      }).catch(() => {});
+    }, 2500);
+  });
+</script>
