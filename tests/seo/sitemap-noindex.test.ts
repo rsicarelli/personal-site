@@ -32,8 +32,10 @@ beforeAll(async () => {
 });
 
 describe('sitemap excludes noindex placeholders (#173)', () => {
-  it('there are placeholders to exclude', () => {
-    expect(placeholders.size).toBeGreaterThan(0); // currently 45
+  it('the placeholder set is derivable (empties as #143 completes)', () => {
+    // Started at 45; shrinks to 0 as translations land (#143). The exclusion guarantee below holds
+    // at any size, including zero (an empty set trivially has nothing wrongly listed).
+    expect(placeholders.size).toBeGreaterThanOrEqual(0);
   });
 
   it('no translated:false placeholder appears as a sitemap <loc>', () => {

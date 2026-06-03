@@ -1,6 +1,6 @@
 ---
-title: 'Fakt: Automating the Fake-over-mock pattern'
-description: 'Kotlin testing has a problem that gets worse the more successful your project becomes.'
+title: 'Fakt: Automatizando o padrão fake-over-mock'
+description: 'Os testes em Kotlin têm um problema que piora quanto mais bem-sucedido seu projeto se torna.'
 pubDate: 2026-02-25
 tags:
   - 'kotlin'
@@ -8,24 +8,22 @@ tags:
   - 'automation'
   - 'kmp'
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fzzcltp2drlweo3amp2tw.png'
-translated: false
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/fakt-automating-the-fake-over-mock-pattern-amh'
-  devtoId: 3284620
   reactions: 1
 ---
 
-Kotlin testing has a problem that gets worse the more successful your project becomes.
+Os testes em Kotlin têm um problema que piora quanto mais bem-sucedido seu projeto se torna.
 
-Manual test fakes don't scale—each interface requires 60-80 lines of boilerplate that silently drifts from reality during refactoring. Runtime mocking frameworks (MockK, Mockito) solve the boilerplate but introduce severe performance penalties and don't work on Kotlin/Native or WebAssembly. KSP-based tools promised compile-time generation, but Kotlin 2.0 broke them all.
+Fakes de teste escritos à mão não escalam — cada interface exige de 60 a 80 linhas de boilerplate que silenciosamente se distancia da realidade durante refatorações. Frameworks de mocking em runtime (MockK, Mockito) resolvem o boilerplate, mas introduzem penalidades severas de performance e não funcionam em Kotlin/Native ou WebAssembly. Ferramentas baseadas em KSP prometiam geração em tempo de compilação, mas o Kotlin 2.0 quebrou todas elas.
 
-Fakt is a compiler plugin that generates production-quality fakes through deep integration with Kotlin's FIR and IR compilation phases—the same extension points used by [Metro](https://github.com/ZacSweers/metro), a production DI framework from Zac Sweers.
+Fakt é um compiler plugin que gera fakes com qualidade de produção por meio de uma integração profunda com as fases de compilação FIR e IR do Kotlin — os mesmos pontos de extensão usados pelo [Metro](https://github.com/ZacSweers/metro), um framework de DI de produção criado por Zac Sweers.
 
-## What Fakt Does
+## O que o Fakt faz
 
 https://github.com/rsicarelli/fakt
 
-Fakt reduces fake boilerplate to an annotation:
+O Fakt reduz o boilerplate de um fake a uma annotation:
 
 ```kotlin
 @Fake
@@ -35,7 +33,7 @@ interface AnalyticsService {
 }
 ```
 
-At compile time, Fakt generates a complete fake implementation. You use it through a type-safe factory:
+Em tempo de compilação, o Fakt gera uma implementação fake completa. Você a utiliza por meio de uma factory type-safe:
 
 ```kotlin
 val fake = fakeAnalyticsService {
@@ -43,20 +41,20 @@ val fake = fakeAnalyticsService {
     flush { Result.success(Unit) }
 }
 
-// Use in tests
+// Use nos testes
 fake.track("user_signup")
 fake.flush()
 
-// Verify interactions (thread-safe StateFlow)
+// Verifique as interações (StateFlow thread-safe)
 assertEquals(1, fake.trackCalls.value.size)
 assertEquals(1, fake.flushCalls.value.size)
 ```
 
-That's it ✨
+É só isso ✨
 
-## The Testing Problem
+## O problema do teste
 
-Consider a simple interface:
+Considere uma interface simples:
 
 ```kotlin
 interface AnalyticsService {
@@ -65,10 +63,10 @@ interface AnalyticsService {
 }
 ```
 
-A proper, production-quality fake requires ~40-60 lines of boilerplate:
+Um fake completo, com qualidade de produção, exige de 40 a 60 linhas de boilerplate:
 
 ```kotlin
-// Typical handwritten fake — error-prone, tedious
+// Fake típico escrito à mão — propenso a erros, tedioso
 class FakeAnalyticsService(
     private val trackBehavior: ((String) -> Unit)? = null
     private val flushBehavior: (suspend () -> Result<Unit>)? = null
@@ -80,7 +78,7 @@ class FakeAnalyticsService(
     private var _flushCalls = mutableListOf<Unit>()
     val flushCalls: List<Unit> get() = _flushCalls
 
-    // Interface implementation
+    // Implementação da interface
     override fun track(event: String) {
         _trackCalls.add(Unit)
         trackBehavior?.invoke(event) ?: Unit
@@ -93,111 +91,111 @@ class FakeAnalyticsService(
 }
 ```
 
-The problems: N methods require ~10N lines. Interface changes don't break unused fakes—they silently drift. For 50 interfaces, this means thousands of lines of brittle boilerplate.
+Os problemas: N métodos exigem cerca de 10N linhas. Mudanças na interface não quebram fakes não utilizados — eles silenciosamente se distanciam da realidade. Para 50 interfaces, isso significa milhares de linhas de boilerplate frágil.
 
-### The Mock Tax
+### O imposto do mock
 
-Runtime mocking frameworks solve the boilerplate but pay a different cost. Kotlin classes are `final` by default, so MockK and Mockito resort to bytecode instrumentation. Independent benchmarks[^1] quantify the penalty:
+Frameworks de mocking em runtime resolvem o boilerplate, mas pagam um preço diferente. Classes em Kotlin são `final` por padrão, então MockK e Mockito recorrem à instrumentação de bytecode. Benchmarks independentes[^1] quantificam a penalidade:
 
-| Mocking Pattern                             | Framework | Comparison               | Verified Penalty          |
-| ------------------------------------------- | --------- | ------------------------ | ------------------------- |
-| `mockkObject` (Singletons)                  | MockK     | vs. Dependency Injection | **1,391x slower**         |
-| `mockkStatic` (Top-level functions)         | MockK     | vs. Interface-based DI   | **146x slower**           |
-| `verify { ... }` (Interaction verification) | MockK     | vs. State-based testing  | **47x slower**            |
-| `relaxed` mocks (Unstubbed calls)           | MockK     | vs. Strict mocks         | **3.7x slower**           |
-| `mock-maker-inline`                         | Mockito   | vs. `all-open` plugin    | **2.7-3x slower**[^2][^3] |
+| Padrão de mocking                           | Framework | Comparação                  | Penalidade verificada         |
+| ------------------------------------------- | --------- | --------------------------- | ----------------------------- |
+| `mockkObject` (Singletons)                  | MockK     | vs. Injeção de Dependência  | **1.391x mais lento**         |
+| `mockkStatic` (Funções top-level)           | MockK     | vs. DI baseada em interface | **146x mais lento**           |
+| `verify { ... }` (Verificação de interação) | MockK     | vs. Teste baseado em estado | **47x mais lento**            |
+| Mocks `relaxed` (Chamadas sem stub)         | MockK     | vs. Mocks estritos          | **3,7x mais lento**           |
+| `mock-maker-inline`                         | Mockito   | vs. plugin `all-open`       | **2,7-3x mais lento**[^2][^3] |
 
-A production test suite with 2,668 tests experienced a 2.7x slowdown (7.3s → 20.0s) when using `mock-maker-inline`[^3]. For large projects, the mock tax accumulates to 40% slower test suites[^1].
+Uma suíte de testes de produção com 2.668 testes sofreu uma desaceleração de 2,7x (7,3s → 20,0s) ao usar `mock-maker-inline`[^3]. Em projetos grandes, o imposto do mock se acumula em suítes de teste 40% mais lentas[^1].
 
-### The KMP Dead End
+### O beco sem saída do KMP
 
-Runtime mocking relies on JVM-specific features: reflection, bytecode instrumentation, dynamic proxies. Kotlin/Native and Kotlin/Wasm compile to machine code. There is no JVM. MockK and Mockito cannot run in `commonTest` source sets targeting Native or Wasm[^6][^7].
+O mocking em runtime depende de recursos específicos da JVM: reflection, instrumentação de bytecode, dynamic proxies. Kotlin/Native e Kotlin/Wasm compilam para código de máquina. Não existe JVM. MockK e Mockito não conseguem rodar em source sets `commonTest` que tenham como alvo Native ou Wasm[^6][^7].
 
-The community attempted KSP-based solutions, but Kotlin 2.0's K2 compiler broke them. The StreetComplete app (10,000+ tests) was forced to migrate mid-project[^8].
+A comunidade tentou soluções baseadas em KSP, mas o compilador K2 do Kotlin 2.0 as quebrou. O app StreetComplete (mais de 10.000 testes) foi forçado a migrar no meio do projeto[^8].
 
-## Why Compiler Plugins Work
+## Por que compiler plugins funcionam
 
-KSP-based tools (Mockative, MocKMP) operated at the symbol level—after type resolution, with limited access to the type system. When K2 landed, they broke. Compiler plugins operate during compilation, with full access to FIR and IR. They survive Kotlin version updates.
+Ferramentas baseadas em KSP (Mockative, MocKMP) operavam no nível de símbolos — depois da resolução de tipos, com acesso limitado ao sistema de tipos. Quando o K2 chegou, elas quebraram. Compiler plugins operam durante a compilação, com acesso completo a FIR e IR. Eles sobrevivem às atualizações de versão do Kotlin.
 
-| Aspect      | KSP                   | Compiler Plugin    |
-| ----------- | --------------------- | ------------------ |
-| Access      | After type resolution | During compilation |
-| Type System | Read-only symbols     | Full manipulation  |
+| Aspecto          | KSP                       | Compiler Plugin      |
+| ---------------- | ------------------------- | -------------------- |
+| Acesso           | Após a resolução de tipos | Durante a compilação |
+| Sistema de tipos | Símbolos somente leitura  | Manipulação completa |
 
-Fakt uses a two-phase FIR → IR architecture:
+O Fakt usa uma arquitetura de duas fases, FIR → IR:
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│  PHASE 1: FIR (Frontend IR)                          │
-│  • Detects @Fake annotations                         │
-│  • Validates interface structure                     │
-│  • Full type system access                           │
+│  FASE 1: FIR (Frontend IR)                           │
+│  • Detecta annotations @Fake                         │
+│  • Valida a estrutura da interface                   │
+│  • Acesso completo ao sistema de tipos               │
 └──────────────────────────────────────────────────────┘
                          ↓
 ┌──────────────────────────────────────────────────────┐
-│  PHASE 2: IR (Intermediate Representation)           │
-│  • Analyzes interface methods and properties         │
-│  • Generates readable .kt source files               │
-│  • Thread-safe StateFlow call history                │
+│  FASE 2: IR (Intermediate Representation)            │
+│  • Analisa métodos e propriedades da interface       │
+│  • Gera arquivos-fonte .kt legíveis                  │
+│  • Histórico de chamadas com StateFlow thread-safe   │
 └──────────────────────────────────────────────────────┘
 ```
 
-This is the same pattern used by [Metro](https://github.com/ZacSweers/metro), Zac Sweers' DI compiler plugin. Metro's architecture has proven stable across Kotlin 1.9, 2.0, and 2.1.
+Esse é o mesmo padrão usado pelo [Metro](https://github.com/ZacSweers/metro), o compiler plugin de DI de Zac Sweers. A arquitetura do Metro se mostrou estável ao longo do Kotlin 1.9, 2.0 e 2.1.
 
-## Why Fakes Over Mocks
+## Por que fakes em vez de mocks
 
-Beyond performance, fakes represent a different testing philosophy. Martin Fowler's "Mocks Aren't Stubs"[^10] describes two schools: state-based testing (verify outcomes) and interaction-based testing (verify method calls).
+Além da performance, fakes representam uma filosofia de teste diferente. O artigo "Mocks Aren't Stubs", de Martin Fowler[^10], descreve duas escolas: teste baseado em estado (verificar resultados) e teste baseado em interação (verificar chamadas de método).
 
-The problem with interaction-based tests: they couple to implementation details[^11]. Refactor a method signature without changing behavior, and mock-based tests break. Google's Testing Blog defines resilience as a critical test quality—"a test shouldn't fail if the code under test isn't defective"[^12]. Mock-based tests often violate this.
+O problema dos testes baseados em interação: eles se acoplam a detalhes de implementação[^11]. Refatore a assinatura de um método sem mudar o comportamento e os testes baseados em mock quebram. O Testing Blog do Google define resiliência como uma qualidade crítica de um teste — "um teste não deveria falhar se o código sob teste não está com defeito"[^12]. Testes baseados em mock frequentemente violam isso.
 
-Google's "Now in Android" app makes this explicit[^14]:
+O app "Now in Android" do Google deixa isso explícito[^14]:
 
-> **"Don't use mocking frameworks. Instead, use fakes."**
+> **"Não use frameworks de mocking. Em vez disso, use fakes."**
 
-The goal: "less brittle tests that may exercise more production code, instead of just verifying specific calls against mocks"[^15].
+O objetivo: "testes menos frágeis que podem exercitar mais código de produção, em vez de apenas verificar chamadas específicas contra mocks"[^15].
 
-Kotlin's async testing stack—`runTest`, `TestDispatcher`, Turbine[^17]—is inherently state-based. Turbine's `awaitItem()` verifies emitted values, not method calls. The natural data source for this stack is a fake with `MutableStateFlow` backing. Fakt automates this pattern.
+A stack de teste assíncrono do Kotlin — `runTest`, `TestDispatcher`, Turbine[^17] — é inerentemente baseada em estado. O `awaitItem()` do Turbine verifica valores emitidos, não chamadas de método. A fonte de dados natural para essa stack é um fake apoiado em `MutableStateFlow`. O Fakt automatiza esse padrão.
 
-## Practical Guidance
+## Orientações práticas
 
-### Fakes vs. Mocks: Quick Comparison
+### Fakes vs. Mocks: comparação rápida
 
-| Feature                 | MockK/Mockito              | Fakt                     |
-| ----------------------- | -------------------------- | ------------------------ |
-| **KMP Support**         | Limited (JVM only)         | Universal (all targets)  |
-| **Compile-time Safety** | ❌                         | ✅                       |
-| **Runtime Overhead**    | Heavy (reflection)         | Zero                     |
-| **Type Safety**         | Partial (`any()` matchers) | Complete                 |
-| **Learning Curve**      | Steep (complex DSL)        | Gentle (typed functions) |
-| **Call History**        | Manual (`verify { }`)      | Built-in (StateFlow)     |
-| **Thread Safety**       | Not guaranteed             | StateFlow-based          |
-| **Debuggability**       | Reflection (opaque)        | Generated `.kt` files    |
+| Recurso                       | MockK/Mockito              | Fakt                       |
+| ----------------------------- | -------------------------- | -------------------------- |
+| **Suporte a KMP**             | Limitado (só JVM)          | Universal (todos os alvos) |
+| **Segurança em compile-time** | ❌                         | ✅                         |
+| **Overhead em runtime**       | Pesado (reflection)        | Zero                       |
+| **Type safety**               | Parcial (matchers `any()`) | Completo                   |
+| **Curva de aprendizado**      | Íngreme (DSL complexa)     | Suave (funções tipadas)    |
+| **Histórico de chamadas**     | Manual (`verify { }`)      | Embutido (StateFlow)       |
+| **Thread safety**             | Não garantida              | Baseada em StateFlow       |
+| **Facilidade de debug**       | Reflection (opaco)         | Arquivos `.kt` gerados     |
 
-### Choosing the Right Tool
+### Escolhendo a ferramenta certa
 
-Fakt and mocking libraries solve overlapping but distinct problems. Choosing between them depends on your constraints and testing needs.
+O Fakt e as bibliotecas de mocking resolvem problemas sobrepostos, mas distintos. A escolha entre eles depende das suas restrições e necessidades de teste.
 
-**Fakt works best when:**
+**O Fakt funciona melhor quando:**
 
-- You've already chosen fakes over mocks. If you understand the state-based testing philosophy and prefer testing outcomes over verifying interactions, Fakt automates what you'd otherwise write by hand.
+- Você já escolheu fakes em vez de mocks. Se você entende a filosofia do teste baseado em estado e prefere testar resultados em vez de verificar interações, o Fakt automatiza o que você escreveria à mão.
 
-- You only use mocks for convenience. Many developers reach for mocking frameworks not for `verify { }` features, but simply because writing manual fakes is tedious. Fakt gives you the factory convenience without the mock overhead—generated fakes are plain Kotlin classes.
+- Você usa mocks apenas por conveniência. Muitos desenvolvedores recorrem a frameworks de mocking não pelos recursos de `verify { }`, mas simplesmente porque escrever fakes à mão é tedioso. O Fakt te dá a conveniência da factory sem o overhead do mock — os fakes gerados são classes Kotlin comuns.
 
-- You're building for Kotlin Multiplatform. Fakt generates plain Kotlin that compiles on JVM, Native, and WebAssembly—no reflection required. This applies to any source set, not just `commonTest`.
+- Você está construindo para Kotlin Multiplatform. O Fakt gera Kotlin puro que compila em JVM, Native e WebAssembly — sem reflection. Isso vale para qualquer source set, não só o `commonTest`.
 
-- You value exercising production code in tests. Fakt-generated fakes are real implementations your tests compile against, catching interface drift at build time rather than runtime.
+- Você valoriza exercitar código de produção nos testes. Os fakes gerados pelo Fakt são implementações reais contra as quais seus testes compilam, capturando o desvio da interface em tempo de build, e não em runtime.
 
-- Tests run concurrently. Fakt tracks call history with StateFlow, which is thread-safe by design. Manual fakes with `var count = 0` break under parallel execution.
+- Os testes rodam concorrentemente. O Fakt rastreia o histórico de chamadas com StateFlow, que é thread-safe por design. Fakes à mão com `var count = 0` quebram sob execução paralela.
 
-**Mocking libraries (Mokkery, MockK) work best when:**
+**Bibliotecas de mocking (Mokkery, MockK) funcionam melhor quando:**
 
-- You need spy behavior. Partial mocking of real implementations—calling real methods while intercepting others—is something only mocking frameworks can do. Fakt generates new implementations, it doesn't wrap existing ones.
+- Você precisa de comportamento de spy. O mocking parcial de implementações reais — chamar métodos reais enquanto intercepta outros — é algo que só frameworks de mocking conseguem fazer. O Fakt gera novas implementações; ele não envolve as existentes.
 
-- You're mocking third-party classes without interfaces. If a library exposes final classes with no interface to program against, mocking frameworks can instrument the bytecode. Fakt requires an interface to annotate.
+- Você está mockando classes de terceiros sem interfaces. Se uma biblioteca expõe classes final sem nenhuma interface contra a qual programar, frameworks de mocking podem instrumentar o bytecode. O Fakt exige uma interface para anotar.
 
-**Neither tool replaces contract testing.** For third-party HTTP APIs, use WireMock or Pact. Hand-written fakes for external services drift from reality without contract validation—they create dangerous illusions of fidelity that break in production.
+**Nenhuma das ferramentas substitui o contract testing.** Para APIs HTTP de terceiros, use WireMock ou Pact. Fakes escritos à mão para serviços externos se distanciam da realidade sem validação de contrato — eles criam ilusões perigosas de fidelidade que quebram em produção.
 
-## Works Cited
+## Referências
 
 [^1]: Benchmarking Mockk — Avoid these patterns for fast unit tests. Kevin Block. [https://medium.com/@\_kevinb/benchmarking-mockk-avoid-these-patterns-for-fast-unit-tests-220fc225da55](https://medium.com/@_kevinb/benchmarking-mockk-avoid-these-patterns-for-fast-unit-tests-220fc225da55)
 
