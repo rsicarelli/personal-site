@@ -33,7 +33,7 @@ describe('rate-limit helpers', () => {
 
 function mockDB(): RateLimitDB {
   const table = new Map<string, number>();
-  const make = (sql: string): RateLimitStmt => {
+  const make = (): RateLimitStmt => {
     let args: unknown[] = [];
     const stmt: RateLimitStmt = {
       bind(...vals: unknown[]) {
@@ -41,7 +41,9 @@ function mockDB(): RateLimitDB {
         return stmt;
       },
       async run() {
-        if (sql.startsWith('DELETE')) table.clear();
+        // The opportunistic prune only deletes EXPIRED windows (`ts < now - 2*window`); the active
+        // window's rows always survive, so it's a no-op here. (Clearing the table would make the count
+        // flaky against the 2%-random prune that fires inside checkRateLimit.)
         return {};
       },
       async first<T>() {
@@ -53,7 +55,7 @@ function mockDB(): RateLimitDB {
     };
     return stmt;
   };
-  return { prepare: (sql: string) => make(sql) };
+  return { prepare: () => make() };
 }
 
 describe('checkRateLimit', () => {
