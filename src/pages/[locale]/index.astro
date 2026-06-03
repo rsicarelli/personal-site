@@ -8,7 +8,6 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Card from '@/components/ui/Card.astro';
-import RssLinks from '@/components/content/RssLinks.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
 import { LOCALES, SITE, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
@@ -45,7 +44,6 @@ const upcoming = (await getLocalizedEntries('events', locale))
 ---
 
 <BaseLayout title={t('site.title')} description={t('site.description')}>
-  <RssLinks slot="head" locale={locale} />
   <JsonLd slot="head" schema={siteGraph} />
   <Container class="py-16">
     <section>
