@@ -90,6 +90,13 @@ App scaffold (Astro) is the next step. No app code yet.
 - **Media** (photos/downloads) lives in Cloudflare R2 / the local `public/media/` placeholder —
   never in git (no Git LFS). Only metadata lives in `src/content/{photos,materials}`; resolve URLs
   with `mediaUrl()` (`src/lib/media.ts`) against `PUBLIC_MEDIA_BASE_URL`.
+- **Blog body images** (Epic #183) live in R2 under `blog/<series>/<part>/<locale>/<file>` and are
+  referenced from markdown as plain absolute URLs `https://media.rsicarelli.com/<key>` (the host is
+  intentionally NOT in `image.remotePatterns`, so Astro never fetches them at build). The
+  `rehype-r2-images` plugin (`src/lib/rehype-r2-images.mjs`) rewrites those `<img>`s to responsive
+  Cloudflare `/cdn-cgi/image/` markup (`format=auto` → AVIF/WebP) with intrinsic `width`/`height`
+  for zero CLS. After adding/replacing R2 images in a post, run `node scripts/media-dimensions.mjs`
+  to bake their dimensions into `src/lib/media-dimensions.json` (a missing entry fails the build).
 - **Visual layer is Epic 5's** (`src/styles/**`, `src/components/ui/**`, the layout shell, fonts,
   `Image`/`lite-youtube`). Pages consume semantic token classes and those components — never add
   tokens or duplicate them.
