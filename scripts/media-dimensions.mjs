@@ -19,7 +19,9 @@ import sharp from 'sharp';
 
 const MEDIA_HOST = 'media.rsicarelli.com';
 const MANIFEST = new URL('../src/lib/media-dimensions.json', import.meta.url);
-const URL_RE = new RegExp(`https://${MEDIA_HOST}/([^\\s)"']+\\.(?:png|jpe?g|webp|avif|gif))`, 'gi');
+// Escape regex metacharacters in the host (the dots are literal, not wildcards) before interpolating.
+const HOST_RE = MEDIA_HOST.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const URL_RE = new RegExp(`https://${HOST_RE}/([^\\s)"']+\\.(?:png|jpe?g|webp|avif|gif))`, 'gi');
 
 const keys = new Set();
 for await (const file of glob('src/content/blog/**/*.{md,mdx}')) {
@@ -55,12 +57,11 @@ for (const key of [...keys].sort()) {
   console.log(`✓ ${key} → ${width}×${height}`);
 }
 
-// Drop stale entries no longer referenced by any post, then write sorted for stable diffs.
-const sorted = Object.fromEntries(
-  [...keys]
-    .sort()
-    .map((k) => [k, manifest[k]])
-    .filter(([, v]) => v),
-);
-await writeFile(MANIFEST, JSON.stringify(sorted, null, 2) + '\n');
-console.log(`\nmanifest: ${Object.keys(sorted).length} image(s) (${fetched} newly fetched)`);
+// Drop stale entries no longer referenced by any post, then write sorted. One `[w, h]` tuple per
+// line keeps the JSON Prettier-stable, so re-running this script produces no spurious diff.
+const entries = [...keys].sort().filter((k) => manifest[k]);
+const body = entries
+  .map((k) => `  ${JSON.stringify(k)}: [${manifest[k][0]}, ${manifest[k][1]}]`)
+  .join(',\n');
+await writeFile(MANIFEST, `{\n${body}\n}\n`);
+console.log(`\nmanifest: ${entries.length} image(s) (${fetched} newly fetched)`);
