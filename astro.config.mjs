@@ -19,7 +19,9 @@ export default defineConfig({
   // Static output (Astro's default with no `output` key and no adapter): the build emits a fully
   // prebuilt `dist/` that Cloudflare Pages serves directly — zero-JS by default, no server runtime.
   // Deploy is Pages' native Git integration (push to `main` → build → deploy; PR previews); the
-  // build output dir is pinned in wrangler.jsonc. See docs/deploy-runbook.md (Hosting epic #60).
+  // build command + output dir live in the Cloudflare Pages dashboard build config. (We do NOT ship a
+  // wrangler config file: with one present, the Pages build BETA ignores the dashboard environment
+  // variables — which silently disabled the env-gated Umami + Giscus integrations, see #195.)
 
   // Final deployed URL — used for canonical URLs and the sitemap.
   site: 'https://rsicarelli.com',
