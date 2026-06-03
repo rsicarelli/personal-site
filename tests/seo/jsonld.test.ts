@@ -75,6 +75,7 @@ describe('blogPostingLd', () => {
     updatedDate: new Date('2026-02-20T00:00:00Z'),
     tags: ['kotlin', 'kmp'],
     translated: true,
+    comments: true,
   };
   it('maps headline/dates and a name-only author', () => {
     const b = blogPostingLd(data, { url: URL_, locale: 'en', authorName: 'Rodrigo Sicarelli' });

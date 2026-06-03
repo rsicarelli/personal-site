@@ -78,6 +78,8 @@ const blog = defineCollection({
        * the post route shows a "shown in original language" banner and it's listed for translation.
        */
       translated: z.boolean().default(true),
+      /** Opt a post out of the Giscus comment thread (#195). Comments are on by default. */
+      comments: z.boolean().default(true),
       provenance,
     }),
 });

@@ -20,6 +20,9 @@ import { describe, expect, it } from 'vitest';
 const DIST = fileURLToPath(new URL('../../dist/', import.meta.url));
 const HEADERS = fileURLToPath(new URL('../../public/_headers', import.meta.url));
 const ANALYTICS = fileURLToPath(new URL('../../src/components/Analytics.astro', import.meta.url));
+const COMMENTS = fileURLToPath(
+  new URL('../../src/components/content/Comments.astro', import.meta.url),
+);
 
 /** Inline, executable <script> blocks: no `src`, and not an inert JSON/LD data block. */
 const INLINE_SCRIPT =
@@ -54,6 +57,18 @@ async function umamiHash(): Promise<string> {
   return sha256(m[1]);
 }
 
+/**
+ * The Giscus loader (#195) is env-gated the same way — absent from a default-env build — and emitted
+ * verbatim via `is:inline set:html`, so we hash the `giscusLoaderJs` literal directly to keep the
+ * guard env-independent.
+ */
+async function giscusHash(): Promise<string> {
+  const src = await readFile(COMMENTS, 'utf8');
+  const m = src.match(/const giscusLoaderJs = `([\s\S]*?)`;/);
+  if (!m) throw new Error('Could not locate the `giscusLoaderJs` literal in Comments.astro');
+  return sha256(m[1]);
+}
+
 /** The `'sha256-…'` tokens from the script-src directive of whichever CSP header is set. */
 async function headerScriptHashes(): Promise<Set<string>> {
   const text = await readFile(HEADERS, 'utf8');
@@ -68,6 +83,7 @@ describe('CSP inline-script hashes', () => {
   it('allow-lists exactly the inline scripts the build emits (plus the env-gated Umami tracker)', async () => {
     const emitted = await distInlineHashes();
     emitted.add(await umamiHash());
+    emitted.add(await giscusHash());
     const allowed = await headerScriptHashes();
 
     const missing = [...emitted].filter((h) => !allowed.has(h)).map((h) => `sha256-${h}`);

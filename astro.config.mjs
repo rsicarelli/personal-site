@@ -86,6 +86,25 @@ export default defineConfig({
         access: 'public',
         optional: true,
       }),
+      // Giscus comments (#195) — GitHub Discussions backend, cookieless, env-gated like Umami above.
+      // All four are required to activate; when any is unset (dev/local/CI) the Comments component
+      // emits nothing. Values come from giscus.app after enabling Discussions + installing the app.
+      PUBLIC_GISCUS_REPO: envField.string({ context: 'client', access: 'public', optional: true }),
+      PUBLIC_GISCUS_REPO_ID: envField.string({
+        context: 'client',
+        access: 'public',
+        optional: true,
+      }),
+      PUBLIC_GISCUS_CATEGORY: envField.string({
+        context: 'client',
+        access: 'public',
+        optional: true,
+      }),
+      PUBLIC_GISCUS_CATEGORY_ID: envField.string({
+        context: 'client',
+        access: 'public',
+        optional: true,
+      }),
       // Base URL for photos/downloads (#36/#37). Defaults to the local `public/media/` dir so dev
       // works with placeholder assets; flips to the Cloudflare R2 public base in the Hosting epic
       // (#67) via .env — no code change. Media itself never lives in git (we avoid Git LFS).
