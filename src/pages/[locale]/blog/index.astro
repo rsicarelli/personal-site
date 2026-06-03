@@ -7,7 +7,6 @@
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
-import RssLinks from '@/components/content/RssLinks.astro';
 import SeriesSpotlight from '@/components/content/SeriesSpotlight.astro';
 import { LOCALES, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
@@ -34,7 +33,6 @@ const seriesLabel = new Map(series.map((s) => [s.slug, s.data.label]));
 ---
 
 <BaseLayout title={`${t('nav.blog')} · ${t('site.title')}`} description={t('site.description')}>
-  <RssLinks slot="head" locale={locale} />
   <Container as="section" class="py-16">
     <h1 class="text-3xl font-bold tracking-tight">{t('nav.blog')}</h1>
 

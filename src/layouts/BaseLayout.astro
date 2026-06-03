@@ -5,6 +5,7 @@ import { ClientRouter } from 'astro:transitions';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import Analytics from '@/components/Analytics.astro';
+import RssLinks from '@/components/content/RssLinks.astro';
 import { LOCALES, DEFAULT_LOCALE, SITE, type Locale } from '@/config/site';
 import { hreflangOf, stripLocale } from '@/i18n/utils';
 import { buildSeoMeta, canonicalUrl } from '@/lib/seo';
@@ -132,6 +133,9 @@ const seoMeta = buildSeoMeta({
         head slot below. */
     }
     {seoMeta.map((m) => <meta property={m.property} name={m.name} content={m.content} />)}
+
+    {/* Per-locale RSS autodiscovery (#198) — site-wide so any page advertises the feed. */}
+    <RssLinks locale={locale} />
 
     <slot name="head" />
   </head>
