@@ -12,6 +12,8 @@ export const SITE = {
   title: 'rsicarelli.com',
   description:
     'Rodrigo Sicarelli — Staff Software Engineer, Kotlin Multiplatform authority, speaker and OSS maintainer.',
+  /** Public contact address — the "reply via email" target (#196) and LGPD Art. 41 channel (#193). */
+  email: 'hello@rsicarelli.com',
 } as const;
 
 /**

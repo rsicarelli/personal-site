@@ -80,6 +80,18 @@ const blog = defineCollection({
       translated: z.boolean().default(true),
       /** Opt a post out of the Giscus comment thread (#195). Comments are on by default. */
       comments: z.boolean().default(true),
+      /**
+       * Off-site discussion links (#196) — surfaced as a "Discuss on…" row. Every field optional;
+       * standalone posts omit the whole object and only the "Reply via email" link shows.
+       */
+      discuss: z
+        .object({
+          hn: z.url().optional(),
+          reddit: z.url().optional(),
+          lobsters: z.url().optional(),
+          mastodon: z.url().optional(),
+        })
+        .optional(),
       provenance,
     }),
 });
