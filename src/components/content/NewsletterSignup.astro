@@ -1,0 +1,125 @@
+---
+/**
+ * NewsletterSignup (#197) — Buttondown, double opt-in, privacy-first.
+ *
+ * Env-gated on `PUBLIC_NEWSLETTER_ENABLED` (renders nothing until set, like Giscus). A real
+ * `<form action="/api/subscribe" method="post">` that works with **no JS** (the function 303-redirects
+ * to /<locale>/subscribe); the value-free inline `<script>` progressively enhances it to a `fetch`
+ * with inline success/error. No cookies, no client storage. A hidden honeypot (`website`) + the
+ * server-side double opt-in keep spam out. The inline script reads everything from the DOM (no Astro
+ * interpolation) → a single stable CSP hash in `public/_headers`.
+ */
+import { PUBLIC_NEWSLETTER_ENABLED } from 'astro:env/client';
+import { useTranslations } from '@/i18n/utils';
+import type { Locale } from '@/config/site';
+
+interface Props {
+  locale: Locale;
+  class?: string;
+}
+const { locale, class: className } = Astro.props;
+const t = useTranslations(locale);
+const enabled = PUBLIC_NEWSLETTER_ENABLED === 'true';
+
+const input =
+  'border-input focus-visible:ring-ring/50 focus-visible:border-ring h-9 w-full rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]';
+const button =
+  'bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-9 shrink-0 items-center justify-center rounded-md px-4 text-sm font-medium transition-colors disabled:opacity-50';
+---
+
+{
+  enabled && (
+    <div class:list={['container-content pt-8', className]}>
+      <section class="border-border bg-card rounded-lg border p-5">
+        <h2 class="text-foreground text-sm font-semibold">{t('newsletter.heading')}</h2>
+        <p class="text-muted-foreground mt-1 text-sm">{t('newsletter.blurb')}</p>
+
+        <form
+          data-newsletter
+          action="/api/subscribe"
+          method="post"
+          class="mt-3 flex flex-col gap-2 sm:flex-row"
+        >
+          <label class="sr-only" for="newsletter-email">
+            {t('newsletter.emailLabel')}
+          </label>
+          <input
+            id="newsletter-email"
+            type="email"
+            name="email"
+            required
+            autocomplete="email"
+            placeholder={t('newsletter.placeholder')}
+            class={input}
+          />
+
+          {/* Honeypot — visually hidden, off the tab order; bots fill it, humans don't. */}
+          <div class="sr-only" aria-hidden="true">
+            <label for="newsletter-website">Leave this field empty</label>
+            <input
+              id="newsletter-website"
+              type="text"
+              name="website"
+              tabindex="-1"
+              autocomplete="off"
+            />
+          </div>
+
+          <input type="hidden" name="locale" value={locale} />
+          <button type="submit" class={button}>
+            {t('newsletter.button')}
+          </button>
+        </form>
+
+        <p
+          data-newsletter-status
+          aria-live="polite"
+          data-success={t('newsletter.success')}
+          data-error={t('newsletter.error')}
+          class="text-muted-foreground mt-2 text-sm"
+          hidden
+        />
+        <p class="text-muted-foreground mt-2 text-xs">{t('newsletter.legal')}</p>
+      </section>
+    </div>
+  )
+}
+
+<script>
+  // Progressive enhancement for the newsletter form (#197). Value-free — reads the fields + the
+  // localized status copy from the DOM, so the emitted bytes (and CSP hash) are stable.
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach((form) => {
+      if (form.dataset.enhanced) return;
+      form.dataset.enhanced = '1';
+      const status = form.parentElement?.querySelector<HTMLElement>('[data-newsletter-status]');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = new FormData(form);
+        const btn = form.querySelector('button');
+        if (btn) btn.disabled = true;
+        let ok = false;
+        try {
+          const res = await fetch(form.action, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+              email: data.get('email'),
+              website: data.get('website'),
+              locale: data.get('locale'),
+            }),
+          });
+          ok = res.ok && (await res.json()).ok === true;
+        } catch {
+          // network/parse error → ok stays false
+        }
+        if (status) {
+          status.hidden = false;
+          status.textContent = status.getAttribute(ok ? 'data-success' : 'data-error');
+        }
+        if (ok) form.reset();
+        if (btn) btn.disabled = false;
+      });
+    });
+  });
+</script>

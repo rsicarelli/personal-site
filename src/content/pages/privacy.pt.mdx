@@ -61,9 +61,11 @@ Fazem parte do plano de engajamento do site e são documentados aqui conforme ca
 - **Antispam — Cloudflare Turnstile.** Protege formulários (ex.: newsletter) contra abuso. No modo
   padrão, **não define cookies** e não faz rastreamento entre sites; emite um token de uso único
   validado no servidor.
-- **Newsletter.** Apenas por opt-in, com confirmação em **dupla etapa (double opt-in)**; você pode
-  cancelar a inscrição em qualquer email. Guardamos o mínimo necessário para enviá-la e nunca a
-  compartilhamos ou vendemos.
+- **Newsletter — Buttondown.** Apenas por opt-in, com **dupla etapa (double opt-in)** (seu email só
+  entra na lista depois que você clica no email de confirmação). O formulário de inscrição é nosso —
+  ele envia seu email ao Buttondown por uma chamada de API no servidor, então **não há JavaScript nem
+  cookie de terceiros** neste site. Seu email é guardado no Buttondown apenas para enviar a newsletter;
+  você pode cancelar a inscrição em qualquer email, e ele nunca é compartilhado ou vendido.
 
 Se algum desses passar a usar armazenamento no dispositivo além da chave funcional de tema, esta
 página será atualizada antes de ele entrar no ar.

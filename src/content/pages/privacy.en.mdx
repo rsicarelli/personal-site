@@ -56,8 +56,11 @@ These are part of the site's engagement plan and are documented here as each one
 - **Anti-spam — Cloudflare Turnstile.** Protects forms (e.g. newsletter) from abuse. In its default
   mode it sets **no cookies** and does no cross-site tracking; it issues a one-time token validated
   server-side.
-- **Newsletter.** Opt-in only, with **double opt-in** confirmation; you can unsubscribe from any
-  email. We store the minimum needed to send it and never share or sell it.
+- **Newsletter — Buttondown.** Opt-in only, with **double opt-in** (your address only joins the list
+  after you click the confirmation email). The signup form is our own — it posts your email to
+  Buttondown through a server-side API call, so there is **no third-party JavaScript or cookie** on
+  this site. Your email is stored at Buttondown solely to send the newsletter; you can unsubscribe from
+  any email, and it is never shared or sold.
 
 If any of these introduces device storage beyond the functional theme key, this page is updated
 before it ships.
