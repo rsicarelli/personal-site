@@ -10,6 +10,7 @@ import Prose from '@/components/ui/Prose.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
 import ArticleMeta from '@/components/content/ArticleMeta.astro';
 import ViewBeacon from '@/components/content/ViewBeacon.astro';
+import Reactions from '@/components/content/Reactions.astro';
 import ShareButtons from '@/components/content/ShareButtons.astro';
 import PostDiscuss from '@/components/content/PostDiscuss.astro';
 import Comments from '@/components/content/Comments.astro';
@@ -49,6 +50,7 @@ const {
   series,
   translated,
   comments,
+  reactions,
   discuss,
   provenance,
 } = entry.data;
@@ -169,6 +171,12 @@ const jsonLd = [
     <Prose class="mt-8">
       <Content />
     </Prose>
+
+    {
+      reactions !== false && (
+        <Reactions path={new URL(pageUrl).pathname} locale={locale} class="mt-10" />
+      )
+    }
 
     <ShareButtons url={pageUrl} title={title} locale={locale} class="mt-10" />
 

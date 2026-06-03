@@ -30,7 +30,7 @@ check** — it reports `{ ok, db, time }` where `db` is `true` only when the D1 
    npx wrangler d1 migrations apply personal-site-engagement-preview --remote
    ```
    (Wrangler reads `migrations/` by default; `0001_engagement.sql` creates `counters`, `reactions`,
-   `dedup`.)
+   `dedup`; `0002_ratelimit.sql` adds the `ratelimit` table for the per-IP limiter (#202).)
 3. **Bind them in the dashboard** → Cloudflare Pages project → **Settings → Functions → D1 database
    bindings**. Add the **same variable name `DB`** in both environments:
    - **Production** → `personal-site-engagement`
@@ -44,10 +44,12 @@ check** — it reports `{ ok, db, time }` where `db` is `true` only when the D1 
 
 ## Endpoints
 
-| Route             | What it does                                                                     |
-| ----------------- | -------------------------------------------------------------------------------- |
-| `GET /api/health` | binding check — `{ ok, db, time }`                                               |
-| `POST /api/view`  | cookieless view count (#200) — `{ "path": "/en/blog/<slug>" }`; same-origin only |
+| Route             | What it does                                                                                 |
+| ----------------- | -------------------------------------------------------------------------------------------- |
+| `GET /api/health` | binding check — `{ ok, db, time }`                                                           |
+| `POST /api/view`  | cookieless view count (#200) — `{ "path": "/en/blog/<slug>" }`; same-origin only             |
+| `POST /api/react` | anonymous reaction (#201) — `{ "path": "/en/blog/<slug>", "emoji": "👍" }`; same-origin only |
+| `GET /api/react`  | public per-emoji counts — `?path=/en/blog/<slug>` → `{ path, counts }` (the on-page display) |
 
 **View counting (#200)** dedups a reader with `SHA-256(dailySalt + path + IP + UA)` where
 `dailySalt = SHA-256(VIEW_SALT_SECRET + UTC-date)` — raw IP/UA are never stored and the salt rotates
@@ -65,7 +67,22 @@ npx wrangler d1 execute personal-site-engagement --remote \
 Requires one extra owner-only secret:
 
 - Add **`VIEW_SALT_SECRET`** (a long random string, e.g. `openssl rand -hex 32`) in Cloudflare Pages →
-  **Settings → Variables and Secrets**, **type Secret**, for **Production AND Preview**.
+  **Settings → Variables and Secrets**, **type Secret**, for **Production AND Preview**. It is the
+  **shared engagement salt** — it now seeds the view dedup, the reaction dedup (#201) and the per-IP
+  rate limiter (#202). No separate secret is needed.
+
+**Reactions (#201)** are anonymous and dedup the same way as views, with the emoji folded into the
+hash (`SHA-256(dailySalt + path + IP + UA + emoji)`) so a reader can react once per emoji per day.
+Unlike views, the per-emoji **counts are public** — `GET /api/react?path=…` is the on-page display
+source (no PII; edge-cached ~30s). Only allowlisted post paths and the fixed emoji palette
+(`functions/_lib/react.ts`) are accepted.
+
+**Rate limiting (#202)** — every public write endpoint (`/api/view`, `/api/react`, `/api/subscribe`)
+runs the shared per-IP limiter in `functions/_lib/ratelimit.ts` (fixed window, keyed by a salted IP
+hash in the `ratelimit` table — the raw IP is never stored). Over budget → HTTP 429. `/api/subscribe`
+only engages the limiter once a `DB` binding is present (honeypot + double opt-in remain its primary
+guard). As a network-layer backstop, add a Cloudflare **WAF rate-limit rule** on `/api/*` (e.g. block
+above 100 requests/min/IP) in the dashboard.
 
 ## Local development (optional)
 
@@ -83,5 +100,5 @@ npx wrangler pages dev dist --d1 DB=personal-site-engagement-preview
   Pages build ignores the dashboard environment variables (that broke Giscus/Umami, #209). D1
   bindings are set in the dashboard instead, which has no such conflict.
 - **Migrations are forward-only**; add `migrations/000N_*.sql` and re-run `migrations apply`.
-- Future endpoints (`/api/view`, `/api/react`) live beside `health.ts` and reuse the `DB` binding +
-  the salted-hash `dedup` table.
+- The write endpoints (`/api/view`, `/api/react`, `/api/subscribe`) live beside `health.ts` and reuse
+  the `DB` binding, the salted-hash `dedup` table, and the shared `ratelimit` limiter.

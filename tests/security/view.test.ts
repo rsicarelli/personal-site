@@ -64,6 +64,27 @@ function mockDB(inserted: boolean) {
     async run() {
       return { meta: { changes: inserted ? 1 : 0 } };
     },
+    // The shared rate limiter (#202) upserts `ratelimit … RETURNING count`; a low count is allowed.
+    async first<T>() {
+      return { count: 1 } as T;
+    },
+  };
+  return { prepare: () => stmt };
+}
+
+/** A mock whose rate-limit counter climbs, so a flood eventually trips the limit. */
+function floodingDB() {
+  let rl = 0;
+  const stmt = {
+    bind() {
+      return stmt;
+    },
+    async run() {
+      return { meta: { changes: 1 } };
+    },
+    async first<T>() {
+      return { count: ++rl } as T;
+    },
   };
   return { prepare: () => stmt };
 }
@@ -127,6 +148,13 @@ describe('POST /api/view', () => {
       env: { DB: mockDB(true), VIEW_SALT_SECRET: 's' },
     });
     expect((await res.json()).counted).toBe(false);
+  });
+
+  it('429s once the per-IP rate limit is exceeded (#202)', async () => {
+    const env = { DB: floodingDB(), VIEW_SALT_SECRET: 's' };
+    let last: Response | undefined;
+    for (let i = 0; i < 121; i++) last = await onRequestPost({ request: post('/en/blog/x'), env });
+    expect(last!.status).toBe(429);
   });
 
   it('does not leak the count back to the caller (only ok/counted)', async () => {

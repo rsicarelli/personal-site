@@ -14,10 +14,12 @@
  * posts · salted-hash dedup (one count per IP+UA+path/day) · POST-only · `no-store`.
  */
 import { normalizePath, isBotUA, isSameOrigin, utcDate, dailySalt, dedupKey } from '../_lib/view';
+import { checkRateLimit, type RateLimitDB } from '../_lib/ratelimit';
 
 interface D1Stmt {
   bind(...vals: unknown[]): D1Stmt;
   run(): Promise<{ meta?: { changes?: number } }>;
+  first<T = unknown>(): Promise<T | null>;
 }
 interface D1Like {
   prepare(sql: string): D1Stmt;
@@ -81,6 +83,22 @@ export async function onRequestPost(context: Ctx): Promise<Response> {
 
   const ip = request.headers.get('CF-Connecting-IP') ?? '';
   const salt = await dailySalt(env.VIEW_SALT_SECRET ?? '', utcDate());
+
+  // Per-IP rate limit (#202) — bound a scripted beacon flood before touching the counters.
+  const rl = await checkRateLimit(env.DB as RateLimitDB, {
+    salt,
+    ip,
+    bucket: 'view',
+    limit: 120,
+    windowSec: 60,
+  });
+  if (!rl.allowed) {
+    return new Response(JSON.stringify({ ok: false }), {
+      status: 429,
+      headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
+    });
+  }
+
   const key = await dedupKey(salt, path, ip, ua);
   const now = Math.floor(Date.now() / 1000);
 
