@@ -1,0 +1,111 @@
+---
+/**
+ * Comments (#195) — Giscus (GitHub Discussions) for a blog post. Cookieless on our domain (Giscus
+ * stores only a server-encrypted token in localStorage AFTER a GitHub sign-in), per-locale threads
+ * via `mapping: pathname`, and **env-gated**: when any `PUBLIC_GISCUS_*` var is unset (dev/local/CI)
+ * `giscusConfig()` returns null and this component emits NOTHING — so no third-party script ships
+ * until comments are configured. See docs/comments.md for the one-time GitHub setup.
+ *
+ * The loader is emitted verbatim via `is:inline set:html` (like the Umami tracker) so its bytes are
+ * deterministic and env-independent → a single CSP hash, allow-listed in `public/_headers` and
+ * guarded by tests/security/csp-hashes.test.ts. It reads all giscus config from the container's
+ * `data-*` (no interpolation), injects the giscus client on `astro:page-load` (so it survives View
+ * Transitions), and keeps the embed's theme in sync with the site's light/dark toggle.
+ */
+import {
+  PUBLIC_GISCUS_REPO,
+  PUBLIC_GISCUS_REPO_ID,
+  PUBLIC_GISCUS_CATEGORY,
+  PUBLIC_GISCUS_CATEGORY_ID,
+} from 'astro:env/client';
+import { useTranslations } from '@/i18n/utils';
+import type { Locale } from '@/config/site';
+import { giscusConfig } from '@/lib/giscus';
+
+interface Props {
+  locale: Locale;
+  class?: string;
+}
+
+const { locale, class: className } = Astro.props;
+const t = useTranslations(locale);
+const cfg = giscusConfig(
+  {
+    repo: PUBLIC_GISCUS_REPO,
+    repoId: PUBLIC_GISCUS_REPO_ID,
+    category: PUBLIC_GISCUS_CATEGORY,
+    categoryId: PUBLIC_GISCUS_CATEGORY_ID,
+  },
+  locale,
+);
+
+// Injected on the client (verbatim) — keep value-free so the emitted bytes (and CSP hash) are stable.
+const giscusLoaderJs = `(() => {
+  if (window.__giscusBound) return;
+  window.__giscusBound = true;
+  var ORIGIN = 'https://giscus.app';
+  var theme = function () {
+    return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+  };
+  var ATTRS = {
+    repo: 'data-repo', repoId: 'data-repo-id', category: 'data-category',
+    categoryId: 'data-category-id', mapping: 'data-mapping', strict: 'data-strict',
+    reactionsEnabled: 'data-reactions-enabled', emitMetadata: 'data-emit-metadata',
+    inputPosition: 'data-input-position', lang: 'data-lang', loading: 'data-loading'
+  };
+  var inject = function () {
+    document.querySelectorAll('[data-giscus]').forEach(function (el) {
+      if (el.dataset.giscusReady) return;
+      el.dataset.giscusReady = '1';
+      var s = document.createElement('script');
+      s.src = ORIGIN + '/client.js';
+      s.crossOrigin = 'anonymous';
+      s.async = true;
+      Object.keys(ATTRS).forEach(function (k) {
+        if (el.dataset[k] != null) s.setAttribute(ATTRS[k], el.dataset[k]);
+      });
+      s.setAttribute('data-theme', theme());
+      el.appendChild(s);
+    });
+  };
+  document.addEventListener('astro:page-load', inject);
+  var sync = function () {
+    var f = document.querySelector('iframe.giscus-frame');
+    if (f && f.contentWindow) {
+      f.contentWindow.postMessage({ giscus: { setConfig: { theme: theme() } } }, ORIGIN);
+    }
+  };
+  new MutationObserver(sync).observe(document.documentElement, {
+    attributes: true, attributeFilter: ['class']
+  });
+})();`;
+---
+
+{
+  cfg && (
+    <section
+      aria-label={t('blog.comments.title')}
+      class:list={['border-border border-t pt-8', className]}
+    >
+      <h2 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+        {t('blog.comments.title')}
+      </h2>
+      <div
+        data-giscus
+        data-repo={cfg.repo}
+        data-repo-id={cfg.repoId}
+        data-category={cfg.category}
+        data-category-id={cfg.categoryId}
+        data-mapping={cfg.mapping}
+        data-strict="1"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-lang={cfg.lang}
+        data-loading="lazy"
+        class="mt-4 min-h-60"
+      />
+      <script is:inline set:html={giscusLoaderJs} />
+    </section>
+  )
+}
