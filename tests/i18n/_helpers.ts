@@ -54,10 +54,18 @@ export async function loadDocument(relPath: string) {
  * dropped. `minLength` filters out short labels (nav/footer chrome) that could appear as innocent
  * substrings inside the other locale's prose — leaving long, content-bearing strings safe for
  * anti-leak assertions.
+ *
+ * Taxonomy badge labels (`blog.topic.*`/`blog.difficulty.*`/`blog.type.*`) are also dropped: they're
+ * chrome rendered from `ui[locale]` by construction, and several are common technical words
+ * ("Intermediate", "Reference", "Android") that legitimately appear in the OTHER locale's prose — so
+ * they make false-positive leak markers. (Per-locale badge correctness is asserted separately.)
  */
+const NON_MARKER_KEY_PREFIXES = ['blog.topic.', 'blog.difficulty.', 'blog.type.'];
+
 export function uniqueMarkers(minLength = 0): Record<Locale, string[]> {
   const out = { en: [] as string[], 'pt-br': [] as string[] } satisfies Record<Locale, string[]>;
   for (const key of Object.keys(ui.en) as (keyof (typeof ui)['en'])[]) {
+    if (NON_MARKER_KEY_PREFIXES.some((p) => key.startsWith(p))) continue;
     const en = ui.en[key];
     const pt = ui['pt-br'][key];
     if (en === pt) continue;
