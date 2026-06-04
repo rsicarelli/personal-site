@@ -8,11 +8,12 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Prose from '@/components/ui/Prose.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
-import ArticleMeta from '@/components/content/ArticleMeta.astro';
+import PostSummary from '@/components/content/PostSummary.astro';
 import ViewBeacon from '@/components/content/ViewBeacon.astro';
 import Reactions from '@/components/content/Reactions.astro';
 import ShareButtons from '@/components/content/ShareButtons.astro';
-import PostDiscuss from '@/components/content/PostDiscuss.astro';
+import AuthorCard from '@/components/content/AuthorCard.astro';
+import NewsletterSignup from '@/components/content/NewsletterSignup.astro';
 import Comments from '@/components/content/Comments.astro';
 import { SITE, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
@@ -67,6 +68,10 @@ const next = idx >= 0 && idx < seriesPosts.length - 1 ? seriesPosts[idx + 1] : u
 // present) becomes both the OG image and BlogPosting.image; dates reuse the same UTC source as the
 // visible <time> elements. Author is name-only here; the rich Person node lives on /about.
 const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
+const postPath = new URL(pageUrl).pathname;
+// Provenance as quiet byline links (#216 dropped the heavy card): the dev.to original + source repo.
+const devtoUrl = provenance?.devtoUrl;
+const sourceUrl = provenance?.githubBranch ?? provenance?.githubRepo;
 // OG/JSON-LD image must be self-hosted (the metadata suite asserts the rsicarelli.com origin). Use
 // the local optimized `cover` when present; otherwise a per-post generated card (#148) on our own
 // origin. (The remote dev.to `coverUrl` stays off-origin — it powers only the visible spotlight
@@ -148,17 +153,47 @@ const jsonLd = [
     </p>
 
     {
-      /* Answer-first capsule (#56): the direct-answer lede, GEO/AEO's top formatting lever. */
-      summary && (
-        <p class="text-foreground border-primary mt-6 border-l-2 pl-4 text-lg text-pretty">
-          {summary}
+      /* Provenance as quiet links (#216 dropped the card): dev.to original + source repo. */
+      (devtoUrl || sourceUrl) && (
+        <p class="text-muted-foreground mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs">
+          {devtoUrl && (
+            <a
+              href={devtoUrl}
+              rel="nofollow noopener"
+              target="_blank"
+              class="hover:text-foreground underline underline-offset-4"
+            >
+              ↗ {t('blog.originallyOn')}
+            </a>
+          )}
+          {sourceUrl && (
+            <a
+              href={sourceUrl}
+              rel="noopener"
+              target="_blank"
+              class="hover:text-foreground underline underline-offset-4"
+            >
+              ↗ {t('blog.sourceCode')}
+            </a>
+          )}
         </p>
       )
     }
 
-    <ArticleMeta locale={locale} provenance={provenance} class="mt-6" />
+    {
+      /* Answer-first capsule (#56), now a clearly-labeled TL;DR (no longer a blockquote look-alike). */
+      summary && <PostSummary summary={summary} locale={locale} class="mt-6" />
+    }
 
-    <ViewBeacon path={new URL(pageUrl).pathname} />
+    {/* What you can do, up front — a slim pre-read actions bar (react + share). */}
+    <div
+      class="border-border mt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-y py-3"
+    >
+      {reactions !== false && <Reactions path={postPath} locale={locale} compact />}
+      <ShareButtons url={pageUrl} title={title} locale={locale} compact />
+    </div>
+
+    <ViewBeacon path={postPath} />
 
     {
       translated === false && (
@@ -172,15 +207,12 @@ const jsonLd = [
       <Content />
     </Prose>
 
-    {
-      reactions !== false && (
-        <Reactions path={new URL(pageUrl).pathname} locale={locale} class="mt-10" />
-      )
-    }
-
-    <ShareButtons url={pageUrl} title={title} locale={locale} class="mt-10" />
-
-    <PostDiscuss title={title} locale={locale} discuss={discuss} class="mt-6" />
+    {/* Now engage — bookend reactions + share, then meet the author. */}
+    <div class="border-border mt-12 flex flex-col gap-8 border-t pt-10">
+      {reactions !== false && <Reactions path={postPath} locale={locale} />}
+      <ShareButtons url={pageUrl} title={title} locale={locale} />
+      <AuthorCard locale={locale} />
+    </div>
 
     {
       tags.length > 0 && (
@@ -241,7 +273,13 @@ const jsonLd = [
         </nav>
       )
     }
+  </Container>
 
-    {comments !== false && <Comments locale={locale} class="mt-12" />}
+  {/* Owned-audience prompt — env-gated, renders nothing until configured. */}
+  <NewsletterSignup locale={locale} />
+
+  {/* Comments break out of the 48rem reading column into a wider track. */}
+  <Container width="wide" as="section" class="pb-16">
+    <Comments locale={locale} title={title} discuss={discuss} commentsEnabled={comments} />
   </Container>
 </BaseLayout>

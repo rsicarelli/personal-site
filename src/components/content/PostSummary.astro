@@ -1,0 +1,29 @@
+---
+/**
+ * PostSummary — the answer-first lede (#56) rendered as a clearly-labeled "TL;DR" capsule.
+ *
+ * Distinct from prose blockquotes (which share the accent left-border in global.css) so the on-page
+ * answer no longer reads as a stray quote: a subtle bordered card with an uppercase label. Consumes
+ * semantic tokens only.
+ */
+import { useTranslations } from '@/i18n/utils';
+import type { Locale } from '@/config/site';
+
+interface Props {
+  summary: string;
+  locale: Locale;
+  class?: string;
+}
+const { summary, locale, class: className } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<aside
+  data-post-summary
+  class:list={['border-border bg-secondary/40 rounded-lg border p-4 sm:p-5', className]}
+>
+  <p class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+    {t('blog.summaryLabel')}
+  </p>
+  <p class="text-foreground mt-1.5 text-base text-pretty">{summary}</p>
+</aside>
