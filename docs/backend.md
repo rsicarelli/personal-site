@@ -44,12 +44,13 @@ check** — it reports `{ ok, db, time }` where `db` is `true` only when the D1 
 
 ## Endpoints
 
-| Route             | What it does                                                                                 |
-| ----------------- | -------------------------------------------------------------------------------------------- |
-| `GET /api/health` | binding check — `{ ok, db, time }`                                                           |
-| `POST /api/view`  | cookieless view count (#200) — `{ "path": "/en/blog/<slug>" }`; same-origin only             |
-| `POST /api/react` | anonymous reaction (#201) — `{ "path": "/en/blog/<slug>", "emoji": "👍" }`; same-origin only |
-| `GET /api/react`  | public per-emoji counts — `?path=/en/blog/<slug>` → `{ path, counts }` (the on-page display) |
+| Route                  | What it does                                                                                                          |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `GET /api/health`      | binding check — `{ ok, db, time }`                                                                                    |
+| `POST /api/view`       | cookieless view count (#200) — `{ "path": "/en/blog/<slug>" }`; same-origin only                                      |
+| `POST /api/react`      | anonymous reaction (#201) — `{ "path": "/en/blog/<slug>", "emoji": "👍" }`; same-origin only                          |
+| `GET /api/react`       | public per-emoji counts — `?path=/en/blog/<slug>` → `{ path, counts }` (the on-page display)                          |
+| `POST /api/engagement` | cookieless engaged-time + read-complete (#224) — `{ "path", "kind":"engaged"\|"read", "seconds"? }`; same-origin only |
 
 **View counting (#200)** dedups a reader with `SHA-256(dailySalt + path + IP + UA)` where
 `dailySalt = SHA-256(VIEW_SALT_SECRET + UTC-date)` — raw IP/UA are never stored and the salt rotates
@@ -76,6 +77,25 @@ hash (`SHA-256(dailySalt + path + IP + UA + emoji)`) so a reader can react once 
 Unlike views, the per-emoji **counts are public** — `GET /api/react?path=…` is the on-page display
 source (no PII; edge-cached ~30s). Only allowlisted post paths and the fixed emoji palette
 (`functions/_lib/react.ts`) are accepted.
+
+**Engagement instrumentation (#224)** — the north-star reading metrics, cookieless and private to the
+author (no public read, no on-page number). `POST /api/engagement` takes `kind`:
+
+- `engaged` — visible reading seconds (the client counts only while the tab is visible and flushes the
+  delta on `visibilitychange → hidden`). Summed into `counters(slug,'engaged_seconds')` with a
+  `counters(slug,'engaged_samples')` tally, so `engaged_seconds / engaged_samples` is the mean engaged
+  time per post. A sample sum (not deduped); a per-beacon clamp (`MAX_ENGAGED_SECONDS = 1800`) + the
+  shared per-IP limiter bound abuse.
+- `read` — the reader reached the end-of-article sentinel; deduped once per visitor/day (same salted
+  hash as views, `+'read'`) into `counters(slug,'read_complete')`. `read_complete / view` is the
+  read-through rate.
+
+Reuses the existing `counters` table — **no migration**. Read them yourself from D1:
+
+```bash
+npx wrangler d1 execute personal-site-engagement --remote \
+  --command "SELECT slug, kind, count FROM counters WHERE kind IN ('view','read_complete','engaged_seconds','engaged_samples') ORDER BY slug;"
+```
 
 _Seeding from dev.to (#216, owner-run once):_ mirrored posts recorded their dev.to like count in
 frontmatter (`provenance.reactions`). After the D1 is live, seed those into our reactions (mapped to
@@ -111,5 +131,7 @@ npx wrangler pages dev dist --d1 DB=personal-site-engagement-preview
   Pages build ignores the dashboard environment variables (that broke Giscus/Umami, #209). D1
   bindings are set in the dashboard instead, which has no such conflict.
 - **Migrations are forward-only**; add `migrations/000N_*.sql` and re-run `migrations apply`.
-- The write endpoints (`/api/view`, `/api/react`, `/api/subscribe`) live beside `health.ts` and reuse
-  the `DB` binding, the salted-hash `dedup` table, and the shared `ratelimit` limiter.
+- The write endpoints (`/api/view`, `/api/react`, `/api/engagement`, `/api/subscribe`) live beside
+  `health.ts` and reuse the `DB` binding, the salted-hash `dedup` table, and the shared `ratelimit`
+  limiter. `/api/engagement` adds no new table or secret — it writes new `kind`s into `counters` and
+  reuses `VIEW_SALT_SECRET`.

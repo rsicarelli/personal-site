@@ -10,6 +10,7 @@ import Prose from '@/components/ui/Prose.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
 import PostSummary from '@/components/content/PostSummary.astro';
 import ViewBeacon from '@/components/content/ViewBeacon.astro';
+import EngagementBeacon from '@/components/content/EngagementBeacon.astro';
 import Reactions from '@/components/content/Reactions.astro';
 import ShareButtons from '@/components/content/ShareButtons.astro';
 import AuthorCard from '@/components/content/AuthorCard.astro';
@@ -234,6 +235,11 @@ const jsonLd = [
       <Prose class="mt-8">
         <Content />
       </Prose>
+
+      {
+        /* End-of-article sentinel + engaged-time/read-complete beacon (#224). Renders nothing visible. */
+      }
+      <EngagementBeacon path={postPath} />
 
       {
         /*
