@@ -26,6 +26,8 @@ interface Props {
   part?: number;
   /** Accessible name → renders as `role="img"`; omit for decorative covers beside a title link. */
   label?: string;
+  /** Banner mode (accepted for a uniform Cover contract; Contour has no in-art tag, so it's a no-op). */
+  bare?: boolean;
   /** Appearance classes (border / rounding / margin) — the caller owns the frame. */
   class?: string;
 }
