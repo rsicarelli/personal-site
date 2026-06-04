@@ -48,12 +48,12 @@ describe('Reading layer — serif long-form typography (#226)', () => {
         const h1 = parseHTML(p.html).document.querySelector('article h1');
         expect(h1, p.relPath).not.toBeNull();
         expect(h1!.getAttribute('class') ?? '', p.relPath).toContain('font-serif');
-        // the serif @font-face ships, and nothing points at a third-party font CDN (self-hosted ethos)
-        expect(p.html, p.relPath).toContain('Source Serif 4');
-        expect(
-          p.html.includes('fonts.gstatic.com') || p.html.includes('fonts.googleapis.com'),
-          p.relPath,
-        ).toBe(false);
+        // Self-hosted: the serif @font-face ships with its `src` pointing at our own /_astro/fonts
+        // bundle — a positive proof of self-hosting (no runtime font CDN), and not a fragile
+        // host-substring check.
+        expect(p.html, p.relPath).toMatch(
+          /@font-face\{font-family:"Source Serif 4[^}]*src:url\("\/_astro\/fonts\//,
+        );
       }
     });
   });
