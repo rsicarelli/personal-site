@@ -112,10 +112,12 @@ const seoMeta = buildSeoMeta({
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     {
-      /* Self-hosted variable fonts (#43). Preload only Inter normal/latin — the single file that
-      drives LCP body text; italic, latin-ext, and the mono accent load on demand with swap (pt-BR
+      /* Self-hosted variable fonts (#43, #226). Preload the two above-the-fold normal/latin faces that
+      drive first paint: Source Serif 4 (the long-form reading layer / LCP body + post titles) and Inter
+      (UI, nav, byline). Italic, latin-ext, and the mono accent load on demand with swap (pt-BR
       diacritics live in the `latin` subset, so preloading latin-ext would just waste bytes). */
     }
+    <Font cssVariable="--font-source-serif" preload={[{ style: 'normal', subset: 'latin' }]} />
     <Font cssVariable="--font-inter" preload={[{ style: 'normal', subset: 'latin' }]} />
     <Font cssVariable="--font-jetbrains-mono" />
 

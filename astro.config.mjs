@@ -154,6 +154,20 @@ export default defineConfig({
       display: 'swap',
       fallbacks: ['ui-monospace', 'monospace'],
     },
+    {
+      // Source Serif 4 (#226) — the editorial reading layer for long-form (`.prose`). Variable
+      // transitional serif with an optical-size axis (`font-optical-sizing: auto`), OFL, full pt-BR
+      // diacritics in latin + latin-ext. Self-hosted via the Fonts API (no runtime font CDN); the
+      // article body + post titles use it, while Inter stays the UI face and JetBrains Mono the code face.
+      provider: fontProviders.google(),
+      name: 'Source Serif 4',
+      cssVariable: '--font-source-serif',
+      weights: ['200 900'],
+      styles: ['normal', 'italic'],
+      subsets: ['latin', 'latin-ext'],
+      display: 'swap',
+      fallbacks: ['Georgia', 'Cambria', 'Times New Roman', 'serif'],
+    },
   ],
 
   // i18n routing (#20). Subdirectory URLs /en/ + /pt-br/ (never ccTLD/subdomain/?lang=).
