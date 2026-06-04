@@ -50,7 +50,10 @@ const provenance = z
     githubRepo: httpUrl().optional(),
     /** Per-post branch/tree link parsed from the article body header (richer than the repo root). */
     githubBranch: httpUrl().optional(),
-    /** dev.to reaction count at import time — a light social proof signal, not kept in sync. */
+    /**
+     * dev.to reaction count at import time. Not rendered (#216 removed the static badge); it's the
+     * one-time seed source for our own first-party reactions (#201) via `scripts/seed-reactions.mjs`.
+     */
     reactions: z.number().int().optional(),
   })
   .optional();

@@ -77,6 +77,17 @@ Unlike views, the per-emoji **counts are public** — `GET /api/react?path=…` 
 source (no PII; edge-cached ~30s). Only allowlisted post paths and the fixed emoji palette
 (`functions/_lib/react.ts`) are accepted.
 
+_Seeding from dev.to (#216, owner-run once):_ mirrored posts recorded their dev.to like count in
+frontmatter (`provenance.reactions`). After the D1 is live, seed those into our reactions (mapped to
+❤️) so posts don't launch at zero. The script prints idempotent SQL (`ON CONFLICT DO NOTHING`, so it
+never clobbers a real reader reaction):
+
+```bash
+pnpm seed:reactions > /tmp/seed.sql
+npx wrangler d1 execute personal-site-engagement --remote --file=/tmp/seed.sql
+npx wrangler d1 execute personal-site-engagement-preview --remote --file=/tmp/seed.sql
+```
+
 **Rate limiting (#202)** — every public write endpoint (`/api/view`, `/api/react`, `/api/subscribe`)
 runs the shared per-IP limiter in `functions/_lib/ratelimit.ts` (fixed window, keyed by a salted IP
 hash in the `ratelimit` table — the raw IP is never stored). Over budget → HTTP 429. `/api/subscribe`
