@@ -21,6 +21,7 @@
     "format:check": "prettier --check .",
     "check:i18n": "node scripts/check-locale-completeness.mjs",
     "ingest:devto": "node scripts/ingest-devto.mjs && prettier --write 'src/content/blog/**/*.md' 'src/content/series/**/*.yaml'",
+    "seed:reactions": "node scripts/seed-reactions.mjs",
     "test": "vitest run",
     "test:i18n": "vitest run tests/i18n",
     "test:seo": "vitest run tests/seo",

@@ -1,8 +1,12 @@
 ---
 /**
- * ArticleMeta (#31) — provenance chrome for a mirrored post: a link to the dev.to original, the
- * companion source repo/branch, and the dev.to reaction count. The site is the canonical home, so
- * the dev.to link is a plain `rel="nofollow"` cross-link (never a canonical pointing away).
+ * ArticleMeta (#31) — provenance chrome for a mirrored post: a link to the dev.to original and the
+ * companion source repo/branch. The site is the canonical home, so the dev.to link is a plain
+ * `rel="nofollow"` cross-link (never a canonical pointing away).
+ *
+ * The dev.to reaction count is intentionally NOT shown — our own first-party reactions (#201) are the
+ * single on-page reaction surface; the historical dev.to total seeds them instead (#216,
+ * scripts/seed-reactions.mjs).
  *
  * Graceful by design: every field is optional and the component renders NOTHING when the whole
  * provenance object is absent/empty — so hand-authored posts with no provenance show no card.
@@ -16,6 +20,7 @@ interface Provenance {
   devtoId?: number;
   githubRepo?: string;
   githubBranch?: string;
+  /** dev.to like count at import — seed source for #201 reactions (#216); not rendered here. */
   reactions?: number;
 }
 
@@ -28,10 +33,9 @@ interface Props {
 const { locale, provenance = {}, class: className } = Astro.props;
 const t = useTranslations(locale);
 
-const { devtoUrl, githubRepo, githubBranch, reactions } = provenance;
+const { devtoUrl, githubRepo, githubBranch } = provenance;
 const sourceUrl = githubBranch ?? githubRepo;
-const hasReactions = typeof reactions === 'number' && reactions > 0;
-const hasAny = Boolean(devtoUrl || sourceUrl || hasReactions);
+const hasAny = Boolean(devtoUrl || sourceUrl);
 
 const pill =
   'inline-flex items-center gap-1.5 hover:text-foreground focus-visible:text-foreground transition-colors';
@@ -61,15 +65,6 @@ const pill =
           </svg>
           {t('blog.sourceCode')}
         </a>
-      )}
-
-      {hasReactions && (
-        <span class="inline-flex items-center gap-1.5" aria-label={t('blog.reactions')}>
-          <svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-          </svg>
-          {reactions}
-        </span>
       )}
     </aside>
   )
