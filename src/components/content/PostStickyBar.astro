@@ -1,0 +1,50 @@
+---
+/**
+ * PostStickyBar (Option B · Sticky Companion) — a slim floating action pill, bottom-center, that
+ * follows the reader so reactions / share / "jump to comments" are always one tap away. Reuses the
+ * existing Reactions + ShareButtons islands (compact, `data-compact` so tests target the canonical
+ * full regions). Share is desktop-only (room); reactions + comments-jump show on every viewport. No
+ * new inline script → no CSP hash.
+ */
+import Reactions from '@/components/content/Reactions.astro';
+import ShareButtons from '@/components/content/ShareButtons.astro';
+import { useTranslations } from '@/i18n/utils';
+import type { Locale } from '@/config/site';
+
+interface Props {
+  path: string;
+  url: string;
+  title: string;
+  locale: Locale;
+  reactions?: boolean;
+}
+const { path, url, title, locale, reactions = true } = Astro.props;
+const t = useTranslations(locale);
+const CHAT = 'M20 2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4v4l5.333-4H20a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z';
+---
+
+<div
+  class="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 print:hidden"
+>
+  <div
+    class="border-border bg-card/80 supports-[backdrop-filter]:bg-card/65 pointer-events-auto flex max-w-[calc(100vw-2rem)] items-center gap-2 overflow-x-auto rounded-full border px-3 py-1.5 shadow-lg backdrop-blur sm:gap-3"
+  >
+    {reactions && <Reactions path={path} locale={locale} compact />}
+
+    <div class="hidden items-center gap-3 sm:flex">
+      <span class="bg-border h-5 w-px" aria-hidden="true"></span>
+      <ShareButtons url={url} title={title} locale={locale} compact />
+    </div>
+
+    <span class="bg-border h-5 w-px" aria-hidden="true"></span>
+    <a
+      href="#comments"
+      class="text-muted-foreground hover:text-foreground inline-flex shrink-0 items-center transition-colors"
+      aria-label={t('blog.comments.title')}
+    >
+      <svg viewBox="0 0 24 24" class="size-5" fill="currentColor" aria-hidden="true">
+        <path d={CHAT}></path>
+      </svg>
+    </a>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+---
+/**
+ * ReadingProgress — a thin top bar that fills as the page is scrolled. Pure CSS via a scroll-driven
+ * animation (`animation-timeline: scroll()`); a progressive enhancement that simply stays empty in
+ * browsers without support, and is hidden under reduced-motion. Zero JS → no CSP hash.
+ */
+---
+
+<div class="reading-progress" aria-hidden="true"></div>
+
+<style>
+  .reading-progress {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    height: 3px;
+    z-index: 50;
+    background: var(--primary);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+  @supports (animation-timeline: scroll()) {
+    .reading-progress {
+      animation: reading-progress-grow linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+  @keyframes reading-progress-grow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reading-progress {
+      display: none;
+    }
+  }
+</style>
