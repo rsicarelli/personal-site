@@ -7,7 +7,6 @@ tags:
   - 'braziliandevs'
 series: 'kotlin-koans-br'
 seriesOrder: 4
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F7i8v3zse00a2qe2uta0q.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-strings-com-tres-aspas-3202'
   devtoId: 1783116

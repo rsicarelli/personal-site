@@ -7,7 +7,7 @@ import { join } from 'node:path';
  * Dynamic OpenGraph card generation (#148). Renders a 1200×630 branded title card with satori
  * (text → SVG vector paths, so no font is needed at raster time) and rasterizes with sharp (already
  * a dep via astro:assets). Build-time only, via the `/og/**` endpoint — it's the OG-image FALLBACK:
- * pages prefer a real `cover` / remote `coverUrl`, and only use this card when they have no image.
+ * pages prefer a local `cover` image, and only use this card when they have none.
  *
  * Fonts are read from `@fontsource/inter` (`.woff`, which satori accepts — not `.woff2`) at the
  * project root, so rendering is deterministic in any build environment (CI, Cloudflare Pages).

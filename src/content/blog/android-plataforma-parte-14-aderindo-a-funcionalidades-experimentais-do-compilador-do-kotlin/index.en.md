@@ -9,7 +9,6 @@ tags:
   - 'gradle'
 series: 'android-plataforma'
 seriesOrder: 14
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F3qk47henua28l33se5vd.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-14-aderindo-a-funcionalidades-experimentais-do-compilador-do-kotlin-3b0g'
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'

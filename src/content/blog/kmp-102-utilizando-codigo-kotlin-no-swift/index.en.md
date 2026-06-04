@@ -10,7 +10,6 @@ tags:
   - 'mobile'
 series: 'kmp-102'
 seriesOrder: 3
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fxs3j6mxf4ocf4xif66pz.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-102-utilizando-codigo-kotlin-no-swift-2ice'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'

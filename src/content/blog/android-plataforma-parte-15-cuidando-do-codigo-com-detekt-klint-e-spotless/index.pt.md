@@ -10,7 +10,6 @@ tags:
   - 'gradle'
 series: 'android-plataforma'
 seriesOrder: 15
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fqeipccc0f9v0d70smukv.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-15-cuidando-do-codigo-com-detekt-klint-e-spotless-50n7'
   devtoId: 1611222

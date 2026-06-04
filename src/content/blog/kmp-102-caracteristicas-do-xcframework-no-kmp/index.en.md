@@ -10,7 +10,6 @@ tags:
   - 'braziliandevs'
 series: 'kmp-102'
 seriesOrder: 2
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fgvs6z4hfiqdph7rc8zdt.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-102-caracteristicas-do-xcframework-no-kmp-3162'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
