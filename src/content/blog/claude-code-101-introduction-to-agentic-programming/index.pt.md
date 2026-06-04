@@ -10,7 +10,6 @@ tags:
   - 'braziliandevs'
 series: 'claude-code-101'
 seriesOrder: 1
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F6mc3scopj9lxh9vo7yar.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/claude-code-101-introducao-a-programacao-agentica-4mk1'
   devtoId: 3454772

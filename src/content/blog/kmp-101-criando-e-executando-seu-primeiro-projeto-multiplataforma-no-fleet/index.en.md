@@ -11,7 +11,6 @@ tags:
   - 'mobile'
 series: 'kmp-101'
 seriesOrder: 5
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Firwzqv63nau0qx6mxiks.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-101-criando-e-executando-seu-primeiro-projeto-multiplataforma-no-fleet-4ep7'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'

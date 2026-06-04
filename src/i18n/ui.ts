@@ -94,7 +94,6 @@ export const ui = {
     'blog.nextPart': 'Next',
     'blog.originalLanguage':
       'This article is shown in its original language — a translation is on the way.',
-    'blog.originallyOn': 'Originally on dev.to',
     'blog.sourceCode': 'Source code',
     'blog.share.label': 'Share',
     'blog.share.twitter': 'Share on X',
@@ -226,7 +225,6 @@ export const ui = {
     'blog.nextPart': 'Próximo',
     'blog.originalLanguage':
       'Este artigo é exibido no idioma original — a tradução está a caminho.',
-    'blog.originallyOn': 'Publicado originalmente no dev.to',
     'blog.sourceCode': 'Código-fonte',
     'blog.share.label': 'Compartilhar',
     'blog.share.twitter': 'Compartilhar no X',
