@@ -21,12 +21,17 @@ describe('on-site generated covers', () => {
     expect(svgs.length, 'hub should render cover svgs').toBeGreaterThan(0);
   });
 
-  it('each series landing exposes its cover as role="img" with an aria-label', () => {
+  it('each series landing renders a generated cover banner (art svg + the title)', () => {
     const landings = pages.filter((p) => /^\/series\/[^/]+$/.test(p.logicalPath));
     expect(landings.length, 'no series landings built').toBeGreaterThan(0);
     for (const p of landings) {
-      const hero = parseHTML(p.html).document.querySelector('svg[role="img"][aria-label]');
-      expect(hero, `${p.relPath}: series hero cover`).toBeTruthy();
+      const doc = parseHTML(p.html).document;
+      // The hero is now a CoverBanner: decorative art svg + a real <h1> title meshed over it.
+      expect(doc.querySelector('main svg'), `${p.relPath}: series hero cover svg`).toBeTruthy();
+      expect(
+        doc.querySelector('main h1')?.textContent?.trim(),
+        `${p.relPath}: hero title`,
+      ).toBeTruthy();
     }
   });
 

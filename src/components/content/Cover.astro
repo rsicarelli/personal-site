@@ -26,11 +26,13 @@ interface Props {
   part?: number;
   /** Accessible name → renders as `role="img"`; omit for decorative covers beside a title link. */
   label?: string;
+  /** Banner mode: drop the in-art tag/rule so an overlaid title block owns the bottom-left. */
+  bare?: boolean;
   /** Appearance classes (border / rounding / margin) — the caller owns the frame. */
   class?: string;
 }
 
-const { seed, topic, series, part, label, class: className } = Astro.props;
+const { seed, topic, series, part, label, bare = false, class: className } = Astro.props;
 const { rng } = coverInputs({ slug: seed, topic, series, part });
 
 // Faint mono dot grid (with a small seeded phase so two covers never line up identically).
@@ -80,18 +82,22 @@ const ruleY = 466 + Math.round(rng() * 26);
     font-weight="700"
     fill-opacity="0.12">{glyph}</text
   >
-  <line class="stroke-primary" x1="96" y1={ruleY} x2="240" y2={ruleY} stroke-width="6"></line>
   {
-    tag && (
-      <text
-        class="fill-muted-foreground font-mono"
-        x="96"
-        y={ruleY + 46}
-        font-size="30"
-        fill-opacity="0.9"
-      >
-        {tag}
-      </text>
+    !bare && (
+      <>
+        <line class="stroke-primary" x1="96" y1={ruleY} x2="240" y2={ruleY} stroke-width="6" />
+        {tag && (
+          <text
+            class="fill-muted-foreground font-mono"
+            x="96"
+            y={ruleY + 46}
+            font-size="30"
+            fill-opacity="0.9"
+          >
+            {tag}
+          </text>
+        )}
+      </>
     )
   }
 </svg>

@@ -1,12 +1,12 @@
 ---
 /**
- * SeriesCard (#31, enriched in #231 C3) — one series in the blog spotlight grid. A linked `Card` with
- * a generated, theme-aware `<Cover>` (seeded by the series slug), the series label, and a metadata
- * line (parts · total reading time · level) composed by the caller. The whole card is the link, so
- * the cover is decorative (no `label`).
+ * SeriesCard (#31, restyled for the title-banner direction) — one series in the blog spotlight grid:
+ * a linked `Card` whose cover is a `CoverBanner` with the series label meshed in, and the metadata
+ * line (parts · total reading time · level) below. The whole `Card` is the link, so the banner carries
+ * no nested anchor (label is plain text inside it).
  */
 import Card from '@/components/ui/Card.astro';
-import Cover from '@/components/content/Cover.astro';
+import CoverBanner from '@/components/content/CoverBanner.astro';
 
 interface Props {
   href: string;
@@ -21,9 +21,13 @@ const { href, label, meta, slug } = Astro.props;
 ---
 
 <Card href={href} class="flex flex-col gap-3">
-  <Cover seed={slug} series={slug} class="border-border rounded-md border" />
-  <div>
-    <h3 class="font-semibold tracking-tight">{label}</h3>
-    <p class="text-muted-foreground mt-1 font-mono text-xs">{meta}</p>
-  </div>
+  <CoverBanner
+    seed={slug}
+    series={slug}
+    title={label}
+    as="h3"
+    headingClass="text-base"
+    class="border-border rounded-md border"
+  />
+  <p class="text-muted-foreground font-mono text-xs">{meta}</p>
 </Card>
