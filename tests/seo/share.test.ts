@@ -70,7 +70,8 @@ describe('ShareButtons rendered on built blog posts', () => {
     posts = pages.filter((p) => /^\/blog\/[^/]+$/.test(p.logicalPath));
   });
 
-  const region = (html: string) => parseHTML(html).document.querySelector('[data-share]');
+  const region = (html: string) =>
+    parseHTML(html).document.querySelector('[data-share]:not([data-compact])');
 
   it('renders a share region on blog posts in both locales', () => {
     expect(posts.length).toBeGreaterThan(0);

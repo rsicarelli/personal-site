@@ -29,7 +29,7 @@ describe('Reactions on built blog posts', () => {
     expect(posts.length).toBeGreaterThan(0);
     for (const p of posts) {
       const doc = parseHTML(p.html).document;
-      const region = doc.querySelector('[data-reactions]');
+      const region = doc.querySelector('[data-reactions]:not([data-compact])');
       expect(region, p.relPath).not.toBeNull();
       // the post's own locale path is the write target
       expect(norm(region!.getAttribute('data-reactions-path') ?? ''), p.relPath).toBe(
@@ -50,7 +50,7 @@ describe('Reactions on built blog posts', () => {
   it('uses the per-locale heading and bakes no count number at build', () => {
     for (const p of posts) {
       const doc = parseHTML(p.html).document;
-      const region = doc.querySelector('[data-reactions]')!;
+      const region = doc.querySelector('[data-reactions]:not([data-compact])')!;
       expect(region.textContent, p.relPath).toContain(ui[p.locale]['blog.reactions.heading']);
       // counts come from the GET at runtime — nothing numeric is server-rendered into the count spans.
       for (const span of region.querySelectorAll('[data-reaction-count]')) {

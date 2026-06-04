@@ -19,16 +19,30 @@ import {
   PUBLIC_GISCUS_CATEGORY_ID,
 } from 'astro:env/client';
 import { useTranslations } from '@/i18n/utils';
-import type { Locale } from '@/config/site';
+import { SITE, type Locale } from '@/config/site';
 import { giscusConfig } from '@/lib/giscus';
+import { discussLinks, type DiscussInput } from '@/lib/discuss';
 
 interface Props {
   locale: Locale;
+  /** Post title — pre-fills the "reply via email" subject. */
+  title: string;
+  /** Off-site discussion links (#196), surfaced in the comments header. */
+  discuss?: DiscussInput;
+  /** Per-post opt-out for the Giscus embed (#195). The reply/discuss channels always show. */
+  commentsEnabled?: boolean;
   class?: string;
 }
 
-const { locale, class: className } = Astro.props;
+const { locale, title, discuss, commentsEnabled = true, class: className } = Astro.props;
 const t = useTranslations(locale);
+const links = discussLinks(discuss);
+const mailto = `mailto:${SITE.email}?subject=${encodeURIComponent(title)}`;
+const pill =
+  'inline-flex items-center gap-1.5 hover:text-foreground focus-visible:text-foreground transition-colors';
+const MAIL =
+  'M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Zm21-1.762V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z';
+const CHAT = 'M20 2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4v4l5.333-4H20a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z';
 const cfg = giscusConfig(
   {
     repo: PUBLIC_GISCUS_REPO,
@@ -79,33 +93,75 @@ const giscusLoaderJs = `(() => {
     attributes: true, attributeFilter: ['class']
   });
 })();`;
+
+// Giscus injects a cross-origin <iframe class="giscus-frame">; without an explicit width it falls
+// back to the HTML default iframe box (300px, fixed). The standard giscus.css supplies this rule —
+// our custom loader must too. Emitted inline INSIDE the gated block so a giscus-free build ships no
+// "giscus" anywhere (tests/seo/comments.test.ts). Height stays auto-managed by giscus via postMessage.
+const giscusFrameCss = `.giscus,.giscus-frame{width:100%}.giscus-frame{min-height:12rem}`;
 ---
 
-{
-  cfg && (
-    <section
-      aria-label={t('blog.comments.title')}
-      class:list={['border-border border-t pt-8', className]}
-    >
-      <h2 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
-        {t('blog.comments.title')}
-      </h2>
-      <div
-        data-giscus
-        data-repo={cfg.repo}
-        data-repo-id={cfg.repoId}
-        data-category={cfg.category}
-        data-category-id={cfg.categoryId}
-        data-mapping={cfg.mapping}
-        data-strict="1"
-        data-reactions-enabled="0"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-lang={cfg.lang}
-        data-loading="lazy"
-        class="mt-4 min-h-60"
-      />
-      <script is:inline set:html={giscusLoaderJs} />
-    </section>
-  )
-}
+<section
+  aria-label={t('blog.comments.title')}
+  class:list={['border-border border-t pt-8', className]}
+>
+  {
+    /* Always-available conversation channels (reply via email + off-site threads), independent of the
+      Giscus embed so they show even before comments are configured. */
+  }
+  <nav
+    aria-label={t('blog.discuss.label')}
+    class="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-2 text-sm"
+  >
+    <span class="text-foreground font-medium">{t('blog.discuss.label')}</span>
+    <a href={mailto} class={pill}>
+      <svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true">
+        <path d={MAIL}></path>
+      </svg>
+      {t('blog.discuss.reply')}
+    </a>
+    {
+      links.map((link) => (
+        <a
+          href={link.href}
+          aria-label={t(link.labelKey)}
+          target="_blank"
+          rel="noopener noreferrer"
+          class={pill}
+        >
+          <svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true">
+            <path d={CHAT} />
+          </svg>
+          {link.name}
+        </a>
+      ))
+    }
+  </nav>
+
+  {
+    cfg && commentsEnabled && (
+      <div class="mt-8">
+        <h2 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+          {t('blog.comments.title')}
+        </h2>
+        <div
+          data-giscus
+          data-repo={cfg.repo}
+          data-repo-id={cfg.repoId}
+          data-category={cfg.category}
+          data-category-id={cfg.categoryId}
+          data-mapping={cfg.mapping}
+          data-strict="1"
+          data-reactions-enabled="0"
+          data-emit-metadata="0"
+          data-input-position="top"
+          data-lang={cfg.lang}
+          data-loading="lazy"
+          class="mt-4"
+        />
+        <script is:inline set:html={giscusLoaderJs} />
+        <style is:inline set:html={giscusFrameCss} />
+      </div>
+    )
+  }
+</section>
