@@ -16,6 +16,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/10-11/customizing-android-options'
   reactions: 2
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 No artigo anterior, parametrizamos os argumentos de `applyAndroidApp()` e `appyAndroidLibary()` com modelos.

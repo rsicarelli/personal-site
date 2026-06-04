@@ -12,6 +12,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/fakt-automating-the-fake-over-mock-pattern-amh'
   devtoId: 3284620
   reactions: 1
+topic: kotlin
+difficulty: beginner
+contentType: deep-dive
 ---
 
 Kotlin testing has a problem that gets worse the more successful your project becomes.

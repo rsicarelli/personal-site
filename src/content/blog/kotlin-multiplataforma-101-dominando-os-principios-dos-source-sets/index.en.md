@@ -16,6 +16,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-multiplataforma-101-dominando-os-principios-dos-source-sets-4pg'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 11
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 This time, let's understand a key concept for writing KMP code: _source sets_.

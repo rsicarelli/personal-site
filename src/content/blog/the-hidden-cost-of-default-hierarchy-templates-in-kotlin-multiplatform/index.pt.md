@@ -11,6 +11,11 @@ coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,g
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/the-hidden-cost-of-default-hierarchy-templates-in-kotlin-multiplatform-256a'
   reactions: 6
+topic: kmp
+difficulty: advanced
+contentType: deep-dive
+featured: true
+featuredOrder: 2
 ---
 
 ## Introdução

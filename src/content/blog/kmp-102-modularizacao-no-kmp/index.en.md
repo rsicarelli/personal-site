@@ -15,6 +15,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-102-modularizacao-no-kmp-4oe5'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 23
+topic: kmp
+difficulty: intermediate
+contentType: tutorial
 ---
 
 In this article, we'll get a better understanding of how modularization behaves in KMP projects, and how to do it in an efficient, well-organized way.

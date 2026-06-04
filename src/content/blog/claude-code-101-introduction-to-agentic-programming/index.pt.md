@@ -16,6 +16,9 @@ provenance:
   devtoId: 3454772
   githubRepo: 'https://github.com/rsicarelli/claude-code-10x'
   reactions: 4
+topic: ai-tooling
+difficulty: beginner
+contentType: tutorial
 ---
 
 O problema: quase 10.000 testes precisavam ser adaptados pra nova versão. Código de mais de 20 times, espalhado por centenas de módulos.

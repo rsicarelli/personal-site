@@ -16,6 +16,9 @@ provenance:
   devtoId: 2034279
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 7
+topic: kmp
+difficulty: intermediate
+contentType: tutorial
 ---
 
 Com isso, podemos avançar e aprender como o código Kotlin compilado para Objective-C funciona e como consumi-lo no iOS.

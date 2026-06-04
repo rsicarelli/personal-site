@@ -16,6 +16,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/7/decorating-android-app'
   reactions: 3
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 No artigo anterior, preparamos nossa plataforma para receber novas funcionalidades.

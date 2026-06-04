@@ -15,6 +15,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/10-11/customizing-android-options'
   reactions: 3
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 In the last article, we explored `CommonsExtension` to remove duplication from our configuration.

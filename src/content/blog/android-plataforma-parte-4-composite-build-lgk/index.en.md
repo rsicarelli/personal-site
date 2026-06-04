@@ -16,6 +16,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/3-4/composite-build'
   reactions: 3
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 We'll build on the initial project by creating and including a composite build.

@@ -17,6 +17,9 @@ provenance:
   devtoId: 1662061
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 18
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 Essa diversidade de plataformas exige estratégias de desenvolvimento que proporcionem atualizações simultâneas e experiências de usuário uniformes.

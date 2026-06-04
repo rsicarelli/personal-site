@@ -16,6 +16,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/12/improving-android-library-build-time'
   reactions: 2
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 --

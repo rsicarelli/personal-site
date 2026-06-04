@@ -17,6 +17,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/15/enhancing-code-quality'
   reactions: 2
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 Agora, vamos explorar a garantia da qualidade do código através da integração de plugins.

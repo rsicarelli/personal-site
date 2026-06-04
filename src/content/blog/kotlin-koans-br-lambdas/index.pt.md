@@ -13,6 +13,9 @@ provenance:
   devtoId: 1783128
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
+topic: kotlin
+difficulty: beginner
+contentType: tutorial
 ---
 
 ## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Introduction/Lambdas/Task.kt)

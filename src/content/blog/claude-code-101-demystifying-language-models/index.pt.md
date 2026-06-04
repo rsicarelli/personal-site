@@ -14,6 +14,9 @@ provenance:
   devtoId: 3476054
   githubRepo: 'https://github.com/rsicarelli/claude-code-10x'
   reactions: 5
+topic: ai-tooling
+difficulty: beginner
+contentType: tutorial
 ---
 
 [🌐 Read in English](https://dev.to/rsicarelli/claude-code-101-demystifying-language-models-3h8o)

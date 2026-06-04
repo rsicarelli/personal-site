@@ -17,6 +17,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/5/gradle-init-clean-up'
   reactions: 2
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 Agora, vamos ajustar os arquivos gerados pelo comando `gradle init`.

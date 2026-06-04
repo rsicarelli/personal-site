@@ -17,6 +17,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/1-2/introduction'
   reactions: 6
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 Para lidar com essa complexidade, apresentaremos o conceito de "plataforma" em desenvolvimento, ilustrando como uma plataforma estruturada pode simplificar a gestão de dependências e configurações.

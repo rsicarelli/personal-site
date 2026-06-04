@@ -1,4 +1,11 @@
 label: 'Kotlin Koans BR'
+description: "A hands-on tour of Kotlin's core language features — from string templates to sealed classes and smart casts — one short, focused exercise at a time."
 order: 5
+level: beginner
+next: 'kmp-101'
+outcomes:
+  - 'Read and write idiomatic Kotlin with confidence'
+  - 'Use nullable types, smart casts and sealed classes safely'
+  - 'Apply extension functions, lambdas and data classes in real code'
 repo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F0kuchkfp7latpkvmkj89.png'

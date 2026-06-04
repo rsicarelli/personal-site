@@ -15,6 +15,9 @@ provenance:
   devtoId: 1743038
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 8
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 Neste artigo, vamos explorar o uso de bibliotecas _open-source_, compreender sua aplicabilidade em nossos projetos e, por fim, sua implementação.

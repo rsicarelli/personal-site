@@ -77,8 +77,8 @@ const blog = defineCollection({
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
       tags: z.array(z.string()).default([]),
-      /** Controlled primary browse facet (#231) — drives `/topics/<slug>`. Optional until #232 A3. */
-      topic: topic.optional(),
+      /** Controlled primary browse facet (#231) — drives `/topics/<slug>`. Required since the #232 A3 migration. */
+      topic,
       /** Audience level (#231) — surfaced as a card badge + a difficulty ladder. */
       difficulty: difficulty.optional(),
       /** Post kind (#231) — tutorial / deep-dive / reference / opinion. */

@@ -1,4 +1,12 @@
 label: 'Android Plataforma'
+description: 'Build a scalable Android platform with Gradle: modularization, convention plugins, shared build logic, version catalogs, and faster builds — step by step.'
 order: 4
+level: intermediate
+related:
+  - 'kmp-101'
+outcomes:
+  - 'Modularize an Android project and share Gradle build logic'
+  - 'Write convention plugins and a custom DSL for your modules'
+  - 'Speed up builds and enforce quality with detekt, ktlint and Spotless'
 repo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform'
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fvih5nd062eyxjjo6l50n.png'

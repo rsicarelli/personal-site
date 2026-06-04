@@ -16,6 +16,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/9/android-commons-extension'
   reactions: 3
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 No último post, conseguimos extrair a lógica de configuração de nossos módulos library/biblioteca.

@@ -17,6 +17,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/8/decorating-android-library'
   reactions: 3
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 Agora, vamos estender essa configuração para os módulos designsystem, home e details.

@@ -16,6 +16,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-101-como-compartilhar-codigo-no-kmp-conectando-plataformas-com-expect-e-actual-49ma'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 11
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 Now let's come up to the surface of KMP, unpacking the `actual` and `expect` keywords and how they make code sharing easier.

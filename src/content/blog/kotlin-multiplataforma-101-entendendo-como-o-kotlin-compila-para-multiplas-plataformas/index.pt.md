@@ -17,6 +17,9 @@ provenance:
   devtoId: 1672546
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 13
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 Neste artigo, vamos desvendar os conceitos básicos do compilador Kotlin e sua capacidade de compilar para múltiplas plataformas.

@@ -16,6 +16,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-multiplataforma-101-introducao-ao-paradigma-da-multiplataforma-eo3'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 18
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 This diversity of platforms demands development strategies that deliver simultaneous updates and a consistent user experience.

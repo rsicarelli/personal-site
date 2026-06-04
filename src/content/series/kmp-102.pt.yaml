@@ -1,4 +1,15 @@
 label: 'KMP 102'
+description: 'Leve o Kotlin Multiplatform para o iOS: modularize uma base compartilhada, consuma Kotlin a partir do Swift e otimize o XCFramework que você entrega a um projeto Xcode.'
 order: 3
+level: intermediate
+prerequisites:
+  - 'kmp-101'
+related:
+  - 'kmp-101'
+  - 'android-plataforma'
+outcomes:
+  - 'Modularizar uma base Kotlin Multiplatform para escala'
+  - 'Consumir APIs Kotlin a partir do Swift e ajustar a exportação Obj-C/Swift'
+  - 'Construir e otimizar um XCFramework para consumidores iOS'
 repo: 'https://github.com/rsicarelli/KMP-101'
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F77ybgidb8t2gwn9n696y.png'

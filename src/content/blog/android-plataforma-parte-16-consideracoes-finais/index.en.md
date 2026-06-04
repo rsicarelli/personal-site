@@ -16,6 +16,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/main'
   reactions: 3
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 I'd like to share a few final thoughts on everything we've covered, and suggest some next steps for future series!

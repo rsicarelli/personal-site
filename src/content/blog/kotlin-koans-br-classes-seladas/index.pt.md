@@ -13,6 +13,9 @@ provenance:
   devtoId: 1783194
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 7
+topic: kotlin
+difficulty: beginner
+contentType: tutorial
 ---
 
 ### 🔗 [Tarefa](https://play.kotlinlang.org/koans/Classes/Sealed%20classes/Task.kt)

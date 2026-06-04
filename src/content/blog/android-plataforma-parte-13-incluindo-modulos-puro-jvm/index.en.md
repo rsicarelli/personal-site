@@ -16,6 +16,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/13/jvm-only-modules'
   reactions: 2
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 In this article we'll look at the difference between pure JVM modules (`java-library`) and Android Library modules (`com.android.library`), and we'll extend our platform to support that feature.

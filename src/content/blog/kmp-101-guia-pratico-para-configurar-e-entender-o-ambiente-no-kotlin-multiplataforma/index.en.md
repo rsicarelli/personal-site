@@ -16,6 +16,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-101-guia-pratico-para-configurar-e-entender-o-ambiente-no-kotlin-multiplataforma-2jcn'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 14
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 In the world of Kotlin Multiplatform, this need is even more apparent: properly setting up the development environment for KMP is crucial to make sure developers can get the most out of the language's multiplatform capabilities.

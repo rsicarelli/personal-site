@@ -15,6 +15,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-0-introducao-a-serie-1ffe'
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform'
   reactions: 10
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 On top of that, add the constant changes, deprecations, and the business pressure to ship features that meet customer needs. This volatile landscape makes it a real challenge to keep our code organized, efficient, and scalable.

@@ -12,6 +12,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-lambdas-4pnl'
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
+topic: kotlin
+difficulty: beginner
+contentType: tutorial
 ---
 
 ## 🔗 [Task](https://play.kotlinlang.org/koans/Introduction/Lambdas/Task.kt)

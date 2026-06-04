@@ -17,6 +17,9 @@ provenance:
   devtoId: 1696574
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 11
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 Agora, vamos emergir à superfície do KMP, desvendando as palavras reservadas `actual` e `expect` e como elas facilitam o compartilhamento de código.

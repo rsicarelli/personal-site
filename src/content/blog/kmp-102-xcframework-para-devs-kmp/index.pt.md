@@ -15,6 +15,9 @@ provenance:
   devtoId: 1868908
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 16
+topic: kmp
+difficulty: intermediate
+contentType: tutorial
 ---
 
 ## KMP102 - XCFramework para Devs Kotlin Multiplataforma
