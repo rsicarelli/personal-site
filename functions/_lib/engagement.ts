@@ -3,20 +3,30 @@
  * parsing / validation / dedup-key math is unit-testable without the Cloudflare runtime (mirrors the
  * split in `_lib/view.ts` and `_lib/ratelimit.ts`).
  *
- * Two signals share the endpoint: `engaged` (visible reading seconds, summed) and `read`
- * (read-to-the-end, deduped once per visitor/day). Privacy is identical to the view counter (#200):
- * the read dedup key is a one-way SHA-256 over the daily salt + path + IP + UA, so raw IP/UA are never
- * stored and the key rotates daily.
+ * Three signals share the endpoint: `engaged` (visible reading seconds, summed), `depth` (a 25/50/75
+ * scroll milestone) and `read` (read-to-the-end / 100%). `depth` + `read` are deduped once per
+ * visitor/day. Privacy is identical to the view counter (#200): the dedup keys are one-way SHA-256 over
+ * the daily salt + path + IP + UA (+ signal), so raw IP/UA are never stored and the key rotates daily.
  */
 import { sha256Hex } from './view';
 
-export type EngagementKind = 'engaged' | 'read';
+export type EngagementKind = 'engaged' | 'depth' | 'read';
 
 /** Clamp a single engaged-time sample to a sane window — bounds an inflated/garbage beacon. */
 export const MAX_ENGAGED_SECONDS = 1800; // 30 min
 
+/** The allowed intermediate scroll-depth milestones (100% is the separate `read` signal). */
+export const DEPTH_MILESTONES = [25, 50, 75] as const;
+export type DepthMilestone = (typeof DEPTH_MILESTONES)[number];
+
 export function isEngagementKind(v: unknown): v is EngagementKind {
-  return v === 'engaged' || v === 'read';
+  return v === 'engaged' || v === 'depth' || v === 'read';
+}
+
+/** Narrow a `pct` value to one of the fixed milestones (25/50/75); anything else → null (→ 400). */
+export function toDepthMilestone(v: unknown): DepthMilestone | null {
+  const n = typeof v === 'number' ? v : Number(v);
+  return (DEPTH_MILESTONES as readonly number[]).includes(n) ? (n as DepthMilestone) : null;
 }
 
 /**
@@ -32,20 +42,27 @@ export function clampSeconds(v: unknown): number {
 /** Parse the beacon body (throws on malformed JSON → caller returns 400). */
 export async function parseEngagementBody(
   request: Request,
-): Promise<{ path: string; kind: string; seconds: number }> {
+): Promise<{ path: string; kind: string; seconds: number; pct: unknown }> {
   const b = (await request.json()) as Record<string, unknown>;
   return {
     path: String(b.path ?? ''),
     kind: String(b.kind ?? ''),
     seconds: clampSeconds(b.seconds),
+    pct: b.pct,
   };
 }
 
 /**
- * Dedup key for the once-per-day read-complete signal: SHA-256(dailySalt | path | IP | UA | 'read').
- * The `'read'` suffix namespaces it away from the view counter's key for the same visitor/post/day, so
- * a read-complete and a view never collide in the shared `dedup` ledger.
+ * Dedup key for the once-per-day signals: SHA-256(dailySalt | path | IP | UA | tag). The `tag`
+ * (`'read'` or e.g. `'depth:50'`) namespaces each signal away from the view counter's key — and from
+ * each other — for the same visitor/post/day, so they never collide in the shared `dedup` ledger.
  */
-export function readDedupKey(salt: string, path: string, ip: string, ua: string): Promise<string> {
-  return sha256Hex([salt, path, ip, ua, 'read'].join('|'));
+export function reachDedupKey(
+  salt: string,
+  path: string,
+  ip: string,
+  ua: string,
+  tag: string,
+): Promise<string> {
+  return sha256Hex([salt, path, ip, ua, tag].join('|'));
 }

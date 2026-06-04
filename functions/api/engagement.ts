@@ -1,14 +1,16 @@
 /**
  * Cookieless engagement instrumentation (#224) — Cloudflare Pages Function.
  *
- * POST `/api/engagement` {"path","kind":"engaged"|"read","seconds"?}. Two signals, both private to the
- * author (read straight from D1 — there is **no public read endpoint and no on-page number**, like the
- * view counter #200). A GET returns 405.
+ * POST `/api/engagement` {"path","kind":"engaged"|"depth"|"read","seconds"?,"pct"?}. Three signals, all
+ * private to the author (read straight from D1 — there is **no public read endpoint and no on-page
+ * number**, like the view counter #200). A GET returns 405.
  *
  *  - kind `engaged`: adds visible-reading `seconds` to `counters(slug,'engaged_seconds')` and bumps
  *    `counters(slug,'engaged_samples')`, so `engaged_seconds / engaged_samples` is the mean engaged time
  *    per post. It's a *sample sum*, not deduped — abuse is bounded by the per-IP rate limit and the
  *    per-beacon `MAX_ENGAGED_SECONDS` clamp.
+ *  - kind `depth`: a 25/50/75 scroll milestone (`pct`); deduped once per IP+UA+path/day per milestone
+ *    into `counters(slug,'scroll_<pct>')`. With `read` (100%) this is the read funnel.
  *  - kind `read`: the reader reached the end-of-article sentinel; deduped once per IP+UA+path/day (like a
  *    view) into `counters(slug,'read_complete')`. `read_complete / view` is the read-through rate.
  *
@@ -20,7 +22,12 @@
  */
 import { normalizePath, isBotUA, isSameOrigin, utcDate, dailySalt } from '../_lib/view';
 import { checkRateLimit, type RateLimitDB } from '../_lib/ratelimit';
-import { isEngagementKind, parseEngagementBody, readDedupKey } from '../_lib/engagement';
+import {
+  isEngagementKind,
+  parseEngagementBody,
+  reachDedupKey,
+  toDepthMilestone,
+} from '../_lib/engagement';
 
 interface D1Stmt {
   bind(...vals: unknown[]): D1Stmt;
@@ -74,6 +81,34 @@ async function bumpCounter(db: D1Like, slug: string, kind: string, by: number): 
     .run();
 }
 
+/**
+ * Record a once-per-day "reach" signal (read-complete or a scroll-depth milestone): insert the dedup
+ * row keyed by `tag` and, only on the first sighting that day (changes>0), bump its counter. Returns
+ * whether it counted.
+ */
+async function recordReach(
+  db: D1Like,
+  opts: {
+    salt: string;
+    path: string;
+    ip: string;
+    ua: string;
+    tag: string;
+    counter: string;
+    now: number;
+  },
+): Promise<boolean> {
+  const { salt, path, ip, ua, tag, counter, now } = opts;
+  const key = await reachDedupKey(salt, path, ip, ua, tag);
+  const ins = await db
+    .prepare('INSERT INTO dedup (hash, ts) VALUES (?1, ?2) ON CONFLICT(hash) DO NOTHING')
+    .bind(key, now)
+    .run();
+  const counted = (ins.meta?.changes ?? 0) > 0;
+  if (counted) await bumpCounter(db, path, counter, 1);
+  return counted;
+}
+
 export async function onRequestPost(context: Ctx): Promise<Response> {
   const { request, env } = context;
 
@@ -85,11 +120,13 @@ export async function onRequestPost(context: Ctx): Promise<Response> {
   let path: string;
   let kind: string;
   let seconds: number;
+  let pct: unknown;
   try {
     const body = await parseEngagementBody(request);
     path = normalizePath(body.path);
     kind = body.kind;
     seconds = body.seconds;
+    pct = body.pct;
   } catch {
     return new Response(null, { status: 400 });
   }
@@ -117,24 +154,47 @@ export async function onRequestPost(context: Ctx): Promise<Response> {
   if (!rl.allowed) return json({ ok: false }, 'no-store', 429);
 
   const now = Math.floor(Date.now() / 1000);
+  const db = env.DB;
 
-  if (kind === 'read') {
-    // Deduped once per visitor/day, like a view.
-    const key = await readDedupKey(salt, path, ip, ua);
-    const ins = await env.DB.prepare(
-      'INSERT INTO dedup (hash, ts) VALUES (?1, ?2) ON CONFLICT(hash) DO NOTHING',
-    )
-      .bind(key, now)
-      .run();
-    const counted = (ins.meta?.changes ?? 0) > 0;
-    if (counted) await bumpCounter(env.DB, path, 'read_complete', 1);
-
-    // Opportunistic prune (no cron): occasionally drop dedup rows older than 2 days.
+  // Opportunistic prune (no cron): occasionally drop dedup rows older than 2 days.
+  const prune = async () => {
     if (Math.random() < 0.02) {
-      await env.DB.prepare('DELETE FROM dedup WHERE ts < ?1')
+      await db
+        .prepare('DELETE FROM dedup WHERE ts < ?1')
         .bind(now - 172800)
         .run();
     }
+  };
+
+  if (kind === 'read') {
+    // Read-to-the-end (100%) — deduped once per visitor/day, like a view.
+    const counted = await recordReach(db, {
+      salt,
+      path,
+      ip,
+      ua,
+      tag: 'read',
+      counter: 'read_complete',
+      now,
+    });
+    await prune();
+    return json({ ok: true, counted });
+  }
+
+  if (kind === 'depth') {
+    // A 25/50/75 scroll milestone — deduped once per visitor/day per milestone → counters.scroll_<pct>.
+    const milestone = toDepthMilestone(pct);
+    if (milestone === null) return new Response(null, { status: 400 });
+    const counted = await recordReach(db, {
+      salt,
+      path,
+      ip,
+      ua,
+      tag: `depth:${milestone}`,
+      counter: `scroll_${milestone}`,
+      now,
+    });
+    await prune();
     return json({ ok: true, counted });
   }
 

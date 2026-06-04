@@ -2,7 +2,8 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import {
   clampSeconds,
   isEngagementKind,
-  readDedupKey,
+  reachDedupKey,
+  toDepthMilestone,
   MAX_ENGAGED_SECONDS,
 } from '../../functions/_lib/engagement';
 import { onRequestPost, _clearManifestCache } from '../../functions/api/engagement';
@@ -25,19 +26,32 @@ describe('engagement helpers', () => {
     expect(clampSeconds(999999)).toBe(MAX_ENGAGED_SECONDS);
   });
 
-  it('isEngagementKind only accepts the two known kinds', () => {
+  it('isEngagementKind only accepts the three known kinds', () => {
     expect(isEngagementKind('engaged')).toBe(true);
+    expect(isEngagementKind('depth')).toBe(true);
     expect(isEngagementKind('read')).toBe(true);
     expect(isEngagementKind('view')).toBe(false);
     expect(isEngagementKind('')).toBe(false);
     expect(isEngagementKind(null)).toBe(false);
   });
 
-  it('readDedupKey is deterministic, varies by input, and differs from the view key', async () => {
-    const k = await readDedupKey('salt', '/en/blog/x', '1.2.3.4', 'UA');
-    expect(await readDedupKey('salt', '/en/blog/x', '1.2.3.4', 'UA')).toBe(k);
-    expect(await readDedupKey('salt', '/en/blog/y', '1.2.3.4', 'UA')).not.toBe(k);
-    expect(await readDedupKey('salt', '/en/blog/x', '9.9.9.9', 'UA')).not.toBe(k);
+  it('toDepthMilestone accepts only 25/50/75 (100% is the separate read signal)', () => {
+    expect(toDepthMilestone(25)).toBe(25);
+    expect(toDepthMilestone(50)).toBe(50);
+    expect(toDepthMilestone(75)).toBe(75);
+    expect(toDepthMilestone('50')).toBe(50);
+    expect(toDepthMilestone(100)).toBeNull();
+    expect(toDepthMilestone(33)).toBeNull();
+    expect(toDepthMilestone(undefined)).toBeNull();
+  });
+
+  it('reachDedupKey is deterministic, varies by input, and namespaces by tag', async () => {
+    const k = await reachDedupKey('salt', '/en/blog/x', '1.2.3.4', 'UA', 'read');
+    expect(await reachDedupKey('salt', '/en/blog/x', '1.2.3.4', 'UA', 'read')).toBe(k);
+    expect(await reachDedupKey('salt', '/en/blog/y', '1.2.3.4', 'UA', 'read')).not.toBe(k);
+    expect(await reachDedupKey('salt', '/en/blog/x', '9.9.9.9', 'UA', 'read')).not.toBe(k);
+    // different signals never collide for the same visitor/post/day
+    expect(await reachDedupKey('salt', '/en/blog/x', '1.2.3.4', 'UA', 'depth:50')).not.toBe(k);
     expect(k).toMatch(/^[0-9a-f]{64}$/);
   });
 });
@@ -154,6 +168,41 @@ describe('POST /api/engagement', () => {
     });
     expect((await repeat.json()).counted).toBe(false);
     expect(db.counters.get('/en/blog/x\nread_complete')).toBe(1); // still 1
+  });
+
+  it('counts a fresh scroll-depth milestone, then dedups the repeat', async () => {
+    const db = mockDB();
+    const env = { DB: db, VIEW_SALT_SECRET: 's' };
+    const first = await onRequestPost({
+      request: post({ path: '/en/blog/x', kind: 'depth', pct: 50 }),
+      env,
+    });
+    expect((await first.json()).counted).toBe(true);
+    expect(db.counters.get('/en/blog/x\nscroll_50')).toBe(1);
+
+    const repeat = await onRequestPost({
+      request: post({ path: '/en/blog/x', kind: 'depth', pct: 50 }),
+      env,
+    });
+    expect((await repeat.json()).counted).toBe(false);
+    expect(db.counters.get('/en/blog/x\nscroll_50')).toBe(1); // still 1
+  });
+
+  it('records distinct milestones independently (25 and 75 do not collide)', async () => {
+    const db = mockDB();
+    const env = { DB: db, VIEW_SALT_SECRET: 's' };
+    await onRequestPost({ request: post({ path: '/en/blog/x', kind: 'depth', pct: 25 }), env });
+    await onRequestPost({ request: post({ path: '/en/blog/x', kind: 'depth', pct: 75 }), env });
+    expect(db.counters.get('/en/blog/x\nscroll_25')).toBe(1);
+    expect(db.counters.get('/en/blog/x\nscroll_75')).toBe(1);
+  });
+
+  it('400s on an out-of-set depth pct', async () => {
+    const res = await onRequestPost({
+      request: post({ path: '/en/blog/x', kind: 'depth', pct: 33 }),
+      env: { DB: mockDB(), VIEW_SALT_SECRET: 's' },
+    });
+    expect(res.status).toBe(400);
   });
 
   it('sums engaged seconds and bumps the sample count (no dedup)', async () => {
