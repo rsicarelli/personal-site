@@ -1,0 +1,201 @@
+---
+/**
+ * Blog hub (#31, restructured into a curated front + paginated feed in #231 C3). One paginated route
+ * per locale: page 1 is `/<locale>/blog`, page N is `/<locale>/blog/<N>` (numbered pagination, not
+ * infinite scroll — crawlable + self-canonical). Page 1 leads with the curated front (hub statement,
+ * a "start here" pointer, the series spotlight, then featured deep-dives); every page then lists the
+ * chronological "Latest" feed via the shared `PostCard`. Featured posts are surfaced on the front and
+ * kept out of the paginated feed so they aren't shown twice.
+ *
+ * hreflang reciprocity holds for free: every post is bilingual (locale-completeness), so both locales
+ * paginate to the same number of pages and `/en/blog/N` ↔ `/pt-br/blog/N` always reciprocate (the
+ * alternates are derived from the locale-stripped path in BaseLayout).
+ */
+import type { PaginateFunction, Page } from 'astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SeriesSpotlight from '@/components/content/SeriesSpotlight.astro';
+import PostCard from '@/components/content/PostCard.astro';
+import JsonLd from '@/components/content/JsonLd.astro';
+import { LOCALES, type Locale } from '@/config/site';
+import { useTranslations } from '@/i18n/utils';
+import {
+  getLocalizedEntries,
+  getSeriesWithCounts,
+  commonBlogTagSlugs,
+  type LocalizedEntry,
+} from '@/lib/content';
+import { canonicalUrl } from '@/lib/seo';
+import { collectionPageLd, breadcrumbLd } from '@/lib/jsonld';
+
+export async function getStaticPaths({ paginate }: { paginate: PaginateFunction }) {
+  // 12 posts/page. Inlined (not a module const): Astro hoists getStaticPaths above frontmatter
+  // consts, so referencing one here hits its temporal dead zone at build time.
+  const out = [];
+  for (const locale of LOCALES) {
+    // Featured posts live on the curated front (page 1), not in the chronological feed — so they're
+    // never listed twice. The featured set is identical across locales, so page counts stay in sync.
+    const posts = (await getLocalizedEntries('blog', locale)).filter((p) => !p.entry.data.featured);
+    out.push(...paginate(posts, { params: { locale }, pageSize: 12 }));
+  }
+  return out;
+}
+
+const locale = Astro.params.locale as Locale;
+const { page } = Astro.props as { page: Page<LocalizedEntry<'blog'>> };
+const t = useTranslations(locale);
+const isFirst = page.currentPage === 1;
+
+const tagPages = await commonBlogTagSlugs();
+const seriesList = isFirst ? await getSeriesWithCounts(locale) : [];
+const seriesLabel = new Map((await getSeriesWithCounts(locale)).map((s) => [s.slug, s.data.label]));
+const featured = isFirst
+  ? (await getLocalizedEntries('blog', locale))
+      .filter((p) => p.entry.data.featured)
+      .sort(
+        (a, b) =>
+          (a.entry.data.featuredOrder ?? Number.MAX_SAFE_INTEGER) -
+          (b.entry.data.featuredOrder ?? Number.MAX_SAFE_INTEGER),
+      )
+  : [];
+// "New here? Start with …" → the canonical entry series (the owner's default path begins at KMP 101).
+const startHere = isFirst ? seriesList.find((s) => s.slug === 'kmp-101') : undefined;
+
+const lastPage = page.lastPage;
+const pageHref = (n: number) => (n === 1 ? `/${locale}/blog` : `/${locale}/blog/${n}`);
+const pageNumbers = Array.from({ length: lastPage }, (_, i) => i + 1);
+
+// Structured data (#231 C4): this listing as a CollectionPage whose mainEntity is an ItemList of the
+// posts on THIS page, plus a Home → Blog breadcrumb. Each page self-canonicalizes (BaseLayout).
+const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
+const items = page.data.map(({ slug, entry }) => ({
+  url: canonicalUrl(`/blog/${slug}`, locale, Astro.site),
+  name: entry.data.title,
+}));
+const jsonLd = [
+  collectionPageLd({
+    url: pageUrl,
+    name: t('nav.blog'),
+    locale,
+    description: t('blog.hubIntro'),
+    items,
+  }),
+  breadcrumbLd([
+    { name: t('nav.home'), url: canonicalUrl('/', locale, Astro.site) },
+    { name: t('nav.blog'), url: canonicalUrl('/blog', locale, Astro.site) },
+  ]),
+];
+
+const pageTitle = isFirst
+  ? `${t('nav.blog')} · ${t('site.title')}`
+  : `${t('nav.blog')} — ${t('blog.page')} ${page.currentPage} · ${t('site.title')}`;
+---
+
+<BaseLayout title={pageTitle} description={t('blog.hubIntro')}>
+  <JsonLd slot="head" schema={jsonLd} />
+  <Container as="section" class="py-16">
+    <h1 class="text-3xl font-bold tracking-tight">{t('nav.blog')}</h1>
+
+    {
+      isFirst && (
+        <>
+          <p class="text-foreground/80 mt-3 max-w-prose text-lg">{t('blog.hubIntro')}</p>
+          {startHere && (
+            <p class="text-muted-foreground mt-4 font-mono text-xs">
+              {t('blog.startHere')}{' '}
+              <a href={startHere.href} class="text-primary hover:underline">
+                {startHere.data.label}
+              </a>
+            </p>
+          )}
+
+          <SeriesSpotlight locale={locale} series={seriesList} />
+
+          {featured.length > 0 && (
+            <section class="mt-12">
+              <h2 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                {t('blog.featured')}
+              </h2>
+              <div class="mt-6 space-y-10">
+                {featured.map(({ slug, entry }, i) => (
+                  <PostCard
+                    locale={locale}
+                    slug={slug}
+                    entry={entry}
+                    seriesLabel={entry.data.series ? seriesLabel.get(entry.data.series) : undefined}
+                    tagPages={tagPages}
+                    eager={i === 0}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+        </>
+      )
+    }
+
+    <h2 class="text-muted-foreground mt-12 text-xs font-semibold tracking-wide uppercase">
+      {t('blog.latest')}
+    </h2>
+    {
+      page.data.length === 0 ? (
+        <p class="text-muted-foreground mt-6">{t('blog.empty')}</p>
+      ) : (
+        <div class="mt-6 space-y-10">
+          {page.data.map(({ slug, entry }, i) => (
+            <PostCard
+              locale={locale}
+              slug={slug}
+              entry={entry}
+              seriesLabel={entry.data.series ? seriesLabel.get(entry.data.series) : undefined}
+              tagPages={tagPages}
+              eager={isFirst && featured.length === 0 && i === 0}
+            />
+          ))}
+        </div>
+      )
+    }
+
+    {
+      lastPage > 1 && (
+        <nav
+          aria-label={t('blog.pagination')}
+          class="border-border mt-12 flex items-center justify-between gap-4 border-t pt-6 font-mono text-xs"
+        >
+          {page.url.prev ? (
+            <a href={page.url.prev} class="text-muted-foreground hover:text-foreground">
+              ← {t('blog.newer')}
+            </a>
+          ) : (
+            <span />
+          )}
+          <ul class="flex flex-wrap items-center gap-1">
+            {pageNumbers.map((n) => (
+              <li>
+                <a
+                  href={pageHref(n)}
+                  aria-current={n === page.currentPage ? 'page' : undefined}
+                  class:list={[
+                    'rounded-md px-2 py-1 transition-colors',
+                    n === page.currentPage
+                      ? 'bg-secondary text-secondary-foreground'
+                      : 'text-muted-foreground hover:text-foreground',
+                  ]}
+                >
+                  {n}
+                </a>
+              </li>
+            ))}
+          </ul>
+          {page.url.next ? (
+            <a href={page.url.next} class="text-muted-foreground hover:text-foreground">
+              {t('blog.older')} →
+            </a>
+          ) : (
+            <span />
+          )}
+        </nav>
+      )
+    }
+  </Container>
+</BaseLayout>

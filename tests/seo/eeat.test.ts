@@ -56,7 +56,7 @@ describe('About page Person identity', () => {
 
 describe('blog byline', () => {
   it('every post links the author byline to /about', () => {
-    const posts = pages.filter((p) => /^\/blog\/[^/]+$/.test(p.logicalPath));
+    const posts = pages.filter((p) => /^\/blog\/(?!\d+$)[^/]+$/.test(p.logicalPath));
     expect(posts.length, 'no blog posts rendered').toBeGreaterThan(0);
     for (const p of posts) {
       const doc = parseHTML(p.html).document;

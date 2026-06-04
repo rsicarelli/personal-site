@@ -30,7 +30,7 @@ describe('ViewBeacon on built blog posts', () => {
   let manifest: Set<string>;
   beforeAll(async () => {
     const pages = await collectLocalePages();
-    posts = pages.filter((p) => /^\/blog\/[^/]+$/.test(p.logicalPath));
+    posts = pages.filter((p) => /^\/blog\/(?!\d+$)[^/]+$/.test(p.logicalPath));
     const raw = await readFile(join(DIST, 'engagement', 'slugs.json'), 'utf8');
     manifest = new Set((JSON.parse(raw) as { paths: string[] }).paths);
   });

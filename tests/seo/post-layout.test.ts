@@ -12,7 +12,7 @@ describe('Blog post layout', () => {
   let posts: RenderedPage[];
   beforeAll(async () => {
     const pages = await collectLocalePages();
-    posts = pages.filter((p) => /^\/blog\/[^/]+$/.test(p.logicalPath));
+    posts = pages.filter((p) => /^\/blog\/(?!\d+$)[^/]+$/.test(p.logicalPath));
   });
 
   it('renders an author card (about-the-author + a link to /about) on every post', () => {

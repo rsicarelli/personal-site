@@ -1,21 +1,21 @@
 ---
 /**
- * SeriesCard (#31) — one series in the blog spotlight grid. A linked `Card` with an optional cover
- * (remote dev.to CDN image until R2, #R2), the series label, and its part count. Cover images are
- * plain lazy `<img>` (remote, fixed aspect) rather than astro:assets, which only optimizes local files.
+ * SeriesCard (#31, enriched in #231 C3) — one series in the blog spotlight grid. A linked `Card` with
+ * an optional cover (remote dev.to CDN image until R2, #R2), the series label, and a metadata line
+ * (parts · total reading time · level) composed by the caller. Cover images are plain lazy `<img>`
+ * (remote, fixed aspect) rather than astro:assets, which only optimizes local files.
  */
 import Card from '@/components/ui/Card.astro';
 
 interface Props {
   href: string;
   label: string;
-  count: number;
-  /** "parts" / "partes" — already localized by the caller. */
-  partsLabel: string;
+  /** Preformatted, already-localized line: e.g. "8 parts · ~1h 4min · Beginner". */
+  meta: string;
   coverUrl?: string;
 }
 
-const { href, label, count, partsLabel, coverUrl } = Astro.props;
+const { href, label, meta, coverUrl } = Astro.props;
 ---
 
 <Card href={href} class="flex flex-col gap-3">
@@ -32,6 +32,6 @@ const { href, label, count, partsLabel, coverUrl } = Astro.props;
   }
   <div>
     <h3 class="font-semibold tracking-tight">{label}</h3>
-    <p class="text-muted-foreground mt-1 font-mono text-xs">{count} {partsLabel}</p>
+    <p class="text-muted-foreground mt-1 font-mono text-xs">{meta}</p>
   </div>
 </Card>
