@@ -90,6 +90,8 @@
   --font-mono:
     var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
     'Liberation Mono', monospace;
+  /* Editorial reading layer (#226) — serif body/headings for long-form `.prose` only; UI stays sans. */
+  --font-serif: var(--font-source-serif), Georgia, Cambria, 'Times New Roman', Times, serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -212,10 +214,15 @@
  * accent links, mono code. It only styles flow content — width/centering stay with the container.
  */
 .prose {
-  max-width: 68ch;
+  /* Serif reading layer (#226): an 18px serif body on a ~66ch measure. `font-optical-sizing: auto`
+     lets Source Serif 4's opsz axis open spacing at reading sizes. UI/byline (sans) + code (mono)
+     are unaffected — they set their own family. */
+  max-width: 66ch;
   color: var(--foreground);
-  font-size: 1.0625rem;
-  line-height: 1.75;
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+  font-size: 1.125rem;
+  line-height: 1.65;
   text-wrap: pretty;
   overflow-wrap: break-word; /* long URLs / unbroken tokens wrap instead of overflowing on mobile */
 
