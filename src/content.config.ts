@@ -94,8 +94,6 @@ const blog = defineCollection({
        * (the meta/OG/SERP snippet): `summary` is the on-page answer; both can diverge.
        */
       summary: z.string().max(320).optional(),
-      /** Remote cover URL (dev.to CDN) until media moves to R2 (#R2). Distinct from local `cover`. */
-      coverUrl: httpUrl().optional(),
       /**
        * Series membership. The value is a series *slug* (e.g. `kmp-101`) matched against the
        * `series` collection by its filePath-derived slug — NOT an Astro `reference()`, because the
@@ -252,8 +250,6 @@ const series = defineCollection({
     order: z.number().int().optional(),
     /** Companion repository for the whole series → shown on the series landing. */
     repo: httpUrl().optional(),
-    /** Remote cover URL (dev.to CDN) until media moves to R2 (#R2). */
-    coverUrl: httpUrl().optional(),
     /** Audience level for the whole series (#231) — shown on the landing + spotlight cards. */
     level: difficulty.optional(),
     /** Series slugs to read first (#231) — rendered as a "Before this series" block. */

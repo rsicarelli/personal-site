@@ -11,7 +11,6 @@ tags:
   - 'mobile'
 series: 'kmp-101'
 seriesOrder: 6
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F6wdj5w6bjhallotjxo2x.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-101-aprendendo-sobre-o-uso-do-gradle-no-kotlin-multiplataforma-47f8'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'

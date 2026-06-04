@@ -3,13 +3,12 @@
  * PostCard (#231 C1) — the one editorial list row shared by the blog hub, tag archives and the
  * upcoming topic pages. A text-forward row (single-column list, not a grid) with: an answer-first
  * lede (`summary`, falling back to `description`), a metadata line (date · reading time · difficulty
- * · series/part badge), the title, and up to two tags. An optional 2:1 cover sits beside the text on
- * `sm+`; when a post has none, a deterministic no-cover block carries the topic label — no network,
- * fixed aspect ratio, so the row never shifts (CLS).
+ * · series/part badge), the title, and up to two tags. A 2:1 cover sits beside the text on `sm+`.
  *
- * Covers are plain `<img>` (remote dev.to CDN today, R2 later) with explicit width/height; the first
- * card on a page passes `eager` for a high-priority above-the-fold fetch. Reading time is computed
- * build-time via `readingTimeOf` (no render()).
+ * The cover is an original, theme-aware generated `<Cover>` (inline SVG, zero-network, no CLS) seeded
+ * from the post — unless the post sets a local `cover` image, which renders through the optimized
+ * `<Image>` pipeline (and still feeds OG). Reading time is computed build-time via `readingTimeOf`
+ * (no render()).
  */
 import type { CollectionEntry } from 'astro:content';
 import type { Locale } from '@/config/site';
@@ -17,6 +16,8 @@ import { useTranslations } from '@/i18n/utils';
 import type { UIKey } from '@/i18n/ui';
 import { slugifyTag, readingTimeOf } from '@/lib/content';
 import { formatDate, isoDate } from '@/lib/datetime';
+import Cover from '@/components/content/Cover.astro';
+import Image from '@/components/ui/Image.astro';
 
 interface Props {
   locale: Locale;
@@ -36,11 +37,7 @@ const d = entry.data;
 const href = `/${locale}/blog/${slug}`;
 const minutes = readingTimeOf(entry);
 const lede = d.summary ?? d.description;
-const cover = d.cover?.src ?? d.coverUrl;
-const coverW = d.cover?.width ?? 320;
-const coverH = d.cover?.height ?? 160;
 const difficultyLabel = d.difficulty ? t(`blog.difficulty.${d.difficulty}` as UIKey) : undefined;
-const topicLabel = t(`blog.topic.${d.topic}` as UIKey);
 const shownTags = d.tags.slice(0, 2);
 ---
 
@@ -48,26 +45,30 @@ const shownTags = d.tags.slice(0, 2);
   class="border-border flex flex-col gap-4 border-b pb-10 last:border-0 sm:flex-row-reverse sm:items-start sm:gap-6"
 >
   {
-    /* Cover (or deterministic topic fallback) — fixed 2:1 box so there's no layout shift. Decorative:
-      it duplicates the title link, so it's hidden from the a11y tree and out of the tab order. */
+    /* Cover — a generated, theme-aware SVG by default; the optional local `cover` image when set.
+      Fixed 2:1 box so there's no layout shift. Decorative: it duplicates the title link, so it's
+      hidden from the a11y tree and out of the tab order. */
   }
   <a href={href} class="block w-full shrink-0 sm:w-52" tabindex="-1" aria-hidden="true">
     {
-      cover ? (
-        <img
-          src={cover}
-          width={coverW}
-          height={coverH}
+      d.cover ? (
+        <Image
+          src={d.cover}
           alt=""
+          widths={[320, 640]}
+          sizes="(min-width: 640px) 13rem, 100vw"
           loading={eager ? 'eager' : 'lazy'}
-          decoding="async"
-          {...(eager ? { fetchpriority: 'high' } : {})}
+          priority={eager}
           class="border-border aspect-[2/1] w-full rounded-md border object-cover"
         />
       ) : (
-        <div class="border-border bg-secondary text-muted-foreground flex aspect-[2/1] w-full items-center justify-center rounded-md border px-3 text-center font-mono text-xs">
-          {topicLabel}
-        </div>
+        <Cover
+          seed={slug}
+          topic={d.topic}
+          series={d.series}
+          part={d.seriesOrder}
+          class="border-border rounded-md border"
+        />
       )
     }
   </a>

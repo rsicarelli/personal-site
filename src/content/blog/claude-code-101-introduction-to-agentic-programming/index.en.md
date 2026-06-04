@@ -9,7 +9,6 @@ tags:
   - 'ai'
 series: 'claude-code-101'
 seriesOrder: 1
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fk7x245w00xy8wd4jdt6t.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/claude-code-101-introduction-to-agentic-programming-3p83'
   devtoId: 3460063

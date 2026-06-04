@@ -10,7 +10,6 @@ tags:
   - 'mobile'
 series: 'kmp-102'
 seriesOrder: 5
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fz0zdcy0ty1bpvi3mlcob.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-102-modularizacao-no-kmp-4oe5'
   devtoId: 2317222

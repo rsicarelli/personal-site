@@ -44,12 +44,7 @@ function metaOf(s: SeriesWithCount): string {
       <ul class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {series.map((s) => (
           <li>
-            <SeriesCard
-              href={s.href}
-              label={s.data.label}
-              meta={metaOf(s)}
-              coverUrl={s.data.coverUrl}
-            />
+            <SeriesCard href={s.href} label={s.data.label} meta={metaOf(s)} slug={s.slug} />
           </li>
         ))}
       </ul>

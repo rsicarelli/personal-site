@@ -9,9 +9,9 @@ import { renderOgCard } from '@/lib/og';
  * Per-page OpenGraph card images (#148): `/og/<locale>/<collection>/<slug>.png`, prerendered at
  * build. Generated ONLY for content detail entries that have no self-hosted `cover` (so each blog
  * post / project / talk without an image gets a branded title card instead of the generic
- * `og-default.png`). The card is on the rsicarelli.com origin, which the metadata suite requires —
- * an off-origin dev.to `coverUrl` could not be used for og:image. Detail pages reference this URL as
- * their OG/JSON-LD image fallback (cover, when present, still wins).
+ * `og-default.png`). The card is on the rsicarelli.com origin, which the metadata suite requires.
+ * Detail pages reference this URL as their OG/JSON-LD image fallback (a local `cover`, when present,
+ * still wins).
  */
 const COLLECTIONS = [
   { key: 'blog', label: 'nav.blog' },
