@@ -280,4 +280,39 @@ describe('rendered JSON-LD over dist/**', () => {
       items.forEach((it, i) => expect(it.position, relPath).toBe(i + 1));
     }
   });
+
+  it('listing pages emit CollectionPage (hub/series/topics); series also CreativeWorkSeries (#231 E3)', () => {
+    const typesByPath = new Map<string, Set<string>>();
+    const collectionNodeByPath = new Map<string, Record<string, unknown>>();
+    for (const { type, node, relPath } of allNodes()) {
+      if (!typesByPath.has(relPath)) typesByPath.set(relPath, new Set());
+      typesByPath.get(relPath)!.add(type);
+      if (type === 'CollectionPage') collectionNodeByPath.set(relPath, node);
+    }
+    const paths = [...typesByPath.keys()];
+
+    // Blog hub (page 1) → CollectionPage whose mainEntity is an ItemList.
+    const hub = paths.find((r) => /\/blog\/index\.html$/.test(r));
+    expect(hub, 'no blog hub page found').toBeTruthy();
+    expect(typesByPath.get(hub!)!.has('CollectionPage'), `${hub}: CollectionPage`).toBe(true);
+    expect(
+      (collectionNodeByPath.get(hub!)!.mainEntity as Record<string, unknown>)?.['@type'],
+      `${hub}: CollectionPage.mainEntity ItemList`,
+    ).toBe('ItemList');
+
+    // Series landings → CreativeWorkSeries + CollectionPage.
+    const seriesPaths = paths.filter((r) => /\/series\/[^/]+\/index\.html$/.test(r));
+    expect(seriesPaths.length, 'no series landings found').toBeGreaterThan(0);
+    for (const r of seriesPaths) {
+      expect(typesByPath.get(r)!.has('CreativeWorkSeries'), `${r}: CreativeWorkSeries`).toBe(true);
+      expect(typesByPath.get(r)!.has('CollectionPage'), `${r}: CollectionPage`).toBe(true);
+    }
+
+    // Topic hubs → CollectionPage.
+    const topicPaths = paths.filter((r) => /\/topics\/[^/]+\/index\.html$/.test(r));
+    expect(topicPaths.length, 'no topic hubs found').toBeGreaterThan(0);
+    for (const r of topicPaths) {
+      expect(typesByPath.get(r)!.has('CollectionPage'), `${r}: CollectionPage`).toBe(true);
+    }
+  });
 });

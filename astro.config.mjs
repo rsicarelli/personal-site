@@ -7,12 +7,17 @@ import sitemap from '@astrojs/sitemap';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 import { rehypeR2Images } from './src/lib/rehype-r2-images.mjs';
 import { placeholderBlogPaths } from './scripts/placeholder-posts.mjs';
+import { blogLastmod } from './scripts/blog-lastmod.mjs';
 
 // `translated: false` placeholder posts (#152) are `robots: noindex, follow`. Drop them from the
 // sitemap too (#173): a noindexed URL in the sitemap only earns a benign "Submitted URL marked
 // 'noindex'" notice in Search Console. Computed once from the same scan that drives the noindex
 // meta, so a post rejoins the sitemap automatically when it's translated (#143) — no per-post edit.
 const noindexPlaceholders = await placeholderBlogPaths();
+
+// Real per-post <lastmod> (#231 E1): updatedDate ?? pubDate, so the sitemap carries a true freshness
+// signal instead of @astrojs/sitemap's all-equal build-time default. Keyed by site-root path.
+const blogDates = await blogLastmod();
 
 // https://astro.build/config
 export default defineConfig({
@@ -39,6 +44,12 @@ export default defineConfig({
       // The callback only sees the absolute URL string; match on its trailing-slash-normalized
       // pathname (dir-form <loc>s carry a trailing slash, the placeholder set doesn't).
       filter: (page) => !noindexPlaceholders.has(new URL(page).pathname.replace(/\/$/, '')),
+      // Stamp blog posts with their real lastmod (#231 E1); other URLs keep the integration default.
+      serialize(item) {
+        const date = blogDates.get(new URL(item.url).pathname.replace(/\/$/, ''));
+        if (date) item.lastmod = date;
+        return item;
+      },
       i18n: {
         defaultLocale: 'en',
         locales: { en: 'en', 'pt-br': 'pt-BR' },
