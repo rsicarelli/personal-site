@@ -1,35 +1,27 @@
 ---
 /**
  * SeriesCard (#31, enriched in #231 C3) — one series in the blog spotlight grid. A linked `Card` with
- * an optional cover (remote dev.to CDN image until R2, #R2), the series label, and a metadata line
- * (parts · total reading time · level) composed by the caller. Cover images are plain lazy `<img>`
- * (remote, fixed aspect) rather than astro:assets, which only optimizes local files.
+ * a generated, theme-aware `<Cover>` (seeded by the series slug), the series label, and a metadata
+ * line (parts · total reading time · level) composed by the caller. The whole card is the link, so
+ * the cover is decorative (no `label`).
  */
 import Card from '@/components/ui/Card.astro';
+import Cover from '@/components/content/Cover.astro';
 
 interface Props {
   href: string;
   label: string;
   /** Preformatted, already-localized line: e.g. "8 parts · ~1h 4min · Beginner". */
   meta: string;
-  coverUrl?: string;
+  /** Series slug — seeds the generated cover art. */
+  slug: string;
 }
 
-const { href, label, meta, coverUrl } = Astro.props;
+const { href, label, meta, slug } = Astro.props;
 ---
 
 <Card href={href} class="flex flex-col gap-3">
-  {
-    coverUrl && (
-      <img
-        src={coverUrl}
-        alt=""
-        loading="lazy"
-        decoding="async"
-        class="border-border aspect-[2/1] w-full rounded-md border object-cover"
-      />
-    )
-  }
+  <Cover seed={slug} series={slug} class="border-border rounded-md border" />
   <div>
     <h3 class="font-semibold tracking-tight">{label}</h3>
     <p class="text-muted-foreground mt-1 font-mono text-xs">{meta}</p>

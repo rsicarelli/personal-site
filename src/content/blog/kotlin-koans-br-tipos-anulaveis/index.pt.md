@@ -7,7 +7,6 @@ tags:
   - 'braziliandevs'
 series: 'kotlin-koans-br'
 seriesOrder: 6
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fggj8j1wgvcmgw1oql67g.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-tipos-anulaveis-3mg'
   devtoId: 1783123

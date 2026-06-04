@@ -11,7 +11,6 @@ tags:
   - 'mobile'
 series: 'kmp-101'
 seriesOrder: 3
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F6xa5d4gzb1kl52b68rhd.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-multiplataforma-101-dominando-os-principios-dos-source-sets-4pg'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'

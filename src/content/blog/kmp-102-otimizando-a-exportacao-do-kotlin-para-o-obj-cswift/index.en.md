@@ -11,7 +11,6 @@ tags:
   - 'braziliandevs'
 series: 'kmp-102'
 seriesOrder: 4
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fcfwlg9ef4ssxqh9o8v3l.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-102-otimizando-a-exportacao-do-kotlin-para-o-obj-cswift-358p'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'

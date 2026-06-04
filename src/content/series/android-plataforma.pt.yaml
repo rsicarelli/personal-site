@@ -9,4 +9,3 @@ outcomes:
   - 'Escrever convention plugins e uma DSL personalizada para seus módulos'
   - 'Acelerar builds e garantir qualidade com detekt, ktlint e Spotless'
 repo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform'
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fvih5nd062eyxjjo6l50n.png'
