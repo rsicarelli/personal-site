@@ -17,6 +17,9 @@ provenance:
   devtoId: 1684940
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 9
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 Dessa vez, vamos colocar a mão na massa efetivamente, e criar nosso primeiro "Olá mundo" em Android, iOS e Desktop!

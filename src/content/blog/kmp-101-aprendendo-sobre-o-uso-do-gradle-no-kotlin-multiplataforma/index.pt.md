@@ -17,6 +17,9 @@ provenance:
   devtoId: 1685330
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 9
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 Dessa vez, vamos nos aprofundar em um aspecto fundamental do KMP: o Plugin KMP para Gradle.

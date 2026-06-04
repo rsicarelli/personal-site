@@ -16,6 +16,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-101-criando-e-executando-seu-primeiro-projeto-multiplataforma-no-fleet-4ep7'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 9
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 This time, we're really getting our hands dirty and building our first "Hello World" on Android, iOS, and Desktop!

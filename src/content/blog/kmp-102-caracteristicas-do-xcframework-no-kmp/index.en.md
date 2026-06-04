@@ -15,6 +15,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-102-caracteristicas-do-xcframework-no-kmp-3162'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 12
+topic: kmp
+difficulty: intermediate
+contentType: tutorial
 ---
 
 In the previous post, we learned how Kotlin/Native exports a collection of `.frameworks` in the XCFramework format.

@@ -16,6 +16,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-101-aprendendo-sobre-o-uso-do-gradle-no-kotlin-multiplataforma-47f8'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 9
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 This time, we're going to dig into a core aspect of KMP: the KMP Gradle Plugin.

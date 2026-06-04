@@ -16,6 +16,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-multiplataforma-101-entendendo-como-o-kotlin-compila-para-multiplas-plataformas-5hba'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 13
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 In this article, we'll unpack the basics of the Kotlin compiler and its ability to compile to multiple platforms.

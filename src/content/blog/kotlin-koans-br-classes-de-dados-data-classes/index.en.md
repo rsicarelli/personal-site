@@ -12,6 +12,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-classes-de-dados-data-classes-2h9b'
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 1
+topic: kotlin
+difficulty: beginner
+contentType: tutorial
 ---
 
 ## 🔗 [Task](https://play.kotlinlang.org/koans/Classes/Data%20classes/Task.kt)

@@ -14,6 +14,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-extension-functions-e-properties-funcoes-e-propriedades-estendidas-e39'
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 7
+topic: kotlin
+difficulty: beginner
+contentType: tutorial
 ---
 
 ## 🔗 [Task](https://play.kotlinlang.org/koans/Classes/Extension%20functions/Task.kt)

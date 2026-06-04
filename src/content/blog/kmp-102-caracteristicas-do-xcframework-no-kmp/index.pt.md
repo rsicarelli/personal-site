@@ -16,6 +16,9 @@ provenance:
   devtoId: 1930624
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 12
+topic: kmp
+difficulty: intermediate
+contentType: tutorial
 ---
 
 No post anterior, aprendemos sobre como o Kotlin/Native exporta uma coleção de `.frameworks` no formato XCFramework.

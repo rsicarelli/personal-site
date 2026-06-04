@@ -17,6 +17,9 @@ provenance:
   devtoId: 1677323
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 11
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 Dessa vez, vamos entender um conceito-chave para codar em KMP: os _source sets_

@@ -14,6 +14,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-101-explorando-as-dependencias-internas-e-externas-no-kmp-4j76'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 8
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 In this article, we'll explore how to use _open-source_ libraries, understand when they fit our projects, and finally how to implement them.

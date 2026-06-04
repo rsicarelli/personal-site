@@ -15,6 +15,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/6/version-catalog'
   reactions: 2
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 In the previous post, we optimized our platform and got it ready for more features.

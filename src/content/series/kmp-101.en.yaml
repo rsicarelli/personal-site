@@ -1,4 +1,15 @@
 label: 'KMP 101'
+description: 'Start Kotlin Multiplatform from zero: understand how Kotlin compiles to multiple targets, set up your environment, and build and run your first shared module across platforms.'
 order: 2
+level: beginner
+prerequisites:
+  - 'kotlin-koans-br'
+next: 'kmp-102'
+related:
+  - 'android-plataforma'
+outcomes:
+  - 'Explain how Kotlin Multiplatform compiles and shares code across targets'
+  - 'Set up a KMP environment and create your first multiplatform project'
+  - 'Manage source sets, dependencies, and expect/actual declarations'
 repo: 'https://github.com/rsicarelli/KMP-101'
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fgfgzfl54fe26cqlk9jk2.png'

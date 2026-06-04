@@ -1,4 +1,11 @@
 label: 'Kotlin Koans BR'
+description: 'Um tour prático pelos recursos fundamentais da linguagem Kotlin — de templates de string a classes seladas e smart casts — um exercício curto e focado por vez.'
 order: 5
+level: beginner
+next: 'kmp-101'
+outcomes:
+  - 'Ler e escrever Kotlin idiomático com confiança'
+  - 'Usar tipos anuláveis, smart casts e classes seladas com segurança'
+  - 'Aplicar extension functions, lambdas e data classes em código real'
 repo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F0kuchkfp7latpkvmkj89.png'

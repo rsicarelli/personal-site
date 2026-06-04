@@ -14,6 +14,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-alias-para-importacao-import-alias-5ahe'
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 3
+topic: kotlin
+difficulty: beginner
+contentType: tutorial
 ---
 
 ## 🔗 [Task](https://play.kotlinlang.org/koans/Classes/Rename%20on%20import/Task.kt)

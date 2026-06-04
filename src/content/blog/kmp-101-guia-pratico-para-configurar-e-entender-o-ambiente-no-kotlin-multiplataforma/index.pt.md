@@ -17,6 +17,9 @@ provenance:
   devtoId: 1682822
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 14
+topic: kmp
+difficulty: beginner
+contentType: tutorial
 ---
 
 No mundo do Kotlin Multiplataforma, esta necessidade é ainda mais evidente: configurar adequadamente o ambiente de desenvolvimento para KMP é crucial para garantir que devs possam aproveitar ao máximo as capacidades multiplataforma da linguagem.

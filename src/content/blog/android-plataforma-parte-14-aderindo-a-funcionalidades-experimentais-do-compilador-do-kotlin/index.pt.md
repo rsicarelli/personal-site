@@ -16,6 +16,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/14/opt-in-experimental-kotlin-compiler'
   reactions: 2
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 No último artigo, extendemos nossa plataforma com a capacidade de declarar módulos JVM.

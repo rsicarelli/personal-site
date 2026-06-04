@@ -16,6 +16,9 @@ provenance:
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/'
   githubBranch: 'https://github.com/rsicarelli/kotlin-gradle-android-platform/tree/1-2/introduction'
   reactions: 6
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 To handle this complexity, we'll introduce the concept of a "platform" in development, showing how a structured platform can simplify dependency and configuration management.

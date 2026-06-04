@@ -16,6 +16,9 @@ provenance:
   devtoId: 1611952
   githubRepo: 'https://github.com/rsicarelli/kotlin-gradle-android-platform'
   reactions: 10
+topic: android
+difficulty: intermediate
+contentType: tutorial
 ---
 
 Junte a isso as constantes alterações, depreciações e a pressão do negócio para entregar funcionalidades que atendam às necessidades dos clientes. Este cenário volátil torna-se um desafio para manter nosso código organizado, eficiente e escalável.

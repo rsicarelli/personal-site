@@ -16,6 +16,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-102-otimizando-a-exportacao-do-kotlin-para-o-obj-cswift-358p'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 16
+topic: kmp
+difficulty: intermediate
+contentType: tutorial
 ---
 
 In this post, we'll dig deeper into how this export works and the impact on our generated code.

@@ -14,6 +14,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-102-xcframework-para-devs-kmp-4a4b'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 16
+topic: kmp
+difficulty: intermediate
+contentType: tutorial
 ---
 
 ## KMP102 - XCFramework for Kotlin Multiplatform Devs

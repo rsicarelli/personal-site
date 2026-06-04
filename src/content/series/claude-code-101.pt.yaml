@@ -1,4 +1,10 @@
 label: 'Claude Code 101'
+description: 'Seja produtivo com programação agêntica: entenda como os large language models realmente funcionam e coloque o Claude Code para trabalhar em um fluxo de desenvolvimento real.'
 order: 1
+level: beginner
+outcomes:
+  - 'Entender o que os large language models podem e não podem fazer'
+  - 'Aplicar programação agêntica a um fluxo de desenvolvimento real'
+  - 'Usar o Claude Code de forma eficaz no dia a dia'
 repo: 'https://github.com/rsicarelli/claude-code-10x'
 coverUrl: 'https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fk7x245w00xy8wd4jdt6t.png'

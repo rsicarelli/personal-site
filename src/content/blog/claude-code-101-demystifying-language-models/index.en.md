@@ -14,6 +14,9 @@ provenance:
   devtoId: 3476270
   githubRepo: 'https://github.com/rsicarelli/claude-code-10x'
   reactions: 1
+topic: ai-tooling
+difficulty: beginner
+contentType: tutorial
 ---
 
 But the machines in the factory build things. And to understand how they build, the best analogy I know is LEGO. Standardized pieces that snap together one at a time, following (or ignoring) a manual, on a desk with limited space.

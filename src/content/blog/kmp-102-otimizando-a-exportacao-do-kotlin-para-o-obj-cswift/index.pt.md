@@ -17,6 +17,9 @@ provenance:
   devtoId: 2222232
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 16
+topic: kmp
+difficulty: intermediate
+contentType: tutorial
 ---
 
 Nesse post, vamos aprofundar sobre como essa exportação funciona e o impacto no nosso código gerado.

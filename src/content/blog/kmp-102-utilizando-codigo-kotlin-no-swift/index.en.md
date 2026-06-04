@@ -15,6 +15,9 @@ provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-102-utilizando-codigo-kotlin-no-swift-2ice'
   githubRepo: 'https://github.com/rsicarelli/KMP-101'
   reactions: 7
+topic: kmp
+difficulty: intermediate
+contentType: tutorial
 ---
 
 With that done, we can move forward and learn how Kotlin code compiled to Objective-C works, and how to consume it on iOS.

@@ -11,6 +11,9 @@ coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,g
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/fakt-automating-the-fake-over-mock-pattern-amh'
   reactions: 1
+topic: kotlin
+difficulty: beginner
+contentType: deep-dive
 ---
 
 Os testes em Kotlin têm um problema que piora quanto mais bem-sucedido seu projeto se torna.

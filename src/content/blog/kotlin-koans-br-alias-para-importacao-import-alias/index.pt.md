@@ -15,6 +15,9 @@ provenance:
   devtoId: 1813348
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'
   reactions: 3
+topic: kotlin
+difficulty: beginner
+contentType: tutorial
 ---
 
 ## 🔗 [Tarefa](https://play.kotlinlang.org/koans/Classes/Rename%20on%20import/Task.kt)
