@@ -22,7 +22,7 @@ describe('Reactions on built blog posts', () => {
   let posts: RenderedPage[];
   beforeAll(async () => {
     const pages = await collectLocalePages();
-    posts = pages.filter((p) => /^\/blog\/[^/]+$/.test(p.logicalPath));
+    posts = pages.filter((p) => /^\/blog\/(?!\d+$)[^/]+$/.test(p.logicalPath));
   });
 
   it('renders the reaction region with the full emoji palette + a reserved count box', () => {

@@ -39,7 +39,7 @@ describe('Reading layer — serif long-form typography (#226)', () => {
     let posts: RenderedPage[];
     beforeAll(async () => {
       const pages = await collectLocalePages();
-      posts = pages.filter((p) => /^\/blog\/[^/]+$/.test(p.logicalPath));
+      posts = pages.filter((p) => /^\/blog\/(?!\d+$)[^/]+$/.test(p.logicalPath));
     });
 
     it('renders the post title in the serif layer and self-hosts the face (no font CDN)', () => {

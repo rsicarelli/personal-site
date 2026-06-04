@@ -67,7 +67,7 @@ describe('ShareButtons rendered on built blog posts', () => {
   beforeAll(async () => {
     const pages = await collectLocalePages();
     // Post detail pages only: exactly one segment after /blog/ (excludes /blog and /blog/tags/*).
-    posts = pages.filter((p) => /^\/blog\/[^/]+$/.test(p.logicalPath));
+    posts = pages.filter((p) => /^\/blog\/(?!\d+$)[^/]+$/.test(p.logicalPath));
   });
 
   const region = (html: string) =>

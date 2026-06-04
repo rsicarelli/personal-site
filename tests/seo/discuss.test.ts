@@ -38,7 +38,7 @@ describe('PostDiscuss rendered on built blog posts', () => {
   let posts: RenderedPage[];
   beforeAll(async () => {
     const pages = await collectLocalePages();
-    posts = pages.filter((p) => /^\/blog\/[^/]+$/.test(p.logicalPath));
+    posts = pages.filter((p) => /^\/blog\/(?!\d+$)[^/]+$/.test(p.logicalPath));
   });
 
   it('renders a "Reply via email" mailto (to the public address) on every post, both locales', () => {
