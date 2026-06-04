@@ -77,6 +77,16 @@ const jsonLd = [
 
 <BaseLayout title={`${label} · ${t('site.title')}`} description={description ?? label}>
   <JsonLd slot="head" schema={jsonLd} />
+  {
+    /* Per-series feed autodiscovery (#231 B3) — alongside BaseLayout's site-wide locale feed link. */
+  }
+  <link
+    slot="head"
+    rel="alternate"
+    type="application/rss+xml"
+    title={`${label} — RSS`}
+    href={`/${locale}/series/${slug}/rss.xml`}
+  />
   <Container as="section" class="py-16">
     <a
       href={`/${locale}/blog`}
