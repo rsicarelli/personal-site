@@ -1,0 +1,89 @@
+---
+/**
+ * EngagementBeacon (#224) — cookieless engaged-time + read-complete instrumentation.
+ *
+ * Two first-party signals (POST /api/engagement), no cookies / no client storage:
+ *   • engaged-time — accumulates VISIBLE reading time (paused while the tab is hidden) and flushes the
+ *     delta via `fetch` + `keepalive` on each `visibilitychange → hidden` / `pagehide`. bfcache-safe,
+ *     never `unload`/`beforeunload` (MDN guidance).
+ *   • read-complete — this element doubles as the end-of-article sentinel; an IntersectionObserver fires
+ *     a single `read` beacon once it scrolls into view, armed after a 3s dwell so an instant bounce (or a
+ *     short post fully above the fold) doesn't count. The server dedups read-complete once per visitor/day.
+ *
+ * Place at the END of the article body (after <Prose>). Renders nothing visible. The script reads the
+ * path from `data-*` only (no interpolation) → identical bytes on every page → a stable CSP hash in
+ * `public/_headers`. Instrumentation requires JS; the post reads fine without it.
+ */
+interface Props {
+  /** The post's locale path, e.g. `/en/blog/<slug>` (server validates it against the allowlist). */
+  path: string;
+}
+const { path } = Astro.props;
+---
+
+<div data-engagement-beacon data-engagement-path={path} aria-hidden="true"></div>
+
+<script>
+  // Bound once on astro:page-load (first load AND each View Transition swap).
+  document.addEventListener('astro:page-load', () => {
+    const el = document.querySelector<HTMLElement>('[data-engagement-beacon]');
+    if (!el || el.dataset.engagementBound) return;
+    el.dataset.engagementBound = '1';
+    const path = el.getAttribute('data-engagement-path');
+    if (!path) return;
+
+    const ENDPOINT = '/api/engagement';
+    const send = (body: object) => {
+      try {
+        fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(body),
+          keepalive: true,
+        }).catch(() => {});
+      } catch {
+        /* ignore — instrumentation must never break the page */
+      }
+    };
+
+    // --- engaged-time: count visible ms, flush the delta on hide ---
+    let visibleSince = document.visibilityState === 'visible' ? performance.now() : 0;
+    let unsentMs = 0;
+    const accumulate = () => {
+      if (visibleSince) {
+        unsentMs += performance.now() - visibleSince;
+        visibleSince = 0;
+      }
+    };
+    const flush = () => {
+      accumulate();
+      const seconds = Math.round(unsentMs / 1000);
+      if (seconds >= 1) {
+        send({ path, kind: 'engaged', seconds });
+        unsentMs = 0;
+      }
+    };
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') flush();
+      else visibleSince = performance.now();
+    });
+    window.addEventListener('pagehide', flush);
+
+    // --- read-complete: fire once when the end sentinel is in view, after a dwell ---
+    let readSent = false;
+    let intersecting = false;
+    const maybeSendRead = () => {
+      if (readSent || !intersecting) return;
+      readSent = true;
+      send({ path, kind: 'read' });
+      io.disconnect();
+    };
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) intersecting = e.isIntersecting;
+      maybeSendRead();
+    });
+    io.observe(el);
+    // Covers both long posts (IO fires on scroll past the dwell) and short posts already in view.
+    setTimeout(maybeSendRead, 3000);
+  });
+</script>
