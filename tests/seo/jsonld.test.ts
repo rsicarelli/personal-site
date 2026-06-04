@@ -10,6 +10,8 @@ import {
   eventLd,
   breadcrumbLd,
   faqPageLd,
+  collectionPageLd,
+  creativeWorkSeriesLd,
 } from '@/lib/jsonld';
 
 /**
@@ -171,6 +173,50 @@ describe('breadcrumbLd & faqPageLd', () => {
     expect(f['@type']).toBe('FAQPage');
     expect(f.mainEntity).toEqual([
       { '@type': 'Question', name: 'Q?', acceptedAnswer: { '@type': 'Answer', text: 'A.' } },
+    ]);
+  });
+});
+
+describe('collectionPageLd & creativeWorkSeriesLd', () => {
+  const items = [
+    { url: 'https://x/en/blog/a', name: 'Part 1' },
+    { url: 'https://x/en/blog/b', name: 'Part 2' },
+  ];
+  it('CollectionPage wraps its items in a positioned ItemList mainEntity', () => {
+    const c = collectionPageLd({
+      url: 'https://x/en/series/s',
+      name: 'S',
+      locale: 'en',
+      description: 'D',
+      items,
+    });
+    expect(c['@type']).toBe('CollectionPage');
+    expect(c.inLanguage).toBe('en');
+    expect(c.description).toBe('D');
+    expect(c.mainEntity).toEqual({
+      '@type': 'ItemList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, url: 'https://x/en/blog/a', name: 'Part 1' },
+        { '@type': 'ListItem', position: 2, url: 'https://x/en/blog/b', name: 'Part 2' },
+      ],
+    });
+  });
+  it('omits mainEntity when there are no items, and localizes inLanguage', () => {
+    const c = collectionPageLd({ url: 'u', name: 'S', locale: 'pt-br', items: [] });
+    expect(c.mainEntity).toBeUndefined();
+    expect(c.inLanguage).toBe('pt-BR');
+  });
+  it('CreativeWorkSeries lists its parts via hasPart BlogPostings', () => {
+    const s = creativeWorkSeriesLd({
+      url: 'https://x/en/series/s',
+      name: 'S',
+      locale: 'en',
+      parts: items,
+    });
+    expect(s['@type']).toBe('CreativeWorkSeries');
+    expect(s.hasPart).toEqual([
+      { '@type': 'BlogPosting', url: 'https://x/en/blog/a', name: 'Part 1' },
+      { '@type': 'BlogPosting', url: 'https://x/en/blog/b', name: 'Part 2' },
     ]);
   });
 });

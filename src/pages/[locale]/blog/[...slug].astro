@@ -314,6 +314,21 @@ const jsonLd = [
           </nav>
         )
       }
+
+      {
+        /* Always offer the way back up to the series overview (the part badge at the top links there
+        too, but the foot of a long read is where the reader decides what's next). */
+        series && seriesInfo && (
+          <p class="mt-6 text-center">
+            <a
+              href={`/${locale}/series/${series}`}
+              class="text-muted-foreground hover:text-foreground font-mono text-xs"
+            >
+              ↩ {t('series.backToOverview')}
+            </a>
+          </p>
+        )
+      }
     </article>
 
     {

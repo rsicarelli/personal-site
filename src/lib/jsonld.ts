@@ -130,6 +130,65 @@ export function eventLd(
   };
 }
 
+/** ItemList of ordered entries (position/url/name) — the `mainEntity` of a listing CollectionPage. */
+function itemListLd(items: { url: string; name: string }[]): JsonLdNode {
+  return {
+    '@type': 'ItemList',
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: it.url,
+      name: it.name,
+    })),
+  };
+}
+
+/**
+ * CollectionPage for a listing page (blog hub, series landing, tag/topic archive) — #231 B2/C4. Its
+ * `mainEntity` is an `ItemList` of the items shown, in order. Understood (not rendered as a Google
+ * rich result) — for crawler + AI comprehension of the cluster.
+ */
+export function collectionPageLd(opts: {
+  url: string;
+  name: string;
+  locale: Locale;
+  description?: string;
+  items: { url: string; name: string }[];
+}): JsonLdNode {
+  return {
+    '@type': 'CollectionPage',
+    name: opts.name,
+    url: opts.url,
+    inLanguage: hreflangOf(opts.locale),
+    ...(opts.description ? { description: opts.description } : {}),
+    ...(opts.items.length ? { mainEntity: itemListLd(opts.items) } : {}),
+  };
+}
+
+/**
+ * CreativeWorkSeries — the series entity on a `/series/<slug>` landing (#231 B2). Lists its parts via
+ * `hasPart`. The correct, honest model for an editorial series (NOT `Course`, whose rich result was
+ * retired June 2025 and which implies an enrolled roster). Pairs with the per-post `isPartOf`.
+ */
+export function creativeWorkSeriesLd(opts: {
+  url: string;
+  name: string;
+  locale: Locale;
+  description?: string;
+  parts: { url: string; name: string }[];
+}): JsonLdNode {
+  return {
+    '@type': 'CreativeWorkSeries',
+    name: opts.name,
+    url: opts.url,
+    inLanguage: hreflangOf(opts.locale),
+    ...(opts.description ? { description: opts.description } : {}),
+    ...(opts.parts.length
+      ? { hasPart: opts.parts.map((p) => ({ '@type': 'BlogPosting', url: p.url, name: p.name })) }
+      : {}),
+  };
+}
+
 /** BreadcrumbList — `items` already ordered Home → Section → current page. */
 export function breadcrumbLd(items: { name: string; url: string }[]): JsonLdNode {
   return {

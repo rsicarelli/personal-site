@@ -1,15 +1,23 @@
 ---
 /**
- * Series landing (#31) — one page per (locale, series): the series header (label, description,
- * optional cover + repo) and its posts listed in reading order (`seriesOrder`, part 1 → N). Routes
- * and draft-filtering go through the content spine; `localizedPaths('series')` yields both locales.
+ * Series landing (#31, upgraded to a learning-path hub in #231 Phase B) — one page per (locale,
+ * series). Leads with an answer-first overview, then a metadata bar (parts · total reading time ·
+ * level), prerequisites + outcomes, a single "Start the series" CTA, the ordered parts (each with its
+ * reading time), and cross-series "continue / related" links. Emits CreativeWorkSeries +
+ * CollectionPage(ItemList) + BreadcrumbList structured data. Routing/draft-filtering go through the
+ * content spine; the optional fields (level/prerequisites/outcomes/next/related) degrade gracefully
+ * when the series YAML hasn't filled them yet (the #232 A3 content migration).
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
+import JsonLd from '@/components/content/JsonLd.astro';
 import { type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
-import { localizedPaths, getSeriesPosts } from '@/lib/content';
+import type { UIKey } from '@/i18n/ui';
+import { localizedPaths, getSeriesPosts, getLocalizedEntries, readingTimeOf } from '@/lib/content';
 import { formatDate, isoDate } from '@/lib/datetime';
+import { canonicalUrl } from '@/lib/seo';
+import { collectionPageLd, creativeWorkSeriesLd, breadcrumbLd } from '@/lib/jsonld';
 
 export async function getStaticPaths() {
   return localizedPaths('series');
@@ -19,11 +27,56 @@ const { entry } = Astro.props;
 const locale = Astro.params.locale as Locale;
 const slug = Astro.params.slug as string;
 const t = useTranslations(locale);
-const { label, description, repo, coverUrl } = entry.data;
+const { label, description, repo, coverUrl, level, prerequisites, next, related, outcomes } =
+  entry.data;
 const posts = await getSeriesPosts(locale, slug);
+
+// Total reading time across the series (build-time, no render()): the "~Xh" learning-path estimate.
+const totalMinutes = posts.reduce((sum, p) => sum + readingTimeOf(p.entry), 0);
+const hours = Math.floor(totalMinutes / 60);
+const mins = totalMinutes % 60;
+const totalLabel =
+  hours > 0 ? `~${hours}h${mins ? ` ${mins}min` : ''}` : `${totalMinutes} ${t('blog.minRead')}`;
+const levelLabel = level ? t(`blog.difficulty.${level}` as UIKey) : undefined;
+
+// Resolve cross-series references (prerequisites / next / related) to their labels, dropping any slug
+// with no matching series in this locale so a stale reference never renders a dead link.
+const labelBySlug = new Map(
+  (await getLocalizedEntries('series', locale)).map((s) => [s.slug, s.entry.data.label]),
+);
+const toLinks = (slugs: string[]) =>
+  slugs
+    .filter((s) => labelBySlug.has(s))
+    .map((s) => ({ href: `/${locale}/series/${s}`, label: labelBySlug.get(s)! }));
+const prereqLinks = toLinks(prerequisites);
+const relatedLinks = toLinks(related);
+const nextLink =
+  next && labelBySlug.has(next)
+    ? { href: `/${locale}/series/${next}`, label: labelBySlug.get(next)! }
+    : undefined;
+const firstPost = posts[0];
+
+// Structured data (#231 B2): the series entity (CreativeWorkSeries + hasPart) + a CollectionPage whose
+// mainEntity is an ItemList of the ordered parts + a Home → Blog → series breadcrumb. Part and landing
+// URLs use the same canonical builder as every other route.
+const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
+const parts = posts.map((p) => ({
+  url: canonicalUrl(`/blog/${p.slug}`, locale, Astro.site),
+  name: p.entry.data.title,
+}));
+const jsonLd = [
+  creativeWorkSeriesLd({ url: pageUrl, name: label, locale, description, parts }),
+  collectionPageLd({ url: pageUrl, name: label, locale, description, items: parts }),
+  breadcrumbLd([
+    { name: t('nav.home'), url: canonicalUrl('/', locale, Astro.site) },
+    { name: t('nav.blog'), url: canonicalUrl('/blog', locale, Astro.site) },
+    { name: label, url: pageUrl },
+  ]),
+];
 ---
 
 <BaseLayout title={`${label} · ${t('site.title')}`} description={description ?? label}>
+  <JsonLd slot="head" schema={jsonLd} />
   <Container as="section" class="py-16">
     <a
       href={`/${locale}/blog`}
@@ -46,13 +99,28 @@ const posts = await getSeriesPosts(locale, slug);
 
     <p class="text-muted-foreground mt-6 font-mono text-xs">{t('blog.series')}</p>
     <h1 class="mt-1 text-3xl font-bold tracking-tight text-balance">{label}</h1>
-    {description && <p class="text-muted-foreground mt-3 max-w-prose">{description}</p>}
-    <p class="text-muted-foreground mt-2 font-mono text-xs">
-      {posts.length}{' '}{t('blog.parts')}
+    {
+      /* Answer-first overview — the series' direct value statement, rendered as a prominent lede. */
+      description && <p class="text-foreground/80 mt-3 max-w-prose text-lg">{description}</p>
+    }
+
+    {/* Metadata bar: parts · total reading time · level (+ source repo when present). */}
+    <p class="text-muted-foreground mt-4 flex flex-wrap items-center gap-x-2 font-mono text-xs">
+      <span>{posts.length}{' '}{t('blog.parts')}</span>
+      <span aria-hidden="true">·</span>
+      <span>{totalLabel}</span>
+      {
+        levelLabel && (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>{levelLabel}</span>
+          </>
+        )
+      }
       {
         repo && (
           <>
-            <span aria-hidden="true"> · </span>
+            <span aria-hidden="true">·</span>
             <a href={repo} rel="noopener" target="_blank" class="hover:text-foreground underline">
               {t('blog.sourceCode')}
             </a>
@@ -60,6 +128,57 @@ const posts = await getSeriesPosts(locale, slug);
         )
       }
     </p>
+
+    {
+      /* Start CTA — the single primary action; the one accent fill on the page. */
+      firstPost && (
+        <a
+          href={`/${locale}/blog/${firstPost.slug}`}
+          class="bg-primary text-primary-foreground hover:bg-primary/90 mt-6 inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors"
+        >
+          {t('series.start')} →
+        </a>
+      )
+    }
+
+    {
+      /* Prerequisites — sibling series to read first. */
+      prereqLinks.length > 0 && (
+        <section class="mt-10">
+          <h2 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+            {t('series.prerequisites')}
+          </h2>
+          <ul class="mt-3 flex flex-wrap gap-2 text-sm">
+            {prereqLinks.map((l) => (
+              <li>
+                <a
+                  href={l.href}
+                  class="border-border text-muted-foreground hover:text-foreground rounded-full border px-3 py-1 transition-colors"
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      /* Outcomes — what you'll be able to do after the series. */
+      outcomes.length > 0 && (
+        <section class="mt-10">
+          <h2 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+            {t('series.outcomes')}
+          </h2>
+          <ul class="text-foreground/90 mt-3 max-w-prose list-disc space-y-1 pl-5 text-sm">
+            {outcomes.map((o) => (
+              <li>{o}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
 
     <h2 class="text-muted-foreground mt-10 text-xs font-semibold tracking-wide uppercase">
       {t('blog.inThisSeries')}
@@ -70,6 +189,8 @@ const posts = await getSeriesPosts(locale, slug);
           <li class="border-border border-b pb-6 last:border-0">
             <p class="text-muted-foreground font-mono text-xs">
               {t('blog.part')} {post.data.seriesOrder ?? i + 1}
+              <span aria-hidden="true"> · </span>
+              {readingTimeOf(post)} {t('blog.minRead')}
             </p>
             <h3 class="mt-1 text-lg font-semibold tracking-tight">
               <a href={`/${locale}/blog/${postSlug}`} class="hover:text-primary transition-colors">
@@ -86,5 +207,45 @@ const posts = await getSeriesPosts(locale, slug);
         ))
       }
     </ol>
+
+    {
+      /* Cross-series learning path: continue to the next series + related series. */
+      (nextLink || relatedLinks.length > 0) && (
+        <section class="border-border mt-12 border-t pt-8">
+          {nextLink && (
+            <div>
+              <h2 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                {t('series.continue')}
+              </h2>
+              <a
+                href={nextLink.href}
+                class="hover:text-primary mt-2 inline-block text-lg font-semibold tracking-tight transition-colors"
+              >
+                {nextLink.label} →
+              </a>
+            </div>
+          )}
+          {relatedLinks.length > 0 && (
+            <div class:list={[nextLink && 'mt-8']}>
+              <h2 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                {t('series.related')}
+              </h2>
+              <ul class="mt-3 flex flex-wrap gap-2 text-sm">
+                {relatedLinks.map((l) => (
+                  <li>
+                    <a
+                      href={l.href}
+                      class="border-border text-muted-foreground hover:text-foreground rounded-full border px-3 py-1 transition-colors"
+                    >
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+      )
+    }
   </Container>
 </BaseLayout>
