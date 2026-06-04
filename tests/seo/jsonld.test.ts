@@ -74,6 +74,7 @@ describe('blogPostingLd', () => {
     pubDate: new Date('2026-01-10T00:00:00Z'),
     updatedDate: new Date('2026-02-20T00:00:00Z'),
     tags: ['kotlin', 'kmp'],
+    featured: false,
     translated: true,
     comments: true,
     reactions: true,

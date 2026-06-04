@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry, type CollectionKey } from 'astro:content';
+import getReadingTime from 'reading-time';
 import { LOCALES, type Locale } from '@/config/site';
 
 /**
@@ -124,6 +125,17 @@ function seriesOrderOf(entry: CollectionEntry<'blog'>): number {
   return entry.data.seriesOrder ?? 0;
 }
 
+/**
+ * Reading time (whole minutes, ≥1) for a post at BUILD time WITHOUT `render()` — listings and series
+ * totals can't reach the remark-injected `minutesRead` (that needs `render()`), so we compute from the
+ * raw markdown body. Mirrors `remark-reading-time.mjs` (same `reading-time` lib, `max(1, round)`); the
+ * value can differ by ≤1 min from the post byline, which strips markup via mdast — close enough for a
+ * card label and a "~Xh total" series estimate, and far cheaper than rendering every post in a list.
+ */
+export function readingTimeOf(entry: CollectionEntry<'blog'>): number {
+  return Math.max(1, Math.round(getReadingTime(entry.body ?? '').minutes));
+}
+
 export interface SeriesWithCount {
   /** Series slug (its filePath-derived id), e.g. `kmp-101`. */
   slug: string;
@@ -131,6 +143,8 @@ export interface SeriesWithCount {
   data: CollectionEntry<'series'>['data'];
   /** Number of published posts in this series for the locale. */
   count: number;
+  /** Summed reading time (minutes) across the series' published posts — the "~Xh total" estimate. */
+  totalMinutes: number;
   /** `/`<locale>`/series/`<slug> landing URL. */
   href: string;
 }
@@ -146,9 +160,13 @@ export async function getSeriesWithCounts(locale: Locale): Promise<SeriesWithCou
     getLocalizedEntries('blog', locale),
   ]);
   const counts = new Map<string, number>();
+  const minutes = new Map<string, number>();
   for (const { entry } of posts) {
     const s = seriesOf(entry);
-    if (s) counts.set(s, (counts.get(s) ?? 0) + 1);
+    if (s) {
+      counts.set(s, (counts.get(s) ?? 0) + 1);
+      minutes.set(s, (minutes.get(s) ?? 0) + readingTimeOf(entry));
+    }
   }
   return seriesEntries
     .map(({ slug, entry }) => ({
@@ -156,6 +174,7 @@ export async function getSeriesWithCounts(locale: Locale): Promise<SeriesWithCou
       locale,
       data: entry.data,
       count: counts.get(slug) ?? 0,
+      totalMinutes: minutes.get(slug) ?? 0,
       href: `/${locale}/series/${slug}`,
     }))
     .filter((s) => s.count > 0)

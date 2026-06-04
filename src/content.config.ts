@@ -13,6 +13,18 @@ import { isHttpUrl } from '@/lib/url';
  */
 const httpUrl = () => z.string().refine(isHttpUrl, { message: 'must be an http(s) URL' });
 
+/**
+ * Controlled taxonomy (Content-Hub Epic #231 / Phase A #232). `topic` is the primary browse facet
+ * (→ `/topics/<slug>`), `difficulty` ladders the junior→staff audience, and `contentType`
+ * distinguishes a tutorial from an opinion. Zod enums make an out-of-vocabulary value a build error —
+ * the cheapest governance for a solo author (no free-tag sprawl). All optional for now so the build
+ * stays green pre-migration; `topic` flips to required after the content migration (#232 A3).
+ * Per-locale labels live in `src/i18n/ui.ts` (`blog.topic.*` / `blog.difficulty.*` / `blog.type.*`).
+ */
+const topic = z.enum(['kmp', 'android', 'kotlin', 'ai-tooling', 'career-oss']);
+const difficulty = z.enum(['beginner', 'intermediate', 'advanced']);
+const contentType = z.enum(['tutorial', 'deep-dive', 'reference', 'opinion']);
+
 /*
  * Content collections (Astro Content Layer + Zod) — skeleton per research §04.
  *
@@ -65,6 +77,16 @@ const blog = defineCollection({
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
       tags: z.array(z.string()).default([]),
+      /** Controlled primary browse facet (#231) — drives `/topics/<slug>`. Optional until #232 A3. */
+      topic: topic.optional(),
+      /** Audience level (#231) — surfaced as a card badge + a difficulty ladder. */
+      difficulty: difficulty.optional(),
+      /** Post kind (#231) — tutorial / deep-dive / reference / opinion. */
+      contentType: contentType.optional(),
+      /** Curated-front pin (#231): hand-set until a metrics-driven "most read" lands post-launch (#237). */
+      featured: z.boolean().default(false),
+      /** Tie-break ordering among `featured` posts (lower = first). */
+      featuredOrder: z.number().int().optional(),
       cover: image().optional(),
       /**
        * Answer-first capsule (#56): a 1–3 sentence direct answer rendered as a visible lede above
@@ -232,6 +254,16 @@ const series = defineCollection({
     repo: httpUrl().optional(),
     /** Remote cover URL (dev.to CDN) until media moves to R2 (#R2). */
     coverUrl: httpUrl().optional(),
+    /** Audience level for the whole series (#231) — shown on the landing + spotlight cards. */
+    level: difficulty.optional(),
+    /** Series slugs to read first (#231) — rendered as a "Before this series" block. */
+    prerequisites: z.array(z.string()).default([]),
+    /** The natural next series slug (#231) — a "Continue your path" end-cap. */
+    next: z.string().optional(),
+    /** Sibling series slugs worth surfacing (#231) — "Related series". */
+    related: z.array(z.string()).default([]),
+    /** Learning outcomes (#231) — a "What you'll be able to do" list on the landing. */
+    outcomes: z.array(z.string()).default([]),
   }),
 });
 
