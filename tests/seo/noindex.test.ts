@@ -41,11 +41,36 @@ describe('noindex placeholders', () => {
     expect(placeholders.size).toBeGreaterThanOrEqual(0);
   });
 
-  it('exactly the placeholder pages carry robots noindex — nothing else', () => {
+  it('only placeholders + thin tag archives carry noindex — posts, listings and topics never do', () => {
     for (const p of pages) {
       const key = `${p.locale} ${p.logicalPath.slice(1)}`; // `/blog/x` → `blog/x`
-      const expected = placeholders.has(key);
-      expect(/noindex/i.test(robots(p.html)), `${p.relPath} noindex mismatch`).toBe(expected);
+      const isTagArchive = /^\/blog\/tags\//.test(p.logicalPath);
+      const noindex = /noindex/i.test(robots(p.html));
+      if (placeholders.has(key)) {
+        expect(noindex, `${p.relPath}: placeholder must be noindex`).toBe(true);
+      } else if (isTagArchive) {
+        // Tag archives opt into noindex when thin (#231 D2) — the exact rule is verified below.
+      } else {
+        expect(noindex, `${p.relPath}: only placeholders/thin-tags are noindex`).toBe(false);
+      }
+    }
+  });
+
+  it('thin tag archives (< 3 posts) are noindex; richer ones stay indexable (#231 D2)', () => {
+    const THIN = 3; // keep in sync with THIN_TAG_MIN in tags/[tag].astro
+    const tagPages = pages.filter((p) => /^\/blog\/tags\//.test(p.logicalPath));
+    expect(tagPages.length, 'no tag archives were built').toBeGreaterThan(0);
+    for (const p of tagPages) {
+      const doc = parseHTML(p.html).document;
+      // Distinct posts listed on the archive (PostCard links each post twice — cover + title — so
+      // dedupe by href; exclude the "← All posts" link and any tag-chip links).
+      const posts = new Set(
+        [...doc.querySelectorAll(`main a[href^="/${p.locale}/blog/"]`)]
+          .map((a) => a.getAttribute('href')!)
+          .filter((h) => h !== `/${p.locale}/blog` && !/\/blog\/tags\//.test(h)),
+      );
+      const noindex = /noindex/i.test(robots(p.html));
+      expect(noindex, `${p.relPath}: ${posts.size} posts`).toBe(posts.size < THIN);
     }
   });
 

@@ -19,9 +19,11 @@ import PostCard from '@/components/content/PostCard.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
 import { LOCALES, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
+import type { UIKey } from '@/i18n/ui';
 import {
   getLocalizedEntries,
   getSeriesWithCounts,
+  getTopicsWithCounts,
   commonBlogTagSlugs,
   type LocalizedEntry,
 } from '@/lib/content';
@@ -60,6 +62,7 @@ const featured = isFirst
   : [];
 // "New here? Start with …" → the canonical entry series (the owner's default path begins at KMP 101).
 const startHere = isFirst ? seriesList.find((s) => s.slug === 'kmp-101') : undefined;
+const topics = isFirst ? await getTopicsWithCounts(locale) : [];
 
 const lastPage = page.lastPage;
 const pageHref = (n: number) => (n === 1 ? `/${locale}/blog` : `/${locale}/blog/${n}`);
@@ -107,6 +110,26 @@ const pageTitle = isFirst
                 {startHere.data.label}
               </a>
             </p>
+          )}
+
+          {topics.length > 0 && (
+            <nav aria-label={t('blog.browseTopics')} class="mt-8">
+              <h2 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                {t('blog.browseTopics')}
+              </h2>
+              <ul class="mt-3 flex flex-wrap gap-2 text-sm">
+                {topics.map(({ topic }) => (
+                  <li>
+                    <a
+                      href={`/${locale}/topics/${topic}`}
+                      class="border-border text-muted-foreground hover:text-foreground rounded-full border px-3 py-1 transition-colors"
+                    >
+                      {t(`blog.topic.${topic}` as UIKey)}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           )}
 
           <SeriesSpotlight locale={locale} series={seriesList} />

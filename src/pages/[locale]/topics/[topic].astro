@@ -1,12 +1,10 @@
 ---
 /**
- * Tag archive (#31, refreshed in #231 D2) — `/<locale>/blog/tags/<tag>`. Built ONLY for tags present
- * in published posts of BOTH locales (`commonBlogTagSlugs`), so BaseLayout's reciprocal hreflang
- * always has a real sibling. Tags are language-neutral and shown verbatim. Posts render through the
- * shared `PostCard`; tags are a SECONDARY scent under the controlled topics, so a thin archive
- * (fewer than `THIN_TAG_MIN` posts) is `noindex, follow` — followed for discovery, kept out of the
- * index to avoid near-empty doorway pages. The threshold is per-locale-symmetric (posts are
- * bilingual), so en/pt agree and hreflang stays consistent.
+ * Topic hub (#231 D1) — `/<locale>/topics/<slug>`, one per controlled topic with published posts.
+ * The primary browse facet: a unique answer-first intro, then the topic's posts via the shared
+ * `PostCard`, plus CollectionPage + ItemList + breadcrumb structured data. Only topics with ≥1
+ * published post get a page (so an empty topic never ships), and that set is identical across locales
+ * (posts are bilingual) so BaseLayout's reciprocal hreflang always has a real sibling.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
@@ -14,49 +12,47 @@ import PostCard from '@/components/content/PostCard.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
 import { LOCALES, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
+import type { UIKey } from '@/i18n/ui';
 import {
   getLocalizedEntries,
+  getTopicsWithCounts,
   getSeriesWithCounts,
   commonBlogTagSlugs,
-  slugifyTag,
+  type Topic,
 } from '@/lib/content';
 import { canonicalUrl } from '@/lib/seo';
 import { collectionPageLd, breadcrumbLd } from '@/lib/jsonld';
 
-/** Tags with fewer than this many posts are `noindex` (thin/doorway). Keep in sync with the test. */
-const THIN_TAG_MIN = 3;
-
 export async function getStaticPaths() {
-  const tagSlugs = await commonBlogTagSlugs();
-  return LOCALES.flatMap((locale) => [...tagSlugs].map((tag) => ({ params: { locale, tag } })));
+  const paths: { params: { locale: Locale; topic: string } }[] = [];
+  for (const locale of LOCALES) {
+    for (const { topic } of await getTopicsWithCounts(locale)) {
+      paths.push({ params: { locale, topic } });
+    }
+  }
+  return paths;
 }
 
 const locale = Astro.params.locale as Locale;
-const tag = Astro.params.tag as string;
+const topic = Astro.params.topic as Topic;
 const t = useTranslations(locale);
+const label = t(`blog.topic.${topic}` as UIKey);
+const intro = t(`topic.intro.${topic}` as UIKey);
 
-const posts = (await getLocalizedEntries('blog', locale)).filter(({ entry }) =>
-  entry.data.tags.some((tg) => slugifyTag(tg) === tag),
+const posts = (await getLocalizedEntries('blog', locale)).filter(
+  (p) => p.entry.data.topic === topic,
 );
-// Show the tag verbatim (its original-cased text from the first post that carries it).
-const label = posts[0]?.entry.data.tags.find((tg) => slugifyTag(tg) === tag) ?? tag;
-const isThin = posts.length < THIN_TAG_MIN;
-
 const tagPages = await commonBlogTagSlugs();
 const seriesLabel = new Map((await getSeriesWithCounts(locale)).map((s) => [s.slug, s.data.label]));
 
+// Structured data (#231 D1): CollectionPage + ItemList of the topic's posts + Home → Blog → topic.
 const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
 const items = posts.map(({ slug, entry }) => ({
   url: canonicalUrl(`/blog/${slug}`, locale, Astro.site),
   name: entry.data.title,
 }));
 const jsonLd = [
-  collectionPageLd({
-    url: pageUrl,
-    name: `${t('blog.taggedWith')} ${label}`,
-    locale,
-    items,
-  }),
+  collectionPageLd({ url: pageUrl, name: label, locale, description: intro, items }),
   breadcrumbLd([
     { name: t('nav.home'), url: canonicalUrl('/', locale, Astro.site) },
     { name: t('nav.blog'), url: canonicalUrl('/blog', locale, Astro.site) },
@@ -65,11 +61,7 @@ const jsonLd = [
 ];
 ---
 
-<BaseLayout
-  title={`${t('blog.taggedWith')} ${label} · ${t('site.title')}`}
-  description={`${t('blog.taggedWith')} ${label}`}
-  noindex={isThin}
->
+<BaseLayout title={`${label} · ${t('site.title')}`} description={intro}>
   <JsonLd slot="head" schema={jsonLd} />
   <Container as="section" class="py-16">
     <a
@@ -78,10 +70,8 @@ const jsonLd = [
     >
       ← {t('blog.allPosts')}
     </a>
-    <h1 class="mt-6 text-3xl font-bold tracking-tight">
-      {t('blog.taggedWith')}
-      <span class="text-primary">{label}</span>
-    </h1>
+    <h1 class="mt-6 text-3xl font-bold tracking-tight">{label}</h1>
+    <p class="text-foreground/80 mt-3 max-w-prose text-lg">{intro}</p>
 
     <div class="mt-10 space-y-10">
       {

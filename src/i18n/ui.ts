@@ -72,6 +72,17 @@ export const ui = {
     'blog.type.deep-dive': 'Deep dive',
     'blog.type.reference': 'Reference',
     'blog.type.opinion': 'Opinion',
+    'blog.browseTopics': 'Browse by topic',
+    'topic.intro.kmp':
+      'Everything Kotlin Multiplatform — sharing real code across iOS, Android and beyond, from your first project to shipping in production.',
+    'topic.intro.android':
+      'Android platform engineering with Gradle — modularization, convention plugins, build speed and the tooling that keeps a large app healthy.',
+    'topic.intro.kotlin':
+      'The Kotlin language itself — idioms, features and fundamentals, learned hands-on.',
+    'topic.intro.ai-tooling':
+      'AI-assisted development — how large language models actually work and how to put agentic coding to work in a real workflow.',
+    'topic.intro.career-oss':
+      'Notes on the engineering career and maintaining open source in the open.',
     'blog.inThisSeries': 'In this series',
     'series.start': 'Start the series',
     'series.outcomes': "What you'll learn",
@@ -194,6 +205,16 @@ export const ui = {
     'blog.type.deep-dive': 'Análise aprofundada',
     'blog.type.reference': 'Referência',
     'blog.type.opinion': 'Opinião',
+    'blog.browseTopics': 'Explorar por tema',
+    'topic.intro.kmp':
+      'Tudo sobre Kotlin Multiplatform — compartilhar código de verdade entre iOS, Android e além, do primeiro projeto até produção.',
+    'topic.intro.android':
+      'Engenharia de plataforma Android com Gradle — modularização, convention plugins, velocidade de build e as ferramentas que mantêm um app grande saudável.',
+    'topic.intro.kotlin': 'A linguagem Kotlin em si — idiomas, recursos e fundamentos, na prática.',
+    'topic.intro.ai-tooling':
+      'Desenvolvimento assistido por IA — como os large language models realmente funcionam e como aplicar programação agêntica em um fluxo real.',
+    'topic.intro.career-oss':
+      'Notas sobre carreira em engenharia e manutenção de open source de forma aberta.',
     'blog.inThisSeries': 'Nesta série',
     'series.start': 'Começar a série',
     'series.outcomes': 'O que você vai aprender',

@@ -117,6 +117,35 @@ export async function commonBlogTagSlugs(): Promise<Set<string>> {
   return new Set([...perLocale[0]].filter((slug) => perLocale.every((set) => set.has(slug))));
 }
 
+/**
+ * Controlled topic facet (#231 D1) — the primary browse taxonomy driving `/topics/<slug>`. Kept in
+ * sync with the `topic` enum in `src/content.config.ts` (the schema is the build-time guard; this
+ * array fixes the display + URL order). The leading entries are the pillars (KMP first).
+ */
+export const TOPICS = ['kmp', 'android', 'kotlin', 'ai-tooling', 'career-oss'] as const;
+export type Topic = (typeof TOPICS)[number];
+
+/**
+ * Topics that have at least one published post in `locale`, with their post counts, in `TOPICS`
+ * order. Drives the `/topics/<slug>` pages and the hub's "browse by topic" row — empty topics get
+ * no page (so a `career-oss` with only a draft never ships a dead hub). Counts match across locales
+ * (posts are bilingual), so the per-topic page set is identical per locale → hreflang stays reciprocal.
+ */
+export async function getTopicsWithCounts(
+  locale: Locale,
+): Promise<{ topic: Topic; count: number }[]> {
+  const posts = await getLocalizedEntries('blog', locale);
+  const counts = new Map<Topic, number>();
+  for (const { entry } of posts) {
+    const tp = entry.data.topic as Topic;
+    counts.set(tp, (counts.get(tp) ?? 0) + 1);
+  }
+  return TOPICS.filter((t) => (counts.get(t) ?? 0) > 0).map((t) => ({
+    topic: t,
+    count: counts.get(t)!,
+  }));
+}
+
 /** Read a blog post's series slug + part order (typed accessors for the un-narrowed entry data). */
 function seriesOf(entry: CollectionEntry<'blog'>): string | undefined {
   return entry.data.series;
