@@ -44,13 +44,13 @@ check** — it reports `{ ok, db, time }` where `db` is `true` only when the D1 
 
 ## Endpoints
 
-| Route                  | What it does                                                                                                          |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `GET /api/health`      | binding check — `{ ok, db, time }`                                                                                    |
-| `POST /api/view`       | cookieless view count (#200) — `{ "path": "/en/blog/<slug>" }`; same-origin only                                      |
-| `POST /api/react`      | anonymous reaction (#201) — `{ "path": "/en/blog/<slug>", "emoji": "👍" }`; same-origin only                          |
-| `GET /api/react`       | public per-emoji counts — `?path=/en/blog/<slug>` → `{ path, counts }` (the on-page display)                          |
-| `POST /api/engagement` | cookieless engaged-time + read-complete (#224) — `{ "path", "kind":"engaged"\|"read", "seconds"? }`; same-origin only |
+| Route                  | What it does                                                                                                                                 |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /api/health`      | binding check — `{ ok, db, time }`                                                                                                           |
+| `POST /api/view`       | cookieless view count (#200) — `{ "path": "/en/blog/<slug>" }`; same-origin only                                                             |
+| `POST /api/react`      | anonymous reaction (#201) — `{ "path": "/en/blog/<slug>", "emoji": "👍" }`; same-origin only                                                 |
+| `GET /api/react`       | public per-emoji counts — `?path=/en/blog/<slug>` → `{ path, counts }` (the on-page display)                                                 |
+| `POST /api/engagement` | cookieless engaged-time + scroll-depth + read (#224) — `{ "path", "kind":"engaged"\|"depth"\|"read", "seconds"?, "pct"? }`; same-origin only |
 
 **View counting (#200)** dedups a reader with `SHA-256(dailySalt + path + IP + UA)` where
 `dailySalt = SHA-256(VIEW_SALT_SECRET + UTC-date)` — raw IP/UA are never stored and the salt rotates
@@ -86,15 +86,17 @@ author (no public read, no on-page number). `POST /api/engagement` takes `kind`:
   `counters(slug,'engaged_samples')` tally, so `engaged_seconds / engaged_samples` is the mean engaged
   time per post. A sample sum (not deduped); a per-beacon clamp (`MAX_ENGAGED_SECONDS = 1800`) + the
   shared per-IP limiter bound abuse.
-- `read` — the reader reached the end-of-article sentinel; deduped once per visitor/day (same salted
-  hash as views, `+'read'`) into `counters(slug,'read_complete')`. `read_complete / view` is the
-  read-through rate.
+- `depth` — a 25/50/75 scroll milestone (`pct`), from invisible sentinels at those fractions of the
+  reading body; deduped once per visitor/day per milestone into `counters(slug,'scroll_<pct>')`.
+- `read` — the reader reached the end-of-article sentinel (100%); deduped once per visitor/day (same
+  salted hash as views, `+'read'`) into `counters(slug,'read_complete')`. `scroll_25 → scroll_50 →
+scroll_75 → read_complete` is the read funnel; `read_complete / view` is the read-through rate.
 
 Reuses the existing `counters` table — **no migration**. Read them yourself from D1:
 
 ```bash
 npx wrangler d1 execute personal-site-engagement --remote \
-  --command "SELECT slug, kind, count FROM counters WHERE kind IN ('view','read_complete','engaged_seconds','engaged_samples') ORDER BY slug;"
+  --command "SELECT slug, kind, count FROM counters WHERE kind IN ('view','scroll_25','scroll_50','scroll_75','read_complete','engaged_seconds','engaged_samples') ORDER BY slug;"
 ```
 
 _Seeding from dev.to (#216, owner-run once):_ mirrored posts recorded their dev.to like count in

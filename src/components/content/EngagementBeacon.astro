@@ -6,9 +6,10 @@
  *   • engaged-time — accumulates VISIBLE reading time (paused while the tab is hidden) and flushes the
  *     delta via `fetch` + `keepalive` on each `visibilitychange → hidden` / `pagehide`. bfcache-safe,
  *     never `unload`/`beforeunload` (MDN guidance).
- *   • read-complete — this element doubles as the end-of-article sentinel; an IntersectionObserver fires
- *     a single `read` beacon once it scrolls into view, armed after a 3s dwell so an instant bounce (or a
- *     short post fully above the fold) doesn't count. The server dedups read-complete once per visitor/day.
+ *   • scroll depth + read-complete — invisible 1px sentinels (at 25/50/75% of the `.prose` body, plus
+ *     this element at the end) fire a `depth`/`read` beacon via one IntersectionObserver when reached,
+ *     each armed after a 3s dwell so an instant bounce (or a short post fully in view) doesn't count.
+ *     The server dedups each milestone once per visitor/day → a read funnel (scroll_25/50/75 → read).
  *
  * Place at the END of the article body (after <Prose>). Renders nothing visible. The script reads the
  * path from `data-*` only (no interpolation) → identical bytes on every page → a stable CSP hash in
@@ -69,21 +70,45 @@ const { path } = Astro.props;
     });
     window.addEventListener('pagehide', flush);
 
-    // --- read-complete: fire once when the end sentinel is in view, after a dwell ---
-    let readSent = false;
-    let intersecting = false;
-    const maybeSendRead = () => {
-      if (readSent || !intersecting) return;
-      readSent = true;
-      send({ path, kind: 'read' });
-      io.disconnect();
+    // --- scroll depth (25/50/75) + read-complete (end), via one IntersectionObserver ---
+    // Each "reach" sends once, only after a 3s dwell so an instant bounce / short post in view is ignored.
+    type Reach = { el: Element; body: object; vis: boolean; sent: boolean };
+    const armAt = performance.now() + 3000;
+    const reaches: Reach[] = [{ el, body: { path, kind: 'read' }, vis: false, sent: false }];
+
+    // Inject invisible 1px sentinels at 25/50/75% of the READING body (`.prose`), not the whole
+    // <article> (which includes the post-read engagement zone). Absolutely positioned → zero layout cost.
+    const bodyEl = el.closest('article')?.querySelector<HTMLElement>('.prose');
+    if (bodyEl) {
+      if (getComputedStyle(bodyEl).position === 'static') bodyEl.style.position = 'relative';
+      for (const pct of [25, 50, 75]) {
+        const s = document.createElement('div');
+        s.setAttribute('aria-hidden', 'true');
+        s.style.cssText = `position:absolute;left:0;top:${pct}%;width:1px;height:1px;pointer-events:none`;
+        bodyEl.appendChild(s);
+        reaches.push({ el: s, body: { path, kind: 'depth', pct }, vis: false, sent: false });
+      }
+    }
+
+    const flushReaches = () => {
+      if (performance.now() < armAt) return;
+      for (const r of reaches) {
+        if (!r.sent && r.vis) {
+          r.sent = true;
+          send(r.body);
+          io.unobserve(r.el);
+        }
+      }
     };
     const io = new IntersectionObserver((entries) => {
-      for (const e of entries) intersecting = e.isIntersecting;
-      maybeSendRead();
+      for (const e of entries) {
+        const r = reaches.find((x) => x.el === e.target);
+        if (r) r.vis = e.isIntersecting;
+      }
+      flushReaches();
     });
-    io.observe(el);
-    // Covers both long posts (IO fires on scroll past the dwell) and short posts already in view.
-    setTimeout(maybeSendRead, 3000);
+    reaches.forEach((r) => io.observe(r.el));
+    // Covers long posts (IO fires on scroll past the dwell) and short posts already fully in view.
+    setTimeout(flushReaches, 3000);
   });
 </script>
