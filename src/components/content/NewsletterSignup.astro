@@ -15,9 +15,12 @@ import type { Locale } from '@/config/site';
 
 interface Props {
   locale: Locale;
+  /** Drop the built-in `container-content` wrapper when the form already sits inside a column
+   *  (e.g. the end-of-article engagement zone), so the gutter/measure isn't applied twice. */
+  bare?: boolean;
   class?: string;
 }
-const { locale, class: className } = Astro.props;
+const { locale, bare = false, class: className } = Astro.props;
 const t = useTranslations(locale);
 const enabled = PUBLIC_NEWSLETTER_ENABLED === 'true';
 
@@ -29,7 +32,7 @@ const button =
 
 {
   enabled && (
-    <div class:list={['container-content pt-8', className]}>
+    <div class:list={[!bare && 'container-content pt-8', className]}>
       <section class="border-border bg-card rounded-lg border p-5">
         <h2 class="text-foreground text-sm font-semibold">{t('newsletter.heading')}</h2>
         <p class="text-muted-foreground mt-1 text-sm">{t('newsletter.blurb')}</p>

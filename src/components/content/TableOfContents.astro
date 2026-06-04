@@ -1,0 +1,133 @@
+---
+/**
+ * TableOfContents (#blog-layout) — "On this page" navigation for long posts, built from the
+ * headings Astro's `render()` exposes (it auto-slugs Markdown/MDX heading `id`s, so the anchors
+ * resolve with ZERO JS — the links work on their own).
+ *
+ * Two variants share one markup/style vocabulary:
+ *   • `rail`   — a sticky desktop aside (web.dev/MDN "On this page" pattern), quiet by default.
+ *   • `inline` — a collapsible <details> block placed at the top of the article on mobile.
+ *
+ * The only JS is a single, value-free IntersectionObserver island that toggles
+ * `aria-current="location"` on the link for the section currently in view (active-section
+ * highlight). It reads everything from the DOM (`[data-toc] a[href^="#"]`), so its emitted bytes —
+ * and thus the CSP hash in `public/_headers` — are identical on every page. Highlighting is a
+ * progressive enhancement; navigation never depends on it.
+ *
+ * The page decides WHEN to render this (≥3 H2s); here we just render whatever headings we're given.
+ */
+import { useTranslations } from '@/i18n/utils';
+import type { Locale } from '@/config/site';
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  /** Headings from `render()`, already filtered to the depths worth listing (h2/h3). */
+  headings: MarkdownHeading[];
+  locale: Locale;
+  /** `rail` = sticky desktop aside; `inline` = collapsible <details> for mobile. */
+  variant: 'rail' | 'inline';
+  class?: string;
+}
+const { headings, variant, locale, class: className } = Astro.props;
+const t = useTranslations(locale);
+const label = t('blog.onThisPage');
+
+// Shared link styling: a quiet muted link with a left guide-rail; the active section borrows the
+// signature accent on its left border + full-contrast text. py-1 + the list gap give a comfortable
+// hit area (WCAG 2.5.8). Indent h3s one step under their h2.
+const link =
+  '-ml-px block border-l border-transparent py-1 pl-3 text-muted-foreground transition-colors hover:text-foreground aria-[current=location]:border-primary aria-[current=location]:text-foreground';
+---
+
+{
+  variant === 'rail' ? (
+    <nav data-toc aria-label={label} class:list={['text-sm', className]}>
+      <p class="text-muted-foreground mb-3 font-mono text-xs font-semibold tracking-wide uppercase">
+        {label}
+      </p>
+      <ul class="border-border space-y-1 border-l">
+        {headings.map((h) => (
+          <li>
+            <a href={`#${h.slug}`} class:list={[link, h.depth >= 3 && 'pl-6']}>
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  ) : (
+    <details data-toc class:list={['border-border rounded-lg border', className]}>
+      <summary class="text-foreground cursor-pointer px-4 py-3 text-sm font-medium">
+        {label}
+      </summary>
+      <ul class="border-border space-y-1 border-t px-4 py-3 text-sm">
+        {headings.map((h) => (
+          <li>
+            <a href={`#${h.slug}`} class:list={[link, h.depth >= 3 && 'pl-6']}>
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </details>
+  )
+}
+
+<script>
+  // Active-section highlight (#blog-layout). Value-free — reads the in-page anchors from the DOM, so
+  // the emitted bytes (and the CSP hash) are stable across every post. Re-binds on each `astro:page-load`
+  // (first load AND View Transition swaps) and disconnects the previous observer so it never leaks.
+  // Navigation works without this script; it only adds the "you are here" affordance.
+  document.addEventListener('astro:page-load', () => {
+    const w = window as unknown as { __tocObserver?: IntersectionObserver };
+    if (w.__tocObserver) {
+      w.__tocObserver.disconnect();
+      w.__tocObserver = undefined;
+    }
+    const links = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>('[data-toc] a[href^="#"]'),
+    );
+    if (!links.length) return;
+
+    const idOf = (a: HTMLAnchorElement) =>
+      decodeURIComponent((a.getAttribute('href') || '').slice(1));
+    const targets: HTMLElement[] = [];
+    const seen = new Set<string>();
+    links.forEach((a) => {
+      const id = idOf(a);
+      if (seen.has(id)) return;
+      seen.add(id);
+      const el = document.getElementById(id);
+      if (el) targets.push(el);
+    });
+    if (!targets.length) return;
+
+    const visible = new Set<string>();
+    const setActive = (id: string) => {
+      links.forEach((a) => {
+        if (idOf(a) === id) a.setAttribute('aria-current', 'location');
+        else a.removeAttribute('aria-current');
+      });
+    };
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          const id = (e.target as HTMLElement).id;
+          if (e.isIntersecting) visible.add(id);
+          else visible.delete(id);
+        });
+        // Highlight the first heading (in document order) currently in the active band.
+        for (const el of targets) {
+          if (visible.has(el.id)) {
+            setActive(el.id);
+            return;
+          }
+        }
+      },
+      { rootMargin: '0px 0px -70% 0px', threshold: 0 },
+    );
+    targets.forEach((el) => obs.observe(el));
+    w.__tocObserver = obs;
+  });
+</script>
