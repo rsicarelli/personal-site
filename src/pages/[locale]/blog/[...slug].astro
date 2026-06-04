@@ -113,85 +113,95 @@ const jsonLd = [
     >
       ← {t('blog.allPosts')}
     </a>
-    {
-      series && seriesInfo && (
-        <p class="mt-6 font-mono text-xs">
-          <a
-            href={`/${locale}/series/${series}`}
-            class="bg-secondary text-secondary-foreground hover:bg-secondary/70 inline-flex rounded-md px-1.5 py-0.5 transition-colors"
-          >
-            {seriesInfo.entry.data.label}
-            {entry.data.seriesOrder != null && ` · ${t('blog.part')} ${entry.data.seriesOrder}`}
-          </a>
-        </p>
-      )
-    }
-    <h1 class="mt-3 text-3xl font-bold tracking-tight text-balance">{title}</h1>
-    <p class="text-muted-foreground mt-3 font-mono text-xs">
-      {/* Visible byline (#59) — pairs with the BlogPosting.author Person ref; links to /about. */}
-      {t('blog.by')}{' '}
-      <a
-        href={`/${locale}/about`}
-        rel="author"
-        class="hover:text-foreground underline underline-offset-4"
-      >
-        {SITE.name}
-      </a>
-      <span aria-hidden="true"> · </span>
-      <time datetime={isoDate(pubDate)}>{formatDate(pubDate, locale)}</time>
-      <span aria-hidden="true"> · </span>{minutes}
-      {t('blog.minRead')}
+
+    <header class="border-border mb-10 border-b pb-8">
       {
-        updatedDate && (
-          <>
-            <span aria-hidden="true"> · </span>
-            {t('blog.updated')}{' '}
-            <time datetime={isoDate(updatedDate)}>{formatDate(updatedDate, locale)}</time>
-          </>
+        series && seriesInfo && (
+          <p class="mt-6 font-mono text-xs">
+            <a
+              href={`/${locale}/series/${series}`}
+              class="bg-secondary text-secondary-foreground hover:bg-secondary/70 inline-flex rounded-md px-1.5 py-0.5 transition-colors"
+            >
+              {seriesInfo.entry.data.label}
+              {entry.data.seriesOrder != null && ` · ${t('blog.part')} ${entry.data.seriesOrder}`}
+            </a>
+          </p>
         )
       }
-    </p>
+      <h1 class="mt-3 text-4xl font-bold tracking-tight text-balance">{title}</h1>
+      <p class="text-muted-foreground mt-3 font-mono text-xs">
+        {
+          /* Visible byline (#59) — pairs with the BlogPosting.author Person ref; links to /about. */
+        }
+        {t('blog.by')}{' '}
+        <a
+          href={`/${locale}/about`}
+          rel="author"
+          class="hover:text-foreground underline underline-offset-4"
+        >
+          {SITE.name}
+        </a>
+        <span aria-hidden="true"> · </span>
+        <time datetime={isoDate(pubDate)}>{formatDate(pubDate, locale)}</time>
+        <span aria-hidden="true"> · </span>{minutes}
+        {t('blog.minRead')}
+        {
+          updatedDate && (
+            <>
+              <span aria-hidden="true"> · </span>
+              {t('blog.updated')}{' '}
+              <time datetime={isoDate(updatedDate)}>{formatDate(updatedDate, locale)}</time>
+            </>
+          )
+        }
+      </p>
 
-    {
-      /* Provenance as quiet links (#216 dropped the card): dev.to original + source repo. */
-      (devtoUrl || sourceUrl) && (
-        <p class="text-muted-foreground mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs">
-          {devtoUrl && (
-            <a
-              href={devtoUrl}
-              rel="nofollow noopener"
-              target="_blank"
-              class="hover:text-foreground underline underline-offset-4"
-            >
-              ↗ {t('blog.originallyOn')}
-            </a>
-          )}
-          {sourceUrl && (
-            <a
-              href={sourceUrl}
-              rel="noopener"
-              target="_blank"
-              class="hover:text-foreground underline underline-offset-4"
-            >
-              ↗ {t('blog.sourceCode')}
-            </a>
-          )}
-        </p>
-      )
-    }
+      {
+        /* Provenance as quiet links (#216 dropped the card): dev.to original + source repo. */
+        (devtoUrl || sourceUrl) && (
+          <p class="text-muted-foreground mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs">
+            {devtoUrl && (
+              <a
+                href={devtoUrl}
+                rel="nofollow noopener"
+                target="_blank"
+                class="hover:text-foreground underline underline-offset-4"
+              >
+                ↗ {t('blog.originallyOn')}
+              </a>
+            )}
+            {sourceUrl && (
+              <a
+                href={sourceUrl}
+                rel="noopener"
+                target="_blank"
+                class="hover:text-foreground underline underline-offset-4"
+              >
+                ↗ {t('blog.sourceCode')}
+              </a>
+            )}
+          </p>
+        )
+      }
 
-    {
-      /* Answer-first capsule (#56), now a clearly-labeled TL;DR (no longer a blockquote look-alike). */
-      summary && <PostSummary summary={summary} locale={locale} class="mt-6" />
-    }
+      {
+        /* Answer-first capsule (#56), now a clearly-labeled TL;DR (no longer a blockquote look-alike). */
+        summary && <PostSummary summary={summary} locale={locale} class="mt-6" />
+      }
 
-    {/* What you can do, up front — a slim pre-read actions bar (react + share). */}
-    <div
-      class="border-border mt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-y py-3"
-    >
-      {reactions !== false && <Reactions path={postPath} locale={locale} compact />}
-      <ShareButtons url={pageUrl} title={title} locale={locale} compact />
-    </div>
+      {/* Header toolbar — act early, or jump straight to the discussion. */}
+      <div class="border-border mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 border-t pt-4">
+        {reactions !== false && <Reactions path={postPath} locale={locale} compact />}
+        <ShareButtons url={pageUrl} title={title} locale={locale} compact />
+        <a
+          href="#comments"
+          class="text-muted-foreground hover:text-foreground ml-auto inline-flex items-center gap-1.5 text-sm transition-colors"
+        >
+          {t('blog.comments.title')}
+          <span aria-hidden="true">↓</span>
+        </a>
+      </div>
+    </header>
 
     <ViewBeacon path={postPath} />
 
@@ -279,6 +289,7 @@ const jsonLd = [
   <NewsletterSignup locale={locale} />
 
   {/* Comments break out of the 48rem reading column into a wider track. */}
+  <span id="comments" class="block"></span>
   <Container width="wide" as="section" class="pb-16">
     <Comments locale={locale} title={title} discuss={discuss} commentsEnabled={comments} />
   </Container>
