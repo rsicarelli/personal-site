@@ -93,6 +93,12 @@ const giscusLoaderJs = `(() => {
     attributes: true, attributeFilter: ['class']
   });
 })();`;
+
+// Giscus injects a cross-origin <iframe class="giscus-frame">; without an explicit width it falls
+// back to the HTML default iframe box (300px, fixed). The standard giscus.css supplies this rule —
+// our custom loader must too. Emitted inline INSIDE the gated block so a giscus-free build ships no
+// "giscus" anywhere (tests/seo/comments.test.ts). Height stays auto-managed by giscus via postMessage.
+const giscusFrameCss = `.giscus,.giscus-frame{width:100%}.giscus-frame{min-height:12rem}`;
 ---
 
 <section
@@ -154,24 +160,8 @@ const giscusLoaderJs = `(() => {
           class="mt-4"
         />
         <script is:inline set:html={giscusLoaderJs} />
+        <style is:inline set:html={giscusFrameCss} />
       </div>
     )
   }
 </section>
-
-<style>
-  /*
-   * Giscus injects a cross-origin <iframe class="giscus-frame"> into [data-giscus]. Without an
-   * explicit width it falls back to the HTML default iframe box (300px, fixed) — the "tiny, fixed-size"
-   * comment box. The standard giscus.css provides this rule; our custom loader must supply it. `:global`
-   * is required because the iframe is added client-side and never carries Astro's scope attribute.
-   * Height stays auto-managed by giscus via postMessage; min-height just reserves comfortable space.
-   */
-  :global(.giscus),
-  :global(.giscus-frame) {
-    width: 100%;
-  }
-  :global(.giscus-frame) {
-    min-height: 12rem;
-  }
-</style>
