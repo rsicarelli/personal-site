@@ -26,7 +26,7 @@ Now let's come up to the surface of KMP, unpacking the `actual` and `expect` key
 
 ## How KMP Makes Code Sharing Easier
 
-In the article [🔗 Mastering the Principles of Source Sets](https://dev.to/rsicarelli/kotlin-multiplataforma-101-dominando-os-principios-dos-source-sets-4pg), we learned that KMP uses the source set structure and that every platform-specific source set inherits from the root source set `commonMain`. All Kotlin code in `commonMain` automatically becomes accessible from the platform-specific source sets, such as `androidMain`, `appleMain`, and others.
+In the article [🔗 Mastering the Principles of Source Sets](/en/blog/kotlin-multiplataforma-101-dominando-os-principios-dos-source-sets), we learned that KMP uses the source set structure and that every platform-specific source set inherits from the root source set `commonMain`. All Kotlin code in `commonMain` automatically becomes accessible from the platform-specific source sets, such as `androidMain`, `appleMain`, and others.
 
 Code in `commonMain` can be:
 
@@ -300,14 +300,6 @@ In this article, we explored the capabilities of the `actual` and `expect` keywo
 In the next article, we'll dive deeper into the ecosystem of KMP libraries. We'll learn how to navigate this territory, choose the right libraries for our needs, understand their details and quirks, and how they can push our multiplatform development work even further.
 
 See you next time!
-
----
-
-> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
->
-> The sources and content are reviewed to ensure the relevance of the information provided, as well as the sources used in each prompt.
->
-> That said, if you find any incorrect information or believe some credit is missing, please get in touch!
 
 ---
 

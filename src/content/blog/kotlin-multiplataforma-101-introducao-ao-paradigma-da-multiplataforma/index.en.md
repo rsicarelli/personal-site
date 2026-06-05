@@ -265,14 +265,6 @@ We'll learn how the Kotlin compiler works, and how its frontend + backend + IR s
 
 ---
 
-> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
->
-> The sources and content are reviewed to ensure the information provided is relevant, as are the sources used in each prompt.
->
-> That said, if you find any incorrect information or believe a credit is missing, please get in touch!
-
----
-
 > References
 >
 > - [Simplifying Application Development with Kotlin Multiplatform Mobile Robert Nagy](https://github.com/PacktPublishing/Simplifying-Application-Development-with-Kotlin-Multiplatform-Mobile)

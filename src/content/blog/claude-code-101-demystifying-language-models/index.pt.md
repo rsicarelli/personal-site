@@ -18,9 +18,7 @@ difficulty: beginner
 contentType: tutorial
 ---
 
-[🌐 Read in English](https://dev.to/rsicarelli/claude-code-101-demystifying-language-models-3h8o)
-
-No [artigo anterior](https://dev.to/rsicarelli/claude-code-101-introducao-a-programacao-agentica-4mk1), montamos a fábrica inteira: a evolução de produção manual pra máquinas autônomas, o ecossistema de ferramentas agênticas, os três pilares (prompt, context e harness engineering). Você sabe o que a fábrica faz, quem trabalha nela e até quanto fatura.
+No [artigo anterior](/pt-br/blog/claude-code-101-introduction-to-agentic-programming), montamos a fábrica inteira: a evolução de produção manual pra máquinas autônomas, o ecossistema de ferramentas agênticas, os três pilares (prompt, context e harness engineering). Você sabe o que a fábrica faz, quem trabalha nela e até quanto fatura.
 
 Mas as máquinas da fábrica constroem coisas. E pra entender como elas constroem, a melhor analogia que eu conheço é LEGO. Peças padronizadas que se encaixam uma por vez, seguindo (ou não) um manual, numa mesa com espaço limitado.
 
@@ -109,7 +107,7 @@ Resultado: **"O céu está azul hoje."**
 
 Cada peça colocada depende de todas as anteriores: tanto o input original quanto o que o modelo já construiu. Por isso respostas às vezes começam bem e descarrilham no meio. O modelo não sabe onde vai terminar quando começa a gerar.
 
-Se você leu o [artigo anterior](https://dev.to/rsicarelli/cc101-programacao-agentica), pode reconhecer esse mecanismo. Lembra do autocomplete, a fase 1 da evolução? O code completion que sugeria a próxima linha no editor? O mecanismo por baixo é o mesmo: next-token prediction. A diferença é a escala. Modelos como o GPT-2 (2019) tinham 1,5 bilhão de parâmetros e uma mesa minúscula. O Claude Opus 4.6 opera numa escala completamente diferente, com uma janela de contexto mil vezes maior. O processo de montagem é o mesmo. A capacidade de construir coisas complexas é que mudou.
+Se você leu o [artigo anterior](/pt-br/blog/claude-code-101-introduction-to-agentic-programming), pode reconhecer esse mecanismo. Lembra do autocomplete, a fase 1 da evolução? O code completion que sugeria a próxima linha no editor? O mecanismo por baixo é o mesmo: next-token prediction. A diferença é a escala. Modelos como o GPT-2 (2019) tinham 1,5 bilhão de parâmetros e uma mesa minúscula. O Claude Opus 4.6 opera numa escala completamente diferente, com uma janela de contexto mil vezes maior. O processo de montagem é o mesmo. A capacidade de construir coisas complexas é que mudou.
 
 ---
 

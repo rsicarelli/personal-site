@@ -252,14 +252,6 @@ Até a próxima!
 
 ---
 
-> 🤖 Artigo foi escrito com o auxílio do ChatGPT 4, utilizando o plugin Web.
->
-> As fontes e o conteúdo são revisados para garantir a relevância das informações fornecidas, assim como as fontes utilizadas em cada prompt.
->
-> No entanto, caso encontre alguma informação incorreta ou acredite que algum crédito está faltando, por favor, entre em contato!
-
----
-
 > Referências:
 >
 > - [An Overview of JDK Vendors - DZone](https://dzone.com/articles/an-overview-on-jdk-vendors)

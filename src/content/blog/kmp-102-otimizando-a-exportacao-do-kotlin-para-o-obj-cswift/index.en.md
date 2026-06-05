@@ -22,21 +22,6 @@ contentType: tutorial
 
 In this post, we'll dig deeper into how this export works and the impact on our generated code.
 
-- [How Kotlin/Native exports code to Swift](#how-kotlinnative-exports-code-to-swift)
-- [Recapping code export](#recapping-code-export)
-  - [💡 In short](#-in-short)
-- [How does Kotlin/Native resolve Kotlin types into Objective-C?](#how-does-kotlinnative-resolve-kotlin-types-into-objective-c)
-- [Controlling what gets exported to the Headers](#controlling-what-gets-exported-to-the-headers)
-  - [🤔 But why should I care about this?](#-but-why-should-i-care-about-this)
-  - [Recommended export paradigm](#recommended-export-paradigm)
-  - [Ways to hide Kotlin code from Objective-C](#ways-to-hide-kotlin-code-from-objective-c)
-    - [1. Using the `internal` modifier](#1-using-the-internal-modifier)
-    - [2. Using the `@HiddenFromObjC` and `@HidesFromObjC` annotations](#2-using-the-hiddenfromobjc-and-hidesfromobjc-annotations)
-      - [2.1 @HiddenFromObjC](#21-hiddenfromobjc)
-      - [2.2 @HidesFromObjC](#22-hidesfromobjc)
-- [Impact of using `internal`, `@HiddenFromObjC`, and `@HidesFromObjC` on the codebase](#impact-of-using-internal-hiddenfromobjc-and-hidesfromobjc-on-the-codebase)
-- [Conclusion](#conclusion)
-
 ## Recapping code export
 
 When you compile a `.framework` with Kotlin/Native, the compiler generates a series of files:

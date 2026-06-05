@@ -23,21 +23,6 @@ contentType: tutorial
 
 Nesse post, vamos aprofundar sobre como essa exportação funciona e o impacto no nosso código gerado.
 
-- [Como o Kotlin/Native exporta código para o Swift](#como-o-kotlinnative-exporta-código-para-o-swift)
-- [Recapitulando a exportação de código](#recapitulando-a-exportação-de-código)
-  - [💡 Resumindo](#-resumindo)
-- [Como o Kotlin/Native resolve os tipos Kotlin para Objective-C?](#como-o-kotlinnative-resolve-os-tipos-kotlin-para-objective-c)
-- [Controlando o que é exportado para os Headers](#controlando-o-que-é-exportado-para-os-headers)
-  - [🤔 Mas por que eu devo me preocupar com isso?](#-mas-por-que-eu-devo-me-preocupar-com-isso)
-  - [Recomendação de paragidma de exportação](#recomendação-de-paragidma-de-exportação)
-  - [Formas de esconder código Kotlin do Objective-C](#formas-de-esconder-código-kotlin-do-objective-c)
-    - [1. Utilizando o modificador `internal`](#1-utilizando-o-modificador-internal)
-    - [2. Utilizando as anotações `@HiddenFromObjC` e `@HidesFromObjC`](#2-utilizando-as-anotações-hiddenfromobjc-e-hidesfromobjc)
-      - [2.1 @HiddenFromObjC](#21-hiddenfromobjc)
-      - [2.2 @HidesFromObjC](#22-hidesfromobjc)
-- [Impacto do uso do `internal`, `@HiddenFromObjC` e `@HidesFromObjC` no codebase](#impacto-do-uso-do-internal-hiddenfromobjc-e-hidesfromobjc-no-codebase)
-- [Conclusão](#conclusão)
-
 ## Recapitulando a exportação de código
 
 Ao compilar um `.framework` com o Kotlin/Native, o compilador gera uma série de arquivos, sendo eles:

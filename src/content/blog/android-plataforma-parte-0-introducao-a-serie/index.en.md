@@ -37,49 +37,49 @@ Throughout these articles, we'll build a platform from scratch and integrate it 
 
 🔗 [github.com/rsicarelli/kotlin-gradle-android-platform](https://github.com/rsicarelli/kotlin-gradle-android-platform)
 
-1. [**Modularization**](https://dev.to/rsicarelli/android-plataforma-parte-1-modularizacao-2016)
+1. [**Modularization**](/en/blog/android-plataforma-parte-1-modularizacao)
    - We'll explore the reasons and ideas behind modularization on Android.
-2. [**Starting the Project**](https://dev.to/rsicarelli/android-plataforma-parte-2-inicio-do-projeto-34jg)
+2. [**Starting the Project**](/en/blog/android-plataforma-parte-2-inicio-do-projeto)
    - We'll introduce the base project that we'll evolve and integrate with our platform.
-3. [**Sharing Gradle scripts**](https://dev.to/rsicarelli/android-plataforma-parte-3-compartilhando-scripts-do-gradle-5ak3)
+3. [**Sharing Gradle scripts**](/en/blog/android-plataforma-parte-3-compartilhando-scripts-do-gradle)
    - We'll cover `buildSrc` and discuss how to share scripts across Gradle projects.
-4. [**Composite Build**](https://dev.to/rsicarelli/android-plataforma-parte-4-composite-build-lgk)
+4. [**Composite Build**](/en/blog/android-plataforma-parte-4-composite-build-lgk)
    - We'll introduce this valuable Gradle feature and create a composite build to represent our platform.
-5. [**Simplifying Gradle Init**](https://dev.to/rsicarelli/android-plataforma-parte-5-simplificando-gradle-init-1b55)
+5. [**Simplifying Gradle Init**](/en/blog/android-plataforma-parte-5-simplificando-gradle-init)
    - We'll take a closer look at the features our platform actually needs.
-6. [**Version Catalog**](https://dev.to/rsicarelli/android-plataforma-parte-6-version-catalog-59ob)
+6. [**Version Catalog**](/en/blog/android-plataforma-parte-6-version-catalog)
    - We'll introduce and implement Gradle's version catalog.
-7. [**Decorating the 'app' module**](https://dev.to/rsicarelli/android-plataforma-parte-7-decorando-o-modulo-app-2ah4)
+7. [**Decorating the 'app' module**](/en/blog/android-plataforma-parte-7-decorando-o-modulo-app)
    - We'll introduce the concept of "decorations" and delegate the `app` module's Gradle scripts to our platform.
-8. [**Decorating the 'library' modules**](https://dev.to/rsicarelli/android-plataforma-parte-8-decorando-os-modulo-library-4mm0)
+8. [**Decorating the 'library' modules**](/en/blog/android-plataforma-parte-8-decorando-os-modulo-library)
    - We'll move on to our libraries and delegate their logic to our platform too.
-9. [**Unifying the Application and Library extensions with the Common Extension**](https://dev.to/rsicarelli/android-plataforma-parte-9-unificando-a-application-e-library-extensions-com-a-common-extension-19gc)
+9. [**Unifying the Application and Library extensions with the Common Extension**](/en/blog/android-plataforma-parte-9-unificando-a-application-e-library-extensions-com-a-common-extension)
    - We'll discuss `ApplicationExtension`, `LibraryExtension`, and `CommonsExtension` from the Android Gradle Plugin (AGP).
-10. [**Customizing the modules**](https://dev.to/rsicarelli/android-plataforma-parte-10-customizacao-dos-modulos-2a7)
+10. [**Customizing the modules**](/en/blog/android-plataforma-parte-10-customizacao-dos-modulos)
 
 - We'll parameterize our platform so the modules using it can be customized.
 
-11. [**Creating a DSL to customize the new options**](https://dev.to/rsicarelli/android-plataforma-parte-11-criando-uma-dsl-para-customizar-as-novas-opcoes-1m1e)
+11. [**Creating a DSL to customize the new options**](/en/blog/android-plataforma-parte-11-criando-uma-dsl-para-customizar-as-novas-opcoes)
 
 - We'll build an idiomatic Kotlin way to apply our platform customizations.
 
-12. [**Optimizing build time for Android libraries**](https://dev.to/rsicarelli/android-plataforma-parte-12-otimizando-tempo-de-compilacao-para-bibliotecas-android-3g36)
+12. [**Optimizing build time for Android libraries**](/en/blog/android-plataforma-parte-12-otimizando-tempo-de-compilacao-para-bibliotecas-android)
 
 - We'll discuss the Android Gradle Plugin's `BuildFeatures` and optimize the build of Android libraries.
 
-13. [**Adding "pure JVM" modules**](https://dev.to/rsicarelli/android-plataforma-parte-13-incluindo-modulos-puro-jvm-4f61)
+13. [**Adding "pure JVM" modules**](/en/blog/android-plataforma-parte-13-incluindo-modulos-puro-jvm)
 
 - We'll explore the reasons to keep modules leaner and avoid the extra steps of the Android Gradle Plugin.
 
-14. [**Adopting experimental Kotlin compiler features**](https://dev.to/rsicarelli/android-plataforma-parte-14-aderindo-a-funcionalidades-experimentais-do-compilador-do-kotlin-3b0g)
+14. [**Adopting experimental Kotlin compiler features**](/en/blog/android-plataforma-parte-14-aderindo-a-funcionalidades-experimentais-do-compilador-do-kotlin)
 
 - We'll discuss the `@RequiresOptIn` annotation and how to adapt our platform to adopt experimental features.
 
-15. [**Caring for the code with Detekt, Klint, and Spotless**](https://dev.to/rsicarelli/android-plataforma-parte-15-cuidando-do-codigo-com-detekt-klint-e-spotless-50n7)
+15. [**Caring for the code with Detekt, Klint, and Spotless**](/en/blog/android-plataforma-parte-15-cuidando-do-codigo-com-detekt-klint-e-spotless)
 
 - We'll focus on code quality, using our platform to set our project up with code analysis and formatting tools.
 
-16. [**Final thoughts**](https://dev.to/rsicarelli/android-plataforma-parte-16-consideracoes-finais-53f2)
+16. [**Final thoughts**](/en/blog/android-plataforma-parte-16-consideracoes-finais)
 
 - We'll reflect on whether a platform is really needed, on good practices, and on the next steps for future series!
 
@@ -166,4 +166,4 @@ I hope you enjoy this content and learn a lot from it!
 
 If you have any questions or run into trouble, don't hesitate to reach out or leave a comment.
 
-Start here: [**Part 1: Modularization**](https://dev.to/rsicarelli/android-plataforma-parte-1-modularizacao-2016)
+Start here: [**Part 1: Modularization**](/en/blog/android-plataforma-parte-1-modularizacao)

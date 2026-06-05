@@ -105,7 +105,7 @@ Result: **"The sky is blue today."**
 
 Each piece placed depends on all the ones before it: both the original input and what the model has already built. That's why responses sometimes start well and derail halfway through. The model doesn't know where it will end up when it starts generating.
 
-If you read the [previous article](https://dev.to/rsicarelli/claude-code-101-introduction-to-agentic-programming-3p83), you might recognize this mechanism. Remember autocomplete, phase 1 of the evolution? The code completion that suggested the next line in the editor? The underlying mechanism is the same: next-token prediction. The difference is scale. Models like GPT-2 (2019) had 1.5 billion parameters and a tiny desk. Claude Opus 4.6 operates at a completely different scale, with a context window a thousand times larger. The assembly process is the same. The ability to build complex things is what changed.
+If you read the [previous article](/en/blog/claude-code-101-introduction-to-agentic-programming), you might recognize this mechanism. Remember autocomplete, phase 1 of the evolution? The code completion that suggested the next line in the editor? The underlying mechanism is the same: next-token prediction. The difference is scale. Models like GPT-2 (2019) had 1.5 billion parameters and a tiny desk. Claude Opus 4.6 operates at a completely different scale, with a context window a thousand times larger. The assembly process is the same. The ability to build complex things is what changed.
 
 ---
 

@@ -54,7 +54,7 @@ The "Fat" nature of frameworks in KMP creates a technical challenge when we want
 
 Kotlin projects have a multi-modular nature for cache reuse and build performance. Modularizing projects has a positive influence on the development experience in Kotlin projects that use Gradle.
 
-[In this article](https://dev.to/rsicarelli/android-plataforma-parte-1-modularizacao-2016) I dig a bit deeper into modularization in Android projects, which also applies to KMP projects.
+[In this article](/en/blog/android-plataforma-parte-1-modularizacao) I dig a bit deeper into modularization in Android projects, which also applies to KMP projects.
 
 Kotlin projects usually have multiple modules, such as:
 

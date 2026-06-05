@@ -27,7 +27,7 @@ Agora, vamos emergir à superfície do KMP, desvendando as palavras reservadas `
 
 ## Como o KMP Facilita o Compartilhamento de Código
 
-No artigo [🔗 Dominando os Princípios dos Source Sets](https://dev.to/rsicarelli/kotlin-multiplataforma-101-dominando-os-principios-dos-source-sets-4pg), aprendemos que o KMP usa a estrutura de source sets e que todo source-set específico é herdeiro do source-set raiz `commonMain`. Todo código Kotlin no `commonMain` fica automaticamente acessível nos source-sets específicos, como `androidMain`, `appleMain`, entre outros.
+No artigo [🔗 Dominando os Princípios dos Source Sets](/pt-br/blog/kotlin-multiplataforma-101-dominando-os-principios-dos-source-sets), aprendemos que o KMP usa a estrutura de source sets e que todo source-set específico é herdeiro do source-set raiz `commonMain`. Todo código Kotlin no `commonMain` fica automaticamente acessível nos source-sets específicos, como `androidMain`, `appleMain`, entre outros.
 
 O código no `commonMain` pode ser:
 
@@ -301,14 +301,6 @@ Neste artigo, desbravamos as funcionalidades das palavras reservadas `actual` e 
 No próximo artigo, vamos nos aprofundar no ecossistema das bibliotecas KMP. Aprenderemos como navegar por este território, escolher as bibliotecas adequadas para as nossas necessidades, entender seus detalhes e peculiaridades, e como elas podem impulsionar ainda mais nosso trabalho no desenvolvimento multiplataforma.
 
 Até a próxima!
-
----
-
-> 🤖 Artigo foi escrito com o auxílio do ChatGPT 4, utilizando o plugin Web.
->
-> As fontes e o conteúdo são revisados para garantir a relevância das informações fornecidas, assim como as fontes utilizadas em cada prompt.
->
-> No entanto, caso encontre alguma informação incorreta ou acredite que algum crédito está faltando, por favor, entre em contato!
 
 ---
 
