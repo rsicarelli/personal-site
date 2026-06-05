@@ -196,7 +196,7 @@ detekt()
 
 **8 -** Sincronize o projeto. Perceba que uma série de tasks `detektX` foram adicionadas no projeto:
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/pm2238ij1zni4t7dput9.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/pm2238ij1zni4t7dput9.png)
 
 **8 -** Verifique que está funcionando rodando o seguinte comando.
 
@@ -370,7 +370,7 @@ spotless()
 
 **8 -** Sincronize o projeto. Perceba que agora várias tasks `spotless` estarão disponíveis na lista de tarefas do Gradle:
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/8lnbvzudyiqmg3zwpg88.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/8lnbvzudyiqmg3zwpg88.png)
 
 **9 -** Verifque o funcionamento rodando o comando, ou clique duplo na tarefa `spotlessApply` na lista de tarefas do Gradle:
 

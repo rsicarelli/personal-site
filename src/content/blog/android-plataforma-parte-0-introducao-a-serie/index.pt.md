@@ -84,7 +84,7 @@ No decorrer desses artigos, iremos construir uma plataforma desde o início, aco
 
 - Refletiremos sobre a real necessidade de uma plataforma, boas práticas e os próximos passos para futuras séries!
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/sjeq93uk3vdzdp6sv0ja.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/sjeq93uk3vdzdp6sv0ja.png)
 
 ## Spoiler do que iremos aprender
 

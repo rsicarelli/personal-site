@@ -42,7 +42,7 @@ Assuming the necessary configuration has been applied (which we'll cover in futu
 2. Compile the source code inside the `common` _source set_ for every platform, making the members of the `Common.kt` file natively available to each defined platform.
 3. At the end of compilation, generate platform-specific files (`.class`, `.so`, `.js`, `.wasm`), with every member of `Common.kt` available.
 
-![Basic source set structure](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp101-sourcesets-basic.png?raw=true)
+![Basic source set structure](https://media.rsicarelli.com/blog/kmp-101/shared/kmp101-sourcesets-basic.png)
 
 ### The hierarchical nature of _source sets_
 
@@ -54,7 +54,7 @@ Finally, at the tips of the branches sit the individual family members (the plat
 
 This lets you organize a hierarchy of intermediate _source sets_ with full control over what each _source set_ shares.
 
-![KMP default hierarchy](https://kotlinlang.org/docs/images/default-hierarchy-example.svg)
+![KMP default hierarchy](https://media.rsicarelli.com/blog/kmp-101/shared/default-hierarchy-example.svg)
 
 ## Common vs. platform-specific _source sets_
 
@@ -90,7 +90,7 @@ This concept is called [intermediary _source sets_](https://kotlinlang.org/docs/
 
 > An intermediate _source set_ is a _source set_ that compiles to some, but not all, of the project's targets.
 
-![Source sets example](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/mermaid-diagram-2023-11-24-110205.png?raw=true)
+![Source sets example](https://media.rsicarelli.com/blog/kmp-101/shared/mermaid-diagram-2023-11-24-110205.png)
 
 ## Test _source set_
 
@@ -98,7 +98,7 @@ Tests in Kotlin Multiplatform are also treated as a _source set_. That means eac
 
 The common _source set_ can (and should!) have its own tests too, but you'll need to use other KMP libraries for multiplatform test authoring, such as [🔗 kotlin.test](https://kotlinlang.org/api/latest/kotlin.test/), [🔗 turbine](https://github.com/cashapp/turbine), or [🔗 assertk](https://github.com/willowtreeapps/assertk).
 
-![Test source sets example](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/test-source-set-kmp.png?raw=true)
+![Test source sets example](https://media.rsicarelli.com/blog/kmp-101/shared/test-source-set-kmp.png)
 
 ## Managing dependencies in _source sets_
 
@@ -116,7 +116,7 @@ This means that, when you declare a common dependency, all the other _source set
 
 In contrast to the common _source set_, platform-specific _source sets_ like `androidMain` or `iosMain` focus on dependencies that are relevant only to a particular platform. These dependencies are used to access APIs, libraries, or resources that are exclusive to a platform, allowing developers to leverage native features and optimize the user experience on each platform.
 
-![Dependencies source sets example](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/mermaid-diagram-2023-11-24-125307.png?raw=true)
+![Dependencies source sets example](https://media.rsicarelli.com/blog/kmp-101/shared/mermaid-diagram-2023-11-24-125307.png)
 
 ## Conventions adopted by the community
 

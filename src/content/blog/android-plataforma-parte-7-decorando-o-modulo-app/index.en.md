@@ -198,11 +198,11 @@ dependencyResolutionManagement {
 
 **3 -** Sync the project. Create a folder called `decoration` inside `build-logic/src/main/kotlin`.
 
-![Project structure showing the new decoration folder](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/y9yk99duigmkc4aq8vkn.png)
+![Project structure showing the new decoration folder](https://media.rsicarelli.com/blog/android-plataforma/shared/y9yk99duigmkc4aq8vkn.png)
 
 **4 -** Create a file called `android.kt`. This is where our Android decorations will live.
 
-![The android.kt file created inside the decoration folder](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/l88dbg26zj278jylpask.png)
+![The android.kt file created inside the decoration folder](https://media.rsicarelli.com/blog/android-plataforma/shared/l88dbg26zj278jylpask.png)
 
 **5 -** We'll use the `internal fun applyX()` pattern. Note that, by making it `internal`, we're protecting this function from whoever consumes our platform:
 
@@ -297,7 +297,7 @@ Create another folder inside `decoration` and, for now, call it `kotlin.kt`.
 
 Using the same `internal fun applyX()` pattern:
 
-![The kotlin.kt file inside the decoration folder](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qsr1yfghpcd49tlq9z7c.png)
+![The kotlin.kt file inside the decoration folder](https://media.rsicarelli.com/blog/android-plataforma/shared/qsr1yfghpcd49tlq9z7c.png)
 
 ```kotlin
 import org.gradle.api.Project
@@ -338,7 +338,7 @@ Create another file inside `decoration` called `project.kt`.
 
 Add two extensions: one to grab `libs`, and another to find the version:
 
-![The project.kt file with the libs and version extensions](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/dzdoygvjiiygoxindril.png)
+![The project.kt file with the libs and version extensions](https://media.rsicarelli.com/blog/android-plataforma/shared/dzdoygvjiiygoxindril.png)
 
 ```kotlin
 internal val Project.libs: VersionCatalog

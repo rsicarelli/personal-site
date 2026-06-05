@@ -49,7 +49,7 @@ In KMP, modularization is done through shared modules, which are responsible for
 
 Let's put together a module structure that respects separation of concerns and enables efficient code reuse across modules. Our context here assumes an application that will scale, in the sense of gaining more features and more platforms:
 
-<img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-modularization-pt1.png?raw=true" />
+![](https://media.rsicarelli.com/blog/kmp-102/shared/kmp-modularization-pt1.png)
 
 This structure follows some ideas from Domain Driven Design (DDD), in which each module represents an independent, isolated domain of the application. I won't go into much detail about DDD, but I recommend reading [Domain-Driven Design: Tackling Complexity in the Heart of Software](https://www.amazon.com.br/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215/ref=sr_1_1?dib=eyJ2IjoiMSJ9.Lo7-Md3VvIV38Rzn-ytmnX1FyJz_hHxG_c3ocyge7LEEkMf9J0QQUC_vNRqM-bly1FEW6JDWiQjxRiR4Ip4uOSi5BDadwwQLRq-qGmgXmoG36NnUp66mVBVEOL-xFpHChmTWdyWDB5EZGboxu2dOIVTrzRS54KI4S6rDRsLLLoSAkU9bCl81j0cePEicQvqB.QPWgwg7lUfTottKjOov5grb2CciIICVV12MWxs8bueA&dib_tag=se&keywords=Domain-Driven-Design-Tackling-Complexity-Software&qid=1739362218&sr=8-1&ufe=app_do%3Aamzn1.fos.4bddec23-2dcf-4403-8597-e1a02442043d) to learn more about the subject.
 
@@ -67,7 +67,7 @@ Let's think of each feature as something that can be split into a "frontend" and
 
 With that in mind, one approach you can use is the following:
 
-<img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-modularization-pt2.png?raw=true" />
+![](https://media.rsicarelli.com/blog/kmp-102/shared/kmp-modularization-pt2.png)
 
 Here, we split each feature that has a screen into 3 modules:
 
@@ -103,7 +103,7 @@ Characteristics of this model:
 4. On iOS, the business logic is reused, but the UI is iOS-specific with SwiftUI
 5. An ideal model for projects looking to migrate to Compose gradually, or that intend to keep platform-specific UI
 
-<img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-modularization-scenario-1.png?raw=true" />
+![](https://media.rsicarelli.com/blog/kmp-102/shared/kmp-modularization-scenario-1.png)
 
 ### Scenario 2: Hybrid, migrating to Compose Multiplatform
 
@@ -119,7 +119,7 @@ Characteristics of this model:
 4. In `common-ui`, shared UI components using Compose Multiplatform
 5. An ideal model to begin migrating to Compose Multiplatform with a gradual UI migration
 
-<img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-modularization-scenario-2.png?raw=true" />
+![](https://media.rsicarelli.com/blog/kmp-102/shared/kmp-modularization-scenario-2.png)
 
 ### Scenario 3: 100% Compose Multiplatform
 
@@ -133,7 +133,7 @@ Characteristics of this model:
 2. UI fully shared through Compose Multiplatform
 3. An ideal model for projects with a unified UI across all platforms
 
-<img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-modularization-scenario-3.png?raw=true" />
+![](https://media.rsicarelli.com/blog/kmp-102/shared/kmp-modularization-scenario-3.png)
 
 ## Exploring the benefits of modularization in KMP
 

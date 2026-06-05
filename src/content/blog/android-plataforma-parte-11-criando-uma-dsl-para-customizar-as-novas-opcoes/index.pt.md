@@ -53,7 +53,7 @@ Para solucionar esse problema, vamos introduzir uma DSL que cuide dessa customiz
 
 Note que, aqui iremos definir os valores padrões da nossa plataforma.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/7v2mwju1ebm1o7ebodow.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/7v2mwju1ebm1o7ebodow.png)
 
 ```kotlin
 

@@ -32,7 +32,7 @@ Este é o segundo artigo da série **Claude Code 101**, e aqui a gente desmonta 
 
 Computadores não entendem texto. Entendem números. Antes que um modelo de linguagem processe qualquer coisa que você escreveu, cada palavra, espaço e pontuação precisa virar uma sequência de inteiros. Esses inteiros são os **tokens**: as peças padronizadas com as quais o modelo trabalha.
 
-![O que é um token](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part2/assets/pt-br/part2-image0-bc01.png?raw=true)
+![O que é um token](https://media.rsicarelli.com/blog/101/part2/pt-br/part2-image0-bc01.png)
 
 Um token não é necessariamente uma palavra. Pode ser uma palavra inteira ("hello" vira 1 token), um pedaço de palavra ("tokenização" vira vários tokens), um caractere isolado ou até um byte. A regra prática pro inglês: **1 token corresponde a mais ou menos 4 caracteres**, ou cerca de 3/4 de uma palavra. Pro português, fica mais perto de 1 token pra cada 2.7 a 3 caracteres.
 
@@ -42,7 +42,7 @@ A maioria dos LLMs usa um algoritmo chamado **BPE** (Byte Pair Encoding) pra mon
 
 O detalhe que importa: essa massa de textos é dominada por inglês. Palavras como "the", "and", "great" viram tokens únicos, peças inteiras. Palavras em português são fragmentadas em pedaços menores, como se o kit viesse com peças cortadas ao meio. Compare:
 
-![Tokenização: inglês vs português](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part2/assets/pt-br/part2-image1-354a.png?raw=true)
+![Tokenização: inglês vs português](https://media.rsicarelli.com/blog/101/part2/pt-br/part2-image1-354a.png)
 
 O caractere "ó" sozinho já vira um token separado porque acentos aparecem pouco nos textos de treinamento. Não é detalhe técnico irrelevante. Afeta diretamente o seu bolso e a capacidade efetiva do modelo quando você trabalha em português.
 
@@ -90,7 +90,7 @@ Aqui entra um ponto que pouca gente discute. Ter uma mesa de 1 milhão de tokens
 
 Pesquisas recentes mostram que a capacidade do modelo de prestar atenção (attention, um conceito que vamos explorar logo abaixo) cai conforme o contexto cresce, especialmente pra informações posicionadas no meio do texto [[3]](#referências). O fenômeno tem até nome: **"lost in the middle"**. Na prática, a atenção efetiva do modelo é significativamente menor que a janela anunciada. O benchmark NoLiMa (ICML 2025) mostrou que a maioria dos LLMs erra mais da metade das vezes quando precisa encontrar uma informação específica em contextos a partir de 32K tokens [[9]](#referências).
 
-![A janela de contexto](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part2/assets/pt-br/part2-image2-934b.png?raw=true)
+![A janela de contexto](https://media.rsicarelli.com/blog/101/part2/pt-br/part2-image2-934b.png)
 
 E aqui o imposto linguístico aparece de novo. Se a janela efetiva de um modelo com 200K tokens já é significativamente menor que o anunciado, pra conteúdo 100% em português, planeje com uma margem generosa de desconto. O espaço útil pode cair pra algo entre 80K e 90K tokens de conteúdo equivalente ao inglês. Peças maiores ocupam mais espaço na mesma superfície.
 
@@ -104,7 +104,7 @@ A mecânica é surpreendentemente simples. O modelo olha pra tudo que já está 
 
 Exemplo: o modelo recebe **"O céu está"** e precisa continuar.
 
-![Geração autorregressiva](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part2/assets/pt-br/part2-image3-8a04.png?raw=true)
+![Geração autorregressiva](https://media.rsicarelli.com/blog/101/part2/pt-br/part2-image3-8a04.png)
 Resultado: **"O céu está azul hoje."**
 
 Cada peça colocada depende de todas as anteriores: tanto o input original quanto o que o modelo já construiu. Por isso respostas às vezes começam bem e descarrilham no meio. O modelo não sabe onde vai terminar quando começa a gerar.
@@ -123,7 +123,7 @@ A resposta é o **mecanismo de atenção** (self-attention), introduzido no pape
 
 Imagine que o manual de montagem não mostra só o próximo passo. Pra cada peça nova, ele destaca quais partes da construção importam pra essa decisão: a base brilha forte (sustenta tudo), as torres ao redor acendem (definem o padrão), o jardim do outro lado fica apagado (irrelevante agora). O mecanismo de atenção faz exatamente isso: pra cada token, ele "acende" os anteriores que mais pesam e "apaga" os que não importam.
 
-![Mecanismo de atenção](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part2/assets/pt-br/part2-image4-f663.png?raw=true)
+![Mecanismo de atenção](https://media.rsicarelli.com/blog/101/part2/pt-br/part2-image4-f663.png)
 
 Antes dos Transformers, era como montar LEGO com alguém ditando as instruções: uma peça por vez, sem repetir, sem voltar atrás. Perdeu o passo 12? Já era. O Transformer é ter o manual inteiro aberto na mesa, todas as páginas visíveis ao mesmo tempo. Essa capacidade de processar tudo em paralelo foi o salto que viabilizou treinar modelos na escala atual.
 
@@ -162,7 +162,7 @@ A **temperatura** controla o quão fundo o modelo enfia a mão na caixa. No zero
 | 0.7         | "especiarias exóticas e um toque de limão siciliano." | Criativo                |
 | 1.5         | "sonhos derretidos em caramelo de dragão."            | Incoerente              |
 
-![Temperatura: o quão fundo na caixa](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part2/assets/pt-br/part2-image5-9d21.png?raw=true)
+![Temperatura: o quão fundo na caixa](https://media.rsicarelli.com/blog/101/part2/pt-br/part2-image5-9d21.png)
 
 ### Top-p
 
@@ -217,7 +217,7 @@ Usar Opus pra classificar sentimento de tweets é como comprar um Technic de 4 m
 
 A regra prática: comece sempre pelo modelo mais barato que pode funcionar. Teste com Haiku, Flash ou mini. Se a qualidade não for suficiente, suba. Opus e o3-pro ficam reservados pra quando realmente necessário.
 
-![Famílias de modelos](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part2/assets/pt-br/part2-image6-ae0b.png?raw=true)
+![Famílias de modelos](https://media.rsicarelli.com/blog/101/part2/pt-br/part2-image6-ae0b.png)
 
 Mas independente do kit que você escolher, todos compartilham as mesmas limitações fundamentais.
 
@@ -233,7 +233,7 @@ Quando um modelo gera informação que parece correta mas é factualmente falsa,
 
 Se o padrão estatístico de "X escreveu o livro Y" é forte o bastante nos dados de treinamento, o modelo vai afirmar isso mesmo se for falso. Ele não tem um verificador de fatos interno. Não distingue entre gerar "Paris é a capital da França" e "Paris é a capital da Itália". Ambas são sequências de tokens plausíveis; uma é verdade, a outra não, e o modelo não sabe a diferença.
 
-![Limitações: alucinações e mesa limpa](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part2/assets/pt-br/part2-image7-2d3e.png?raw=true)
+![Limitações: alucinações e mesa limpa](https://media.rsicarelli.com/blog/101/part2/pt-br/part2-image7-2d3e.png)
 
 ### As limitações concretas
 
@@ -259,7 +259,7 @@ Mesmo com essas limitações, os modelos estão sendo usados em escala. E escala
 
 Cada peça custa dinheiro. LLMs são cobrados por token processado, dividido em duas categorias: **input tokens** (tudo que você envia) e **output tokens** (o que o modelo gera). Construir algo novo (output) sempre custa mais que consultar o que já existe (input), geralmente entre 3x e 5x o preço [[8]](#referências). Faz sentido: gerar cada token exige um forward pass completo pelo modelo.
 
-![Input vs Output: consultar vs construir](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part2/assets/pt-br/part2-image8-db69.png?raw=true)
+![Input vs Output: consultar vs construir](https://media.rsicarelli.com/blog/101/part2/pt-br/part2-image8-db69.png)
 
 ### Tabela de preços (abril 2026)
 
@@ -283,7 +283,7 @@ Lembra do custo de tokenização do português? Ele se traduz diretamente em din
 
 Ao longo deste artigo, um fio conecta três seções: o português consome mais peças pra construir a mesma coisa (seção 1), isso ocupa mais espaço na mesa (seção 2), e agora cobra mais caro (aqui). Não são três problemas. É o mesmo problema, em três camadas.
 
-![O imposto linguístico em três camadas](https://github.com/rsicarelli/claude-code-10x/blob/main/posts/101/part2/assets/pt-br/part2-image9-fae8.png?raw=true)
+![O imposto linguístico em três camadas](https://media.rsicarelli.com/blog/101/part2/pt-br/part2-image9-fae8.png)
 
 ### Como otimizar
 

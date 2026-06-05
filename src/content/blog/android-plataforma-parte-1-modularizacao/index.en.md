@@ -36,7 +36,7 @@ This is similar to modularization in Kotlin. We split the code into "modules", w
 
 Simply grouping code into folders isn't the same as modularizing. In large modules, small changes lead to recompiling the entire module.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/4bbq7yrajidhu3ffjh5b.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/4bbq7yrajidhu3ffjh5b.png)
 
 With smaller modules, only the changed section is recompiled, making builds more efficient.
 
@@ -46,7 +46,7 @@ In the Kotlin world, Gradle is indispensable. It detects which modules changed a
 
 A diagram showing a heavily simplified version of this process:
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qpnc33x56e705gtn3p2h.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/qpnc33x56e705gtn3p2h.png)
 
 In small projects, modularization can seem unnecessary. But as the code grows, it saves time and resources. So in large projects, modularization becomes vital.
 

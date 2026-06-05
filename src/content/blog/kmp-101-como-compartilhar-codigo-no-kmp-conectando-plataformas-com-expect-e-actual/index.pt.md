@@ -272,9 +272,9 @@ A palavra reservada `expect` informa o compilador do Kotlin para ele pode "esper
 Só é possível utilizar o `expect` no source set comum (`commonMain`): o source set comum declara, e os source sets específicos implementam.
 
 - Ao declarar um componente com a palavra `expect`, você tem a obrigação de declarar a implementação (`actual`) em cada source-set específico. Inclusive, ao declarar um `expect` qualquer, a IDE já sinaliza um erro informando que precisamos declarar a versão `actual` de cada plataforma.
-  ![Erro ao declarar expect](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-expect-actual-kotlin.png?raw=true)
+  ![Erro ao declarar expect](https://media.rsicarelli.com/blog/kmp-101/shared/error-expect-actual-kotlin.png)
 - Não é possível declarar a implementação ou atribuir um valor para seu componente. Por exemplo, ao declarar uma variável com `expect`, não é possível assinar um valor
-  ![Erro ao inicializar expect](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-expect-no-initializer.png?raw=true)
+  ![Erro ao inicializar expect](https://media.rsicarelli.com/blog/kmp-101/shared/error-expect-no-initializer.png)
 
 Agora que entendemos a palavra reservada `expect`, vamos aprender mais sobre seu outro par: o `actual`
 
@@ -288,11 +288,11 @@ O compilador do Kotlin garante que:
 
 - Toda declaração esperada no source-set comum tem uma declaração real correspondente em cada source-set específico da plataforma.
 
-![Demo em todas as plataformas](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/fullfilling-expect-actual.gif?raw=true)
+![Demo em todas as plataformas](https://media.rsicarelli.com/blog/kmp-101/shared/fullfilling-expect-actual.gif)
 
 - Toda declaração real compartilha o mesmo pacote que a declaração esperada correspondente, como `br.com.rsicarelli.example`. A imagem a seguir mostra o erro relacionado a tentar refatorar declarações que não compartilham o mesmo pacote:
 
-![Error: não pode ter pacotes diferentes](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-cannot-have-different-packages.gif?raw=true) <br> _"Não é Possível Realizar Refatoração. <br> Esta refatoração moverá a declaração selecionada sem seus correspondentes esperados/reais que podem levar a erros de compilação."_
+![Error: não pode ter pacotes diferentes](https://media.rsicarelli.com/blog/kmp-101/shared/error-cannot-have-different-packages.gif) <br> _"Não é Possível Realizar Refatoração. <br> Esta refatoração moverá a declaração selecionada sem seus correspondentes esperados/reais que podem levar a erros de compilação."_
 
 ## Conclusões
 

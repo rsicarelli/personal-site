@@ -79,11 +79,11 @@ If everything went well, **Fleet** performed the following steps:
    3. Desktop with the elephant icon (from Gradle)
 3. Configured each target and made it available in the "Run & Debug" window (by clicking the ▶️ **_run & debug_** icon)
 
-![Running the project in Fleet](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/fleet-hello-world-run.png?raw=true)
+![Running the project in Fleet](https://media.rsicarelli.com/blog/kmp-101/shared/fleet-hello-world-run.png)
 
 Now it's time to try it out! Click on each platform and run our Hello World:
 
-![Demo on every platform](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/hello-world-kmp-compose.gif?raw=true)
+![Demo on every platform](https://media.rsicarelli.com/blog/kmp-101/shared/hello-world-kmp-compose.gif)
 
 ## Conclusion
 

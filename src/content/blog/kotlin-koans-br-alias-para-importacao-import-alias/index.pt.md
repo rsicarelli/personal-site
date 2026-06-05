@@ -64,7 +64,7 @@ fun useDifferentRandomClasses(): String {
 
 Ao tentar importar os 2, recebemos um erro na IDE:
 
-![Conflito ao importar](https://github.com/rsicarelli/kotlin-koans-edu-br/blob/main/koans/src/commonMain/kotlin/com/rsicarelli/koansbr/classes/renameOnImport/resources/import-conflict-kotlin.png?raw=true)
+![Conflito ao importar](https://media.rsicarelli.com/blog/kotlin-koans-br/shared/import-conflict-kotlin.png)
 
 ## Introduzindo o "import alias"
 

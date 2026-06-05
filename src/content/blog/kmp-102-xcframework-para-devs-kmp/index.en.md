@@ -31,7 +31,7 @@ A [framework](https://developer.apple.com/library/archive/documentation/MacOSX/C
 It's a precompiled format that can be used freely across projects in Xcode. This file format makes it easier to build libraries for Apple devices, allowing them to be distributed and consumed through package managers like CocoaPods or the Swift Package Manager.
 
 <p align="center">
-  <img src="https://developer.apple.com/library/archive/documentation/General/Conceptual/DevPedia-CocoaCore/Art/framework_2x.png" alt="AppKit.framework" width="450">
+  <img src="https://media.rsicarelli.com/blog/kmp-102/shared/framework_2x.png" alt="AppKit.framework" style="max-width:450px">
 </p>
 
 ### An Introduction to the XCFramework
@@ -64,7 +64,7 @@ kotlin {
 ```
 
 When we sync the project, we notice that the `assembleKotlinSharedXCFramework` task has been registered in our project. Notice that the task has `KotlinShared` in the middle, which matches the `xcFrameworkName` parameter of the `XCFramework` class:
-![XCFramework registered task](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/xcframework-gradle-task.png?raw=true)
+![XCFramework registered task](https://media.rsicarelli.com/blog/kmp-102/shared/xcframework-gradle-task.png)
 
 ### Analyzing the result of the assemble...XCFramework task
 
@@ -75,7 +75,7 @@ This artifact is exactly the file we need to link to the Xcode project in order 
 > **Note**: Be careful with the project name! Special characters, such as "-", can lead to an error, even though the XCFramework still gets generated.
 
 <p align="center">
-  <img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/xcframework-task-result.png?raw=true" alt="AppKit.framework" width="450">
+  <img src="https://media.rsicarelli.com/blog/kmp-102/shared/xcframework-task-result.png" alt="AppKit.framework" style="max-width:450px">
 </p>
 
 ## NativeBuildTypes: debug and release

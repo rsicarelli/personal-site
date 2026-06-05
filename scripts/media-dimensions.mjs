@@ -21,7 +21,10 @@ const MEDIA_HOST = 'media.rsicarelli.com';
 const MANIFEST = new URL('../src/lib/media-dimensions.json', import.meta.url);
 // Escape regex metacharacters in the host (the dots are literal, not wildcards) before interpolating.
 const HOST_RE = MEDIA_HOST.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const URL_RE = new RegExp(`https://${HOST_RE}/([^\\s)"']+\\.(?:png|jpe?g|webp|avif|gif))`, 'gi');
+const URL_RE = new RegExp(
+  `https://${HOST_RE}/([^\\s)"']+\\.(?:png|jpe?g|webp|avif|gif|svg))`,
+  'gi',
+);
 
 const keys = new Set();
 for await (const file of glob('src/content/blog/**/*.{md,mdx}')) {

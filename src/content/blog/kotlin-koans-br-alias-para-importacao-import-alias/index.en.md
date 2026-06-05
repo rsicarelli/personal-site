@@ -63,7 +63,7 @@ fun useDifferentRandomClasses(): String {
 
 If we try to import both, we get an error in the IDE:
 
-![Conflict when importing](https://github.com/rsicarelli/kotlin-koans-edu-br/blob/main/koans/src/commonMain/kotlin/com/rsicarelli/koansbr/classes/renameOnImport/resources/import-conflict-kotlin.png?raw=true)
+![Conflict when importing](https://media.rsicarelli.com/blog/kotlin-koans-br/shared/import-conflict-kotlin.png)
 
 ## Introducing the "import alias"
 

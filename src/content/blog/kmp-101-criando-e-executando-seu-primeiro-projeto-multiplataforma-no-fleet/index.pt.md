@@ -80,11 +80,11 @@ Se tudo deu certo, o **Fleet** realizou as seguintes etapas
    3. Desktop com o ícone do elefante (do Gradle)
 3. Configurou cada alvo, e o tornou disponível na janela "Run & Debug" (clicando no ícone ▶️ **_run & debug_**)
 
-![Executando o projeto no Fleet](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/fleet-hello-world-run.png?raw=true)
+![Executando o projeto no Fleet](https://media.rsicarelli.com/blog/kmp-101/shared/fleet-hello-world-run.png)
 
 Agora é só testar! Clique em cada uma das plataformas, e execute nosso Olá Mundo:
 
-![Demo em todas as plataformas](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/hello-world-kmp-compose.gif?raw=true)
+![Demo em todas as plataformas](https://media.rsicarelli.com/blog/kmp-101/shared/hello-world-kmp-compose.gif)
 
 ## Conclusão
 

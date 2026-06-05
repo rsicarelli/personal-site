@@ -43,7 +43,7 @@ Every setting in our platform can be adapted from a model, or options, giving us
 
 The idea is to create a model that specifies which options will be applied to each module.
 
-![Diagram of the AndroidOptions model](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/24m73d4j4cj8rcjgg27g.png)
+![Diagram of the AndroidOptions model](https://media.rsicarelli.com/blog/android-plataforma/shared/24m73d4j4cj8rcjgg27g.png)
 
 ```kotlin
 sealed class AndroidOptions(

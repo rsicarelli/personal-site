@@ -101,7 +101,7 @@ When specific extensions like `ApplicationExtension` or `LibraryExtension` are c
 
 So any property or method defined in `CommonExtension` is automatically available to any other extension that inherits from it. This ensures a common, consistent base structure across all Android projects.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/f4zpffe6luk77ineskff.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/f4zpffe6luk77ineskff.png)
 
 ## Extracting common decorations using `CommonExtensions`
 
