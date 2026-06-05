@@ -44,6 +44,30 @@ describe('rendered localized pages', () => {
     }
   });
 
+  it('footer renders the grouped IA: 3 group labels, no duplicate /search link', () => {
+    for (const p of pages) {
+      const doc = parseHTML(p.html).document;
+      // The SITE footer is the document's last <footer> — blog posts also carry an
+      // in-article <footer> (tags) earlier in the DOM.
+      const footer = [...doc.querySelectorAll('footer')].at(-1);
+      expect(footer, p.relPath).toBeDefined();
+      const html = footer!.outerHTML;
+      for (const key of [
+        'footer.group.explore',
+        'footer.group.personal',
+        'footer.group.subscribe',
+      ] as const) {
+        expect(html, `${p.relPath} missing ${key}`).toContain(ui[p.locale][key]);
+      }
+      // Search lives in the header only — the footer link duplicated it (nav evidence review).
+      const hrefs = [...footer!.querySelectorAll('a')].map((a) => a.getAttribute('href') ?? '');
+      expect(
+        hrefs.some((h) => /\/search$/.test(h)),
+        `${p.relPath} footer still links to /search`,
+      ).toBe(false);
+    }
+  });
+
   it('main content carries no other-locale prose (no wrong-language leak)', () => {
     const markers = uniqueMarkers(12); // long, content-bearing strings only — short labels are chrome
     for (const p of pages) {

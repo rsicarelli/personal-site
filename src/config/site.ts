@@ -42,13 +42,34 @@ export const NAV = [
   { key: 'nav.contact', href: '/contact' },
 ] as const satisfies readonly { key: UIKey; href: string }[];
 
-/** Secondary footer links — §05. Same `key`/`href` contract as NAV. */
-export const FOOTER_LINKS = [
-  { key: 'footer.photos', href: '/photos' },
-  { key: 'footer.uses', href: '/uses' },
-  { key: 'footer.now', href: '/now' },
-  { key: 'footer.materials', href: '/materials' },
-  { key: 'footer.search', href: '/search' },
-  { key: 'footer.privacy', href: '/privacy' },
-  { key: 'footer.rss', href: '/rss.xml' },
-] as const satisfies readonly { key: UIKey; href: string }[];
+/**
+ * Secondary footer navigation — grouped into labeled columns (chunking beats a flat row; nav
+ * evidence review, 2026-06). Same `key`/`href` contract as NAV; each group's `labelKey` is the
+ * column heading. Meta links (privacy, licensing) are NOT here — they render inline in the
+ * footer meta line. Search is header-only (the footer link duplicated the header icon).
+ */
+export const FOOTER_GROUPS = [
+  {
+    labelKey: 'footer.group.explore',
+    links: [
+      { key: 'footer.photos', href: '/photos' },
+      { key: 'footer.materials', href: '/materials' },
+    ],
+  },
+  {
+    labelKey: 'footer.group.personal',
+    links: [
+      { key: 'footer.now', href: '/now' },
+      { key: 'footer.uses', href: '/uses' },
+    ],
+  },
+  {
+    // The Newsletter anchor link (#newsletter → in-footer form) is appended in Footer.astro,
+    // env-gated on PUBLIC_NEWSLETTER_ENABLED so it never points at a non-rendered form.
+    labelKey: 'footer.group.subscribe',
+    links: [{ key: 'footer.rss', href: '/rss.xml' }],
+  },
+] as const satisfies readonly {
+  labelKey: UIKey;
+  links: readonly { key: UIKey; href: string }[];
+}[];

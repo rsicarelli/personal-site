@@ -40,6 +40,16 @@ const dateRange = (data: CollectionEntry<'events'>['data']) => {
   <Container as="section" class="py-16">
     <h1 class="text-3xl font-bold tracking-tight">{t('nav.talks')}</h1>
 
+    <!-- Cross-link to the talk photo galleries (nav evidence review: body links beat footer-only). -->
+    <p class="mt-4">
+      <a
+        href={`/${locale}/photos`}
+        class="text-muted-foreground hover:text-foreground text-sm underline underline-offset-4 transition-colors"
+      >
+        {t('talks.photosLink')}
+      </a>
+    </p>
+
     {all.length === 0 && <p class="text-muted-foreground mt-6">{t('talks.empty')}</p>}
 
     {
