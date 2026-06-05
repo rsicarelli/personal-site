@@ -6,6 +6,9 @@ dist/
 .astro/
 .output/
 
+# Generated D1 FTS5 search index SQL (search:sync) — derived from dist/search-corpus.json
+dist/search-index.sql
+
 # Deploy / tooling caches
 .wrangler/
 .vercel/
