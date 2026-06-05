@@ -60,6 +60,32 @@ const links = NAV.slice(1);
         }
       </ul>
 
+      {
+        /* Search entry point (≥sm) — an icon LINK to the search page, not a live input: a header
+        input would force an always-on island site-wide. On mobile the link lives in the panel. */
+      }
+      <a
+        href={localized('/search')}
+        aria-label={t('search.label')}
+        aria-current={isActive('/search') ? 'page' : undefined}
+        class="hover:text-foreground aria-[current=page]:text-primary hidden min-h-6 items-center transition-colors sm:inline-flex"
+      >
+        <svg
+          class="size-5"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.3-4.3"></path>
+        </svg>
+      </a>
+
       {/* Always-visible controls — kept OUTSIDE the <details> so tapping them never toggles it. */}
       <ThemeToggle client:load label={t('theme.toggle')} />
       <span class="sm:border-border sm:border-l sm:pl-4">
@@ -109,6 +135,15 @@ const links = NAV.slice(1);
         <ul
           class="bg-background border-border absolute inset-x-0 top-full z-50 flex flex-col gap-1 border-b px-6 pt-2 pb-4 shadow-sm"
         >
+          <li>
+            <a
+              href={localized('/search')}
+              aria-current={isActive('/search') ? 'page' : undefined}
+              class="hover:bg-accent hover:text-foreground aria-[current=page]:text-primary block rounded-md px-2 py-2 transition-colors aria-[current=page]:font-medium"
+            >
+              {t('search.label')}
+            </a>
+          </li>
           {
             links.map((item) => (
               <li>

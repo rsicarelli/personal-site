@@ -149,6 +149,9 @@ describe('sitemap hreflang validity', () => {
       // `translated: false` placeholders are noindex and intentionally absent from the sitemap
       // (#173); their canonical still resolves, just not as a <loc>. Skip them here.
       if (placeholders.has(`/${p.locale}${p.logicalPath}`)) continue;
+      // The internal search shells are robots-disallowed + noindex and deliberately excluded
+      // from the sitemap (astro.config.mjs filter) — same reasoning, skip them too.
+      if (p.logicalPath === '/search') continue;
       const present = [...locs].some((loc) => norm(loc) === norm(p.canonical));
       expect(present, `${p.relPath}: canonical ${p.canonical} missing from sitemap`).toBe(true);
     }

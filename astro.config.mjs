@@ -42,8 +42,13 @@ export default defineConfig({
     mdx(),
     sitemap({
       // The callback only sees the absolute URL string; match on its trailing-slash-normalized
-      // pathname (dir-form <loc>s carry a trailing slash, the placeholder set doesn't).
-      filter: (page) => !noindexPlaceholders.has(new URL(page).pathname.replace(/\/$/, '')),
+      // pathname (dir-form <loc>s carry a trailing slash, the placeholder set doesn't). Also drop
+      // the internal search shells — they're robots-disallowed + noindexed, so advertising them
+      // in the sitemap would only earn a Search Console notice.
+      filter: (page) => {
+        const path = new URL(page).pathname.replace(/\/$/, '');
+        return !noindexPlaceholders.has(path) && !/^\/(?:en|pt-br)\/search$/.test(path);
+      },
       // Stamp blog posts with their real lastmod (#231 E1); other URLs keep the integration default.
       serialize(item) {
         const date = blogDates.get(new URL(item.url).pathname.replace(/\/$/, ''));

@@ -48,6 +48,7 @@ export const FOOTER_LINKS = [
   { key: 'footer.uses', href: '/uses' },
   { key: 'footer.now', href: '/now' },
   { key: 'footer.materials', href: '/materials' },
+  { key: 'footer.search', href: '/search' },
   { key: 'footer.privacy', href: '/privacy' },
   { key: 'footer.rss', href: '/rss.xml' },
 ] as const satisfies readonly { key: UIKey; href: string }[];

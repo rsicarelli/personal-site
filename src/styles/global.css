@@ -54,6 +54,9 @@
   --border: oklch(0.922 0.013 255);
   --input: oklch(0.87 0.02 252);
   --ring: oklch(0.5 0.19 280);
+  /* Search-match highlight (<mark>) — pale indigo wash from the accent hue; ink stays --foreground
+     so text-on-highlight clears WCAG AA (≥4.5:1) in this theme. Never browser-default yellow. */
+  --mark-bg: oklch(0.95 0.05 280);
 }
 
 .dark {
@@ -76,6 +79,8 @@
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 18%);
   --ring: oklch(0.72 0.16 280);
+  /* Low-alpha accent tint over slate — reads as a highlight without crushing the near-white ink. */
+  --mark-bg: color-mix(in oklch, var(--primary) 28%, transparent);
 }
 
 @theme inline {
@@ -148,6 +153,16 @@
   /* Keep focused targets clear of sticky edges if any are added later (Focus Not Obscured, 2.4.11). */
   :target {
     scroll-margin-top: 5rem;
+  }
+
+  /* Search-match highlight — accent-tinted via the per-theme --mark-bg token (see :root/.dark);
+     `color: inherit` keeps the surrounding ink so contrast holds in both themes. The slight radius
+     + hairline padding match the inline-code chip rhythm. */
+  mark {
+    background: var(--mark-bg);
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 0.1em;
   }
 
   /*

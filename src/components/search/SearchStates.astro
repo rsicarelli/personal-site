@@ -1,0 +1,112 @@
+---
+/**
+ * Zero-query / suggestions block (`#search-zero`) — what an empty search page shows instead of a
+ * blank void: browse-by-section pills, popular topics (live counts from the content spine), and
+ * the three most recent posts (mirroring the shared result-item markup so the page reads as one
+ * coherent list language).
+ *
+ * It doubles as the EMPTY-state suggestions: on a zero-result query, engines keep this block
+ * visible and set `#search-count` to the localized "No results for …" copy. With results, engines
+ * hide it (`hidden` attribute — server-side via HTMLRewriter or client-side via `el.hidden`).
+ */
+import type { Locale } from '@/config/site';
+import { useTranslations } from '@/i18n/utils';
+import type { UIKey } from '@/i18n/ui';
+import { getLocalizedEntries, getTopicsWithCounts, readingTimeOf } from '@/lib/content';
+import { formatDate, isoDate } from '@/lib/datetime';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const [topics, posts] = await Promise.all([
+  getTopicsWithCounts(locale),
+  getLocalizedEntries('blog', locale),
+]);
+const recent = posts.slice(0, 3);
+
+const browse = [
+  { href: `/${locale}/blog`, label: t('search.type.blog') },
+  { href: `/${locale}/projects`, label: t('search.type.project') },
+  { href: `/${locale}/talks`, label: t('search.type.talk') },
+  { href: `/${locale}/materials`, label: t('search.type.material') },
+];
+
+const pill =
+  'border-border text-muted-foreground hover:text-foreground rounded-full border px-3 py-1 transition-colors';
+---
+
+<div id="search-zero" class="mt-12">
+  <p class="text-muted-foreground">{t('search.zero.title')}</p>
+
+  <h2 class="text-muted-foreground mt-8 text-xs font-semibold tracking-wide uppercase">
+    {t('search.zero.browse')}
+  </h2>
+  <ul class="mt-4 flex flex-wrap gap-2 text-sm">
+    {
+      browse.map((b) => (
+        <li>
+          <a href={b.href} class={pill}>
+            {b.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  {
+    topics.length > 0 && (
+      <>
+        <h2 class="text-muted-foreground mt-10 text-xs font-semibold tracking-wide uppercase">
+          {t('search.popularTopics')}
+        </h2>
+        <ul class="mt-4 flex flex-wrap gap-2 text-sm">
+          {topics.map(({ topic, count }) => (
+            <li>
+              <a href={`/${locale}/topics/${topic}`} class={pill}>
+                {t(`blog.topic.${topic}` as UIKey)}
+                <span class="text-muted-foreground/70"> ({count})</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+
+  {
+    recent.length > 0 && (
+      <>
+        <h2 class="text-muted-foreground mt-10 text-xs font-semibold tracking-wide uppercase">
+          {t('search.recent')}
+        </h2>
+        <ul class="mt-6 space-y-8">
+          {recent.map(({ slug, entry }) => (
+            <li class="border-border border-b pb-8 last:border-0">
+              <h3 class="text-xl font-semibold tracking-tight">
+                <a href={`/${locale}/blog/${slug}`} class="hover:text-primary transition-colors">
+                  {entry.data.title}
+                </a>
+              </h3>
+              <p class="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs">
+                <time datetime={isoDate(entry.data.pubDate)}>
+                  {formatDate(entry.data.pubDate, locale)}
+                </time>
+                <span aria-hidden="true">·</span>
+                <span>
+                  {readingTimeOf(entry)} {t('blog.minRead')}
+                </span>
+              </p>
+              <p class="text-muted-foreground mt-2 max-w-prose">
+                {entry.data.summary ?? entry.data.description}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+</div>

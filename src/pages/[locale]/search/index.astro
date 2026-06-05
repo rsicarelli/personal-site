@@ -1,0 +1,90 @@
+---
+/**
+ * Site search — the static shell every engine fills (the "finder").
+ *
+ * URL contract: `/{locale}/search?q={query}[&type={all|blog|project|talk|material}]`. This page
+ * ships statically for both locales (no-JS form target, hreflang reciprocity) and renders the
+ * form + the zero-query suggestions. The RESULTS region is engine-specific:
+ *
+ *  - D1 FTS5 (server): a Pages Function owns GET /{locale}/search — with `?q=` it fetches this
+ *    static shell from ASSETS and injects results via HTMLRewriter on the stable hooks below.
+ *  - Pagefind / Orama (client): an island reads `?q=` on load (and keystrokes after), renders
+ *    into the same hooks via src/lib/search/markup.ts, and syncs the URL with history.replaceState.
+ *
+ * Stable hooks (cross-engine contract): `#search` (data-* carries the localized strings client
+ * engines need), `#search-q`, `#search-filters a[data-type]`, `#search-count` (the aria-live
+ * region — present in the DOM BEFORE results so screen readers announce updates), `#search-results`
+ * (empty `<ul>`), `#search-zero` (suggestions; hidden when results show).
+ *
+ * SEO: internal search results are kept out of the index — `Disallow` in robots.txt (primary,
+ * src/pages/robots.txt.ts) + the `noindex` prop here (belt-and-suspenders) + excluded from the
+ * sitemap (astro.config.mjs). The canonical from BaseLayout is pathname-based, so `?q=` variants
+ * consolidate on the query-less shell automatically.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SearchForm from '@/components/search/SearchForm.astro';
+import SearchStates from '@/components/search/SearchStates.astro';
+import { LOCALES, type Locale } from '@/config/site';
+import { useTranslations } from '@/i18n/utils';
+
+export async function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const locale = Astro.params.locale as Locale;
+const t = useTranslations(locale);
+---
+
+<BaseLayout
+  title={`${t('search.title')} · ${t('site.title')}`}
+  description={t('site.description')}
+  noindex
+>
+  <Container as="section" class="py-16">
+    <div
+      id="search"
+      data-locale={locale}
+      data-count={t('search.results.count')}
+      data-count-one={t('search.results.count.one')}
+      data-empty={t('search.empty.title')}
+      data-empty-hint={t('search.empty.hint')}
+      data-error={t('search.error')}
+      data-error-hint={t('search.error.hint')}
+      data-loading={t('search.loading')}
+    >
+      <h1 class="text-3xl font-bold tracking-tight">{t('search.title')}</h1>
+
+      <SearchForm locale={locale} />
+
+      <p id="search-count" class="text-muted-foreground mt-8 font-mono text-xs" aria-live="polite">
+      </p>
+      <ul id="search-results" class="mt-2 space-y-8"></ul>
+
+      <SearchStates locale={locale} />
+    </div>
+  </Container>
+</BaseLayout>
+
+{
+  /* `/` focuses the search input — progressive enhancement only (the header icon link is the
+  baseline). Document-scoped + idempotent (same pattern as Header's Escape handler) so it survives
+  ClientRouter swaps; it no-ops on pages without `#search-q`. Inline script ⇒ its sha256 hash is
+  allow-listed in public/_headers (guarded by tests/security/csp-hashes.test.ts). */
+}
+<script is:inline>
+  (() => {
+    if (window.__searchKeyBound) return;
+    window.__searchKeyBound = true;
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
+      const el = e.target;
+      if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable))
+        return;
+      const q = document.getElementById('search-q');
+      if (!q) return;
+      e.preventDefault();
+      q.focus();
+    });
+  })();
+</script>

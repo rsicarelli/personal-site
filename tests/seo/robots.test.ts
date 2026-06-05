@@ -38,7 +38,11 @@ describe('robots.txt', () => {
   it('allows all crawlers by default and declares the Content-Signal split', () => {
     const wildcard = blockOf(txt, '\\*');
     expect(wildcard).toContain('Allow: /');
-    expect(wildcard).not.toContain('Disallow: /');
+    // The internal search shells carry a path-scoped Disallow (thin, infinite-variant URLs);
+    // a BLANKET `Disallow: /` must never appear under `*` — match the exact line, not the substring.
+    expect(wildcard).not.toMatch(/^Disallow: \/$/m);
+    expect(wildcard).toMatch(/^Disallow: \/en\/search$/m);
+    expect(wildcard).toMatch(/^Disallow: \/pt-br\/search$/m);
     expect(wildcard).toContain('Content-Signal: search=yes, ai-input=yes, ai-train=no');
   });
 
