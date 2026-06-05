@@ -52,7 +52,9 @@ describe('public/_headers security posture', () => {
 
   it('ships the standard hardening headers', () => {
     for (const header of [
-      'Strict-Transport-Security: max-age=',
+      // Pinned exactly: rsicarelli.com was submitted to the Chromium HSTS preload list (#175),
+      // so `includeSubDomains; preload` is a live commitment — do not weaken or drop the token.
+      'Strict-Transport-Security: max-age=63072000; includeSubDomains; preload',
       'X-Content-Type-Options: nosniff',
       'X-Frame-Options: DENY',
       'Referrer-Policy:',
