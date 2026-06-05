@@ -157,9 +157,25 @@ const pageTitle = isFirst
       )
     }
 
-    <h2 class="text-muted-foreground mt-12 text-xs font-semibold tracking-wide uppercase">
-      {t('blog.latest')}
-    </h2>
+    {
+      /* "Latest" heading + the visible main-feed link — humans' counterpart to the head autodiscovery. */
+    }
+    <div class="mt-12 flex items-baseline justify-between gap-4">
+      <h2 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+        {t('blog.latest')}
+      </h2>
+      <a
+        href={`/${locale}/rss.xml`}
+        class="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 font-mono text-xs transition-colors"
+      >
+        <svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true">
+          <path
+            d="M6.18 17.82a2.18 2.18 0 1 1-4.36 0 2.18 2.18 0 0 1 4.36 0zM1.82 8.91v3.27c5.52 0 10 4.48 10 10h3.27c0-7.33-5.94-13.27-13.27-13.27zM1.82 2.18v3.27c9.13 0 16.55 7.42 16.55 16.55h3.27c0-10.95-8.87-19.82-19.82-19.82z"
+          ></path>
+        </svg>
+        {t('rss.subscribe')}
+      </a>
+    </div>
     {
       page.data.length === 0 ? (
         <p class="text-muted-foreground mt-6">{t('blog.empty')}</p>
