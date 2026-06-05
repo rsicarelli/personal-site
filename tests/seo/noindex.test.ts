@@ -41,17 +41,21 @@ describe('noindex placeholders', () => {
     expect(placeholders.size).toBeGreaterThanOrEqual(0);
   });
 
-  it('only placeholders + thin tag archives carry noindex — posts, listings and topics never do', () => {
+  it('only placeholders + thin tag archives + search carry noindex — posts, listings and topics never do', () => {
     for (const p of pages) {
       const key = `${p.locale} ${p.logicalPath.slice(1)}`; // `/blog/x` → `blog/x`
       const isTagArchive = /^\/blog\/tags\//.test(p.logicalPath);
+      const isSearch = p.logicalPath === '/search';
       const noindex = /noindex/i.test(robots(p.html));
       if (placeholders.has(key)) {
         expect(noindex, `${p.relPath}: placeholder must be noindex`).toBe(true);
       } else if (isTagArchive) {
         // Tag archives opt into noindex when thin (#231 D2) — the exact rule is verified below.
+      } else if (isSearch) {
+        // Internal search results are thin/infinite-variant URLs — robots-disallowed AND noindex.
+        expect(noindex, `${p.relPath}: search shell must be noindex`).toBe(true);
       } else {
-        expect(noindex, `${p.relPath}: only placeholders/thin-tags are noindex`).toBe(false);
+        expect(noindex, `${p.relPath}: only placeholders/thin-tags/search are noindex`).toBe(false);
       }
     }
   });

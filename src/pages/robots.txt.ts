@@ -1,5 +1,5 @@
 import type { APIContext } from 'astro';
-import { SITE } from '@/config/site';
+import { LOCALES, SITE } from '@/config/site';
 
 /**
  * robots.txt (#53) — generated so the `Sitemap:` line tracks the configured origin (no hardcoded
@@ -53,6 +53,9 @@ export function GET(context: APIContext): Response {
     'User-agent: *',
     'Content-Signal: search=yes, ai-input=yes, ai-train=no',
     'Allow: /',
+    // Internal search results are thin, infinite-variant URLs — keep all crawlers out of them
+    // (primary lever; the page also carries a belt-and-suspenders `noindex` via BaseLayout).
+    ...LOCALES.map((locale) => `Disallow: /${locale}/search`),
     '',
     ...ALLOW_BOTS.flatMap((bot) => [`User-agent: ${bot}`, 'Allow: /', '']),
     ...DISALLOW_TRAINING_BOTS.flatMap((bot) => [`User-agent: ${bot}`, 'Disallow: /', '']),

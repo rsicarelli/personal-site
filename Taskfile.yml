@@ -90,6 +90,13 @@ tasks:
       - scripts/upload-media.sh {{.DIR}} {{.CLI_ARGS}}
       - node scripts/media-dimensions.mjs
 
+  search:sync:
+    desc: 'Rebuild the D1 FTS5 search index from content and apply to both DBs (Option B). Build emits dist/search-corpus.json; the script regenerates dist/search-index.sql.'
+    cmds:
+      - task: build
+      - node scripts/search-index-sync.mjs --apply --db personal-site-engagement-preview
+      - node scripts/search-index-sync.mjs --apply --db personal-site-engagement
+
   devto:canonical:
     desc: 'Dry-run the dev.to canonical_url write-back (#151). Add `-- --apply` (with DEV_TO_API_KEY) to write.'
     cmds:

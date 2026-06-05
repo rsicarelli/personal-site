@@ -1,0 +1,74 @@
+---
+/**
+ * Search form + type filter — the no-JS baseline every engine builds on. The form is a real
+ * `method="GET"` submit to `/{locale}/search?q=…`; the filters are real links carrying `?type=`.
+ * Engines enhance IN PLACE without changing this markup:
+ *
+ *  - D1 FTS5 (server): rewrites `#search-q[value]`, the filter `href`s (injecting `q`),
+ *    `aria-current` and the `[data-count]` spans via HTMLRewriter on this exact structure.
+ *  - Pagefind / Orama (client): intercept submit/typing, keep the URL in sync with
+ *    `history.replaceState`, and update the same attributes/spans client-side.
+ *
+ * Stable hooks (the cross-engine contract — don't rename): `#search-form`, `#search-q`,
+ * `#search-filters`, `a[data-type]`, `span[data-count]`.
+ */
+import type { Locale } from '@/config/site';
+import { useTranslations } from '@/i18n/utils';
+import { SEARCH_TYPES } from '@/lib/search/types';
+import type { UIKey } from '@/i18n/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const action = `/${locale}/search`;
+
+const filters = [
+  { type: 'all', label: t('search.filter.all') },
+  ...SEARCH_TYPES.map((type) => ({ type, label: t(`search.type.${type}` as UIKey) })),
+];
+---
+
+<form id="search-form" role="search" method="get" action={action} class="mt-8">
+  <label for="search-q" class="sr-only">{t('search.inputLabel')}</label>
+  <div class="flex gap-3">
+    <input
+      id="search-q"
+      name="q"
+      type="search"
+      placeholder={t('search.placeholder')}
+      autocomplete="off"
+      spellcheck="false"
+      enterkeyhint="search"
+      class="bg-background border-input placeholder:text-muted-foreground w-full rounded-lg border px-4 py-3 text-base"
+    />
+    <button
+      type="submit"
+      class="bg-primary text-primary-foreground rounded-lg px-5 py-3 text-sm font-medium transition-opacity hover:opacity-90"
+    >
+      {t('search.button')}
+    </button>
+  </div>
+
+  <nav
+    id="search-filters"
+    aria-label={t('search.filter.label')}
+    class="mt-4 flex flex-wrap gap-2 text-xs"
+  >
+    {
+      filters.map((f) => (
+        <a
+          href={f.type === 'all' ? action : `${action}?type=${f.type}`}
+          data-type={f.type}
+          aria-current={f.type === 'all' ? 'true' : undefined}
+          class="border-border text-muted-foreground hover:text-foreground aria-[current=true]:border-primary/30 aria-[current=true]:text-primary rounded-full border px-3 py-1 transition-colors aria-[current=true]:font-medium"
+        >
+          {f.label}
+          <span data-count />
+        </a>
+      ))
+    }
+  </nav>
+</form>
