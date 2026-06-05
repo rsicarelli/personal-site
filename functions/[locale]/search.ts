@@ -1,41 +1,62 @@
 /**
- * Site search — Option B: D1 + SQLite FTS5, server-rendered, TRUE zero client JS (#search epic).
+ * Site search — Option D: D1 + SQLite FTS5, progressive-enhancement HYBRID (#search epic).
  *
- * This Pages Function OWNS `GET /{locale}/search`. Its whole pitch is that search fully works with
- * JavaScript disabled: a real `<form method="get">` submits here, we run an FTS5 query against D1,
- * and we inject the results into the SAME static shell every engine shares via HTMLRewriter — no
- * island, no client fetch, no hydration. The browser receives a complete results page.
+ * This Pages Function OWNS `GET /{locale}/search`. Its baseline pitch is unchanged from Option B:
+ * search fully works with JavaScript disabled — a real `<form method="get">` submits here, we run an
+ * FTS5 query against D1, and inject results into the SAME static shell every engine shares via
+ * HTMLRewriter. No island, no client fetch, no hydration; the browser receives a complete page.
+ *
+ * Option D adds a SECOND response shape on the SAME endpoint for the instant-feel island
+ * (`src/scripts/search-d1-hybrid.ts`): when the request asks for JSON (`?format=json` OR
+ * `Accept: application/json`), we serialize `{ q, locale, activeType, total, counts, hasResults,
+ * terms, results:[{url,title,typeLabel,meta,excerptHtml}] }` instead of rewriting the shell. The
+ * island debounce-fetches that JSON per keystroke and renders client-side through the SAME
+ * `src/lib/search/markup.ts`, so server- and client-rendered results are byte-identical. No-JS is a
+ * strict subset: the HTML path below is untouched.
  *
  * Flow:
  *   1. No / blank `q` (or an unknown locale) → hand the request straight to ASSETS: the static
- *      shell serves the zero-query suggestions state unchanged.
- *   2. With `q` → compose an AND-of-prefix MATCH from the query terms, run it (filtered by locale,
- *      and `type` when a facet is active), order by `bm25`, fetch per-type counts, then rewrite the
- *      shell: input value, count/empty copy, result `<li>`s, filter hrefs/counts/aria-current, and
- *      hide the suggestions block when there are hits.
+ *      shell serves the zero-query suggestions state unchanged (HTML only — the island never fetches
+ *      a blank query).
+ *   2. With `q` → compose an AND-of-prefix MATCH, run it (locale-scoped, `type`-filtered when a
+ *      facet is active) through the edge Cache API (Stage 2) → `runSearch`, then branch:
+ *        - JSON intent → `Response(JSON)` via `buildJsonPayload`.
+ *        - else → rewrite the shell (input value, count/empty copy, result `<li>`s, filter
+ *          hrefs/counts/aria-current, hide suggestions on hits).
  *
- * Markup parity: results render through the SHARED `src/lib/search/markup.ts` (imported by a
- * RELATIVE path — the Pages Functions esbuild bundler follows relative imports outside `functions/`)
- * so every engine emits byte-identical result items. Localized strings come from the shared
- * `src/i18n/ui.ts` dictionary (a plain object; its only import is `import type`, elided by esbuild).
+ * Pure logic (MATCH composition, the XSS-safe snippet dance, the JSON serializer, filter hrefs,
+ * locale/type guards) lives in the importable, unit-tested `src/lib/search/server.ts` (imported by a
+ * RELATIVE path — the Pages Functions esbuild bundler follows relative imports outside `functions/`).
+ * This handler keeps only the un-unit-testable shell: D1, HTMLRewriter, the Cache API, `waitUntil`.
  *
- * Security: `q` is user-controlled reflected content. The MATCH expression is built from quoted
- * terms (never interpolated as raw FTS syntax), and ALL rendered text is HTML-escaped — titles and
- * excerpts via the shared `highlight()` (which escapes), and the FTS5 body `snippet()` via a
- * sentinel dance (escape the whole string, then restore only our own `<mark>` markers). No XSS.
+ * Analytics split (Option D): `recordAnalytics` (D1 counters + zero-terms) fires on the HTML path
+ * ONLY — committed/no-JS/deep-link searches. The JSON path does NOT write D1: it's hit once per
+ * keystroke, which would inflate the write budget, so the island reports via Umami instead.
  *
- * Analytics (this engine's structural edge — server-side, zero client JS): every successful query
- * bumps `counters(slug='search:{locale}', kind='query')`; zero-result queries also bump `kind='zero'`
- * and record the normalized term into `search_zero_terms` (a content-gap signal, private to the
- * owner via wrangler — no public read endpoint).
+ * Edge cache (Stage 2): the D1 read is wrapped in `caches.default` keyed by the normalized GET URL,
+ * so repeat/popular queries skip D1. It activates ONLY on the custom domain — `caches.default` is a
+ * no-op on `*.pages.dev`/previews — and is fully feature-detected + try/caught so it can never break
+ * a response.
  */
+import { fillTemplate, termsOf, escapeHtml } from '../../src/lib/search/markup';
 import {
-  renderResultItem,
-  highlight,
-  fillTemplate,
-  termsOf,
-  escapeHtml,
-} from '../../src/lib/search/markup';
+  type Locale,
+  type SearchType,
+  type Row,
+  TYPES,
+  RESULT_LIMIT,
+  MARK_OPEN,
+  MARK_CLOSE,
+  ELLIPSIS,
+  isLocale,
+  isType,
+  matchExpr,
+  renderResults,
+  filterHref,
+  buildJsonPayload,
+  errorJsonPayload,
+  wantsJson,
+} from '../../src/lib/search/server';
 import { ui } from '../../src/i18n/ui';
 
 // ---------------------------------------------------------------------------------------------
@@ -62,109 +83,6 @@ interface Ctx {
   env: Env;
   params: { locale?: string };
   waitUntil(promise: Promise<unknown>): void;
-}
-
-/** The locales this site ships — anything else falls through to ASSETS (404/shell as built). */
-type Locale = 'en' | 'pt-br';
-function isLocale(v: string | undefined): v is Locale {
-  return v === 'en' || v === 'pt-br';
-}
-
-/** Searchable facets (mirrors SEARCH_TYPES) — drives `&type=` filtering and the count map. */
-const TYPES = ['blog', 'project', 'talk', 'material'] as const;
-type SearchType = (typeof TYPES)[number];
-function isType(v: string | null): v is SearchType {
-  return v === 'blog' || v === 'project' || v === 'talk' || v === 'material';
-}
-
-const RESULT_LIMIT = 50;
-
-/** One row read back from the FTS5 table (UNINDEXED columns + the body snippet). */
-interface Row {
-  id: string;
-  type: string;
-  url: string;
-  title: string;
-  excerpt: string;
-  type_label: string;
-  meta_json: string;
-  body_snip: string;
-}
-
-// ---------------------------------------------------------------------------------------------
-// MATCH composition — quoted prefix terms joined by spaces = AND (FTS5 implicit AND).
-// ---------------------------------------------------------------------------------------------
-/**
- * Build a safe FTS5 MATCH expression from a raw query: reuse the shared `termsOf` (whitespace
- * split, length ≥ 2, max 8), strip FTS syntax characters from each term, wrap in double quotes
- * (so the term is a literal, never an operator/column filter), and append `*` for prefix matching.
- * Joining with spaces ANDs them. Returns `''` when no usable term remains (caller treats as blank).
- */
-function matchExpr(q: string): string {
-  const terms = termsOf(q)
-    // Drop the FTS5 metacharacters (quotes, parens, colon, star, caret, minus) so the term can't
-    // break out of its quotes or change query semantics. Diacritics are folded by the tokenizer.
-    .map((t) => t.replace(/["()*:^-]/g, '').trim())
-    .filter((t) => t.length >= 2);
-  if (terms.length === 0) return '';
-  return terms.map((t) => `"${t}"*`).join(' ');
-}
-
-// ---------------------------------------------------------------------------------------------
-// FTS5 body snippet → safe highlighted HTML.
-// ---------------------------------------------------------------------------------------------
-// `snippet()` returns RAW text from the stored body with our markers around matches. We pass
-// unlikely sentinels (not HTML), so we can HTML-escape the entire string first (neutralizing any
-// `<`,`>`,`&` from the content) and only THEN swap our sentinels for real <mark> tags — markup the
-// content itself can never forge. This is the XSS-safe path for reflected body text.
-const MARK_OPEN = 'SMARK';
-const MARK_CLOSE = 'EMARK';
-const ELLIPSIS = '…';
-
-function snippetToSafeHtml(raw: string): string {
-  return escapeHtml(raw).replaceAll(MARK_OPEN, '<mark>').replaceAll(MARK_CLOSE, '</mark>');
-}
-
-// ---------------------------------------------------------------------------------------------
-// Rendering helpers.
-// ---------------------------------------------------------------------------------------------
-/**
- * Choose the excerpt HTML for a result. Prefer highlighting the stored `excerpt` (the answer-first
- * display snippet) when it actually contains a term; otherwise fall back to the FTS5 body snippet
- * (the matched window deep in the prose), which we sanitize via the sentinel dance.
- */
-function excerptHtmlFor(row: Row, terms: string[]): string {
-  const fromExcerpt = highlight(row.excerpt, terms);
-  if (fromExcerpt.includes('<mark>')) return fromExcerpt;
-  if (row.body_snip) return snippetToSafeHtml(row.body_snip);
-  return fromExcerpt; // no match anywhere visible — show the plain (escaped) excerpt
-}
-
-/** Parse a row's `meta_json` back into the meta-line segments, tolerating malformed JSON. */
-function parseMeta(json: string): { text: string; iso?: string }[] {
-  try {
-    const parsed = JSON.parse(json);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-/** Render the joined `<li>` list for the result rows. */
-function renderResults(rows: Row[], terms: string[]): string {
-  return rows
-    .map((row) => {
-      const meta = parseMeta(row.meta_json);
-      const doc = {
-        url: row.url,
-        title: row.title,
-        excerpt: row.excerpt,
-        typeLabel: row.type_label,
-        meta,
-      };
-      return renderResultItem(doc, terms, { excerptHtml: excerptHtmlFor(row, terms) });
-    })
-    .join('');
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -225,6 +143,7 @@ async function runSearch(
 // ---------------------------------------------------------------------------------------------
 // Server-side analytics (fire-and-forget via waitUntil) — mirrors the counters conventions of
 // functions/api/view.ts. Failures are swallowed: analytics must never break a search response.
+// HTML PATH ONLY (Option D analytics split) — the JSON path reports via Umami client-side instead.
 // ---------------------------------------------------------------------------------------------
 async function recordAnalytics(
   db: D1Like,
@@ -269,6 +188,43 @@ async function recordAnalytics(
 }
 
 // ---------------------------------------------------------------------------------------------
+// Edge Cache API (Stage 2) — repeat/popular queries skip D1, protecting its read budget.
+// ---------------------------------------------------------------------------------------------
+// Wrap the response in `caches.default` under a NORMALIZED key (lowercased/trimmed q + type +
+// locale + format), so `?q=Kotlin` and `?q=kotlin ` share a cache entry. Feature-detected + fully
+// try/caught: on `*.pages.dev`/previews `caches.default` is a no-op, and any failure degrades to a
+// fresh `runSearch` — the cache must NEVER break a response. Only activates on the custom domain.
+
+interface CacheLike {
+  match(req: Request): Promise<Response | undefined>;
+  put(req: Request, res: Response): Promise<void>;
+}
+declare const caches: { default?: CacheLike } | undefined;
+
+/** The normalized GET request used as the cache key (separate from the user's actual request). */
+function cacheKeyRequest(
+  url: URL,
+  locale: Locale,
+  type: SearchType | null,
+  format: string,
+): Request {
+  const key = new URL(`/${locale}/search`, url);
+  key.searchParams.set('q', (url.searchParams.get('q') ?? '').trim().toLowerCase());
+  if (type) key.searchParams.set('type', type);
+  if (format === 'json') key.searchParams.set('format', 'json');
+  return new Request(key.toString(), { method: 'GET' });
+}
+
+function edgeCache(): CacheLike | null {
+  try {
+    if (typeof caches !== 'undefined' && caches && caches.default) return caches.default;
+  } catch {
+    // `caches` undeclared / inaccessible (preview) — no-op.
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------------------------------------
 // HTMLRewriter transform over the static shell.
 // ---------------------------------------------------------------------------------------------
 interface TransformOptions {
@@ -281,14 +237,6 @@ interface TransformOptions {
   hasResults: boolean;
   counts: Record<string, number>;
   total: number;
-}
-
-/** Build the `/{locale}/search?...` href for a filter pill, carrying the current query. */
-function filterHref(locale: Locale, type: string, rawQuery: string): string {
-  const params = new URLSearchParams();
-  params.set('q', rawQuery);
-  if (type !== 'all') params.set('type', type);
-  return `/${locale}/search?${params.toString()}`;
 }
 
 /**
@@ -363,20 +311,31 @@ export async function onRequestGet(context: Ctx): Promise<Response> {
   const rawQuery = (url.searchParams.get('q') ?? '').trim();
   const typeParam = url.searchParams.get('type');
   const activeType = isType(typeParam) ? typeParam : null;
+  const json = wantsJson(url, request.headers.get('accept'));
+  const format = json ? 'json' : 'html';
 
   // No query → the static shell already renders the zero-query suggestions state. Serve it as-is.
+  // (The island never fetches a blank query, so a JSON path here isn't needed.)
   if (!rawQuery) return env.ASSETS.fetch(request);
 
   const match = matchExpr(rawQuery);
   // A query that reduces to no usable terms (e.g. all 1-char) behaves like a blank query.
   if (!match) return env.ASSETS.fetch(request);
 
+  // --- Stage 2: edge cache lookup (normalized key). No-op/no-throw where unavailable.
+  const cache = edgeCache();
+  const cacheReq = cache ? cacheKeyRequest(url, locale, activeType, format) : null;
+  if (cache && cacheReq) {
+    try {
+      const hit = await cache.match(cacheReq);
+      if (hit) return hit;
+    } catch {
+      // Cache read failed — fall through to a fresh query.
+    }
+  }
+
   const dict = ui[locale];
   const terms = termsOf(rawQuery);
-
-  // Always fetch the canonical shell (query-less) so HTMLRewriter starts from a clean DOM; the
-  // shell's own canonical/noindex/hreflang are pathname-based and already correct for this URL.
-  const shellReq = new URL(`/${locale}/search`, request.url);
 
   let result: QueryResult | null = null;
   let errored = false;
@@ -391,6 +350,38 @@ export async function onRequestGet(context: Ctx): Promise<Response> {
     errored = true;
   }
 
+  // -------------------------------------------------------------------------------------------
+  // JSON path (the instant island). No D1 analytics here — the island reports via Umami.
+  // -------------------------------------------------------------------------------------------
+  if (json) {
+    const payload =
+      errored || !result
+        ? errorJsonPayload(rawQuery, locale, activeType)
+        : buildJsonPayload({
+            rawQuery,
+            locale,
+            activeType,
+            rows: result.rows,
+            counts: result.counts,
+            total: result.total,
+          });
+    const res = new Response(JSON.stringify(payload), {
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        // Error/empty: never cache (so a freshly-synced index surfaces results). Hits: short TTL.
+        'cache-control': payload.hasResults ? 'public, max-age=300, s-maxage=300' : 'no-store',
+      },
+    });
+    if (cache && cacheReq && payload.hasResults) cacheAndForget(context, cache, cacheReq, res);
+    return res;
+  }
+
+  // -------------------------------------------------------------------------------------------
+  // HTML path (the no-JS baseline — Option B, unchanged) + D1 analytics.
+  // -------------------------------------------------------------------------------------------
+  // Always fetch the canonical shell (query-less) so HTMLRewriter starts from a clean DOM; the
+  // shell's own canonical/noindex/hreflang are pathname-based and already correct for this URL.
+  const shellReq = new URL(`/${locale}/search`, request.url);
   const shell = await env.ASSETS.fetch(shellReq);
 
   // --- Error state: keep the shell usable, show the localized error copy, suggestions visible.
@@ -444,12 +435,24 @@ export async function onRequestGet(context: Ctx): Promise<Response> {
 
   // Cache non-empty result pages briefly (the index only changes at deploy/sync); never cache the
   // empty state (so a freshly-synced index surfaces results without a stale "no results" page).
-  res.headers.set('cache-control', hasResults ? 'public, max-age=300' : 'no-store');
+  res.headers.set('cache-control', hasResults ? 'public, max-age=300, s-maxage=300' : 'no-store');
 
-  // Fire-and-forget analytics — bump query/zero counters + record zero-result terms.
+  // Stage 2: store non-empty HTML in the edge cache too (normalized key).
+  if (cache && cacheReq && hasResults) cacheAndForget(context, cache, cacheReq, res);
+
+  // Fire-and-forget analytics — bump query/zero counters + record zero-result terms. HTML PATH ONLY.
   if (env.DB) {
     context.waitUntil(recordAnalytics(env.DB, locale, rawQuery, !hasResults).catch(() => {}));
   }
 
   return res;
+}
+
+/** `cache.put` a clone, fire-and-forget — failures are swallowed (the live response is unaffected). */
+function cacheAndForget(context: Ctx, cache: CacheLike, req: Request, res: Response): void {
+  try {
+    context.waitUntil(cache.put(req, res.clone()).catch(() => {}));
+  } catch {
+    // `res.clone()`/`put` unavailable — no-op.
+  }
 }
