@@ -12,7 +12,8 @@
       ],
       "numberOfRuns": 3,
       "settings": {
-        "chromeFlags": "--no-sandbox --headless=new"
+        "chromeFlags": "--no-sandbox --headless=new",
+        "skipAudits": ["robots-txt"]
       }
     },
     "assert": {

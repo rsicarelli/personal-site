@@ -12,6 +12,11 @@ import { SITE } from '@/config/site';
  *
  * NOTE: signals and robots rules are preferences, not enforcement — the license is the legal layer,
  * this file is the machine-readable declaration of it.
+ *
+ * Lighthouse's `robots-txt` audit predates the Content Signals Policy and flags `Content-Signal`
+ * as an "unknown directive" (real crawlers ignore unknown lines per RFC 9309), tanking the SEO
+ * category below the CI budget — so that one audit is `skipAudits` in lighthouserc{,.prod}.json.
+ * The robots.txt contract is instead pinned exactly by tests/seo/robots.test.ts.
  */
 
 /** Search/answer/user-action crawlers — these cite/link the source, so they stay allowed. */
