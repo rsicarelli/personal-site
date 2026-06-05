@@ -276,13 +276,5 @@ A hug, and see you next time!
 
 ---
 
-> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
->
-> The sources and content are reviewed to ensure the relevance of the information provided, as well as the sources used in each prompt.
->
-> That said, if you find any incorrect information or believe some credit is missing, please reach out!
-
----
-
 > References
 > [Discussion about KNM on KotlinLang](https://slack-chats.kotlinlang.org/t/5013792/u02k3a6e6kd-i-have-some-questions-about-the-knm-kotlin-nativ)

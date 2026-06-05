@@ -30,7 +30,7 @@ There are several ways to create a new KMP project, for example:
 
 1. [KMP Wizard](https://kmp.jetbrains.com/): This web tool launched in November 2023. Very promising, since JetBrains plans to complement it with templates and other targets.
 2. IntelliJ templates: Both Android Studio (with the KMP plugin) and IntelliJ offer sample projects through "File > New > Project".
-3. Manual: an option for those who already have a solid grasp and a deeper understanding of KMP, and who adopt specific strategies, like using `build-logic` (see my article on this topic, [Android Platform - Part 3: Sharing Gradle scripts](https://dev.to/rsicarelli/android-plataforma-parte-3-compartilhando-scripts-do-gradle-5ak3))
+3. Manual: an option for those who already have a solid grasp and a deeper understanding of KMP, and who adopt specific strategies, like using `build-logic` (see my article on this topic, [Android Platform - Part 3: Sharing Gradle scripts](/en/blog/android-plataforma-parte-3-compartilhando-scripts-do-gradle))
 
 ### Creating a project with the KMP Wizard
 
@@ -94,14 +94,6 @@ Now that we have a base project set up and running, we're ready to move on to mo
 In the next article, we'll explore a crucial aspect of Kotlin Multiplatform: integrating with Gradle through the KMP Plugin.
 
 See you then!
-
----
-
-> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
->
-> The sources and content are reviewed to ensure the relevance of the information provided, as well as the sources used in each prompt.
->
-> That said, if you find any incorrect information or believe some credit is missing, please get in touch!
 
 ---
 

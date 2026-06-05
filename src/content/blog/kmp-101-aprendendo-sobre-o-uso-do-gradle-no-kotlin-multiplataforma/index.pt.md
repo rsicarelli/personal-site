@@ -67,7 +67,7 @@ Recomendo fortemente que faça uma pausa na leitura e pesquise mais sobre o bás
 
 ## Dissecando os arquivos Gradle
 
-Assumindo que você tenha compreendido alguns aspectos-chave do Gradle, vamos analisar os arquivos mais importantes do projeto que criamos no [artigo anterior](https://dev.to/rsicarelli/kmp-101-criando-e-executando-seu-primeiro-projeto-multiplataforma-no-fleet-4ep7).
+Assumindo que você tenha compreendido alguns aspectos-chave do Gradle, vamos analisar os arquivos mais importantes do projeto que criamos no [artigo anterior](/pt-br/blog/kmp-101-criando-e-executando-seu-primeiro-projeto-multiplataforma-no-fleet).
 
 ```
 .
@@ -147,7 +147,7 @@ plugins {
 
 > Se perguntando o que é esse `libs`?
 >
-> [🔗 Confira meu artigo sobre o catalogo de versão (version catalog) do Gradle](https://dev.to/rsicarelli/android-plataforma-parte-6-version-catalog-59ob)
+> [🔗 Confira meu artigo sobre o catalogo de versão (version catalog) do Gradle](/pt-br/blog/android-plataforma-parte-6-version-catalog)
 
 ### O arquivo `build.gradle.kts` do módulo `composeApp`
 
@@ -338,7 +338,7 @@ kotlin.mpp.enableCInteropCommonization=true
 
 Este arquivo representa nosso catálogo de bibliotecas, versões e plugins.
 
-> [🔗 Confira meu artigo sobre o catálogo de versões (version catalog) do Gradle](https://dev.to/rsicarelli/android-plataforma-parte-6-version-catalog-59ob)
+> [🔗 Confira meu artigo sobre o catálogo de versões (version catalog) do Gradle](/pt-br/blog/android-plataforma-parte-6-version-catalog)
 
 #### Outros arquivos
 
@@ -355,14 +355,6 @@ A meu ver, o Gradle em projetos KMP não é apenas uma habilidade técnica; é u
 No próximo artigo, vamos finalmente mexer em código Kotlin, aprendendo uma característica essencial do KMP: `expect` e `actual`.
 
 Até a próxima!
-
----
-
-> 🤖 Artigo foi escrito com o auxílio do ChatGPT 4, utilizando o plugin Web.
->
-> As fontes e o conteúdo são revisados para garantir a relevância das informações fornecidas, assim como as fontes utilizadas em cada prompt.
->
-> No entanto, caso encontre alguma informação incorreta ou acredite que algum crédito está faltando, por favor, entre em contato!
 
 ---
 

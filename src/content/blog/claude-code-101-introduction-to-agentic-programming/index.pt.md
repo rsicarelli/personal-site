@@ -226,14 +226,6 @@ O que são tokens? O que é uma context window? Por que modelos erram com tanta 
 
 ---
 
-> 🤖 Este artigo foi escrito com assistência do Claude (Anthropic).
->
-> Conteúdo pesquisado, verificado e editado por um humano.
->
-> Encontrou algum erro ou crédito faltando? Me manda uma mensagem!
-
----
-
 ## Referências
 
 1. [Miller, G.A. — "The Magical Number Seven, Plus or Minus Two" (1956)](https://psycnet.apa.org/record/1957-02914-001)

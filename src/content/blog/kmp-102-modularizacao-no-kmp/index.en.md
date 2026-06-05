@@ -23,21 +23,9 @@ In this article, we'll get a better understanding of how modularization behaves 
 
 ---
 
-- [What is modularization?](#what-is-modularization)
-- [Modularization in KMP](#modularization-in-kmp)
-- [Paving the way for UI flexibility](#paving-the-way-for-ui-flexibility)
-- [Exporting to the XCFramework](#exporting-to-the-xcframework)
-  - [Scenario 1: shared KMP "backend", flexible "frontend"](#scenario-1-shared-kmp-backend-flexible-frontend)
-  - [Scenario 2: Hybrid, migrating to Compose Multiplatform](#scenario-2-hybrid-migrating-to-compose-multiplatform)
-  - [Scenario 3: 100% Compose Multiplatform](#scenario-3-100-compose-multiplatform)
-- [Exploring the benefits of modularization in KMP](#exploring-the-benefits-of-modularization-in-kmp)
-- [Conclusion](#conclusion)
-
----
-
 ## What is modularization?
 
-I won't dwell too long on this topic, since we already covered it in [Android Platform - Part 1: Modularization](https://dev.to/rsicarelli/android-plataforma-parte-1-modularizacao-2016). If you're not sure what modularization means in Gradle projects, I recommend taking a break to read that article.
+I won't dwell too long on this topic, since we already covered it in [Android Platform - Part 1: Modularization](/en/blog/android-plataforma-parte-1-modularizacao). If you're not sure what modularization means in Gradle projects, I recommend taking a break to read that article.
 
 In short, modularization is the practice of splitting a project into smaller, independent modules that can be developed, tested, and maintained separately.
 
@@ -141,7 +129,7 @@ As you've seen, modularization in KMP is an essential practice for scaling proje
 
 But there's one crucial point I want to highlight: modularization helps us achieve granularity over what we want to export to the XCFramework, more specifically, to the Objective-C headers.
 
-As we saw in the last post, [KMP-102 - Optimizing the Export of Kotlin to Obj-C/Swift](https://dev.to/rsicarelli/kmp-102-otimizando-a-exportacao-do-kotlin-para-o-obj-cswift-358p), being selective about the code we export to the Objective-C headers is directly tied to build-time efficiency (that is, more efficient XCFramework compilations).
+As we saw in the last post, [KMP-102 - Optimizing the Export of Kotlin to Obj-C/Swift](/en/blog/kmp-102-otimizando-a-exportacao-do-kotlin-para-o-obj-cswift), being selective about the code we export to the Objective-C headers is directly tied to build-time efficiency (that is, more efficient XCFramework compilations).
 
 For example:
 

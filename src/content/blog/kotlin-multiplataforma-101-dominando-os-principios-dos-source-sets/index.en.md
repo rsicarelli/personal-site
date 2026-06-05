@@ -30,7 +30,7 @@ _Source sets_ in Kotlin are essential to multiplatform development. Using a hier
 
 Think of a _source set_ in KMP as a 'special folder' in a project, where each folder serves a specific purpose (or platform). For example, the "common" folder holds files used across every platform, while platform-specific folders like "android" or "iOS" hold files exclusive to those platforms.
 
-The Kotlin compiler recognizes these special folders and takes care of compiling their contents (source code), following the compilation strategies explored in 🔗 [KMP 101: Understanding How Kotlin Compiles for Multiple Platforms](https://dev.to/rsicarelli/kotlin-multiplataforma-101-entendendo-como-o-kotlin-compila-para-multiplas-plataformas-5hba).
+The Kotlin compiler recognizes these special folders and takes care of compiling their contents (source code), following the compilation strategies explored in 🔗 [KMP 101: Understanding How Kotlin Compiles for Multiple Platforms](/en/blog/kotlin-multiplataforma-101-entendendo-como-o-kotlin-compila-para-multiplas-plataformas).
 
 ## Understanding the role and basic structure of a _source set_
 
@@ -189,14 +189,6 @@ KMP's flexibility and power let us build robust, efficient applications, maximiz
 In our next article, we'll dive into the KMP Gradle Plugin, exploring how it helps us configure and manage our multiplatform projects efficiently.
 
 See you next time!
-
----
-
-> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
->
-> The sources and content are reviewed to ensure the relevance of the information provided, as well as the sources used in each prompt.
->
-> However, if you find any incorrect information or believe a credit is missing, please get in touch!
 
 ---
 

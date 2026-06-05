@@ -66,7 +66,7 @@ I strongly recommend pausing here and reading up on the basics of Gradle. That k
 
 ## Dissecting the Gradle files
 
-Assuming you've grasped a few key aspects of Gradle, let's look at the most important files in the project we created in the [previous article](https://dev.to/rsicarelli/kmp-101-criando-e-executando-seu-primeiro-projeto-multiplataforma-no-fleet-4ep7).
+Assuming you've grasped a few key aspects of Gradle, let's look at the most important files in the project we created in the [previous article](/en/blog/kmp-101-criando-e-executando-seu-primeiro-projeto-multiplataforma-no-fleet).
 
 ```
 .
@@ -146,7 +146,7 @@ plugins {
 
 > Wondering what this `libs` is?
 >
-> [🔗 Check out my article on Gradle's version catalog](https://dev.to/rsicarelli/android-plataforma-parte-6-version-catalog-59ob)
+> [🔗 Check out my article on Gradle's version catalog](/en/blog/android-plataforma-parte-6-version-catalog)
 
 ### The `composeApp` module's `build.gradle.kts` file
 
@@ -337,7 +337,7 @@ kotlin.mpp.enableCInteropCommonization=true
 
 This file represents our catalog of libraries, versions, and plugins.
 
-> [🔗 Check out my article on Gradle's version catalog](https://dev.to/rsicarelli/android-plataforma-parte-6-version-catalog-59ob)
+> [🔗 Check out my article on Gradle's version catalog](/en/blog/android-plataforma-parte-6-version-catalog)
 
 #### Other files
 
@@ -354,14 +354,6 @@ The way I see it, Gradle in KMP projects isn't just a technical skill; it's a st
 In the next article, we'll finally get our hands on some Kotlin code, learning an essential KMP feature: `expect` and `actual`.
 
 See you next time!
-
----
-
-> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
->
-> The sources and content are reviewed to ensure the information provided is relevant, as are the sources used in each prompt.
->
-> That said, if you find any incorrect information or believe some credit is missing, please get in touch!
 
 ---
 

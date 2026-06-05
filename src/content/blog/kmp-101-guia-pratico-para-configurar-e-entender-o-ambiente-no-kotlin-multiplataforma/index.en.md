@@ -251,14 +251,6 @@ See you next time!
 
 ---
 
-> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
->
-> The sources and content are reviewed to ensure the relevance of the information provided, as well as the sources used in each prompt.
->
-> However, if you find any incorrect information or believe a credit is missing, please get in touch!
-
----
-
 > References:
 >
 > - [An Overview of JDK Vendors - DZone](https://dzone.com/articles/an-overview-on-jdk-vendors)

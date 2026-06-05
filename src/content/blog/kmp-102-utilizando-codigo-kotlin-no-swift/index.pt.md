@@ -22,21 +22,6 @@ contentType: tutorial
 
 Com isso, podemos avançar e aprender como o código Kotlin compilado para Objective-C funciona e como consumi-lo no iOS.
 
-<!-- TOC -->
-
-- [Exportando um 'Olá mundo' em Kotlin para iOS](#exportando-um-olá-mundo-em-kotlin-para-ios)
-  - [O que está acontecendo aqui?](#o-que-está-acontecendo-aqui)
-- [Compreendendo o código gerado pelo Kotlin/Native](#compreendendo-o-código-gerado-pelo-kotlinnative)
-- [Melhorando a interoperabilidade com Swift](#melhorando-a-interoperabilidade-com-swift)
-  - [E a anotação `@HiddenFromObjC`?](#e-a-anotação-hiddenfromobjc)
-- [Outras maneiras de melhorar a interoperabilidade](#outras-maneiras-de-melhorar-a-interoperabilidade)
-  - [Utilizando o SKIE para melhorar a interoperabilidade](#utilizando-o-skie-para-melhorar-a-interoperabilidade)
-  - [Considerações sobre o SKIE](#considerações-sobre-o-skie)
-    - [Reduzindo o tempo de build do SKIE utilizando anotações](#reduzindo-o-tempo-de-build-do-skie-utilizando-anotações)
-- [Conclusões finais](#conclusões-finais)
-
-<!-- TOC -->
-
 ## Exportando um 'Olá mundo' em Kotlin para iOS
 
 Para começar, vamos entender alguns pontos importantes sobre como o código Kotlin é convertido para Objective-C e, consequentemente, como utilizá-lo no iOS.

@@ -105,7 +105,7 @@ Result: **"The sky is blue today."**
 
 Each piece placed depends on all the ones before it: both the original input and what the model has already built. That's why responses sometimes start well and derail halfway through. The model doesn't know where it will end up when it starts generating.
 
-If you read the [previous article](https://dev.to/rsicarelli/claude-code-101-introduction-to-agentic-programming-3p83), you might recognize this mechanism. Remember autocomplete, phase 1 of the evolution? The code completion that suggested the next line in the editor? The underlying mechanism is the same: next-token prediction. The difference is scale. Models like GPT-2 (2019) had 1.5 billion parameters and a tiny desk. Claude Opus 4.6 operates at a completely different scale, with a context window a thousand times larger. The assembly process is the same. The ability to build complex things is what changed.
+If you read the [previous article](/en/blog/claude-code-101-introduction-to-agentic-programming), you might recognize this mechanism. Remember autocomplete, phase 1 of the evolution? The code completion that suggested the next line in the editor? The underlying mechanism is the same: next-token prediction. The difference is scale. Models like GPT-2 (2019) had 1.5 billion parameters and a tiny desk. Claude Opus 4.6 operates at a completely different scale, with a context window a thousand times larger. The assembly process is the same. The ability to build complex things is what changed.
 
 ---
 
@@ -304,14 +304,6 @@ Tokens, desk, attention, temperature, limitations, cost. It might seem like a lo
 But there's a gap. Knowing how the pieces work doesn't explain how typing a paragraph into a terminal results in 50 edited files, passing tests, and a ready commit. Something is taking those pieces, arranging them on the desk, building, checking, tearing down what fails, and trying again. Something is turning a next-token engine into a system that actually builds software.
 
 That something is what tools like Claude Code, Codex CLI, and OpenCode do. They wrap the model, give it tools to act, and orchestrate the cycle of building, checking, and correcting. In the next article, we crack one of them open, piece by piece.
-
----
-
-> 🤖 This article was written with assistance from Claude (Anthropic).
->
-> Content researched, verified, and edited by a human.
->
-> Found an error or a missing credit? Send me a message!
 
 ---
 

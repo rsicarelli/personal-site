@@ -225,14 +225,6 @@ That's exactly what we'll break down in the next article: **Demystifying Languag
 
 ---
 
-> 🤖 This article was written with assistance from Claude (Anthropic).
->
-> Content researched, verified, and edited by a human.
->
-> Found an error or a missing credit? Send me a message!
-
----
-
 ## References
 
 1. [Miller, G.A. — "The Magical Number Seven, Plus or Minus Two" (1956)](https://psycnet.apa.org/record/1957-02914-001)

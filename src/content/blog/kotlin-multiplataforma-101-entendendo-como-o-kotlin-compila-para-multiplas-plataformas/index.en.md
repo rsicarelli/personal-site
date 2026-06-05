@@ -95,14 +95,6 @@ This understanding gives you a sense of Kotlin's versatility and efficiency, off
 
 ---
 
-> 🤖 This article was written with the help of ChatGPT 4, using the Web plugin.
->
-> The sources and content are reviewed to ensure the relevance of the information provided, as well as the sources used in each prompt.
->
-> However, if you find any incorrect information or believe a credit is missing, please get in touch!
-
----
-
 > References
 >
 > - [Crash Course on the Kotlin Compiler by Amanda Hinchman-Dominguez - KotlinConf'23](https://www.youtube.com/watch?v=wUGfuWHCqrc), [Github repo](https://github.com/ahinchman1/Kotlin-Compiler-Crash-Course)

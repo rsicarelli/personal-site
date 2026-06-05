@@ -31,7 +31,7 @@ Os _source sets_ no Kotlin são essenciais para o desenvolvimento multiplataform
 
 Pense em um _source set_ no KMP como uma 'pasta especial' em um projeto, onde cada pasta tem um propósito (ou plataforma) específico. Por exemplo, a pasta "comum" contém arquivos usados em todas as plataformas, enquanto pastas específicas, como "android" ou "iOS", abrigam arquivos exclusivos para essas plataformas.
 
-O compilador do Kotlin identifica essas pastas especiais e se encarrega de compilar seu conteúdo (código-fonte), conforme as estratégias de compilação exploradas em 🔗 [KMP 101: Entendendo como o Kotlin compila para multiplas plataformas](https://dev.to/rsicarelli/kotlin-multiplataforma-101-entendendo-como-o-kotlin-compila-para-multiplas-plataformas-5hba).
+O compilador do Kotlin identifica essas pastas especiais e se encarrega de compilar seu conteúdo (código-fonte), conforme as estratégias de compilação exploradas em 🔗 [KMP 101: Entendendo como o Kotlin compila para multiplas plataformas](/pt-br/blog/kotlin-multiplataforma-101-entendendo-como-o-kotlin-compila-para-multiplas-plataformas).
 
 ## Entendendo a função e a estrutura básica de um _source set_
 
@@ -190,14 +190,6 @@ A flexibilidade e o poder do KMP nos permitem criar aplicações robustas e efic
 No nosso próximo artigo, mergulharemos no Plugin do KMP para Gradle, explorando como ele nos ajuda a configurar e gerenciar nossos projetos multiplataforma de maneira eficiente.
 
 Até a próxima!
-
----
-
-> 🤖 Artigo foi escrito com o auxílio do ChatGPT 4, utilizando o plugin Web.
->
-> As fontes e o conteúdo são revisados para garantir a relevância das informações fornecidas, assim como as fontes utilizadas em cada prompt.
->
-> No entanto, caso encontre alguma informação incorreta ou acredite que algum crédito está faltando, por favor, entre em contato!
 
 ---
 
