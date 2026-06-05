@@ -61,7 +61,7 @@ describe('media-image helper', () => {
 
 describe('content ↔ dimensions manifest invariant', () => {
   it('every R2 image referenced in blog content has baked positive dimensions', async () => {
-    const re = /https:\/\/media\.rsicarelli\.com\/([^\s)"']+\.(?:png|jpe?g|webp|avif|gif))/gi;
+    const re = /https:\/\/media\.rsicarelli\.com\/([^\s)"']+\.(?:png|jpe?g|webp|avif|gif|svg))/gi;
     const referenced = new Set<string>();
     for await (const file of glob('src/content/blog/**/*.{md,mdx}')) {
       for (const m of (await readFile(file, 'utf8')).matchAll(re)) referenced.add(m[1]);
