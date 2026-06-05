@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFile, glob } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { sweepDistImageHosts, ALLOWED_HOSTS } from '../../scripts/check-dist-image-hosts.mjs';
+import { mediaKey } from '../../src/lib/media-image.mjs';
 
 /**
  * Image-host regression guard (#187) — the terminal safeguard of epic #183.
@@ -34,7 +35,8 @@ describe('zero-CLS invariant (#186)', () => {
     for await (const file of glob(fileURLToPath(new URL('dist/**/*.html', ROOT)))) {
       const html = await readFile(file, 'utf8');
       for (const [tag] of html.matchAll(/<img\b[^>]*>/g)) {
-        if (!tag.includes('media.rsicarelli.com')) continue;
+        const src = tag.match(/\bsrc="([^"]+)"/)?.[1];
+        if (!src || !mediaKey(src)) continue; // exact-host check, not a substring match
         checked++;
         if (!/\bwidth="\d+"/.test(tag) || !/\bheight="\d+"/.test(tag))
           offenders.push(`${file}\n    ${tag.slice(0, 160)}`);
