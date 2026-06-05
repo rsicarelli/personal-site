@@ -88,3 +88,13 @@ const t = useTranslations(locale);
     });
   })();
 </script>
+
+{
+  /* Option C engine — Orama (build-time JSON index + lazy client island). PROCESSED script (no
+  `is:inline`): Astro bundles it as an external, hashed-under-'self' chunk, so it needs NO CSP
+  `script-src` change (unlike a WASM engine). It self-binds on `astro:page-load`, reads the data-*
+  templates off `#search`, and renders results through src/lib/search/markup.ts. */
+}
+<script>
+  import '@/scripts/search-orama.ts';
+</script>
