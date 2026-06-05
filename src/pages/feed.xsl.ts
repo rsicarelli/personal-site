@@ -16,8 +16,7 @@ import { ui } from '@/i18n/ui';
  * The palette is self-contained (the transformed page can't reach the site's hashed CSS bundle),
  * loosely echoing the site's editorial light/dark look.
  */
-const esc = (s: string) =>
-  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 const en = ui.en;
 const pt = ui['pt-br'];
