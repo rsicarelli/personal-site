@@ -4,7 +4,8 @@ Source for **[rsicarelli.com](https://rsicarelli.com)** — my bilingual (pt-BR 
 hub: blog, CV, portfolio, contact, upcoming events, photos from talks, downloadable materials, and
 (later) exclusive paid content.
 
-> **Status:** 🚧 Bootstrapping. The research foundation is complete; the app scaffold is the next step.
+> **Status:** ✅ Live at [rsicarelli.com](https://rsicarelli.com) — bilingual blog, CV, photos and
+> an engagement backend, auto-deployed from this repo via Cloudflare Pages.
 
 ## What this is
 
