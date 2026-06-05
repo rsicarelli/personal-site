@@ -33,6 +33,8 @@ export async function GET(context: APIContext) {
     title: ui[locale]['site.title'],
     description: ui[locale]['site.description'],
     site,
+    // Browser-only nicety: humans clicking the feed link get the pretty-feed page (src/pages/feed.xsl.ts).
+    stylesheet: '/feed.xsl',
     items: posts.map(({ slug, entry }) => ({
       title: entry.data.title,
       // Prefer the answer-first lede; fall back to the SEO/meta description.

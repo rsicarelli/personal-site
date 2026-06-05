@@ -33,6 +33,11 @@ export const ui = {
     'footer.rss': 'RSS',
     'rss.subscribe': 'Subscribe via RSS',
     'rss.subscribeSeries': 'Subscribe to this series via RSS',
+    'rss.feedNotice':
+      'This is an RSS feed. Copy the URL from the address bar into your feed reader to subscribe.',
+    'rss.whatIsRss': 'What is RSS?',
+    'rss.visitSite': 'Visit the site',
+    'rss.recentPosts': 'Recent posts',
     'newsletter.heading': 'Subscribe to the newsletter',
     'newsletter.blurb': 'New writing on Kotlin, KMP and mobile platform — straight to your inbox.',
     'newsletter.emailLabel': 'Email address',
@@ -168,6 +173,11 @@ export const ui = {
     'footer.rss': 'RSS',
     'rss.subscribe': 'Assine via RSS',
     'rss.subscribeSeries': 'Assine esta série via RSS',
+    'rss.feedNotice':
+      'Isto é um feed RSS. Copie a URL da barra de endereços e cole no seu leitor de feeds para assinar.',
+    'rss.whatIsRss': 'O que é RSS?',
+    'rss.visitSite': 'Visitar o site',
+    'rss.recentPosts': 'Posts recentes',
     'newsletter.heading': 'Assine a newsletter',
     'newsletter.blurb': 'Novos textos sobre Kotlin, KMP e mobile platform — direto no seu email.',
     'newsletter.emailLabel': 'Endereço de email',
