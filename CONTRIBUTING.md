@@ -35,9 +35,9 @@ repo [**rsicarelli/personal-site-private**](https://github.com/rsicarelli/person
 
 ## Board maintenance (one-time UI follow-ups)
 
-The board's fields, items, and automation seed are created by
-[`scripts/bootstrap-project.sh`](scripts/bootstrap-project.sh). Two things must be set in the GitHub
-UI (the `gh` CLI can't):
+The board's fields, items, and automation seed were created by a one-off bootstrap script
+(`scripts/bootstrap-project.sh`, removed after it served its purpose — recover it from git history
+if a fork ever needs it). Two things must be set in the GitHub UI (the `gh` CLI can't):
 
 1. **Saved views:** (a) _Board_ grouped by Status; (b) _By Area_ (table) grouped by Area;
    (c) _By Phase_ (table) grouped by Milestone.

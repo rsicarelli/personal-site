@@ -23,8 +23,13 @@ repo personally — developer-author ergonomics matter.
 
 ## Status
 
-🚧 **Bootstrapping.** Research is complete (private repo **rsicarelli/personal-site-private** — 8 deep-research reports + `SUMMARY.md`).
-App scaffold (Astro) is the next step. No app code yet.
+✅ **Live in production** at <https://rsicarelli.com> (Cloudflare Pages, auto-deploy on push to
+`main`, PR previews). ~186 bilingual pages: blog (49 posts mirrored in-house from dev.to +
+originals; this site is canonical), series + topics hubs, CV/about, photos, RSS. Engagement
+backend on D1 (views, reactions, newsletter via Buttondown), Giscus comments, Umami + Cloudflare
+analytics. Blog image pipeline complete (epic #183): all media on R2 with edge transforms, zero
+build-time image I/O, CI-guarded. Research foundation lives in the private repo
+**rsicarelli/personal-site-private** (8 deep-research reports + `SUMMARY.md`).
 
 ## Firm constraints
 
@@ -39,7 +44,7 @@ App scaffold (Astro) is the next step. No app code yet.
 - **Framework:** Astro (SSG + islands, zero-JS by default), Content Layer + Zod schemas.
 - **Hosting:** Cloudflare Pages (native git auto-deploy from GitHub; PR previews).
 - **DNS + media:** Cloudflare DNS (apex CNAME flattening + www, free TLS) + **R2** for photos/downloads.
-- **Styling:** Tailwind CSS v4 (or vanilla CSS + design tokens) + shadcn/ui for interactive bits.
+- **Styling:** Tailwind CSS v4 + shadcn/ui for interactive bits.
 - **i18n:** subdirectory URLs `/en/` + `/pt-br/`; detect browser locale only at `/`.
 - **Analytics:** Umami (cookieless, no cookie banner) + Cloudflare Web Analytics as a free baseline.
 - **Design direction:** "minimalist editorial + one distinctive accent"; self-hosted variable
@@ -58,7 +63,6 @@ App scaffold (Astro) is the next step. No app code yet.
 ## Open decisions (deferred)
 
 - **CMS UI:** none (edit MDX in IDE) vs Keystatic vs Sveltia — direct editing works day one.
-- **Deploy target:** Cloudflare Pages vs Workers Static Assets (both work today).
 - **Payments + tax:** Brazil/Pix audience → Hotmart/Kiwify/Mercado Pago/Stripe; global → Paddle (only
   MoR with Pix). Pessoa física (carnê-leão) vs MEI/CNPJ. Decoupled from the framework — no lock-in.
 
@@ -66,7 +70,8 @@ App scaffold (Astro) is the next step. No app code yet.
 
 - Keep the private research repo **rsicarelli/personal-site-private** as the durable foundation; revisit `SUMMARY.md` there before big decisions.
 - Planned content structure follows `04-content-architecture-repo.result.md` (§04) in **rsicarelli/personal-site-private**.
-- **Work tracking:** GitHub Projects (to be set up).
+- **Work tracking:** GitHub Projects board #3 ("rsicarelli.com Roadmap") — active; conventions in
+  `CONTRIBUTING.md`.
 
 ### Content authoring (Epic 4)
 

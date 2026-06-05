@@ -45,16 +45,23 @@ part of this layer (future product analytics — see "PostHog" below).
 3. Redeploy; confirm the deferred `<script>` appears in the live HTML and the Umami dashboard shows
    pageviews + the three events firing once each (downloads, outbound, video).
 
-## Cloudflare Web Analytics (#72) — deferred to Hosting (#60)
+## Cloudflare Web Analytics (#72) — owner toggle, NOT yet enabled
+
+> Status 2026-06-05: the site is live but the beacon is **not** enabled (no `cloudflareinsights`
+> reference in prod HTML) — and enabling it now would be **blocked by the enforcing CSP**. Do step 0
+> first or the beacon silently 404s in the console.
 
 Cloudflare Web Analytics is cookieless, free, and **needs no app code**: it is enabled by **automatic
-beacon injection**, a dashboard toggle on the deployed site. So there is nothing to build in-repo —
-only an owner-only step once the site is live on Cloudflare Pages (#60):
+beacon injection**, a dashboard toggle on the deployed site. Owner steps:
 
+0. **CSP first:** add `https://static.cloudflareinsights.com` to both `script-src` and
+   `connect-src` in `public/_headers` (the injected beacon is an external script, so no inline-hash
+   change; `tests/security/headers.test.ts` doesn't pin those directives' hosts).
 1. **Cloudflare dashboard → Web Analytics → Add a site** → `rsicarelli.com`.
 2. Enable **automatic setup** (Cloudflare injects the beacon at the edge — no token in the repo, no
    second script to maintain). It uses no cookies, no client-side storage, and no fingerprinting.
-3. Verify the beacon loads on the live site and the dashboard reports page views + Core Web Vitals.
+3. Verify the beacon loads on the live site (no CSP errors in the console) and the dashboard reports
+   page views + Core Web Vitals.
 
 This is the **redundant baseline** to Umami (ad-blocker-resistant edge measurement), not a
 replacement.
