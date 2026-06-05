@@ -45,7 +45,10 @@ node scripts/indexnow-submit.mjs --dry-run                          # inspect th
 SITE_URL=https://rsicarelli.com node scripts/indexnow-submit.mjs    # POST to api.indexnow.org (200/202 = ok)
 ```
 
-## 4. Canonical write-back to dev.to (#151) — _owner-only, run now_
+## 4. Canonical write-back to dev.to (#151) — _done; re-run after each ingest_
+
+> ✅ Verified 2026-06-05: all 49 dev.to articles already point `canonical_url` at their
+> `rsicarelli.com` counterparts (`--apply` reported 0 updated, 49 already correct).
 
 49 blog posts are mirrored from dev.to. Each is **self-canonical** to `rsicarelli.com`, but the
 dev.to originals (DA ~90) will win as canonical unless **they** point back to us. `scripts/devto-canonical-writeback.mjs`
