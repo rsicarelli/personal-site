@@ -43,6 +43,7 @@ export async function GET(context: APIContext) {
       link: `/${locale}/blog/${slug}/`,
     })),
     xmlns: { atom: 'http://www.w3.org/2005/Atom' },
-    customData: `<language>${hreflangOf(locale)}</language><atom:link href="${self}" rel="self" type="application/rss+xml"/>`,
+    // RSS 2.0 channel `<copyright>` — content is CC BY-NC 4.0 (attribution required, non-commercial).
+    customData: `<language>${hreflangOf(locale)}</language><copyright>© ${new Date().getFullYear()} ${SITE.name} — CC BY-NC 4.0 (${SITE.contentLicense})</copyright><atom:link href="${self}" rel="self" type="application/rss+xml"/>`,
   });
 }

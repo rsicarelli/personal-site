@@ -25,7 +25,15 @@ const year = new Date().getFullYear();
   <div
     class="text-muted-foreground container-content flex flex-col gap-2 py-8 text-sm sm:flex-row sm:items-center sm:justify-between"
   >
-    <p>© {year} Rodrigo Sicarelli</p>
+    <p>
+      © {year} Rodrigo Sicarelli ·
+      <a
+        href={localized('/licensing')}
+        class="hover:text-foreground underline-offset-2 transition-colors"
+      >
+        {t('footer.license')}
+      </a>
+    </p>
     <ul class="flex items-center gap-4">
       {
         FOOTER_LINKS.map((item) => (

@@ -60,3 +60,21 @@ The research foundation lives in the private repo
 
 - [`SUMMARY.md`](https://github.com/rsicarelli/personal-site-private/blob/main/SUMMARY.md) — consolidated digest + the unified recommended stack.
 - [`RESEARCH-INDEX.md`](https://github.com/rsicarelli/personal-site-private/blob/main/RESEARCH-INDEX.md) — index of the 8 research prompts and their results.
+
+## Licensing
+
+This repository is dual-licensed by path:
+
+| Path                                                                                                                                      | License                                                         | Notes                          |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------ |
+| `src/` (except `src/content/`), `scripts/`, `functions/`, `tests/`, configs                                                               | **Apache-2.0** ([`LICENSE`](LICENSE))                           | The code that builds the site. |
+| `src/content/**` + the rendered prose, images and media at rsicarelli.com (blog, pages, CV, events, photos, materials, portfolio, series) | **CC BY-NC 4.0** ([`src/content/LICENSE`](src/content/LICENSE)) | Words, images and media.       |
+
+If you quote or republish the writing, credit **Rodrigo Sicarelli** and link to
+**<https://rsicarelli.com>**. Non-commercial use only; for commercial licensing,
+[get in touch](mailto:hello@rsicarelli.com).
+
+AI usage follows the same rule — _cite yes, train no_: AI search/answer engines are welcome to
+index and quote this content with attribution; use for model training is not permitted
+(declared machine-readably via `Content-Signal` in [`robots.txt`](src/pages/robots.txt.ts) and
+the `license` property in the site's JSON-LD).

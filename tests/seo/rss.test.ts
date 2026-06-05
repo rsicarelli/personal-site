@@ -29,6 +29,14 @@ describe('per-locale RSS feeds', () => {
     }
   });
 
+  it('carries the CC BY-NC channel copyright', () => {
+    for (const locale of LOCALES) {
+      const xml = feeds[locale];
+      expect(xml, locale).toContain('<copyright>');
+      expect(xml, locale).toContain('CC BY-NC 4.0');
+    }
+  });
+
   it('declares the atom namespace and a correct self-link', () => {
     for (const locale of LOCALES) {
       const xml = feeds[locale];
@@ -101,6 +109,7 @@ describe('per-series RSS feeds (#231 B3)', () => {
         );
         expect(xml.match(/<item>/g)?.length ?? 0, `${locale}/${slug}`).toBeGreaterThan(0);
         expect(xml, `${locale}/${slug} leaks ${other}`).not.toContain(`${ORIGIN}/${other}/blog/`);
+        expect(xml, `${locale}/${slug} copyright`).toContain('CC BY-NC 4.0');
       }
     }
     expect(checked, 'no per-series feeds found in dist').toBeGreaterThan(0);

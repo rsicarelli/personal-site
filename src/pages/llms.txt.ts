@@ -81,8 +81,15 @@ export async function GET(context: APIContext): Promise<Response> {
   }
 
   const body =
-    [`# ${SITE.name}`, '', `> ${SITE.description}`, ''].join('\n') +
-    sections.filter(Boolean).join('\n');
+    [
+      `# ${SITE.name}`,
+      '',
+      `> ${SITE.description}`,
+      '',
+      // The "cite yes, train no" license signal for agent consumers (pairs with robots.txt Content-Signal).
+      `> Content: CC BY-NC 4.0 (${SITE.contentLicense}) — attribution required: ${SITE.name} (${SITE.url}). Code: ${SITE.codeLicense}.`,
+      '',
+    ].join('\n') + sections.filter(Boolean).join('\n');
 
   return new Response(body + '\n', {
     headers: { 'Content-Type': 'text/plain; charset=utf-8' },

@@ -31,6 +31,7 @@ export const ui = {
     'footer.materials': 'Materials',
     'footer.privacy': 'Privacy',
     'footer.rss': 'RSS',
+    'footer.license': 'Content under CC BY-NC 4.0',
     'rss.subscribe': 'Subscribe via RSS',
     'rss.subscribeSeries': 'Subscribe to this series via RSS',
     'rss.feedNotice':
@@ -171,6 +172,7 @@ export const ui = {
     'footer.materials': 'Materiais',
     'footer.privacy': 'Privacidade',
     'footer.rss': 'RSS',
+    'footer.license': 'Texto sob CC BY-NC 4.0',
     'rss.subscribe': 'Assine via RSS',
     'rss.subscribeSeries': 'Assine esta série via RSS',
     'rss.feedNotice':

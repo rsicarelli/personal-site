@@ -19,6 +19,12 @@ describe('llms.txt', () => {
     expect(txt).toMatch(/\n> .+/);
   });
 
+  it('declares the content + code licenses for agent consumers', () => {
+    expect(txt).toContain('CC BY-NC 4.0');
+    expect(txt).toContain('attribution required');
+    expect(txt).toContain('Apache-2.0');
+  });
+
   it('lists content sections for both locales', () => {
     expect(txt).toContain('— English');
     expect(txt).toContain('— Português');
