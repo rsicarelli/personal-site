@@ -32,7 +32,7 @@ Um [framework](https://developer.apple.com/library/archive/documentation/MacOSX/
 Trata-se de um formato pré-compilado que pode ser utilizado livremente entre projetos no Xcode. Esse formato de arquivo facilita a criação de bibliotecas para dispositivos Apple, permitindo sua distribuição e utilização por meio de gerenciadores de pacotes, como CocoaPods ou o Swift Package Manager.
 
 <p align="center">
-  <img src="https://media.rsicarelli.com/blog/kmp-102/shared/framework_2x.png" alt="AppKit.framework" style="max-width:450px">
+  <img src="https://media.rsicarelli.com/blog/kmp-102/shared/framework_2x.png" alt="AppKit.framework" style="max-width:450px" width="912" height="298" loading="lazy" decoding="async">
 </p>
 
 ### Introdução ao XCFramework
@@ -76,7 +76,7 @@ Este artefato é exatamente o arquivo que precisamos vincular ao projeto Xcode p
 > **Nota**: Tenha cuidado com o nome do projeto! Caracteres especiais, como "-", podem resultar em erro, apesar de o XCFramework ser gerado.
 
 <p align="center">
-  <img src="https://media.rsicarelli.com/blog/kmp-102/shared/xcframework-task-result.png" alt="AppKit.framework" style="max-width:450px">
+  <img src="https://media.rsicarelli.com/blog/kmp-102/shared/xcframework-task-result.png" alt="AppKit.framework" style="max-width:450px" width="644" height="624" loading="lazy" decoding="async">
 </p>
 
 ## NativeBuildTypes: debug e release
