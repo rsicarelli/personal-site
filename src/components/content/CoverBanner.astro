@@ -1,0 +1,96 @@
+---
+/**
+ * CoverBanner — the generated `Cover` art used as a BANNER with the title meshed in: the art fills the
+ * background, a theme-aware scrim (a gradient from the `--card` token up to transparent) guarantees
+ * the title stays readable in light AND dark over any art, a topic tag sits top-right, and the title
+ * (optionally a link) sits bottom-left. Responsive aspect — taller 16:9 on mobile (room for the
+ * wrapped title), 2:1 from `sm`. When `href` is set, the title link's `after:absolute after:inset-0`
+ * makes the whole banner one click target.
+ *
+ * The title is REAL HTML text over the SVG (not baked into the image), so it wraps, uses the site
+ * fonts, re-themes, and stays selectable / accessible / crawlable.
+ */
+import Cover from '@/components/content/Cover.astro';
+import type { Topic } from '@/lib/content';
+
+interface Props {
+  seed: string;
+  topic?: Topic;
+  series?: string;
+  part?: number;
+  /** The visible headline (post or series title). */
+  title: string;
+  /** When set, the whole banner becomes a link to the post. */
+  href?: string;
+  /** Small mono line above the title (e.g. "KMP 101 · Part 5" or "Series"). */
+  eyebrow?: string;
+  /** Localized topic label shown as the top-right tag. */
+  topicLabel?: string;
+  /** Heading level for the title (h1 on a hero, h3 in a listing). */
+  as?: 'h1' | 'h2' | 'h3';
+  /** Size classes for the title. */
+  headingClass?: string;
+  /** Frame classes (rounding / border / margin). */
+  class?: string;
+}
+
+const {
+  seed,
+  topic,
+  series,
+  part,
+  title,
+  href,
+  eyebrow,
+  topicLabel,
+  as: Heading = 'h2',
+  headingClass = 'text-2xl sm:text-3xl',
+  class: className,
+} = Astro.props;
+---
+
+<div class:list={['group relative isolate overflow-hidden', className]}>
+  {/* Art background (decorative — the title below is the real content). */}
+  <Cover
+    seed={seed}
+    topic={topic}
+    series={series}
+    part={part}
+    bare
+    class="absolute inset-0 h-full w-full"
+  />
+  {
+    /* Responsive height: the art has no intrinsic height since it's absolute, so this spacer sets it. */
+  }
+  <div class="aspect-[16/9] w-full sm:aspect-[5/2]"></div>
+  {/* Theme-aware readability scrim — opaque (card) at the bottom, fading up. */}
+  <div
+    class="from-card via-card/75 pointer-events-none absolute inset-0 bg-gradient-to-t to-transparent"
+  >
+  </div>
+
+  {
+    topicLabel && (
+      <span class="bg-background/65 text-foreground border-border absolute top-3 right-3 z-10 rounded-full border px-2.5 py-0.5 font-mono text-xs backdrop-blur-sm">
+        {topicLabel}
+      </span>
+    )
+  }
+
+  <div class="absolute inset-x-0 bottom-0 z-10 p-4 sm:p-6">
+    {eyebrow && <p class="text-muted-foreground font-mono text-xs">{eyebrow}</p>}
+    <Heading
+      class:list={['text-foreground mt-1 font-semibold tracking-tight text-balance', headingClass]}
+    >
+      {
+        href ? (
+          <a href={href} class="hover:text-primary transition-colors after:absolute after:inset-0">
+            {title}
+          </a>
+        ) : (
+          title
+        )
+      }
+    </Heading>
+  </div>
+</div>

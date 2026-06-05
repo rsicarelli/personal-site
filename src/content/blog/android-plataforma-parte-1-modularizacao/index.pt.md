@@ -10,7 +10,6 @@ tags:
   - 'gradle'
 series: 'android-plataforma'
 seriesOrder: 1
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fvih5nd062eyxjjo6l50n.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/android-plataforma-parte-1-modularizacao-2016'
   devtoId: 1609438

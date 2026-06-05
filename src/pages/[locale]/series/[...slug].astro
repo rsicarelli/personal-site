@@ -11,6 +11,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
+import CoverBanner from '@/components/content/CoverBanner.astro';
 import { type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
 import type { UIKey } from '@/i18n/ui';
@@ -27,8 +28,7 @@ const { entry } = Astro.props;
 const locale = Astro.params.locale as Locale;
 const slug = Astro.params.slug as string;
 const t = useTranslations(locale);
-const { label, description, repo, coverUrl, level, prerequisites, next, related, outcomes } =
-  entry.data;
+const { label, description, repo, level, prerequisites, next, related, outcomes } = entry.data;
 const posts = await getSeriesPosts(locale, slug);
 
 // Total reading time across the series (build-time, no render()): the "~Xh" learning-path estimate.
@@ -95,20 +95,16 @@ const jsonLd = [
       ← {t('blog.allPosts')}
     </a>
 
-    {
-      coverUrl && (
-        <img
-          src={coverUrl}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          class="border-border mt-6 aspect-[2/1] w-full rounded-lg border object-cover"
-        />
-      )
-    }
+    <CoverBanner
+      seed={slug}
+      series={slug}
+      title={label}
+      eyebrow={t('blog.series')}
+      as="h1"
+      headingClass="text-3xl sm:text-4xl"
+      class="border-border mt-6 rounded-xl border"
+    />
 
-    <p class="text-muted-foreground mt-6 font-mono text-xs">{t('blog.series')}</p>
-    <h1 class="mt-1 text-3xl font-bold tracking-tight text-balance">{label}</h1>
     {
       /* Answer-first overview — the series' direct value statement, rendered as a prominent lede. */
       description && <p class="text-foreground/80 mt-3 max-w-prose text-lg">{description}</p>

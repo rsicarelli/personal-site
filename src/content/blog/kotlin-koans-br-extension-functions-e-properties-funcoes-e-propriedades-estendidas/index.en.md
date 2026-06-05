@@ -9,7 +9,6 @@ tags:
   - 'kmp'
 series: 'kotlin-koans-br'
 seriesOrder: 13
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fi1sa1wvhb23tg0s9tvkx.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-extension-functions-e-properties-funcoes-e-propriedades-estendidas-e39'
   githubRepo: 'https://github.com/rsicarelli/kotlin-koans-edu-br'

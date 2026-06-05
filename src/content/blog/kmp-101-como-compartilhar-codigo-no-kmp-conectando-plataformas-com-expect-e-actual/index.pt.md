@@ -11,7 +11,6 @@ tags:
   - 'mobile'
 series: 'kmp-101'
 seriesOrder: 7
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F3x2ugp064gbq2qgpcrje.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-101-como-compartilhar-codigo-no-kmp-conectando-plataformas-com-expect-e-actual-49ma'
   devtoId: 1696574

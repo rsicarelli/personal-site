@@ -7,7 +7,6 @@ tags:
   - 'braziliandevs'
 series: 'kotlin-koans-br'
 seriesOrder: 9
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F337vd4c2gz7beq7st1ow.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kotlin-koans-br-classes-de-dados-data-classes-2h9b'
   devtoId: 1783184

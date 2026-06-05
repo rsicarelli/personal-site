@@ -8,7 +8,6 @@ tags:
   - 'claude'
 series: 'claude-code-101'
 seriesOrder: 2
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fruy65fg3biv53aa6r856.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/claude-code-101-demystifying-language-models-3h8o'
   devtoId: 3476270

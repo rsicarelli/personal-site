@@ -9,7 +9,6 @@ tags:
   - 'braziliandevs'
 series: 'kmp-102'
 seriesOrder: 1
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F77ybgidb8t2gwn9n696y.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/kmp-102-xcframework-para-devs-kmp-4a4b'
   devtoId: 1868908

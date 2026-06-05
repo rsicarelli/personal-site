@@ -8,7 +8,6 @@ tags:
   - 'braziliandevs'
 series: 'claude-code-101'
 seriesOrder: 2
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F3404ytflo133004tl73y.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/claude-code-101-desmistificando-os-modelos-de-linguagem-5big'
   devtoId: 3476054

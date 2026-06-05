@@ -1,0 +1,82 @@
+---
+/**
+ * Cover — original, self-hosted, theme-aware blog cover art (replaces the dev.to-scraped `coverUrl`).
+ * An inline SVG so it's vector (infinite scale), zero-network (no request, no CLS), and re-themes for
+ * free: it paints with the design tokens via Tailwind `fill-*`/`stroke-*` utilities (which resolve to
+ * `var(--color-*)`), and `.dark` swaps those custom properties on `<html>`, so the art follows the
+ * theme toggle with no JS and no second asset. (Token colors go through CSS classes, NOT `fill="var()"`
+ * presentation attributes, which browsers don't resolve.) The art is deterministic per post via
+ * `coverInputs` (src/lib/cover.ts) — stable across builds, distinct per post, one accent only
+ * (geometry, not color, carries the variation).
+ *
+ * VARIANT: Contour — soft topographic accent lines (layered sine fields) sweeping across the frame,
+ * fading row by row. Calm, beautiful, distinctive — the "depth/terrain of a topic".
+ *
+ * Accessibility: a `label` makes it a real image (`role="img"` + `aria-label`, e.g. the series hero);
+ * without one it's decorative (`aria-hidden`) because an adjacent title link is the true target.
+ */
+import { coverInputs } from '@/lib/cover';
+import type { Topic } from '@/lib/content';
+
+interface Props {
+  /** String to seed the art (post slug, or series slug for series covers). */
+  seed: string;
+  topic?: Topic;
+  series?: string;
+  part?: number;
+  /** Accessible name → renders as `role="img"`; omit for decorative covers beside a title link. */
+  label?: string;
+  /** Banner mode (accepted for a uniform Cover contract; Contour has no in-art tag, so it's a no-op). */
+  bare?: boolean;
+  /** Appearance classes (border / rounding / margin) — the caller owns the frame. */
+  class?: string;
+}
+
+const { seed, topic, series, part, label, class: className } = Astro.props;
+const { rng } = coverInputs({ slug: seed, topic, series, part });
+
+// Stacked topographic lines: each a sum of two sines (base + harmonic) sampled to a smooth polyline,
+// fading toward the bottom. Seed sets phase/amplitude; the band spans the frame.
+const rows = 6 + Math.floor(rng() * 4); // 6–9 lines
+const baseFreq = 0.0035 + rng() * 0.0035;
+const lines = Array.from({ length: rows }, (_, i) => {
+  const baseY = 70 + (i + 0.5) * (460 / rows);
+  const amp = 24 + rng() * 42;
+  const freq = baseFreq * (0.7 + rng() * 0.8);
+  const phase = rng() * Math.PI * 2;
+  const amp2 = 10 + rng() * 22;
+  const freq2 = freq * 2.4;
+  const phase2 = rng() * Math.PI * 2;
+  let d = '';
+  for (let x = 0; x <= 1200; x += 30) {
+    const y = baseY + amp * Math.sin(freq * x + phase) + amp2 * Math.sin(freq2 * x + phase2);
+    d += x === 0 ? `M${x},${y.toFixed(1)}` : ` L${x},${y.toFixed(1)}`;
+  }
+  return { d, opacity: Math.max(0.12, 0.5 - i * (0.34 / rows)).toFixed(3) };
+});
+---
+
+<svg
+  viewBox="0 0 1200 600"
+  preserveAspectRatio="xMidYMid slice"
+  class:list={['block aspect-[2/1] w-full overflow-hidden', className]}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  <rect class="fill-card" width="1200" height="600"></rect>
+  {
+    lines.map((l) => (
+      <path
+        class="stroke-primary"
+        d={l.d}
+        fill="none"
+        stroke-opacity={l.opacity}
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    ))
+  }
+</svg>

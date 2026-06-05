@@ -7,7 +7,6 @@ tags:
   - 'kotlin'
   - 'kmp'
   - 'mobile'
-coverUrl: 'https://media2.dev.to/dynamic/image/width=1000,height=500,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F6nh7bfue7eck9yqnr91b.png'
 provenance:
   devtoUrl: 'https://dev.to/rsicarelli/the-hidden-cost-of-default-hierarchy-templates-in-kotlin-multiplatform-256a'
   devtoId: 2985222
