@@ -1,5 +1,6 @@
 import type { CollectionEntry } from 'astro:content';
 import type { Locale } from '@/config/site';
+import { SITE } from '@/config/site';
 import { hreflangOf } from '@/i18n/utils';
 import { isoDate } from '@/lib/datetime';
 
@@ -21,6 +22,21 @@ export type JsonLdNode = Record<string, unknown>;
 /** schema.org Event attendance-mode enum URLs. */
 const OFFLINE = 'https://schema.org/OfflineEventAttendanceMode';
 const ONLINE = 'https://schema.org/OnlineEventAttendanceMode';
+
+/**
+ * Licensing + attribution block shared by every content-bearing node — the machine-readable half of
+ * the "cite yes, train no" posture (the robots.txt `Content-Signal` is the other half). `license` is
+ * the CC BY-NC 4.0 deed; `copyrightNotice` is the string Google surfaces in license metadata;
+ * `copyrightHolder` follows the same name-only Person convention as `author`. Deliberately NOT
+ * applied to `Person` (not a creative work) or `Event` (a happening, not licensable prose — the
+ * page text is covered by the site-wide WebSite node). Code (Apache-2.0) is not advertised here —
+ * JSON-LD describes the *content*.
+ */
+const LICENSE_BLOCK = {
+  license: SITE.contentLicense,
+  copyrightHolder: { '@type': 'Person', name: SITE.name },
+  copyrightNotice: `© ${SITE.name}. Licensed CC BY-NC 4.0.`,
+} as const;
 
 /** Person — full identity node (name only on `author` refs; this is the rich one). #59 feeds `sameAs`. */
 export function personLd(cv: CollectionEntry<'cv'>['data'], opts: { url: string }): JsonLdNode {
@@ -46,6 +62,7 @@ export function websiteLd(opts: { url: string; name: string; locale: Locale }): 
     name: opts.name,
     url: opts.url,
     inLanguage: hreflangOf(opts.locale),
+    ...LICENSE_BLOCK,
   };
 }
 
@@ -75,6 +92,8 @@ export function blogPostingLd(
     url: opts.url,
     mainEntityOfPage: opts.url,
     author: { '@type': 'Person', name: opts.authorName },
+    ...LICENSE_BLOCK,
+    copyrightYear: data.pubDate.getUTCFullYear(),
     ...(data.tags.length ? { keywords: data.tags } : {}),
     ...(opts.image ? { image: opts.image } : {}),
     // Series membership (#31) → a CreativeWorkSeries the post `isPartOf`, with its part position.
@@ -103,6 +122,7 @@ export function creativeWorkLd(
     inLanguage: hreflangOf(opts.locale),
     url: opts.url,
     author: { '@type': 'Person', name: opts.authorName },
+    ...LICENSE_BLOCK,
     ...(data.repo ? { codeRepository: data.repo, programmingLanguage: data.tech } : {}),
     ...(!data.repo && data.tech.length ? { keywords: data.tech } : {}),
     ...(opts.image ? { image: opts.image } : {}),
@@ -160,6 +180,7 @@ export function collectionPageLd(opts: {
     name: opts.name,
     url: opts.url,
     inLanguage: hreflangOf(opts.locale),
+    ...LICENSE_BLOCK,
     ...(opts.description ? { description: opts.description } : {}),
     ...(opts.items.length ? { mainEntity: itemListLd(opts.items) } : {}),
   };
@@ -182,6 +203,7 @@ export function creativeWorkSeriesLd(opts: {
     name: opts.name,
     url: opts.url,
     inLanguage: hreflangOf(opts.locale),
+    ...LICENSE_BLOCK,
     ...(opts.description ? { description: opts.description } : {}),
     ...(opts.parts.length
       ? { hasPart: opts.parts.map((p) => ({ '@type': 'BlogPosting', url: p.url, name: p.name })) }

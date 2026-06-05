@@ -33,6 +33,16 @@ repo [**rsicarelli/personal-site-private**](https://github.com/rsicarelli/person
 - Conventional-commit style: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `ci:`, `perf:`.
 - Small, focused PRs. One concern per PR where possible.
 
+## License
+
+By submitting a contribution you agree that:
+
+- **Code** contributions (anything outside `src/content/`) are licensed under **Apache-2.0**,
+  matching the repository's [`LICENSE`](LICENSE) (inbound = outbound; no CLA).
+- **Content** (`src/content/**`) is authored by the site owner and is
+  **CC BY-NC 4.0** ([`src/content/LICENSE`](src/content/LICENSE)); prose/translation
+  contributions, if accepted, are licensed under the same terms.
+
 ## Board maintenance (one-time UI follow-ups)
 
 The board's fields, items, and automation seed were created by a one-off bootstrap script

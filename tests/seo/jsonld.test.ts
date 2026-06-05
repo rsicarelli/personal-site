@@ -23,6 +23,10 @@ import {
 
 const URL_ = 'https://rsicarelli.com/en/x';
 
+/** The CC BY-NC 4.0 deed — every content-bearing node must carry it (cite yes, train no). */
+const CC_LICENSE = 'https://creativecommons.org/licenses/by-nc/4.0/';
+const COPYRIGHT_HOLDER = { '@type': 'Person', name: 'Rodrigo Sicarelli' };
+
 const cvData: CollectionEntry<'cv'>['data'] = {
   name: 'Rodrigo Sicarelli',
   headline: 'Staff Software Engineer · Kotlin Multiplatform',
@@ -68,6 +72,11 @@ describe('websiteLd', () => {
     expect(w['@type']).toBe('WebSite');
     expect(w.inLanguage).toBe('pt-BR');
   });
+  it('declares the site-wide content license + copyright holder', () => {
+    const w = websiteLd({ url: 'https://x/en', name: 'x', locale: 'en' });
+    expect(w.license).toBe(CC_LICENSE);
+    expect(w.copyrightHolder).toEqual(COPYRIGHT_HOLDER);
+  });
 });
 
 describe('blogPostingLd', () => {
@@ -92,6 +101,12 @@ describe('blogPostingLd', () => {
     expect(b.dateModified).toBe('2026-02-20');
     expect(b.author).toEqual({ '@type': 'Person', name: 'Rodrigo Sicarelli' });
     expect(b.keywords).toEqual(['kotlin', 'kmp']);
+  });
+  it('carries the content license, copyright holder and copyrightYear from pubDate', () => {
+    const b = blogPostingLd(data, { url: URL_, locale: 'en', authorName: 'Rodrigo Sicarelli' });
+    expect(b.license).toBe(CC_LICENSE);
+    expect(b.copyrightHolder).toEqual(COPYRIGHT_HOLDER);
+    expect(b.copyrightYear).toBe(2026);
   });
   it('falls back dateModified to pubDate when never updated', () => {
     const b = blogPostingLd(
@@ -129,6 +144,10 @@ describe('creativeWorkLd', () => {
     expect(c.codeRepository).toBeUndefined();
     expect(c.keywords).toEqual(['Kotlin', 'KMP']);
   });
+  it('carries the content license (the description prose, not the linked repo)', () => {
+    const c = creativeWorkLd(base, { url: URL_, locale: 'en', authorName: 'X' });
+    expect(c.license).toBe(CC_LICENSE);
+  });
 });
 
 describe('eventLd', () => {
@@ -156,6 +175,10 @@ describe('eventLd', () => {
     const e = eventLd(base, { url: URL_, locale: 'en', performerName: 'X' });
     expect(e.eventAttendanceMode).toBe('https://schema.org/OnlineEventAttendanceMode');
     expect(e.location).toMatchObject({ '@type': 'VirtualLocation' });
+  });
+  it('does NOT carry a license — an Event is a happening, not licensable prose', () => {
+    const e = eventLd(base, { url: URL_, locale: 'en', performerName: 'X' });
+    expect(e.license).toBeUndefined();
   });
 });
 
@@ -222,6 +245,12 @@ describe('collectionPageLd & creativeWorkSeriesLd', () => {
       { '@type': 'BlogPosting', url: 'https://x/en/blog/b', name: 'Part 2' },
     ]);
   });
+  it('both listing nodes carry the content license', () => {
+    const c = collectionPageLd({ url: 'u', name: 'S', locale: 'en', items });
+    const s = creativeWorkSeriesLd({ url: 'u', name: 'S', locale: 'en', parts: items });
+    expect(c.license).toBe(CC_LICENSE);
+    expect(s.license).toBe(CC_LICENSE);
+  });
 });
 
 describe('rendered JSON-LD over dist/**', () => {
@@ -262,6 +291,15 @@ describe('rendered JSON-LD over dist/**', () => {
       expect(author.name, relPath).toBe('Rodrigo Sicarelli');
       expect(author.jobTitle, `${relPath}: author must be name-only`).toBeUndefined();
       expect(node.dateModified, relPath).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    }
+  });
+
+  it('every rendered BlogPosting carries the CC BY-NC license (cite yes, train no)', () => {
+    const posts = allNodes().filter((n) => n.type === 'BlogPosting');
+    expect(posts.length).toBeGreaterThan(0);
+    for (const { node, relPath } of posts) {
+      expect(node.license, relPath).toBe(CC_LICENSE);
+      expect(node.copyrightHolder, relPath).toEqual(COPYRIGHT_HOLDER);
     }
   });
 

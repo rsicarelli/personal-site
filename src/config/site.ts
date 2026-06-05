@@ -14,6 +14,10 @@ export const SITE = {
     'Rodrigo Sicarelli — Staff Software Engineer, Kotlin Multiplatform authority, speaker and OSS maintainer.',
   /** Public contact address — the "reply via email" target (#196) and LGPD Art. 41 channel (#193). */
   email: 'hello@rsicarelli.com',
+  /** Content license (src/content/** + rendered prose) — CC BY-NC 4.0 deed. Code is Apache-2.0 (see /LICENSE). */
+  contentLicense: 'https://creativecommons.org/licenses/by-nc/4.0/',
+  /** SPDX id of the code license, surfaced in llms.txt alongside the content license. */
+  codeLicense: 'Apache-2.0',
 } as const;
 
 /**
