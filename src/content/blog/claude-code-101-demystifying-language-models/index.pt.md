@@ -309,14 +309,6 @@ Essa alguma coisa é o que ferramentas como Claude Code, Codex CLI e OpenCode fa
 
 ---
 
-> 🤖 Este artigo foi escrito com assistência do Claude (Anthropic).
->
-> Conteúdo pesquisado, verificado e editado por um humano.
->
-> Encontrou algum erro ou crédito faltando? Me manda uma mensagem!
-
----
-
 ## Referências
 
 1. [Petrov, A. et al. — "Language Model Tokenizers Introduce Unfairness Between Languages" (NeurIPS 2023)](https://arxiv.org/abs/2305.15425)
