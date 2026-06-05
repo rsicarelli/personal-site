@@ -8,12 +8,15 @@ allowBuilds:
   msw: set this to true or false
   sharp: true
   workerd: false
-# Force a non-vulnerable tmp everywhere (Dependabot alert #4, GHSA-ph9p-34f9-6g65):
-# @lhci/cli pins tmp ^0.1.0 (and pulls tmp 0.0.33 via inquirer/external-editor) with no
-# fixed upstream release. Both only call tmp.fileSync({prefix, postfix}), which is
-# unchanged in tmp 0.2.x. Drop this once @lhci/cli ships with tmp >= 0.2.6.
+# Security overrides for @lhci/cli's transitive deps — 0.15.1 is its latest release, so
+# Dependabot can't fix these upstream. Drop each once a new @lhci/cli ships with it fixed.
+# - tmp (alert #4, GHSA-ph9p-34f9-6g65): path traversal in < 0.2.6. lhci + external-editor
+#   only call tmp.fileSync({prefix, postfix}), unchanged in 0.2.x.
+# - uuid (alert #3, GHSA-w5hq-g745-h8pq): missing buffer bounds check in < 11.1.1. lhci
+#   only calls uuid.v4() (collect/node-runner.js), unchanged in uuid 11's CJS build.
 overrides:
   tmp: '>=0.2.6'
+  uuid: '>=11.1.1'
 minimumReleaseAgeExclude:
   - '@types/react@19.2.16'
   - react-dom@19.2.7
