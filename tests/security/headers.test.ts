@@ -41,6 +41,15 @@ describe('public/_headers security posture', () => {
     }
   });
 
+  it('pins the tightened img-src — first-party media only (#77 final step)', () => {
+    // Tightened after #255 mirrored every blog body image to R2: only the site itself, inline
+    // data URIs, YouTube thumbnails (lite-youtube facade) and the R2 media domain may serve
+    // images. Re-adding a third-party host here is the regression #183 exists to prevent — the
+    // dist sweep (tests/seo/image-hosts.test.ts) guards the same hosts from the content side.
+    const imgSrc = csp.match(/img-src([^;]*)/)?.[1]?.trim() ?? '';
+    expect(imgSrc).toBe("'self' data: https://i.ytimg.com https://media.rsicarelli.com");
+  });
+
   it('ships the standard hardening headers', () => {
     for (const header of [
       'Strict-Transport-Security: max-age=',
