@@ -56,7 +56,9 @@ async function readSitemapUrls() {
     }
   });
   if (sameHost.length !== locs.length)
-    console.warn(`IndexNow: dropped ${locs.length - sameHost.length} non-${host} URL(s) from the sitemap.`);
+    console.warn(
+      `IndexNow: dropped ${locs.length - sameHost.length} non-${host} URL(s) from the sitemap.`,
+    );
   return sameHost;
 }
 
