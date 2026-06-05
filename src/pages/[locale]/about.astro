@@ -132,8 +132,18 @@ const jsonLd = [
                       {job.startDate} – {job.endDate ?? t('cv.present')}
                     </p>
                   </div>
+                  {job.location && (
+                    <p class="text-muted-foreground mt-0.5 font-mono text-xs">{job.location}</p>
+                  )}
                   {job.summary && (
                     <p class="text-muted-foreground mt-1 max-w-prose">{job.summary}</p>
+                  )}
+                  {job.highlights.length > 0 && (
+                    <ul class="text-muted-foreground mt-2 max-w-prose list-disc space-y-1 pl-5 text-sm">
+                      {job.highlights.map((highlight) => (
+                        <li>{highlight}</li>
+                      ))}
+                    </ul>
                   )}
                 </li>
               ))}
@@ -196,6 +206,10 @@ const jsonLd = [
       border: 0 !important;
       margin-top: 0 !important;
       padding-top: 0 !important;
+    }
+    /* Keep each role (title + highlights) on one page of the exported PDF. */
+    #cv li {
+      break-inside: avoid;
     }
     a {
       text-decoration: none !important;

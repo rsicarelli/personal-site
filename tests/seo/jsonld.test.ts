@@ -34,7 +34,9 @@ const cvData: CollectionEntry<'cv'>['data'] = {
     { network: 'GitHub', url: 'https://github.com/rsicarelli' },
     { network: 'LinkedIn', url: 'https://linkedin.com/in/rsicarelli' },
   ],
-  work: [{ company: 'Stone', role: 'Staff Software Engineer', startDate: '2021' }],
+  work: [
+    { company: 'Stone', role: 'Staff Software Engineer', startDate: 'Dec 2023', highlights: [] },
+  ],
 };
 
 describe('personLd', () => {

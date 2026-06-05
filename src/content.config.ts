@@ -182,7 +182,11 @@ const cv = defineCollection({
           role: z.string(),
           startDate: z.string(),
           endDate: z.string().optional(),
+          /** Per-job city/remote, display-only — distinct from the root `location` (homeLocation). */
+          location: z.string().optional(),
           summary: z.string().optional(),
+          /** Quantified outcomes rendered as a bullet list under the role. */
+          highlights: z.array(z.string()).default([]),
         }),
       )
       .default([]),
