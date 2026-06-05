@@ -30,7 +30,10 @@ describe('public/_headers security posture', () => {
     const scriptSrc = csp.match(/script-src([^;]*)/)?.[1] ?? '';
     expect(scriptSrc).toContain("'self'");
     expect(scriptSrc).not.toContain("'unsafe-inline'");
-    expect(scriptSrc).not.toContain("'unsafe-eval'");
+    // `'wasm-unsafe-eval'` (Pagefind search, Option A) is permitted — it only enables WebAssembly
+    // compilation, not JS `eval()`. The dangerous bare `'unsafe-eval'` token must still be absent;
+    // match it with word boundaries so the `wasm-` prefixed variant doesn't trip the guard.
+    expect(scriptSrc).not.toMatch(/(?<!wasm-)'unsafe-eval'/);
     for (const directive of [
       "default-src 'self'",
       "base-uri 'self'",

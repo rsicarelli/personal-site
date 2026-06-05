@@ -64,6 +64,16 @@ const t = useTranslations(locale);
       <SearchStates locale={locale} />
     </div>
   </Container>
+
+  {
+    /* Search engine — Option A (Pagefind). A PROCESSED (non-inline) script: Astro bundles it into a
+    content-hashed `/_astro/*.js` file served from our own origin, so it needs NO CSP hash entry (it
+    falls under `script-src 'self'`). The Pagefind WASM/worker it loads at runtime is what needs the
+    `wasm-unsafe-eval` + `worker-src blob:` additions in public/_headers. */
+  }
+  <script>
+    import '@/scripts/search-pagefind';
+  </script>
 </BaseLayout>
 
 {

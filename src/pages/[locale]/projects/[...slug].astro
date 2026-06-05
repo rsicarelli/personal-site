@@ -25,6 +25,11 @@ const t = useTranslations(locale);
 const { Content } = await render(entry);
 const { title, description, tech, repo, cover } = entry.data;
 
+// Pagefind index metadata (Option A search) — see the blog detail page for the full rationale.
+// Projects have no date; the meta line is up to 3 tech tokens, joined here for the result card.
+const pfTypeLabel = t('search.type.project');
+const pfTech = tech.slice(0, 3).join(' · ');
+
 // Structured data (#52): SoftwareSourceCode (repo present) or CreativeWork, plus a breadcrumb.
 // OG/JSON-LD image: the local cover when present, else a per-page generated card (#148) — both
 // self-hosted (the metadata suite asserts the rsicarelli.com origin).
@@ -49,14 +54,28 @@ const jsonLd = [
   image={ogImage}
 >
   <JsonLd slot="head" schema={jsonLd} />
-  <Container as="article" class="py-16">
+  {
+    /* `data-pagefind-body` marks this article as the search corpus; the data-pagefind-meta spans
+    below bake the localized labels + meta-line tech for the result card (see blog detail). */
+  }
+  <Container as="article" class="py-16" data-pagefind-body data-pagefind-filter="type:project">
+    <span hidden data-pagefind-meta={`typeLabel:${pfTypeLabel}`}></span>
+    <span hidden data-pagefind-meta={`excerpt:${description}`}></span>
+    {pfTech && <span hidden data-pagefind-meta={`tech:${pfTech}`} />}
     <a
       href={`/${locale}/projects`}
+      data-pagefind-ignore
       class="text-muted-foreground hover:text-foreground font-mono text-xs"
     >
       ← {t('projects.allProjects')}
     </a>
-    <h1 class="mt-6 font-mono text-3xl font-bold tracking-tight">{title}</h1>
+    <h1
+      class="mt-6 font-mono text-3xl font-bold tracking-tight"
+      data-pagefind-meta="title"
+      data-pagefind-weight="10"
+    >
+      {title}
+    </h1>
     <p class="text-muted-foreground mt-3 max-w-prose">{description}</p>
 
     {

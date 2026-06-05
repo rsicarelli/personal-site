@@ -29,6 +29,7 @@ import {
   getLocalizedEntry,
 } from '@/lib/content';
 import { formatDate, isoDate } from '@/lib/datetime';
+import type { UIKey } from '@/i18n/ui';
 import { render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -102,6 +103,14 @@ const jsonLd = [
     { name: title, url: pageUrl },
   ]),
 ];
+
+// Pagefind index metadata (Option A search). The island reads these back from `result.data().meta`
+// to rebuild the result card WITHOUT re-deriving i18n at runtime: localized type/topic labels and
+// the formatted date are baked here at build time. `excerpt` is the answer-first capsule (`summary`
+// ?? `description`), matching the shared `SearchDoc.excerpt`. The meta line is date · X min · topic.
+const topicLabel = t(`blog.topic.${entry.data.topic}` as UIKey);
+const pfTypeLabel = t('search.type.blog');
+const pfExcerpt = summary ?? description;
 ---
 
 <BaseLayout
@@ -127,16 +136,35 @@ const jsonLd = [
         'lg:grid lg:max-w-[66rem] lg:grid-cols-[minmax(0,48rem)_15rem] lg:justify-center lg:gap-x-12',
     ]}
   >
-    <article class="min-w-0">
+    {
+      /* `data-pagefind-body` marks this article as the search corpus (once any page is tagged,
+      untagged pages — listings, tags, home — drop out of the index automatically). Filters +
+      display metadata are emitted via the data-pagefind-* spans just below; chrome inside the
+      article (back link, series nav, TOC, engagement zone, tags, comments) carries
+      `data-pagefind-ignore` so only the prose + title feed the index and the excerpt. */
+    }
+    <article class="min-w-0" data-pagefind-body data-pagefind-filter="type:blog">
+      {
+        /* Indexable display metadata (zero visual output): localized labels + the formatted date,
+        read back by the search island to rebuild the result card. The title is also emitted as a
+        meta field AND weighted up on the <h1> below. */
+      }
+      <span hidden data-pagefind-meta={`typeLabel:${pfTypeLabel}`}></span>
+      <span hidden data-pagefind-meta={`excerpt:${pfExcerpt}`}></span>
+      <span hidden data-pagefind-meta={`dateIso:${isoDate(pubDate)}`}></span>
+      <span hidden data-pagefind-meta={`dateLabel:${formatDate(pubDate, locale)}`}></span>
+      <span hidden data-pagefind-meta={`minRead:${minutes} ${t('blog.minRead')}`}></span>
+      <span hidden data-pagefind-meta={`topicLabel:${topicLabel}`}></span>
       <a
         href={`/${locale}/blog`}
+        data-pagefind-ignore
         class="text-muted-foreground hover:text-foreground font-mono text-xs"
       >
         ← {t('blog.allPosts')}
       </a>
       {
         series && seriesInfo && (
-          <p class="mt-6 font-mono text-xs">
+          <p class="mt-6 font-mono text-xs" data-pagefind-ignore>
             <a
               href={`/${locale}/series/${series}`}
               class="bg-secondary text-secondary-foreground hover:bg-secondary/70 inline-flex rounded-md px-1.5 py-0.5 transition-colors"
@@ -147,8 +175,14 @@ const jsonLd = [
           </p>
         )
       }
-      <h1 class="mt-3 font-serif text-3xl font-bold tracking-tight text-balance">{title}</h1>
-      <p class="text-muted-foreground mt-3 font-mono text-xs">
+      <h1
+        class="mt-3 font-serif text-3xl font-bold tracking-tight text-balance"
+        data-pagefind-meta="title"
+        data-pagefind-weight="10"
+      >
+        {title}
+      </h1>
+      <p class="text-muted-foreground mt-3 font-mono text-xs" data-pagefind-ignore>
         {
           /* Visible byline (#59) — pairs with the BlogPosting.author Person ref; links to /about. */
         }
@@ -179,7 +213,10 @@ const jsonLd = [
         /* Source repo link (the dev.to attribution link was dropped with the cover migration; the
           canonical/syndication relationship still lives in provenance + the write-back script). */
         sourceUrl && (
-          <p class="text-muted-foreground mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs">
+          <p
+            class="text-muted-foreground mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs"
+            data-pagefind-ignore
+          >
             <a
               href={sourceUrl}
               rel="noopener"
@@ -201,12 +238,14 @@ const jsonLd = [
         /* Mobile-only "On this page": a collapsible block at the top of the article (the desktop rail
         lives beside the column instead). Reading stays uninterrupted — no pre-read CTAs. */
         showToc && (
-          <TableOfContents
-            headings={tocHeadings}
-            locale={locale}
-            variant="inline"
-            class="mt-6 lg:hidden"
-          />
+          <div data-pagefind-ignore>
+            <TableOfContents
+              headings={tocHeadings}
+              locale={locale}
+              variant="inline"
+              class="mt-6 lg:hidden"
+            />
+          </div>
         )
       }
 
@@ -236,7 +275,7 @@ const jsonLd = [
       accent fill). Reciprocity + peak-end: the ask lands after the value is delivered.
     */
       }
-      <div class="border-border mt-12 flex flex-col gap-8 border-t pt-10">
+      <div class="border-border mt-12 flex flex-col gap-8 border-t pt-10" data-pagefind-ignore>
         {reactions !== false && <Reactions path={postPath} locale={locale} />}
         <ShareButtons url={pageUrl} title={title} locale={locale} />
         <AuthorCard locale={locale} />
@@ -245,7 +284,7 @@ const jsonLd = [
 
       {
         tags.length > 0 && (
-          <footer class="border-border mt-12 border-t pt-6">
+          <footer class="border-border mt-12 border-t pt-6" data-pagefind-ignore>
             <h2 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
               {t('blog.tags')}
             </h2>
@@ -276,6 +315,7 @@ const jsonLd = [
           <nav
             aria-label={seriesInfo?.entry.data.label}
             class="border-border mt-12 grid gap-4 border-t pt-6 sm:grid-cols-2"
+            data-pagefind-ignore
           >
             {prev ? (
               <a
@@ -307,7 +347,7 @@ const jsonLd = [
         /* Always offer the way back up to the series overview (the part badge at the top links there
         too, but the foot of a long read is where the reader decides what's next). */
         series && seriesInfo && (
-          <p class="mt-6 text-center">
+          <p class="mt-6 text-center" data-pagefind-ignore>
             <a
               href={`/${locale}/series/${series}`}
               class="text-muted-foreground hover:text-foreground font-mono text-xs"

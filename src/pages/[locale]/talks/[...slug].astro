@@ -11,6 +11,7 @@ import LiteYouTube from '@/components/ui/LiteYouTube.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
 import { SITE, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
+import type { UIKey } from '@/i18n/ui';
 import { canonicalUrl } from '@/lib/seo';
 import { eventLd, breadcrumbLd } from '@/lib/jsonld';
 import { localizedPaths } from '@/lib/content';
@@ -27,12 +28,17 @@ const locale = Astro.params.locale as Locale;
 const slug = Astro.params.slug as string;
 const t = useTranslations(locale);
 const { Content } = await render(entry);
-const { title, description, startDate, endDate, location, url, slides, video } = entry.data;
+const { title, description, startDate, endDate, location, url, slides, video, kind } = entry.data;
 const videoId = video ? youtubeId(video) : null;
 const dateLabel =
   endDate && endDate.getTime() !== startDate.getTime()
     ? `${formatDate(startDate, locale)} – ${formatDate(endDate, locale)}`
     : formatDate(startDate, locale);
+
+// Pagefind index metadata (Option A search) — see the blog detail page. Talk meta line is
+// date · location · kind (the localized event-kind label); location is optional.
+const pfTypeLabel = t('search.type.talk');
+const pfKind = t(`talks.kind.${kind}` as UIKey);
 
 // Structured data (#52): Event (Offline when a venue is set, else VirtualLocation) + breadcrumb.
 const pageUrl = canonicalUrl(Astro.url.pathname, locale, Astro.site);
@@ -55,15 +61,32 @@ const jsonLd = [
   image={ogImage}
 >
   <JsonLd slot="head" schema={jsonLd} />
-  <Container as="article" class="py-16">
+  {
+    /* `data-pagefind-body` marks this article as the search corpus; the data-pagefind-meta spans
+    bake the localized labels + the date/location/kind meta-line segments (see blog detail). */
+  }
+  <Container as="article" class="py-16" data-pagefind-body data-pagefind-filter="type:talk">
+    <span hidden data-pagefind-meta={`typeLabel:${pfTypeLabel}`}></span>
+    <span hidden data-pagefind-meta={`excerpt:${description}`}></span>
+    <span hidden data-pagefind-meta={`dateIso:${isoDate(startDate)}`}></span>
+    <span hidden data-pagefind-meta={`dateLabel:${dateLabel}`}></span>
+    {location && <span hidden data-pagefind-meta={`location:${location}`} />}
+    <span hidden data-pagefind-meta={`kind:${pfKind}`}></span>
     <a
       href={`/${locale}/talks`}
+      data-pagefind-ignore
       class="text-muted-foreground hover:text-foreground font-mono text-xs"
     >
       ← {t('talks.allTalks')}
     </a>
-    <h1 class="mt-6 text-3xl font-bold tracking-tight text-balance">{title}</h1>
-    <p class="text-muted-foreground mt-3 font-mono text-xs">
+    <h1
+      class="mt-6 text-3xl font-bold tracking-tight text-balance"
+      data-pagefind-meta="title"
+      data-pagefind-weight="10"
+    >
+      {title}
+    </h1>
+    <p class="text-muted-foreground mt-3 font-mono text-xs" data-pagefind-ignore>
       <time datetime={isoDate(startDate)}>{dateLabel}</time>
       {location && <span> · {location}</span>}
     </p>

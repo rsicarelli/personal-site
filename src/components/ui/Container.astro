@@ -21,10 +21,12 @@ interface Props {
   as?: HTMLTag;
   /** Extra classes merged after the width utility (layout, spacing, etc.). */
   class?: string;
+  /** Any other attributes (e.g. `data-pagefind-*`, `aria-*`) pass through to the rendered element. */
+  [key: string]: unknown;
 }
 
-const { width = 'content', as: Tag = 'div', class: className } = Astro.props;
+const { width = 'content', as: Tag = 'div', class: className, ...rest } = Astro.props;
 const widthClass = width === 'wide' ? 'container-wide' : 'container-content';
 ---
 
-<Tag class:list={[widthClass, className]}><slot /></Tag>
+<Tag class:list={[widthClass, className]} {...rest}><slot /></Tag>

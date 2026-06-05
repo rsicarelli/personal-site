@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import pagefind from 'astro-pagefind';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 import { rehypeR2Images } from './src/lib/rehype-r2-images.mjs';
 import { placeholderBlogPaths } from './scripts/placeholder-posts.mjs';
@@ -40,6 +41,13 @@ export default defineConfig({
   integrations: [
     react(),
     mdx(),
+    // Site search (Option A — Pagefind). Builds a static, language-chunked index into
+    // `dist/pagefind/` AFTER `astro build` (a post-build `astro:build:done` hook that crawls the
+    // emitted HTML for `data-pagefind-body` regions) and serves that prebuilt index in `astro dev`.
+    // The search island (src/scripts/search-pagefind.ts) loads it lazily at runtime — no build-time
+    // image/render I/O, no server runtime. Pagefind splits the index per `<html lang>`, so `en` and
+    // `pt-br` get their own chunks and a query never leaks results from the other locale.
+    pagefind(),
     sitemap({
       // The callback only sees the absolute URL string; match on its trailing-slash-normalized
       // pathname (dir-form <loc>s carry a trailing slash, the placeholder set doesn't). Also drop

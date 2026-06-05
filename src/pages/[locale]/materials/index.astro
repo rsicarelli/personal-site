@@ -20,14 +20,31 @@ const locale = Astro.params.locale as Locale;
 const t = useTranslations(locale);
 const groups = await getLocalizedEntries('materials', locale);
 const total = groups.reduce((n, g) => n + g.entry.data.items.length, 0);
+
+// Pagefind index metadata (Option A search). Materials have NO detail route — the listing IS the
+// searchable surface, so the whole page is one indexed doc of type `material`: title = the page
+// heading, excerpt = the first group's description (a one-line gist), and the indexed body (the
+// item titles/descriptions below) lets a query like "slides" surface this page. The result links
+// back to /materials, where the matching item lives.
+const pfTypeLabel = t('search.type.material');
+const pfTitle = t('footer.materials');
+const pfExcerpt = groups.find((g) => g.entry.data.description)?.entry.data.description ?? '';
 ---
 
 <BaseLayout
   title={`${t('footer.materials')} · ${t('site.title')}`}
   description={t('site.description')}
 >
-  <Container as="section" class="py-16">
-    <h1 class="text-3xl font-bold tracking-tight">{t('footer.materials')}</h1>
+  <Container as="section" class="py-16" data-pagefind-body data-pagefind-filter="type:material">
+    <span hidden data-pagefind-meta={`typeLabel:${pfTypeLabel}`}></span>
+    {pfExcerpt && <span hidden data-pagefind-meta={`excerpt:${pfExcerpt}`} />}
+    <h1
+      class="text-3xl font-bold tracking-tight"
+      data-pagefind-meta="title"
+      data-pagefind-weight="10"
+    >
+      {pfTitle}
+    </h1>
 
     {total === 0 && <p class="text-muted-foreground mt-6">{t('materials.empty')}</p>}
 
