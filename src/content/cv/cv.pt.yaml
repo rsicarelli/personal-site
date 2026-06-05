@@ -22,7 +22,8 @@ knowsAbout:
   - Open Source
 email: hello@rsicarelli.com
 # Perfis de reconciliação de entidade → Person.sameAs (#59) + os links visíveis "Em outros lugares".
-# Conjunto confirmado — tests/seo/eeat.test.ts valida exatamente essas URLs; atualize os dois juntos.
+# Fixado por tests/seo/eeat.test.ts (URLs exatas — atualize os dois juntos); a confirmação das
+# URLs de X/Sessionize/Stone está rastreada na #147.
 profiles:
   - network: GitHub
     url: https://github.com/rsicarelli
