@@ -210,7 +210,7 @@ fun Project.jvmLibrary(builderAction: CompilationOptionsBuilder.() -> Unit = { }
 
 **1 -** Dentro de `core`, criaremos um novo módulo chamado `threading`.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/81xtralh2ban3swg5isb.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/81xtralh2ban3swg5isb.png)
 
 **2 -** Inclua esse novo módulo no `settings.gradle.kts`:
 
@@ -240,10 +240,10 @@ dependencies {
 A IDE informará se essa biblioteca é pura JVM.
 
 Embora eu esteja usando o IntelliJ, o Android Studio também exibirá um ícone diferente
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/e3pvnqbr36fgmjw91v08.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/e3pvnqbr36fgmjw91v08.png)
 
 No próximo artigo, aprenderemos a customizar nossas compilações para incorporar algumas das funcionalidades experimentais do compilador Kotlin.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/5afv0g9m07tkk60t7bta.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/5afv0g9m07tkk60t7bta.png)
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/tsfkotnkwv8xvdfu4305.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/tsfkotnkwv8xvdfu4305.png)

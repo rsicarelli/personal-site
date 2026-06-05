@@ -45,7 +45,7 @@ Key characteristics:
 - **PSI/AST trees:** uses the `Abstract Syntax Tree` (AST) and the `Program Structure Interface` (PSI) to represent and manipulate the code structure, which is essential for later analyses.
 - **Semantic analysis:** checks that language elements such as types and scopes are used correctly, making sure the code follows Kotlin's semantic rules.
 
-![Frontend K1](https://github.com/ahinchman1/Kotlin-Compiler-Crash-Course/blob/master/res/k1_frontend.png?raw=true)
+![Frontend K1](https://media.rsicarelli.com/blog/kmp-101/shared/k1_frontend.png)
 
 #### K2: codename FIR (Frontend Intermediate Representation)
 
@@ -53,7 +53,7 @@ K2, also known as `FIR`, is the next major update to the Kotlin compiler and is 
 
 The first beta of K2 arrived with Kotlin `1.9.20`, released in November 2023, and the final version is planned for Kotlin 2.0.0, which we expect in 2024. This new system brings several important improvements, such as more speed, a more organized structure, and a clearer way to understand the code.
 
-![KotlinConf2023 K1 vs K2](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/k1-vs-k2-kotlinconf2023.png?raw=true)
+![KotlinConf2023 K1 vs K2](https://media.rsicarelli.com/blog/kmp-101/shared/k1-vs-k2-kotlinconf2023.png)
 
 > Data from the [KotlinConf'23 - Keynote](https://www.youtube.com/live/c4f4SCEYA5Q?si=LyH_q_6R8hjd-dRo&t=495)
 
@@ -64,7 +64,7 @@ A few of those improvements:
 - **Plugin support:** includes support for a variety of plugins, such as `kapt`, `serialization`, `all-open`, and others.
 - **Cross-platform compatibility:** supports `JVM`, `Native`, `Wasm`, and `JS`, optimized for multiplatform projects.
 
-![Frontend K2 FIR](https://github.com/ahinchman1/Kotlin-Compiler-Crash-Course/blob/master/res/k2_frontend.png?raw=true)
+![Frontend K2 FIR](https://media.rsicarelli.com/blog/kmp-101/shared/k2_frontend.png)
 
 ### Understanding the Kotlin compiler backend
 
@@ -79,7 +79,7 @@ Designed to be multiplatform, Kotlin can be compiled to run on a wide range of d
 - **Kotlin/JS:** specialized for web development, this backend converts Kotlin code into JavaScript, making it compatible with web browsers and JavaScript-based server environments such as Node.js.
 - **Kotlin/Wasm:** a more recent addition that's still in development, this backend lets you compile Kotlin to WebAssembly (Wasm), making it easier to run high-performance Kotlin applications in web browsers.
 
-![Native development](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kotlin-compiler-backend.jpg?raw=true)
+![Native development](https://media.rsicarelli.com/blog/kmp-101/shared/kotlin-compiler-backend.jpg)
 
 ## Intermediate Representation (IR)
 

@@ -33,11 +33,11 @@ O `buildSrc` é uma convenção especial do Gradle para organizar e encapsular c
 
 Todos os artefatos gerados (classes, recursos, etc.) pelo `buildSrc` são então adicionados ao classpath dos arquivos do Gradle do projeto, possibilitando que você referencie e use essas classes diretamente nesses arquivos Gradle sem nenhuma configuração adicional.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/fpupqlqr1nhyumiwau5d.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/fpupqlqr1nhyumiwau5d.png)
 
 Infelizmente, todos esses recursos incríveis vêm com um grande inconveniente: qualquer alteração dentro do `buildSrc` invalida completamente o cache de compilação. Esse comportamento pode ser especialmente problemático para projetos maiores, uma vez que invalidar o cache implica em recompilações frequentes, aumentando consideravelmente o tempo de build.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/lpkfn0h6fei2mzv38eyl.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/lpkfn0h6fei2mzv38eyl.png)
 
 ## Composite Builds
 
@@ -59,7 +59,7 @@ A eficiência dos **Composite Builds** é claramente vista na maneira como eles 
 
 Porém, é importante entender que esse mecanismo do cache é um conceito diferente dos "builds incrementais". Em um build incremental, se uma tarefa não detecta mudanças desde sua última execução, ela exibe o status "UP-TO-DATE", indicando que nada foi refeito.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/8kp0uexg5vptttshf0g1.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/8kp0uexg5vptttshf0g1.png)
 
 ## Criando nossa plataforma utilizando Composite Builds
 

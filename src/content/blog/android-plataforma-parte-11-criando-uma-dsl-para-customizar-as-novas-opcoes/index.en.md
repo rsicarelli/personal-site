@@ -52,7 +52,7 @@ To solve this, let's introduce a DSL that handles this customization in an elega
 
 Note that here we'll define the default values for our platform.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/7v2mwju1ebm1o7ebodow.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/7v2mwju1ebm1o7ebodow.png)
 
 ```kotlin
 

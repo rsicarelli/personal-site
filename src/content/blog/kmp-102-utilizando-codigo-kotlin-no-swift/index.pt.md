@@ -77,7 +77,7 @@ struct ContentView: View {
 
 Como resultado, teremos:
 
-<img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kotlin-shared-hello-world-ios.gif?raw=true" width="200" />
+<img src="https://media.rsicarelli.com/blog/kmp-102/shared/kotlin-shared-hello-world-ios.gif" style="max-width:200px" />
 
 ### O que está acontecendo aqui?
 
@@ -110,7 +110,7 @@ Ou seja, temos várias funcionalidades em Kotlin traduzidas diretamente para Swi
 
 Para investigar como o código Kotlin é traduzido para Objective-C, podemos acessar o código gerado pelo Kotlin/Native. Para isso, basta dar um `cmd + click` na nossa classe `HelloWorld_appleKt`:
 
-![Hello world em Obj-c](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kotlin-shared-hello-world-decompiled.png?raw=true)
+![Hello world em Obj-c](https://media.rsicarelli.com/blog/kmp-102/shared/kotlin-shared-hello-world-decompiled.png)
 
 Para melhorar a experiência de uso do código Kotlin no iOS, podemos codificar nosso código Kotlin de uma forma diferente, para ser mais idiomático ao Swift.
 
@@ -138,7 +138,7 @@ Agora, realizamos o mesmo passo a passo para utilizar no Xcode:
 2. No Xcode, `Products` > `Build for ...` > `Running`, ou simplesmente `cmd + shift + r`
 
 Logo após o build, notamos que a nossa classe anterior `HelloWorld_appleKt` não está mais disponível.
-![Hello world quebrado no Xcode](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kotlin-shared-hello-world-changed-xcode-error.png?raw=true)
+![Hello world quebrado no Xcode](https://media.rsicarelli.com/blog/kmp-102/shared/kotlin-shared-hello-world-changed-xcode-error.png)
 
 Antes de entender o porquê, vamos integrar nosso código KMP utilizando a nova abordagem:
 
@@ -158,7 +158,7 @@ struct ContentView: View {
 Sucesso! Esse código é mais idiomático ao Swift, e conseguimos utilizar o código Kotlin no iOS de uma forma mais amigável.
 
 Se abrirmos o código Objective-C gerado pelo Kotlin/Native, notamos algumas diferenças:
-![Hello world idiomático ao Swift](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kotlin-shared-hello-world-changed-idiomatic-swift.png?raw=true)
+![Hello world idiomático ao Swift](https://media.rsicarelli.com/blog/kmp-102/shared/kotlin-shared-hello-world-changed-idiomatic-swift.png)
 
 Interessante observar que, agora, nossa classe `HelloWorld` é gerada como um Singleton, e o método `get` é gerado como uma extensão!
 
@@ -245,7 +245,7 @@ struct ContentView: View {
 
 Analisando a função `helloWorld()`, observamos que o SKIE gera uma função global que é acessível diretamente no Swift. Essa função global acessa a função `helloWorld()` do Kotlin (na forma "feia"), e a expõe para o Swift.
 
-<img src="https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kotlin-shared-hello-world-skie.gif?raw=true" width="500" />
+<img src="https://media.rsicarelli.com/blog/kmp-102/shared/kotlin-shared-hello-world-skie.gif" style="max-width:500px" />
 
 Muito melhor hein? Agora, conseguimos utilizar o código Kotlin no iOS de uma forma idiomática ao Swift!
 

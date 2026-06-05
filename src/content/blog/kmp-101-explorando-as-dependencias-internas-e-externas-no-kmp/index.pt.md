@@ -127,7 +127,7 @@ kotlin {
 
 A imagem a seguir representa apenas uma parte dessas depêndencias:
 
-![Dependencia com todos os source sets](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-all-targets-imported.png?raw=true)
+![Dependencia com todos os source sets](https://media.rsicarelli.com/blog/kmp-101/shared/kmp-all-targets-imported.png)
 
 Ao declarar os _targets_ e importar uma depêndencia no `commonMain` todas essas depêndencias são importadas no projeto.
 
@@ -142,7 +142,7 @@ macosArm64()
 tvosArm64()
 ```
 
-![Dependencia com alguns dos source sets](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-limited-imports.png?raw=true)
+![Dependencia com alguns dos source sets](https://media.rsicarelli.com/blog/kmp-101/shared/kmp-limited-imports.png)
 
 Ou seja, cada target declarado espera que uma depêndencia exista, seja ela publicada em algum artefato como Maven, ou depêndencia de um módulo interno.
 
@@ -162,7 +162,7 @@ Estes metadados são então usados pelos backends do Kotlin específica para ger
 
 Ao explorar o conteúdo dessa depêndencia, notamos uma extensão especial do KMP: a `.klib`.
 
-![Dependencia do ktor client common](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-common-klib.png?raw=true)
+![Dependencia do ktor client common](https://media.rsicarelli.com/blog/kmp-101/shared/kmp-ktor-client-common-klib.png)
 
 O arquivo `.klib` no KMP é uma biblioteca que contém código compartilhável entre diferentes plataformas.
 
@@ -170,7 +170,7 @@ No contexto do `commonMain`, o `.klib` funciona como uma coleção de código-fo
 
 Se expandirmos a pasta `linkdata`, vamos nos deparar com outro formato de arquivo especial do KMP: `.knm`
 
-![Dependencia do ktor client common](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-common-knm.png?raw=true)
+![Dependencia do ktor client common](https://media.rsicarelli.com/blog/kmp-101/shared/kmp-ktor-client-common-knm.png)
 
 O formato de arquivo `.knm` é um formato binário utilizado internamente pelas bibliotecas `klib` do Kotlin/Native, especialmente em conjunto com a ferramenta `cinterop`.
 
@@ -188,7 +188,7 @@ A dependência "posix" em um contexto de Kotlin Multiplatform para iOS se refere
 
 No caso de iOS, `posixMain` indica que essa biblioteca está usando APIs POSIX, comuns em sistemas baseados em Unix, como o iOS.
 
-![Dependencia do iOS no projeto](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-ios-imports.png?raw=true)
+![Dependencia do iOS no projeto](https://media.rsicarelli.com/blog/kmp-101/shared/kmp-ktor-client-ios-imports.png)
 
 #### Explorando arquivos do `.klib` do iOS
 
@@ -206,13 +206,13 @@ A pasta `ir` representa diferentes componentes do código e metadados compilados
 
 A pasta `targets.ios_X` não possuí nenhum conteúdo nesse caso. Mas, nessa pasta reside arquivos de "bitcode" LLVM, que contém código intermediário utilizado pelo compilador LLVM.
 
-![Dependencia do iosarm64 no projeto](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-iosarm64-klib.png?raw=true)
+![Dependencia do iosarm64 no projeto](https://media.rsicarelli.com/blog/kmp-101/shared/kmp-ktor-client-iosarm64-klib.png)
 
 ### Dissecando a depêndencia do JS
 
 Para o _target_ JS, ainda temos um arquivo `.klib`, mas acompanhado de um `package.json`.
 
-![Dependencia do JS](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-js-include-klib.png?raw=true)
+![Dependencia do JS](https://media.rsicarelli.com/blog/kmp-101/shared/kmp-ktor-client-js-include-klib.png)
 
 ### Dissecando a depêndencia do Android
 
@@ -222,7 +222,7 @@ Nesse caso, observamos um formato de `.jar` normal de qualquer programa em Java/
 
 Note que essa depêndencia é utilizada tanto pelo Source Set `android` quanto ao `desktop`:
 
-![Dependencia do Android e JVM](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-ktor-client-jvm-jar.png?raw=true)
+![Dependencia do Android e JVM](https://media.rsicarelli.com/blog/kmp-101/shared/kmp-ktor-client-jvm-jar.png)
 
 ## Como descobrir se uma biblioteca open-source é compatível com meu target?
 
@@ -230,7 +230,7 @@ Para verificar a compatibilidade de uma biblioteca _open-source_ com um _target_
 
 No caso do `ktor-client-core`, ao acessar o [Maven Central](https://mvnrepository.com/search?q=ktor-client-core) e pesquisar pelo grupo, encontramos uma lista de artefatos para cada source set.
 
-![Demo em todas as plataformas](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/kmp-maven-ktor-ezgif.com-video-to-gif-converter.gif?raw=true)
+![Demo em todas as plataformas](https://media.rsicarelli.com/blog/kmp-101/shared/kmp-maven-ktor-ezgif.com-video-to-gif-converter.gif)
 
 ## Depêndencias de módulos internos
 

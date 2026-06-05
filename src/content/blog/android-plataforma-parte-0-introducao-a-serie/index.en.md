@@ -83,7 +83,7 @@ Throughout these articles, we'll build a platform from scratch and integrate it 
 
 - We'll reflect on whether a platform is really needed, on good practices, and on the next steps for future series!
 
-![A diagram of the Android Platform structure](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/sjeq93uk3vdzdp6sv0ja.png)
+![A diagram of the Android Platform structure](https://media.rsicarelli.com/blog/android-plataforma/shared/sjeq93uk3vdzdp6sv0ja.png)
 
 ## A spoiler of what we'll learn
 

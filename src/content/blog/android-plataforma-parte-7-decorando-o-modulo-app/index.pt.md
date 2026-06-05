@@ -199,11 +199,11 @@ dependencyResolutionManagement {
 
 **3 -** Sincronize o projeto. Crie uma pasta chamada `decoration` dentro do `build-logic/src/main/kotlin`.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/y9yk99duigmkc4aq8vkn.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/y9yk99duigmkc4aq8vkn.png)
 
 **4 -** Crie um arquivo chamado `android.kt`. Aqui é onde nossas decorações do Android irão morar.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/l88dbg26zj278jylpask.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/l88dbg26zj278jylpask.png)
 
 **5 -** Utilizaremos o padrão `internal fun applyX()`. Note que, tornando-a `internal`, estaremos protegendo essa função de quem consome nossa plataforma:
 
@@ -298,7 +298,7 @@ Crie uma outra pasta dentro de `decoration` e por hora chame de `kotlin.kt`.
 
 Utilizando o mesmo padrão `internal fun applyX()`:
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qsr1yfghpcd49tlq9z7c.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/qsr1yfghpcd49tlq9z7c.png)
 
 ```kotlin
 import org.gradle.api.Project
@@ -339,7 +339,7 @@ Crie um outro arquivo dentro de `decoration` chamado `project.kt`.
 
 Inclua duas extensões: uma para resgatar o `libs`, e outra para encontrar a versão:
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/dzdoygvjiiygoxindril.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/dzdoygvjiiygoxindril.png)
 
 ```kotlin
 internal val Project.libs: VersionCatalog

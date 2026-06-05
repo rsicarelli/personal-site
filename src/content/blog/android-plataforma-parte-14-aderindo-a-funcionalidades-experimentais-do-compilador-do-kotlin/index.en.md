@@ -112,7 +112,7 @@ fun HomeScreen() {
 
 Notice the error/warning that shows up on screen:
 
-![Error/warning shown by the IDE](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ziu7l59ez678zltzx6pj.png)
+![Error/warning shown by the IDE](https://media.rsicarelli.com/blog/android-plataforma/shared/ziu7l59ez678zltzx6pj.png)
 
 To fix this error, we simply add the `OptIn` to our composable:
 
@@ -140,7 +140,7 @@ Repeating this declaration at every use can get tedious, especially in large cod
 
 The good news is that we can configure our `applyKotlinOptions()` to opt in to the features we need.
 
-![DSL for opting in to compiler features](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/1m7xwrr2kspiuxgno236.png)
+![DSL for opting in to compiler features](https://media.rsicarelli.com/blog/android-plataforma/shared/1m7xwrr2kspiuxgno236.png)
 
 **1 -** We'll update our `CompilationOptions` model to accept a list of `FeatureOptIn`:
 

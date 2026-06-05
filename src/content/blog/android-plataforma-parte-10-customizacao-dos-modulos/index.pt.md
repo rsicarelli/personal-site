@@ -44,7 +44,7 @@ Cada ajuste em nossa plataforma pode ser adaptado a partir de um modelo ou opç�
 
 A proposta é criar um modelo que especifique quais opções serão aplicadas para cada módulo.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/24m73d4j4cj8rcjgg27g.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/24m73d4j4cj8rcjgg27g.png)
 
 ```kotlin
 sealed class AndroidOptions(

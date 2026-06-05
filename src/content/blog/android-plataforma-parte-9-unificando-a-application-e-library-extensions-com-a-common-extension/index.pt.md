@@ -102,7 +102,7 @@ Quando extensões específicas, como `ApplicationExtension` ou `LibraryExtension
 
 Assim, qualquer propriedade ou método definido em `CommonExtension` estará automaticamente disponível para qualquer outra extensão que dela herde. Isso assegura uma estrutura de base comum e consistente em todos os projetos Android.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/f4zpffe6luk77ineskff.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/f4zpffe6luk77ineskff.png)
 
 ## Extraíndo decorações comuns utilizando a `CommonExtensions`
 

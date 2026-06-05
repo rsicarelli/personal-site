@@ -25,14 +25,14 @@ contentType: tutorial
 
 Iniciaremos a partir de um projeto simples, gerado a partir de um template padrão do IntelliJ, ao qual foram adicionados alguns módulos:
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/mx1hv2uvq4pa5oqglvj2.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/mx1hv2uvq4pa5oqglvj2.png)
 
 - **app**: Atua como o ponto central do aplicativo, contendo a MainActivity.
 - **core:designsystem**: Define os principais elementos visuais, como tema, cores, tipografia e ícones do projeto.
 - **features:home**: Representa a primeira tela de interação, exibindo o conteúdo do módulo details.
 - **features:details**: Apresenta uma mensagem textual na interface.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/oasfibiiy8z36dtjytfs.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/oasfibiiy8z36dtjytfs.png)
 
 ## Problema a ser solucionado
 

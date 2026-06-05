@@ -113,7 +113,7 @@ fun HomeScreen() {
 
 Note o erro/alerta que surge na tela:
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ziu7l59ez678zltzx6pj.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/ziu7l59ez678zltzx6pj.png)
 
 Para resolver esse erro, simplesmente adicionamos o `OptIn` em nosso compose:
 
@@ -141,7 +141,7 @@ Repetir essa declaração em cada uso pode ser tedioso, especialmente em codebas
 
 A boa notícia é que podemos configurar nosso `applyKotlinOptions()` para dar opt-in nas features necessárias.
 
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/1m7xwrr2kspiuxgno236.png)
+![Image description](https://media.rsicarelli.com/blog/android-plataforma/shared/1m7xwrr2kspiuxgno236.png)
 
 **1 -** Atualizaremos nosso modelo `CompilationOptions` para aceitar uma lista de `FeatureOptIn`:
 

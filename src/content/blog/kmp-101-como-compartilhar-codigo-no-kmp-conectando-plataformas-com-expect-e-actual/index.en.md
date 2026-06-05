@@ -271,9 +271,9 @@ The `expect` keyword tells the Kotlin compiler that it can "expect" or "require"
 You can only use `expect` in the common source set (`commonMain`): the common source set declares, and the platform-specific source sets implement.
 
 - When you declare a component with the `expect` keyword, you are required to declare the implementation (`actual`) in each platform-specific source set. In fact, the moment you declare any `expect`, the IDE flags an error telling you that you need to declare the `actual` version for each platform.
-  ![Error declaring expect](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-expect-actual-kotlin.png?raw=true)
+  ![Error declaring expect](https://media.rsicarelli.com/blog/kmp-101/shared/error-expect-actual-kotlin.png)
 - You can't provide an implementation or assign a value to your component. For example, when you declare a variable with `expect`, you can't assign a value to it
-  ![Error initializing expect](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-expect-no-initializer.png?raw=true)
+  ![Error initializing expect](https://media.rsicarelli.com/blog/kmp-101/shared/error-expect-no-initializer.png)
 
 Now that we understand the `expect` keyword, let's learn more about its counterpart: `actual`
 
@@ -287,11 +287,11 @@ The Kotlin compiler guarantees that:
 
 - Every expected declaration in the common source set has a corresponding actual declaration in each platform-specific source set.
 
-![Demo across all platforms](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/fullfilling-expect-actual.gif?raw=true)
+![Demo across all platforms](https://media.rsicarelli.com/blog/kmp-101/shared/fullfilling-expect-actual.gif)
 
 - Every actual declaration shares the same package as its corresponding expected declaration, such as `br.com.rsicarelli.example`. The image below shows the error you get when trying to refactor declarations that don't share the same package:
 
-![Error: cannot have different packages](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/error-cannot-have-different-packages.gif?raw=true) <br> _"Cannot Perform Refactoring. <br> This refactoring will move the selected declaration without its expected/actual counterparts, which may lead to compilation errors."_
+![Error: cannot have different packages](https://media.rsicarelli.com/blog/kmp-101/shared/error-cannot-have-different-packages.gif) <br> _"Cannot Perform Refactoring. <br> This refactoring will move the selected declaration without its expected/actual counterparts, which may lead to compilation errors."_
 
 ## Conclusions
 

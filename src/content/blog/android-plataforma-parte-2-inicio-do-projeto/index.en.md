@@ -24,14 +24,14 @@ contentType: tutorial
 
 We'll start from a simple project, generated from a default IntelliJ template, with a few modules added to it:
 
-![Module structure of the starter project](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/mx1hv2uvq4pa5oqglvj2.png)
+![Module structure of the starter project](https://media.rsicarelli.com/blog/android-plataforma/shared/mx1hv2uvq4pa5oqglvj2.png)
 
 - **app**: Acts as the central entry point of the application, containing the MainActivity.
 - **core:designsystem**: Defines the main visual elements, such as the project's theme, colors, typography, and icons.
 - **features:home**: Represents the first interaction screen, displaying the content from the details module.
 - **features:details**: Shows a text message on the UI.
 
-![Screen rendered by the starter project](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/oasfibiiy8z36dtjytfs.png)
+![Screen rendered by the starter project](https://media.rsicarelli.com/blog/android-plataforma/shared/oasfibiiy8z36dtjytfs.png)
 
 ## The problem to solve
 

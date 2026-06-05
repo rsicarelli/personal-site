@@ -44,6 +44,16 @@ export function rehypeR2Images() {
           `[rehype-r2-images] no baked dimensions for "${key}". Run: node scripts/media-dimensions.mjs`,
         );
       }
+      // Cloudflare image transforms can't handle these on this zone — SVG is rejected outright
+      // (415) and animated GIFs over the frame-area limit 403 (small ones just pass through
+      // unoptimized anyway). Serve the R2 original directly; baked dimensions still give zero CLS.
+      if (/\.(svg|gif)$/.test(key)) {
+        props.width = dim[0];
+        props.height = dim[1];
+        if (props.loading == null) props.loading = 'lazy';
+        if (props.decoding == null) props.decoding = 'async';
+        return;
+      }
       const img = responsiveImage(key, dim);
       props.src = img.src;
       props.srcset = img.srcset;

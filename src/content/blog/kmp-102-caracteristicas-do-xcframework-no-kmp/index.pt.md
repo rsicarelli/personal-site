@@ -253,7 +253,7 @@ class Feature2ViewModelWrapper {
 3. A versão 1.2.0 traz uma mudança significativa em `feature2`.
 4. A versão 1.2.0 só pode ser integrada ao iOS depois que as correções de `feature1` na versão 1.1.0 forem integradas e validadas.
 
-![Timeline of KMP breaking changes](https://github.com/rsicarelli/KMP-101/blob/main/posts/assets/timeline-kmp-breaking-changes.png?raw=true)
+![Timeline of KMP breaking changes](https://media.rsicarelli.com/blog/kmp-102/shared/timeline-kmp-breaking-changes.png)
 
 ## Dores do desenvolvimento KMP
 

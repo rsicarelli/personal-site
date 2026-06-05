@@ -209,7 +209,7 @@ fun Project.jvmLibrary(builderAction: CompilationOptionsBuilder.() -> Unit = { }
 
 **1 -** Inside `core`, we'll create a new module called `threading`.
 
-![Project structure showing the new threading module under core](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/81xtralh2ban3swg5isb.png)
+![Project structure showing the new threading module under core](https://media.rsicarelli.com/blog/android-plataforma/shared/81xtralh2ban3swg5isb.png)
 
 **2 -** Add this new module to `settings.gradle.kts`:
 
@@ -239,10 +239,10 @@ dependencies {
 The IDE will tell you whether this library is pure JVM.
 
 I'm using IntelliJ here, but Android Studio will also show a different icon
-![Android Studio displaying a different icon for the pure JVM module](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/e3pvnqbr36fgmjw91v08.png)
+![Android Studio displaying a different icon for the pure JVM module](https://media.rsicarelli.com/blog/android-plataforma/shared/e3pvnqbr36fgmjw91v08.png)
 
 In the next article we'll learn how to customize our builds to enable some of the Kotlin compiler's experimental features.
 
-![Project structure with the configured pure JVM module](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/5afv0g9m07tkk60t7bta.png)
+![Project structure with the configured pure JVM module](https://media.rsicarelli.com/blog/android-plataforma/shared/5afv0g9m07tkk60t7bta.png)
 
-![IDE icon indicating a pure JVM module](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/tsfkotnkwv8xvdfu4305.png)
+![IDE icon indicating a pure JVM module](https://media.rsicarelli.com/blog/android-plataforma/shared/tsfkotnkwv8xvdfu4305.png)
