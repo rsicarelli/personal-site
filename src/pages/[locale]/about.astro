@@ -59,10 +59,10 @@ const jsonLd = [
       widths={[160, 320]}
       sizes="160px"
       priority
-      class="border-border mb-6 size-40 rounded-full border object-cover"
+      class="border-border mb-6 size-40 rounded-full border object-cover print:hidden"
     />
-    <h1 class="text-3xl font-bold tracking-tight">{page.data.title}</h1>
-    <Prose class="mt-4">
+    <h1 class="text-3xl font-bold tracking-tight print:hidden">{page.data.title}</h1>
+    <Prose class="mt-4 print:hidden">
       <Content />
     </Prose>
 
@@ -132,8 +132,18 @@ const jsonLd = [
                       {job.startDate} – {job.endDate ?? t('cv.present')}
                     </p>
                   </div>
+                  {job.location && (
+                    <p class="text-muted-foreground mt-0.5 font-mono text-xs">{job.location}</p>
+                  )}
                   {job.summary && (
                     <p class="text-muted-foreground mt-1 max-w-prose">{job.summary}</p>
+                  )}
+                  {job.highlights.length > 0 && (
+                    <ul class="text-muted-foreground mt-2 max-w-prose list-disc space-y-1 pl-5 text-sm">
+                      {job.highlights.map((highlight) => (
+                        <li>{highlight}</li>
+                      ))}
+                    </ul>
                   )}
                 </li>
               ))}
@@ -191,11 +201,16 @@ const jsonLd = [
       padding: 0 !important;
       max-width: none !important;
     }
-    /* The prose intro and back-links are screen context; the résumé is what prints. */
+    /* The portrait/title/prose intro are screen context — hidden via `print:hidden` on the
+       elements themselves; only the #cv résumé prints. */
     #cv {
       border: 0 !important;
       margin-top: 0 !important;
       padding-top: 0 !important;
+    }
+    /* Keep each role (title + highlights) on one page of the exported PDF. */
+    #cv li {
+      break-inside: avoid;
     }
     a {
       text-decoration: none !important;

@@ -1,19 +1,28 @@
-# Sample CV (English) — validates the `cv` schema. Real data lands with the About/CV page.
+# Structured CV (English) — feeds the About page sections and the Person/knowsAbout JSON-LD (#59).
 name: Rodrigo Sicarelli
 headline: Staff Software Engineer · Kotlin Multiplatform
 location: São Paulo, Brazil
 summary: >-
-  Staff Software Engineer on Mobile Platform, Kotlin Multiplatform authority, conference
-  speaker and OSS maintainer.
+  Staff Software Engineer on Stone's Mobile Platform. I build the platforms other engineers ship
+  on — cross-platform architecture, CI/CD, build infrastructure and developer experience.
+  Kotlin Multiplatform authority, conference speaker and OSS maintainer.
 knowsAbout:
   - Kotlin
   - Kotlin Multiplatform
+  - Compose Multiplatform
   - Swift
-  - TypeScript
+  - Android
+  - Mobile Architecture
   - Gradle
+  - CI/CD
+  - GitHub Actions
+  - Developer Experience
+  - Server-Driven UI
+  - Open Source
 email: hello@rsicarelli.com
 # Entity-reconciliation profiles → Person.sameAs (#59) + the visible "Elsewhere" links.
-# GitHub/LinkedIn are confirmed; X/Sessionize/Stone are best-guess URLs — CONFIRM and correct.
+# Pinned by tests/seo/eeat.test.ts (exact URLs — update both together); confirmation of the
+# X/Sessionize/Stone URLs is tracked in #147.
 profiles:
   - network: GitHub
     url: https://github.com/rsicarelli
@@ -25,8 +34,117 @@ profiles:
     url: https://sessionize.com/rodrigo-sicarelli
   - network: Stone
     url: https://www.stone.com.br
+# Newest-first: work[0] feeds Person.worksFor (src/lib/jsonld.ts).
 work:
   - company: Stone
     role: Staff Software Engineer (Mobile Platform)
-    startDate: '2021'
-    summary: Mobile platform engineering and Kotlin Multiplatform enablement.
+    startDate: Dec 2023
+    location: São Paulo, Brazil (Remote)
+    summary: >-
+      Joined to design the cross-platform migration architecture — a problem no one had solved at
+      this scale. Delivered in 4 months, adopted org-wide. Now Cross-Staff across the 3 platform
+      squads (Core, Health, Experience), 15 engineers.
+    highlights:
+      - 'Cross-platform architecture: 0% to 80% code sharing, legacy modules isolated with CI gates'
+      - 'CI/CD: Bitrise to GitHub Actions with selective CI (87% cost reduction) and a unified
+        release pipeline for 4 apps'
+      - 'App startup: investigated cold start from scratch, found the root causes — 50s to 15s'
+      - 'Observability: platform connecting CI to app reliability — 52 metrics across 5 repos'
+      - 'Architecture governance: RFCs, design docs and reviews — 15+ RFCs org-wide'
+      - 'AI workflows: built the agentic coding platform (Claude Code, MCP) used by engineers and
+        PMs'
+      - Google KMP Acceleration Program (1 of 5 worldwide), KotlinConf 2025 speaker, featured on
+        the Android Developer Blog and Google I/O 2025
+  - company: Polaroid
+    role: Senior Software Engineer
+    startDate: Nov 2021
+    endDate: Nov 2023
+    location: Amsterdam, Netherlands (Remote)
+    summary: >-
+      Joined to stabilize the flagship app — store rating was 3.5 and Bluetooth connections were
+      unreliable.
+    highlights:
+      - Rewrote the entire Bluetooth Low Energy layer — rating went from 3.5 to 4.6 and stayed
+        there for years
+      - Built the Android apps for Polaroid I-2 (the most advanced camera) and Polaroid Music from
+        scratch
+      - Reusable hardware platform (monorepo, custom Gradle plugins, modular BLE/logging/core)
+        adopted across 4 products — brought Android to full parity with iOS
+  - company: Creditas
+    role: Engineering Manager → Principal Software Engineer
+    startDate: Jan 2021
+    endDate: Sep 2021
+    location: Valencia, Spain
+    summary: >-
+      Started as Engineering Manager, then moved to Principal SE on the platform team, leading
+      cross-country teams across Brazil and Spain.
+    highlights:
+      - Delivered the org's Server-Driven UI engine — component registry, server-controlled
+        layouts, dynamic content via JSON — so product teams could ship without app releases
+  - company: Chama
+    role: Tech Lead → Engineering Manager
+    startDate: Mar 2018
+    endDate: Jan 2021
+    location: Amsterdam, Netherlands
+    summary: >-
+      As Tech Lead, led the Driver team building an intelligent delivery experience on open-source
+      tech. As Engineering Manager of Driver and Dealer, treated logistics efficiency as a complete
+      system — backend performance, operational UX (kanban, map, fleet control) and cross-platform
+      integrations.
+    highlights:
+      - Cut the average delivery time from 40 to 10 minutes — efficiency that translated into more
+        orders per hour without adding resources
+      - Resellers gained tools to orchestrate deliveries intelligently, with documented
+        productivity and revenue growth
+  - company: '99'
+    role: Lead Android Engineer → Mobile Tech Lead Manager
+    startDate: Mar 2017
+    endDate: Mar 2018
+    location: São Paulo, Brazil
+    summary: >-
+      Led the Passenger app Android team, then managed iOS and Android engineers as the technical
+      bridge for the mobile integrations with Didi Chuxing after the acquisition.
+  - company: Westfield
+    role: Senior Android Engineer
+    startDate: Nov 2016
+    endDate: Mar 2017
+    location: San Francisco Bay Area (Remote)
+    summary: Remote senior Android engineering for the US shopping-center group.
+  - company: Elo7
+    role: Senior Android Engineer
+    startDate: Dec 2015
+    endDate: Nov 2016
+    location: São Paulo, Brazil
+    summary: Android engineering on Brazil's largest handmade-goods marketplace.
+  - company: Easy (Easy Taxi)
+    role: Senior Android Engineer
+    startDate: Mar 2015
+    endDate: Dec 2015
+    location: São Paulo, Brazil
+    summary: Driver app team — led a software refactor that paved the way for the product's evolution.
+  - company: ZAP Imóveis
+    role: Android Engineer
+    startDate: Mar 2014
+    endDate: Mar 2015
+    location: São Paulo, Brazil
+    summary: >-
+      Drove Material Design adoption in the Android app and shipped product features like drawing
+      a search area on the map.
+  - company: Walmart
+    role: Android Engineer (Contractor)
+    startDate: Nov 2013
+    endDate: Mar 2014
+    location: São Paulo, Brazil
+    summary: Contract Android development for Walmart Brazil.
+  - company: ZapTaxi
+    role: Intern → Junior Android Engineer
+    startDate: Jul 2012
+    endDate: Nov 2013
+    location: São Paulo, Brazil
+    summary: Learned Android pairing with senior devs and built a technical solution for the support team.
+  - company: Kraft Consulting
+    role: Software Engineering Intern
+    startDate: Dec 2011
+    endDate: Jul 2012
+    location: São Paulo, Brazil
+    summary: Built custom software for clients running ERP systems.

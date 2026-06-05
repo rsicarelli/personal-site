@@ -1,19 +1,29 @@
-# CV de exemplo (Português) — valida o schema `cv`. Os dados reais chegam com a página Sobre/CV.
+# CV estruturado (Português) — alimenta as seções da página Sobre e o JSON-LD Person/knowsAbout (#59).
 name: Rodrigo Sicarelli
 headline: Staff Software Engineer · Kotlin Multiplatform
 location: São Paulo, Brasil
 summary: >-
-  Staff Software Engineer na Mobile Platform, referência em Kotlin Multiplatform, palestrante
-  e mantenedor de projetos open source.
+  Staff Software Engineer na Mobile Platform da Stone. Construo as plataformas sobre as quais
+  outros engenheiros entregam — arquitetura cross-platform, CI/CD, infraestrutura de build e
+  developer experience. Referência em Kotlin Multiplatform, palestrante e mantenedor de open
+  source.
 knowsAbout:
   - Kotlin
   - Kotlin Multiplatform
+  - Compose Multiplatform
   - Swift
-  - TypeScript
+  - Android
+  - Arquitetura Mobile
   - Gradle
+  - CI/CD
+  - GitHub Actions
+  - Developer Experience
+  - Server-Driven UI
+  - Open Source
 email: hello@rsicarelli.com
 # Perfis de reconciliação de entidade → Person.sameAs (#59) + os links visíveis "Em outros lugares".
-# GitHub/LinkedIn confirmados; X/Sessionize/Stone são URLs de melhor palpite — CONFIRMAR e corrigir.
+# Fixado por tests/seo/eeat.test.ts (URLs exatas — atualize os dois juntos); a confirmação das
+# URLs de X/Sessionize/Stone está rastreada na #147.
 profiles:
   - network: GitHub
     url: https://github.com/rsicarelli
@@ -25,8 +35,121 @@ profiles:
     url: https://sessionize.com/rodrigo-sicarelli
   - network: Stone
     url: https://www.stone.com.br
+# Do mais recente para o mais antigo: work[0] alimenta Person.worksFor (src/lib/jsonld.ts).
 work:
   - company: Stone
     role: Staff Software Engineer (Mobile Platform)
-    startDate: '2021'
-    summary: Engenharia de plataforma mobile e capacitação em Kotlin Multiplatform.
+    startDate: Dez 2023
+    location: São Paulo, Brasil (Remoto)
+    summary: >-
+      Entrei para desenhar a arquitetura de migração cross-platform — um problema que ninguém
+      havia resolvido nessa escala. Entreguei em 4 meses, adotada em toda a organização. Hoje atuo
+      como Cross-Staff nas 3 squads de plataforma (Core, Health, Experience), 15 engenheiros.
+    highlights:
+      - 'Arquitetura cross-platform: de 0% para 80% de código compartilhado, módulos legados
+        isolados com gates de CI'
+      - 'CI/CD: de Bitrise para GitHub Actions com CI seletivo (87% de redução de custo) e
+        pipeline de release unificado para 4 apps'
+      - 'Startup do app: investiguei o cold start do zero e encontrei as causas-raiz — de 50s para
+        15s'
+      - 'Observabilidade: plataforma conectando CI à confiabilidade do app — 52 métricas em 5
+        repositórios'
+      - 'Governança de arquitetura: RFCs, design docs e reviews — 15+ RFCs na organização'
+      - 'Workflows de IA: construí a plataforma de agentic coding (Claude Code, MCP) usada por
+        engenheiros e PMs'
+      - Google KMP Acceleration Program (1 de 5 no mundo), palestrante na KotlinConf 2025,
+        destaque no Android Developer Blog e no Google I/O 2025
+  - company: Polaroid
+    role: Senior Software Engineer
+    startDate: Nov 2021
+    endDate: Nov 2023
+    location: Amsterdã, Holanda (Remoto)
+    summary: >-
+      Entrei para estabilizar o app principal — a nota na loja era 3.5 e as conexões Bluetooth
+      eram instáveis.
+    highlights:
+      - Reescrevi toda a camada de Bluetooth Low Energy — a nota foi de 3.5 para 4.6 e se manteve
+        por anos
+      - Construí do zero os apps Android da Polaroid I-2 (a câmera mais avançada) e do Polaroid
+        Music
+      - Plataforma de hardware reutilizável (monorepo, plugins Gradle customizados, módulos de
+        BLE/logging/core) adotada em 4 produtos — levou o Android à paridade total com o iOS
+  - company: Creditas
+    role: Engineering Manager → Principal Software Engineer
+    startDate: Jan 2021
+    endDate: Set 2021
+    location: Valência, Espanha
+    summary: >-
+      Comecei como Engineering Manager e depois migrei para Principal SE no time de plataforma,
+      liderando times distribuídos entre Brasil e Espanha.
+    highlights:
+      - Entreguei o motor de Server-Driven UI da organização — registry de componentes, layouts
+        controlados pelo servidor, conteúdo dinâmico via JSON — para os times de produto
+        entregarem sem release de app
+  - company: Chama
+    role: Tech Lead → Engineering Manager
+    startDate: Mar 2018
+    endDate: Jan 2021
+    location: Amsterdã, Holanda
+    summary: >-
+      Como Tech Lead, liderei o time do Entregador construindo uma experiência de entrega
+      inteligente com tecnologias open source. Como Engineering Manager de Driver e Dealer, tratei
+      a eficiência logística como um sistema completo — performance de backend, UX operacional
+      (kanban, mapa, controle de frota) e integrações cross-platform.
+    highlights:
+      - Reduzi o tempo médio de entrega de 40 para 10 minutos — eficiência que se traduziu em mais
+        pedidos por hora sem adicionar recursos
+      - Revendas ganharam ferramentas para orquestrar entregas de forma inteligente, com casos
+        documentados de crescimento em produtividade e receita
+  - company: '99'
+    role: Lead Android Engineer → Mobile Tech Lead Manager
+    startDate: Mar 2017
+    endDate: Mar 2018
+    location: São Paulo, Brasil
+    summary: >-
+      Liderei o time Android do app do Passageiro e depois gerenciei engenheiros iOS e Android
+      como ponte técnica nas integrações mobile com a Didi Chuxing após a aquisição.
+  - company: Westfield
+    role: Senior Android Engineer
+    startDate: Nov 2016
+    endDate: Mar 2017
+    location: San Francisco Bay Area (Remoto)
+    summary: Engenharia Android sênior remota para o grupo americano de shopping centers.
+  - company: Elo7
+    role: Senior Android Engineer
+    startDate: Dez 2015
+    endDate: Nov 2016
+    location: São Paulo, Brasil
+    summary: Engenharia Android no maior marketplace de produtos artesanais do Brasil.
+  - company: Easy (Easy Taxi)
+    role: Senior Android Engineer
+    startDate: Mar 2015
+    endDate: Dez 2015
+    location: São Paulo, Brasil
+    summary: Time do app do Motorista — liderei uma refatoração de software que pavimentou a evolução do produto.
+  - company: ZAP Imóveis
+    role: Android Engineer
+    startDate: Mar 2014
+    endDate: Mar 2015
+    location: São Paulo, Brasil
+    summary: >-
+      Conduzi a adoção do Material Design no app Android e entreguei features de produto como
+      desenhar uma área de busca no mapa.
+  - company: Walmart
+    role: Android Engineer (Contractor)
+    startDate: Nov 2013
+    endDate: Mar 2014
+    location: São Paulo, Brasil
+    summary: Desenvolvimento Android como contractor para o Walmart Brasil.
+  - company: ZapTaxi
+    role: Estagiário → Junior Android Engineer
+    startDate: Jul 2012
+    endDate: Nov 2013
+    location: São Paulo, Brasil
+    summary: Aprendi Android pareando com devs mais seniores e construí uma solução técnica para o time de suporte.
+  - company: Kraft Consulting
+    role: Estagiário de Engenharia de Software
+    startDate: Dez 2011
+    endDate: Jul 2012
+    location: São Paulo, Brasil
+    summary: Construí software customizado para clientes que utilizam sistemas ERP.
