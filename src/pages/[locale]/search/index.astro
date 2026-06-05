@@ -52,6 +52,7 @@ const t = useTranslations(locale);
       data-error={t('search.error')}
       data-error-hint={t('search.error.hint')}
       data-loading={t('search.loading')}
+      data-showing-for={t('search.showingFor')}
     >
       <h1 class="text-3xl font-bold tracking-tight">{t('search.title')}</h1>
 
@@ -87,4 +88,14 @@ const t = useTranslations(locale);
       q.focus();
     });
   })();
+</script>
+
+{
+  /* Option D instant island (Stage 1b). A PROCESSED `<script>` import — Astro bundles it to a hashed
+  `/_astro/*` chunk served under `script-src 'self'`, so there's NO new inline-script hash and NO CSP
+  change (the csp-hashes guard only covers inline blocks). It debounce-fetches the SAME endpoint as
+  JSON for instant feel; with JS off the form GET + filter <a href>s still hit the no-JS HTML path. */
+}
+<script>
+  import '@/scripts/search-d1-hybrid';
 </script>
