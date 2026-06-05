@@ -133,6 +133,18 @@ const jsonLd = [
           </>
         )
       }
+      {
+        /* Visible per-series feed link — same URL as the head autodiscovery above; "RSS" is
+           literal across locales, the accessible name comes from the localized aria-label. */
+      }
+      <span aria-hidden="true">·</span>
+      <a
+        href={`/${locale}/series/${slug}/rss.xml`}
+        aria-label={t('rss.subscribeSeries')}
+        class="hover:text-foreground underline"
+      >
+        RSS
+      </a>
     </p>
 
     {
