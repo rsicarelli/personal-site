@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFile } from 'node:fs/promises';
+import { readFile, glob } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { sweepDistImageHosts, ALLOWED_HOSTS } from '../../scripts/check-dist-image-hosts.mjs';
 
@@ -19,6 +19,31 @@ describe('dist image-host sweep (#187)', () => {
   it('every <img> src/srcset in dist/ resolves first-party or allow-listed', async () => {
     const { pages, offenders } = await sweepDistImageHosts(fileURLToPath(new URL('dist', ROOT)));
     expect(pages, 'no dist/ pages found — run `astro build` first').toBeGreaterThan(0);
+    expect(offenders).toEqual([]);
+  });
+});
+
+describe('zero-CLS invariant (#186)', () => {
+  it('every media-host <img> in dist/ carries explicit width and height', async () => {
+    // `rehype-r2-images` bakes dimensions into markdown images, but raw HTML <img>s in .md pass
+    // through the pipeline untouched (no rehype-raw) — authors must write width/height on those by
+    // hand (values live in media-dimensions.json). This catches the dimensionless stragglers that
+    // would ship layout shift.
+    const offenders: string[] = [];
+    let checked = 0;
+    for await (const file of glob(fileURLToPath(new URL('dist/**/*.html', ROOT)))) {
+      const html = await readFile(file, 'utf8');
+      for (const [tag] of html.matchAll(/<img\b[^>]*>/g)) {
+        if (!tag.includes('media.rsicarelli.com')) continue;
+        checked++;
+        if (!/\bwidth="\d+"/.test(tag) || !/\bheight="\d+"/.test(tag))
+          offenders.push(`${file}\n    ${tag.slice(0, 160)}`);
+      }
+    }
+    expect(
+      checked,
+      'no media-host images found in dist/ — run `astro build` first',
+    ).toBeGreaterThan(0);
     expect(offenders).toEqual([]);
   });
 });

@@ -31,7 +31,7 @@ A [framework](https://developer.apple.com/library/archive/documentation/MacOSX/C
 It's a precompiled format that can be used freely across projects in Xcode. This file format makes it easier to build libraries for Apple devices, allowing them to be distributed and consumed through package managers like CocoaPods or the Swift Package Manager.
 
 <p align="center">
-  <img src="https://media.rsicarelli.com/blog/kmp-102/shared/framework_2x.png" alt="AppKit.framework" style="max-width:450px">
+  <img src="https://media.rsicarelli.com/blog/kmp-102/shared/framework_2x.png" alt="AppKit.framework" style="max-width:450px" width="912" height="298" loading="lazy" decoding="async">
 </p>
 
 ### An Introduction to the XCFramework
@@ -75,7 +75,7 @@ This artifact is exactly the file we need to link to the Xcode project in order 
 > **Note**: Be careful with the project name! Special characters, such as "-", can lead to an error, even though the XCFramework still gets generated.
 
 <p align="center">
-  <img src="https://media.rsicarelli.com/blog/kmp-102/shared/xcframework-task-result.png" alt="AppKit.framework" style="max-width:450px">
+  <img src="https://media.rsicarelli.com/blog/kmp-102/shared/xcframework-task-result.png" alt="AppKit.framework" style="max-width:450px" width="644" height="624" loading="lazy" decoding="async">
 </p>
 
 ## NativeBuildTypes: debug and release
