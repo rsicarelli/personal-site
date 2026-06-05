@@ -43,10 +43,21 @@ async function readKey() {
   return key;
 }
 
-/** Extract <loc> URLs from the built sitemap. */
+/** Extract <loc> URLs from the built sitemap, keeping only exact same-host entries. */
 async function readSitemapUrls() {
   const xml = await readFile(fileURLToPath(new URL('sitemap-0.xml', `file://${DIST}/`)), 'utf8');
-  return [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  // IndexNow rejects cross-host URLs anyway; filtering here makes the contract explicit.
+  const sameHost = locs.filter((u) => {
+    try {
+      return new URL(u).host === host;
+    } catch {
+      return false;
+    }
+  });
+  if (sameHost.length !== locs.length)
+    console.warn(`IndexNow: dropped ${locs.length - sameHost.length} non-${host} URL(s) from the sitemap.`);
+  return sameHost;
 }
 
 const key = await readKey();
