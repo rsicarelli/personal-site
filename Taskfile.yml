@@ -82,6 +82,14 @@ tasks:
     cmds:
       - pnpm lighthouse:prod
 
+  media:publish:
+    desc: 'Upload media to R2 + bake image dimensions (#153). Usage: task media:publish DIR=~/new-media [-- --dry-run]'
+    requires:
+      vars: [DIR]
+    cmds:
+      - scripts/upload-media.sh {{.DIR}} {{.CLI_ARGS}}
+      - node scripts/media-dimensions.mjs
+
   devto:canonical:
     desc: 'Dry-run the dev.to canonical_url write-back (#151). Add `-- --apply` (with DEV_TO_API_KEY) to write.'
     cmds:
