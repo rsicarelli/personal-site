@@ -1,0 +1,69 @@
+name: Search index sync
+
+# Rebuild the D1 FTS5 search index whenever content (or the corpus pipeline) changes on main, so the
+# server-rendered search at /{locale}/search reflects new/edited posts without a manual `task
+# search:sync`. Runs in parallel with Cloudflare Pages' native deploy — the index lives in D1, the
+# pages are static, so the two are independent; a freshly-deployed page is searchable once this
+# finishes (a few seconds at this corpus size).
+#
+# How it authenticates: `wrangler d1 execute --remote` reads CLOUDFLARE_API_TOKEN from the env. The
+# repo deliberately ships NO wrangler config (a config file makes Pages builds ignore dashboard env
+# vars — bug #195), so we target each database by NAME and let wrangler resolve it via the token.
+#
+# REQUIRED one-time setup (until these secrets exist this workflow no-ops on the wrangler step):
+#   - CLOUDFLARE_API_TOKEN  — a token scoped to "D1 Edit" (+ Account read) for the account that owns
+#                             personal-site-engagement{,-preview}. Create at Cloudflare → My Profile →
+#                             API Tokens, then add via `gh secret set CLOUDFLARE_API_TOKEN`.
+#   - CLOUDFLARE_ACCOUNT_ID — the account id (disambiguates if the token sees multiple accounts).
+#
+# The sync is idempotent and search-only: scripts/search-index-sync.mjs does CREATE TABLE IF NOT
+# EXISTS → DELETE FROM search_fts → re-INSERT every row, touching ONLY the search_fts table (never
+# the engagement counters/reactions/dedup tables). A re-run fully replaces the index; a half-applied
+# run is fixed by simply running again. Standalone workflow (not part of the required CI Summary).
+
+on:
+  push:
+    branches: [main]
+    # Only resync when the indexed corpus could have changed: content, the corpus/route endpoints,
+    # the search libs that shape a doc, or the sync script/build config itself.
+    paths:
+      - 'src/content/**'
+      - 'src/pages/search-corpus.json.ts'
+      - 'src/lib/search/**'
+      - 'src/lib/content.ts'
+      - 'scripts/search-index-sync.mjs'
+      - 'astro.config.mjs'
+  workflow_dispatch: {}
+
+# Never run two syncs at once: each does DELETE-then-INSERT, so an overlap could expose a partially
+# rebuilt index. `cancel-in-progress: false` QUEUES a new run behind the active one instead of
+# cancelling mid-write, so every sync completes atomically-enough at this scale.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    name: Rebuild D1 FTS5 search index
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v6
+      # Reuses the mise-pinned toolchain + installs deps (node/pnpm/task on PATH).
+      - uses: ./.github/actions/setup
+      # Build to emit dist/search-corpus.json, which the sync script turns into dist/search-index.sql.
+      - run: task build
+      # Production first (the live site). The script regenerates the SQL from the corpus, then applies.
+      - name: Sync production index
+        run: node scripts/search-index-sync.mjs --apply --db personal-site-engagement
+      # Preview DB second — keeps PR-preview search current; a hiccup here must not fail the run after
+      # production already synced.
+      - name: Sync preview index
+        continue-on-error: true
+        run: node scripts/search-index-sync.mjs --apply --db personal-site-engagement-preview
