@@ -8,6 +8,12 @@ allowBuilds:
   msw: set this to true or false
   sharp: true
   workerd: false
+# Force a non-vulnerable tmp everywhere (Dependabot alert #4, GHSA-ph9p-34f9-6g65):
+# @lhci/cli pins tmp ^0.1.0 (and pulls tmp 0.0.33 via inquirer/external-editor) with no
+# fixed upstream release. Both only call tmp.fileSync({prefix, postfix}), which is
+# unchanged in tmp 0.2.x. Drop this once @lhci/cli ships with tmp >= 0.2.6.
+overrides:
+  tmp: '>=0.2.6'
 minimumReleaseAgeExclude:
   - '@types/react@19.2.16'
   - react-dom@19.2.7
