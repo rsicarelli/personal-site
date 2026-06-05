@@ -43,7 +43,7 @@ Nesse post, vamos aprofundar sobre como essa exportação funciona e o impacto n
 Ao compilar um `.framework` com o Kotlin/Native, o compilador gera uma série de arquivos, sendo eles:
 
 <p align="center">
-  <img src="https://media.rsicarelli.com/blog/kmp-102/shared/kotlin-native-xcframework-expanded.png" style="max-width:300px" width="316" height="269" loading="lazy" decoding="async" />
+  <img src="https://media.rsicarelli.com/blog/kmp-102/shared/kotlin-native-xcframework-expanded.png" alt="Estrutura de pastas expandida do XCFramework produzido pelo Kotlin/Native" style="max-width:300px" width="316" height="269" loading="lazy" decoding="async" />
 </p>
 
 - `Headers/KotlinShared.h`: Interface gerada pelo KMP que expõe as funções e classes Kotlin para o Objective-C/Swift.

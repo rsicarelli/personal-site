@@ -77,7 +77,7 @@ struct ContentView: View {
 
 Como resultado, teremos:
 
-<img src="https://media.rsicarelli.com/blog/kmp-102/shared/kotlin-shared-hello-world-ios.gif" style="max-width:200px" width="640" height="1389" loading="lazy" decoding="async" />
+<img src="https://media.rsicarelli.com/blog/kmp-102/shared/kotlin-shared-hello-world-ios.gif" alt="Simulador iOS executando um botão SwiftUI que exibe o texto do helloWorld() compartilhado em Kotlin" style="max-width:200px" width="640" height="1389" loading="lazy" decoding="async" />
 
 ### O que está acontecendo aqui?
 
@@ -245,7 +245,7 @@ struct ContentView: View {
 
 Analisando a função `helloWorld()`, observamos que o SKIE gera uma função global que é acessível diretamente no Swift. Essa função global acessa a função `helloWorld()` do Kotlin (na forma "feia"), e a expõe para o Swift.
 
-<img src="https://media.rsicarelli.com/blog/kmp-102/shared/kotlin-shared-hello-world-skie.gif" style="max-width:500px" width="640" height="323" loading="lazy" decoding="async" />
+<img src="https://media.rsicarelli.com/blog/kmp-102/shared/kotlin-shared-hello-world-skie.gif" alt="Autocomplete do Xcode sugerindo a função global helloWorld() amigável ao Swift gerada pelo SKIE" style="max-width:500px" width="640" height="323" loading="lazy" decoding="async" />
 
 Muito melhor hein? Agora, conseguimos utilizar o código Kotlin no iOS de uma forma idiomática ao Swift!
 
