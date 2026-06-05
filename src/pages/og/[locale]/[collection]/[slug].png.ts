@@ -24,7 +24,7 @@ export const prerender = true;
 export async function getStaticPaths() {
   const paths: {
     params: { locale: string; collection: string; slug: string };
-    props: { title: string; eyebrow: string };
+    props: { title: string; eyebrow: string; seed: string };
   }[] = [];
   for (const { key, label } of COLLECTIONS) {
     for (const locale of LOCALES) {
@@ -34,7 +34,7 @@ export async function getStaticPaths() {
         if ((entry.data as { cover?: unknown }).cover) continue;
         paths.push({
           params: { locale, collection: key, slug },
-          props: { title: entry.data.title, eyebrow: t(label) },
+          props: { title: entry.data.title, eyebrow: t(label), seed: slug },
         });
       }
     }
@@ -43,8 +43,8 @@ export async function getStaticPaths() {
 }
 
 export async function GET({ props }: APIContext): Promise<Response> {
-  const { title, eyebrow } = props as { title: string; eyebrow: string };
-  const png = await renderOgCard({ title, eyebrow });
+  const { title, eyebrow, seed } = props as { title: string; eyebrow: string; seed: string };
+  const png = await renderOgCard({ title, eyebrow, seed });
   return new Response(new Uint8Array(png), {
     headers: {
       'Content-Type': 'image/png',
