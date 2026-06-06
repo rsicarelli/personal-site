@@ -9,6 +9,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Prose from '@/components/ui/Prose.astro';
 import Image from '@/components/ui/Image.astro';
+import Card from '@/components/ui/Card.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
 import portrait from '@/assets/rodrigo-sicarelli.jpg';
 import { LOCALES, type Locale } from '@/config/site';
@@ -19,18 +20,29 @@ import { getLocalizedEntry } from '@/lib/content';
 import { render } from 'astro:content';
 
 export async function getStaticPaths() {
+  /** Hub destinations (nav evidence review): About doubles as the landing for the personal pages,
+   *  so footer placement is never their only path. Card text reuses each entry's own frontmatter.
+   *  (Declared inside getStaticPaths — Astro extracts the function, so outer consts aren't in scope.) */
+  const HUB_SLUGS = ['now', 'uses', 'contact'] as const;
   return Promise.all(
     LOCALES.map(async (locale) => ({
       params: { locale },
       props: {
         page: (await getLocalizedEntry('pages', locale, 'about'))?.entry,
         cv: (await getLocalizedEntry('cv', locale, 'cv'))?.entry,
+        hub: (await Promise.all(HUB_SLUGS.map((slug) => getLocalizedEntry('pages', locale, slug))))
+          .filter((e) => e !== undefined)
+          .map((e) => ({
+            href: `/${locale}/${e.slug}`,
+            title: e.entry.data.title,
+            description: e.entry.data.description,
+          })),
       },
     })),
   );
 }
 
-const { page, cv } = Astro.props;
+const { page, cv, hub } = Astro.props;
 const locale = Astro.params.locale as Locale;
 const t = useTranslations(locale);
 if (!page) throw new Error(`Missing 'about' page entry for locale "${locale}".`);
@@ -65,6 +77,22 @@ const jsonLd = [
     <Prose class="mt-4 print:hidden">
       <Content />
     </Prose>
+
+    <!-- Hub cards — surface the personal pages (Now / Uses / Contact) so the footer is never
+         their only path. Screen-only, like the intro: the print export is just the #cv résumé. -->
+    <nav
+      aria-label={t('nav.about')}
+      class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3 print:hidden"
+    >
+      {
+        hub.map((card) => (
+          <Card href={card.href}>
+            <h2 class="font-semibold">{card.title}</h2>
+            <p class="text-muted-foreground mt-1 text-sm">{card.description}</p>
+          </Card>
+        ))
+      }
+    </nav>
 
     <!-- Structured CV -->
     <div id="cv" class="border-border mt-16 border-t pt-10">

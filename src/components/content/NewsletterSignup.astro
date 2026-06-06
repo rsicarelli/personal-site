@@ -18,9 +18,13 @@ interface Props {
   /** Drop the built-in `container-content` wrapper when the form already sits inside a column
    *  (e.g. the end-of-article engagement zone), so the gutter/measure isn't applied twice. */
   bare?: boolean;
+  /** Anchor id for in-page links (e.g. the footer "Newsletter" link → #newsletter). Only the
+   *  footer instance sets it — the component renders twice on blog posts (engagement zone +
+   *  footer), and a hardcoded id would duplicate. */
+  id?: string;
   class?: string;
 }
-const { locale, bare = false, class: className } = Astro.props;
+const { locale, bare = false, id, class: className } = Astro.props;
 const t = useTranslations(locale);
 const enabled = PUBLIC_NEWSLETTER_ENABLED === 'true';
 
@@ -33,7 +37,7 @@ const button =
 {
   enabled && (
     <div class:list={[!bare && 'container-content pt-8', className]}>
-      <section class="border-border bg-card rounded-lg border p-5">
+      <section id={id} class="border-border bg-card scroll-mt-4 rounded-lg border p-5">
         <h2 class="text-foreground text-sm font-semibold">{t('newsletter.heading')}</h2>
         <p class="text-muted-foreground mt-1 text-sm">{t('newsletter.blurb')}</p>
 
