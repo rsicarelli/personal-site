@@ -5,7 +5,7 @@
         "https://rsicarelli.com/en/",
         "https://rsicarelli.com/pt-br/",
         "https://rsicarelli.com/en/about/",
-        "https://rsicarelli.com/en/blog/kotlin-multiplatform-in-production/"
+        "https://rsicarelli.com/en/blog/kmp-102-modularizacao-no-kmp/"
       ],
       "numberOfRuns": 3,
       "settings": {

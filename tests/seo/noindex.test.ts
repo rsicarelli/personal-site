@@ -87,7 +87,7 @@ describe('noindex placeholders', () => {
   });
 
   it('real posts, home, about and listings are indexable (no robots tag)', () => {
-    for (const path of ['/', '/about', '/blog', '/blog/kotlin-multiplatform-in-production']) {
+    for (const path of ['/', '/about', '/blog', '/blog/kmp-102-modularizacao-no-kmp']) {
       const p = pages.find((x) => x.logicalPath === path && x.locale === 'en');
       if (p) expect(robots(p.html), `${path} should be indexable`).toBe('');
     }

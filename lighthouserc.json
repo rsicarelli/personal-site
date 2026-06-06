@@ -7,7 +7,7 @@
         "http://localhost:4321/en/",
         "http://localhost:4321/pt-br/",
         "http://localhost:4321/en/about/",
-        "http://localhost:4321/en/blog/kotlin-multiplatform-in-production/",
+        "http://localhost:4321/en/blog/kmp-102-modularizacao-no-kmp/",
         "http://localhost:4321/en/blog/kmp-102-utilizando-codigo-kotlin-no-swift/"
       ],
       "numberOfRuns": 3,

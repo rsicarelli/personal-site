@@ -12,6 +12,7 @@ const EXPECTED_SAME_AS = [
   'https://github.com/rsicarelli',
   'https://linkedin.com/in/rsicarelli',
   'https://x.com/rsicarelli',
+  'https://bsky.app/profile/rsicarelli.bsky.social',
   'https://sessionize.com/rodrigo-sicarelli',
   'https://www.stone.com.br',
 ];

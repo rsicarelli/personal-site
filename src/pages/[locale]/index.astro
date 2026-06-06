@@ -1,19 +1,33 @@
 ---
 /**
- * Home hub (#29) — one localized route per locale (`/en/`, `/pt-br/`). Aggregates the content
- * collections through the spine: latest posts, featured projects and upcoming talks, each linking
- * to its section. Sections render only when they have content (draft-filtered in prod). Strings
- * come from the i18n dictionary; cards/layout adopt Epic 5's components as they land.
+ * Home hub (#29, redesigned as the content vitrine — #274) — a wide showcase in lanes. The identity
+ * row pairs the serif name + credential pills + elsewhere links with the featured deep-dive as a
+ * cover banner; then full-width lanes follow: the learning paths (every series with its wave
+ * cover), the latest writing as a compact strip, and a highlights grid (OSS projects, the next
+ * appearance when one is scheduled, computed stats, the photos teaser and a contact invite).
+ * Everything is the blog hub's language (cover art, mono labels, pill tags) on Card surfaces —
+ * keyboard order follows DOM order, which matches the visual flow. Sections render only when they
+ * have content (draft-filtered in prod); the newsletter band already lives in the footer.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Card from '@/components/ui/Card.astro';
+import Cover from '@/components/content/Cover.astro';
+import CoverBanner from '@/components/content/CoverBanner.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
+import SeriesCard from '@/components/content/SeriesCard.astro';
 import { LOCALES, SITE, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
+import type { UIKey } from '@/i18n/ui';
 import { canonicalUrl } from '@/lib/seo';
 import { websiteLd, personLd } from '@/lib/jsonld';
-import { getLocalizedEntries, getLocalizedEntry } from '@/lib/content';
+import {
+  getLocalizedEntries,
+  getLocalizedEntry,
+  getSeriesWithCounts,
+  readingTimeOf,
+  type SeriesWithCount,
+} from '@/lib/content';
 import { formatDate, isoDate } from '@/lib/datetime';
 
 export function getStaticPaths() {
@@ -31,54 +45,190 @@ const siteGraph = [
   websiteLd({ url: homeUrl, name: SITE.title, locale }),
   ...(cv ? [personLd(cv.entry.data, { url: canonicalUrl('/about', locale, Astro.site) })] : []),
 ];
+// Elsewhere links — social/speaking profiles only. Stone stays in Person.sameAs (JSON-LD) but is
+// an employer page, not a "find me here" destination, so it's filtered from the visible row.
+const profiles = (cv?.entry.data.profiles ?? []).filter((p) => p.network !== 'Stone');
 
-const posts = (await getLocalizedEntries('blog', locale)).slice(0, 3);
-const projects = (await getLocalizedEntries('portfolio', locale))
+const allPosts = await getLocalizedEntries('blog', locale);
+const featured = allPosts
   .filter((p) => p.entry.data.featured)
-  .slice(0, 3);
+  .sort(
+    (a, b) =>
+      (a.entry.data.featuredOrder ?? Number.MAX_SAFE_INTEGER) -
+      (b.entry.data.featuredOrder ?? Number.MAX_SAFE_INTEGER),
+  )[0];
+const recent = allPosts.filter((p) => !p.entry.data.featured).slice(0, 3);
+
+const seriesList = await getSeriesWithCounts(locale);
+const seriesLabel = new Map(seriesList.map((s) => [s.slug, s.data.label]));
+
+/** Same line as the blog hub spotlight: "8 parts · ~1h 4min · Beginner". */
+function metaOf(s: SeriesWithCount): string {
+  const parts = [`${s.count} ${t('blog.parts')}`];
+  if (s.totalMinutes > 0) {
+    const h = Math.floor(s.totalMinutes / 60);
+    const m = s.totalMinutes % 60;
+    parts.push(h > 0 ? `~${h}h${m ? ` ${m}min` : ''}` : `${s.totalMinutes} ${t('blog.minRead')}`);
+  }
+  if (s.data.level) parts.push(t(`blog.difficulty.${s.data.level}` as UIKey));
+  return parts.join(' · ');
+}
+
+const allProjects = await getLocalizedEntries('portfolio', locale);
+const projects = allProjects.filter((p) => p.entry.data.featured).slice(0, 2);
+
+// The next appearance — the tile only renders when something is actually scheduled.
 const now = new Date();
-const upcoming = (await getLocalizedEntries('events', locale))
+const events = await getLocalizedEntries('events', locale);
+const upcoming = events
   .filter((e) => (e.entry.data.endDate ?? e.entry.data.startDate) >= now)
-  .sort((a, b) => a.entry.data.startDate.getTime() - b.entry.data.startDate.getTime())
-  .slice(0, 2);
+  .sort((a, b) => a.entry.data.startDate.getTime() - b.entry.data.startDate.getTime())[0];
+
+// Computed proof points for the stats tile — counted from the collections, never copy.
+const stats = [
+  { value: allPosts.length, label: t('home.stats.articles') },
+  { value: seriesList.length, label: t('home.stats.series') },
+  { value: events.length, label: t('home.stats.talks') },
+  { value: allProjects.length, label: t('home.stats.projects') },
+];
+
+const credentials = [
+  { label: t('home.credential.role'), href: `/${locale}/about` },
+  { label: t('home.credential.speaker'), href: `/${locale}/talks` },
+  { label: t('home.credential.oss'), href: `/${locale}/projects` },
+];
+
+const featuredEyebrow = featured?.entry.data.series
+  ? `${t('blog.featured')} · ${seriesLabel.get(featured.entry.data.series)}${
+      featured.entry.data.seriesOrder != null
+        ? ` · ${t('blog.part')} ${featured.entry.data.seriesOrder}`
+        : ''
+    }`
+  : t('blog.featured');
+
+const laneLabel = 'text-muted-foreground text-xs font-semibold tracking-wide uppercase';
+const sectionLink =
+  'text-muted-foreground hover:text-foreground font-mono text-xs transition-colors';
 ---
 
 <BaseLayout title={t('site.title')} description={t('site.description')}>
   <JsonLd slot="head" schema={siteGraph} />
-  <Container class="py-16">
-    <section>
-      <h1 class="text-4xl font-bold tracking-tight">{t('home.heading')}</h1>
-      <p class="text-muted-foreground mt-4 max-w-prose text-lg">{t('home.intro')}</p>
+  <Container width="wide" class="py-16">
+    {/* Identity row — the person on the left, the featured deep-dive as the showcase piece. */}
+    <section class="grid items-end gap-8 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <h1 class="font-serif text-4xl font-bold tracking-tight text-balance sm:text-5xl">
+          {t('home.heading')}
+        </h1>
+        <p class="text-foreground/80 mt-4 max-w-prose text-lg text-pretty">{t('home.intro')}</p>
+        <ul class="mt-6 flex flex-wrap gap-2 text-xs">
+          {
+            credentials.map((c) => (
+              <li>
+                <a
+                  href={c.href}
+                  class="border-border text-muted-foreground hover:text-foreground inline-flex items-center rounded-full border px-3 py-1.5 transition-colors"
+                >
+                  {c.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        {
+          profiles.length > 0 && (
+            <p class="text-muted-foreground mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs">
+              {profiles.map((p, i) => (
+                <>
+                  {i > 0 && <span aria-hidden="true">·</span>}
+                  <a
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:text-foreground transition-colors"
+                  >
+                    {p.network}
+                  </a>
+                </>
+              ))}
+            </p>
+          )
+        }
+      </div>
+      {
+        featured && (
+          <div class="lg:col-span-7">
+            <CoverBanner
+              seed={featured.slug}
+              topic={featured.entry.data.topic}
+              series={featured.entry.data.series}
+              part={featured.entry.data.seriesOrder}
+              title={featured.entry.data.title}
+              href={`/${locale}/blog/${featured.slug}`}
+              eyebrow={featuredEyebrow}
+              topicLabel={t(`blog.topic.${featured.entry.data.topic}` as UIKey)}
+              as="h2"
+              headingClass="text-xl sm:text-2xl"
+              class="border-border rounded-lg border"
+            />
+          </div>
+        )
+      }
     </section>
 
+    {/* Learning paths lane — every series with its wave cover, the site's main asset. */}
     {
-      posts.length > 0 && (
-        <section class="mt-16">
-          <div class="flex items-baseline justify-between gap-3">
-            <h2 class="text-xl font-semibold tracking-tight">{t('home.latestPosts')}</h2>
-            <a
-              href={`/${locale}/blog`}
-              class="text-muted-foreground hover:text-foreground font-mono text-xs"
-            >
+      seriesList.length > 0 && (
+        <section aria-labelledby="home-paths" class="mt-14">
+          <div class="flex items-baseline justify-between gap-4">
+            <h2 id="home-paths" class={laneLabel}>
+              {t('home.paths')}
+            </h2>
+            <a href={`/${locale}/blog`} class={sectionLink}>
+              {t('home.allPaths')} →
+            </a>
+          </div>
+          <ul class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {seriesList.map((s) => (
+              <li>
+                <SeriesCard href={s.href} label={s.data.label} meta={metaOf(s)} slug={s.slug} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {/* Latest writing — compact strip; featured already leads the identity row. */}
+    {
+      recent.length > 0 && (
+        <section aria-labelledby="home-latest" class="mt-14">
+          <div class="flex items-baseline justify-between gap-4">
+            <h2 id="home-latest" class={laneLabel}>
+              {t('home.latestPosts')}
+            </h2>
+            <a href={`/${locale}/blog`} class={sectionLink}>
               {t('blog.allPosts')} →
             </a>
           </div>
-          <ul class="mt-6 space-y-6">
-            {posts.map(({ slug, entry }) => (
-              <li class="border-border border-b pb-6 last:border-0">
-                <h3 class="font-semibold tracking-tight">
-                  <a href={`/${locale}/blog/${slug}`} class="hover:text-primary transition-colors">
+          <ul class="mt-4">
+            {recent.map(({ slug, entry }) => (
+              <li class="border-border border-b last:border-0">
+                <a
+                  href={`/${locale}/blog/${slug}`}
+                  class="group flex flex-col gap-1 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+                >
+                  <span class="group-hover:text-primary font-semibold tracking-tight transition-colors">
                     {entry.data.title}
-                  </a>
-                </h3>
-                <p class="text-muted-foreground mt-1 font-mono text-xs">
-                  <time datetime={isoDate(entry.data.pubDate)}>
-                    {formatDate(entry.data.pubDate, locale, 'medium')}
-                  </time>
-                </p>
-                <p class="text-muted-foreground mt-2 max-w-prose text-sm">
-                  {entry.data.description}
-                </p>
+                  </span>
+                  <span class="text-muted-foreground shrink-0 font-mono text-xs">
+                    <time datetime={isoDate(entry.data.pubDate)}>
+                      {formatDate(entry.data.pubDate, locale)}
+                    </time>
+                    <span aria-hidden="true"> · </span>
+                    {readingTimeOf(entry)} {t('blog.minRead')}
+                  </span>
+                </a>
               </li>
             ))}
           </ul>
@@ -86,68 +236,86 @@ const upcoming = (await getLocalizedEntries('events', locale))
       )
     }
 
-    {
-      projects.length > 0 && (
-        <section class="mt-16">
-          <div class="flex items-baseline justify-between gap-3">
-            <h2 class="text-xl font-semibold tracking-tight">{t('home.featuredProjects')}</h2>
-            <a
-              href={`/${locale}/projects`}
-              class="text-muted-foreground hover:text-foreground font-mono text-xs"
-            >
-              {t('projects.allProjects')} →
-            </a>
-          </div>
-          <ul class="mt-6 grid gap-4 sm:grid-cols-2">
-            {projects.map(({ slug, entry }) => (
-              <Card as="li">
-                <h3 class="font-mono font-semibold tracking-tight">
-                  <a
-                    href={`/${locale}/projects/${slug}`}
-                    class="hover:text-primary transition-colors"
-                  >
-                    {entry.data.title}
-                  </a>
-                </h3>
-                <p class="text-muted-foreground mt-1 text-sm">{entry.data.description}</p>
+    {/* Highlights lane — OSS, appearances, proof points and invites as equal-height tiles. */}
+    <section aria-labelledby="home-highlights" class="mt-14">
+      <h2 id="home-highlights" class={laneLabel}>{t('home.highlights')}</h2>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
+        {
+          projects.map(({ slug, entry }) => (
+            <div class="lg:col-span-2">
+              <Card href={`/${locale}/projects/${slug}`} class="flex h-full flex-col gap-2">
+                <h3 class={laneLabel}>{t('home.projectTile')}</h3>
+                <p class="font-mono text-lg font-semibold tracking-tight">{entry.data.title}</p>
+                <p class="text-muted-foreground text-sm">{entry.data.description}</p>
+                {entry.data.tech.length > 0 && (
+                  <ul class="text-muted-foreground mt-auto flex flex-wrap gap-2 pt-2 text-xs">
+                    {entry.data.tech.slice(0, 3).map((tech) => (
+                      <li class="border-border rounded-full border px-2 py-0.5">{tech}</li>
+                    ))}
+                  </ul>
+                )}
               </Card>
-            ))}
-          </ul>
-        </section>
-      )
-    }
-
-    {
-      upcoming.length > 0 && (
-        <section class="mt-16">
-          <div class="flex items-baseline justify-between gap-3">
-            <h2 class="text-xl font-semibold tracking-tight">{t('home.upcomingTalks')}</h2>
-            <a
-              href={`/${locale}/talks`}
-              class="text-muted-foreground hover:text-foreground font-mono text-xs"
-            >
-              {t('talks.allTalks')} →
-            </a>
-          </div>
-          <ul class="mt-6 space-y-6">
-            {upcoming.map(({ slug, entry }) => (
-              <li class="border-border border-b pb-6 last:border-0">
-                <h3 class="font-semibold tracking-tight">
-                  <a href={`/${locale}/talks/${slug}`} class="hover:text-primary transition-colors">
-                    {entry.data.title}
-                  </a>
-                </h3>
-                <p class="text-muted-foreground mt-1 font-mono text-xs">
-                  <time datetime={isoDate(entry.data.startDate)}>
-                    {formatDate(entry.data.startDate, locale, 'medium')}
+            </div>
+          ))
+        }
+        {
+          upcoming && (
+            <div class="lg:col-span-2">
+              <Card href={`/${locale}/talks/${upcoming.slug}`} class="flex h-full flex-col gap-2">
+                <h3 class={laneLabel}>{t('home.upcomingTalks')}</h3>
+                <p class="font-mono text-lg font-semibold tracking-tight">
+                  <time datetime={isoDate(upcoming.entry.data.startDate)}>
+                    {formatDate(upcoming.entry.data.startDate, locale)}
                   </time>
-                  {entry.data.location && <span> · {entry.data.location}</span>}
                 </p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )
-    }
+                <p class="font-semibold tracking-tight">{upcoming.entry.data.title}</p>
+                {upcoming.entry.data.location && (
+                  <p class="text-muted-foreground mt-auto pt-2 font-mono text-xs">
+                    {upcoming.entry.data.location}
+                  </p>
+                )}
+              </Card>
+            </div>
+          )
+        }
+
+        <Card class="h-full lg:col-span-2">
+          <dl class="grid h-full grid-cols-2 content-center gap-x-4 gap-y-5">
+            {
+              stats.map((s) => (
+                <div class="flex flex-col-reverse">
+                  <dt class="text-muted-foreground mt-0.5 text-xs font-semibold tracking-wide uppercase">
+                    {s.label}
+                  </dt>
+                  <dd class="font-mono text-2xl font-semibold tracking-tight tabular-nums">
+                    {s.value}
+                  </dd>
+                </div>
+              ))
+            }
+          </dl>
+        </Card>
+        <div class="lg:col-span-2">
+          <Card href={`/${locale}/photos`} class="group flex h-full flex-col overflow-hidden">
+            <Cover seed="photos" bare class="border-border h-20 rounded-md border" />
+            <p class="group-hover:text-primary mt-3 font-semibold tracking-tight transition-colors">
+              {t('talks.photosLink')}
+            </p>
+          </Card>
+        </div>
+        <div class="lg:col-span-2">
+          <Card
+            href={`/${locale}/contact`}
+            class="group flex h-full flex-col justify-between gap-3"
+          >
+            <h3 class={laneLabel}>{t('nav.contact')}</h3>
+            <p class="font-semibold tracking-tight text-pretty">{t('home.contactTeaser')}</p>
+            <p class:list={['group-hover:text-foreground', sectionLink]}>
+              {t('home.contactCta')} →
+            </p>
+          </Card>
+        </div>
+      </div>
+    </section>
   </Container>
 </BaseLayout>

@@ -18,6 +18,8 @@ provenance:
 topic: kmp
 difficulty: intermediate
 contentType: tutorial
+featured: true
+featuredOrder: 1
 ---
 
 Neste artigo, vamos entender melhor o comportamento da modularização em projetos KMP, e como isso pode ser feito de forma eficiente e organizada.

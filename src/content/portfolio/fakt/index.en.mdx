@@ -1,13 +1,22 @@
 ---
 title: fakt
-description: An open-source Kotlin Multiplatform library.
+description: Compile-time test doubles for Kotlin Multiplatform — type-safe fakes generated from annotated interfaces, zero boilerplate.
 draft: false
 repo: https://github.com/rsicarelli/fakt
 tech:
-  - Kotlin
   - Kotlin Multiplatform
+  - Compiler Plugin
+  - Testing
 featured: true
 ---
 
-`fakt` is an open-source Kotlin Multiplatform library I maintain. A full write-up — what it solves,
-how it's used, and design notes — is coming soon; for now the source and releases live on GitHub.
+`fakt` automates the fake-over-mock pattern: annotate an interface with `@Fake` and the compiler
+generates a type-safe test double at build time. Zero boilerplate, no reflection, and it works
+across every KMP target — the generated fakes are readable `.kt` files, not bytecode magic.
+
+Because generation happens at compile time, fakes never drift from the real code: change the
+interface and the build breaks instead of the test silently lying. Tests verify outcomes (state)
+instead of implementation details (calls), which is exactly what
+[Google recommends for test doubles](https://developer.android.com/training/testing/fundamentals/test-doubles).
+
+Published on Maven Central; docs, source and releases live on GitHub.
