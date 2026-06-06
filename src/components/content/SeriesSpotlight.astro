@@ -14,9 +14,11 @@ import type { SeriesWithCount } from '@/lib/content';
 interface Props {
   locale: Locale;
   series: SeriesWithCount[];
+  /** Section heading override (defaults to the localized "Series") — e.g. "Learning paths" on home. */
+  heading?: string;
 }
 
-const { locale, series } = Astro.props;
+const { locale, series, heading } = Astro.props;
 const t = useTranslations(locale);
 
 /** "8 parts · ~1h 4min · Beginner" — parts always, then total time and level when known. */
@@ -39,7 +41,7 @@ function metaOf(s: SeriesWithCount): string {
         id="series-spotlight"
         class="text-muted-foreground text-xs font-semibold tracking-wide uppercase"
       >
-        {t('blog.series')}
+        {heading ?? t('blog.series')}
       </h2>
       <ul class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {series.map((s) => (
