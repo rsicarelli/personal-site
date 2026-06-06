@@ -277,10 +277,15 @@ const sectionLink =
           </Card>
         </div>
         <div class="lg:col-span-2">
-          <Card href={`/${locale}/contact`} class="group flex h-full flex-col justify-between gap-3">
+          <Card
+            href={`/${locale}/contact`}
+            class="group flex h-full flex-col justify-between gap-3"
+          >
             <h3 class={tileLabel}>{t('nav.contact')}</h3>
-            <p class="text-pretty font-semibold tracking-tight">{t('home.contactTeaser')}</p>
-            <p class:list={['group-hover:text-foreground', sectionLink]}>{t('home.contactCta')} →</p>
+            <p class="font-semibold tracking-tight text-pretty">{t('home.contactTeaser')}</p>
+            <p class:list={['group-hover:text-foreground', sectionLink]}>
+              {t('home.contactCta')} →
+            </p>
           </Card>
         </div>
       </div>
