@@ -127,7 +127,7 @@ const sectionLink =
               <li>
                 <a
                   href={c.href}
-                  class="border-border text-muted-foreground hover:text-foreground rounded-full border px-3 py-1.5 transition-colors"
+                  class="border-border text-muted-foreground hover:text-foreground inline-flex items-center rounded-full border px-3 py-1.5 transition-colors"
                 >
                   {c.label}
                 </a>
@@ -185,7 +185,7 @@ const sectionLink =
               {t('home.paths')}
             </h2>
             <a href={`/${locale}/blog`} class={sectionLink}>
-              {t('blog.allPosts')} →
+              {t('home.allPaths')} →
             </a>
           </div>
           <ul class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

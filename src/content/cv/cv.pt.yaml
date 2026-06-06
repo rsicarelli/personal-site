@@ -31,6 +31,8 @@ profiles:
     url: https://linkedin.com/in/rsicarelli
   - network: X
     url: https://x.com/rsicarelli
+  - network: Bluesky
+    url: https://bsky.app/profile/rsicarelli.bsky.social
   - network: Sessionize
     url: https://sessionize.com/rodrigo-sicarelli
   - network: Stone
