@@ -90,8 +90,10 @@ const sectionLink =
 <BaseLayout title={t('site.title')} description={t('site.description')}>
   <JsonLd slot="head" schema={siteGraph} />
 
-  {/* Full-bleed wave hero — the site's generative signature, edge to edge. The scrim mirrors
-      CoverBanner's (opaque at the bottom, fading up) so the copy stays readable in BOTH themes. */}
+  {
+    /* Full-bleed wave hero — the site's generative signature, edge to edge. The scrim mirrors
+      CoverBanner's (opaque at the bottom, fading up) so the copy stays readable in BOTH themes. */
+  }
   <section class="border-border relative isolate overflow-hidden border-b">
     <Cover seed="rodrigo-sicarelli" bare class="absolute inset-0 h-full w-full" />
     <div
