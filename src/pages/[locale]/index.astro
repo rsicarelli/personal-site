@@ -1,10 +1,10 @@
 ---
 /**
- * Home hub (#29, redesigned as the bento vitrine) — a wide, asymmetric showcase. The identity row
- * pairs the serif name + credential pills + elsewhere links with the featured deep-dive as a cover
- * banner; below it a bento grid mixes the site's best shelves as tiles: the top learning paths with
- * their wave covers, the remaining paths as a list, OSS projects, the next appearance, computed
- * stats, the photos teaser and a contact invite. A compact latest-posts strip closes the page.
+ * Home hub (#29, redesigned as the content vitrine — #274) — a wide showcase in lanes. The identity
+ * row pairs the serif name + credential pills + elsewhere links with the featured deep-dive as a
+ * cover banner; then full-width lanes follow: the learning paths (every series with its wave
+ * cover), the latest writing as a compact strip, and a highlights grid (OSS projects, the next
+ * appearance when one is scheduled, computed stats, the photos teaser and a contact invite).
  * Everything is the blog hub's language (cover art, mono labels, pill tags) on Card surfaces —
  * keyboard order follows DOM order, which matches the visual flow. Sections render only when they
  * have content (draft-filtered in prod); the newsletter band already lives in the footer.
@@ -45,7 +45,9 @@ const siteGraph = [
   websiteLd({ url: homeUrl, name: SITE.title, locale }),
   ...(cv ? [personLd(cv.entry.data, { url: canonicalUrl('/about', locale, Astro.site) })] : []),
 ];
-const profiles = cv?.entry.data.profiles ?? [];
+// Elsewhere links — social/speaking profiles only. Stone stays in Person.sameAs (JSON-LD) but is
+// an employer page, not a "find me here" destination, so it's filtered from the visible row.
+const profiles = (cv?.entry.data.profiles ?? []).filter((p) => p.network !== 'Stone');
 
 const allPosts = await getLocalizedEntries('blog', locale);
 const featured = allPosts
@@ -59,8 +61,6 @@ const recent = allPosts.filter((p) => !p.entry.data.featured).slice(0, 3);
 
 const seriesList = await getSeriesWithCounts(locale);
 const seriesLabel = new Map(seriesList.map((s) => [s.slug, s.data.label]));
-const topSeries = seriesList.slice(0, 2);
-const moreSeries = seriesList.slice(2);
 
 /** Same line as the blog hub spotlight: "8 parts · ~1h 4min · Beginner". */
 function metaOf(s: SeriesWithCount): string {
@@ -77,13 +77,12 @@ function metaOf(s: SeriesWithCount): string {
 const allProjects = await getLocalizedEntries('portfolio', locale);
 const projects = allProjects.filter((p) => p.entry.data.featured).slice(0, 2);
 
-// One appearance, never an empty slot: the soonest upcoming talk, or the latest past one.
+// The next appearance — the tile only renders when something is actually scheduled.
 const now = new Date();
 const events = await getLocalizedEntries('events', locale);
 const upcoming = events
   .filter((e) => (e.entry.data.endDate ?? e.entry.data.startDate) >= now)
   .sort((a, b) => a.entry.data.startDate.getTime() - b.entry.data.startDate.getTime())[0];
-const nextTalk = upcoming ?? events[0];
 
 // Computed proof points for the stats tile — counted from the collections, never copy.
 const stats = [
@@ -107,7 +106,7 @@ const featuredEyebrow = featured?.entry.data.series
     }`
   : t('blog.featured');
 
-const tileLabel = 'text-muted-foreground text-xs font-semibold tracking-wide uppercase';
+const laneLabel = 'text-muted-foreground text-xs font-semibold tracking-wide uppercase';
 const sectionLink =
   'text-muted-foreground hover:text-foreground font-mono text-xs transition-colors';
 ---
@@ -128,7 +127,7 @@ const sectionLink =
               <li>
                 <a
                   href={c.href}
-                  class="border-border text-muted-foreground hover:text-foreground rounded-full border px-3 py-1 transition-colors"
+                  class="border-border text-muted-foreground hover:text-foreground rounded-full border px-3 py-1.5 transition-colors"
                 >
                   {c.label}
                 </a>
@@ -177,126 +176,35 @@ const sectionLink =
       }
     </section>
 
-    {/* Bento grid — the site's shelves as tiles; DOM order = reading order = tab order. */}
-    <section aria-labelledby="home-highlights" class="mt-12">
-      <h2 id="home-highlights" class="sr-only">{t('home.highlights')}</h2>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
-        {
-          topSeries.map((s) => (
-            <div class="lg:col-span-2">
-              <SeriesCard href={s.href} label={s.data.label} meta={metaOf(s)} slug={s.slug} />
-            </div>
-          ))
-        }
-        {
-          moreSeries.length > 0 && (
-            <Card class="flex flex-col lg:col-span-2">
-              <h3 class={tileLabel}>{t('home.paths')}</h3>
-              <ul class="mt-3 grow space-y-3">
-                {moreSeries.map((s) => (
-                  <li>
-                    <a href={s.href} class="group block">
-                      <span class="group-hover:text-primary font-semibold tracking-tight transition-colors">
-                        {s.data.label}
-                      </span>
-                      <span class="text-muted-foreground block font-mono text-xs">{metaOf(s)}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              <a href={`/${locale}/blog`} class:list={['mt-4 block', sectionLink]}>
-                {t('blog.allPosts')} →
-              </a>
-            </Card>
-          )
-        }
-
-        {
-          projects.map(({ slug, entry }) => (
-            <div class="lg:col-span-2">
-              <Card href={`/${locale}/projects/${slug}`} class="flex h-full flex-col gap-2">
-                <h3 class={tileLabel}>{t('projects.featured')}</h3>
-                <p class="font-mono text-lg font-semibold tracking-tight">{entry.data.title}</p>
-                <p class="text-muted-foreground text-sm">{entry.data.description}</p>
-                {entry.data.tech.length > 0 && (
-                  <ul class="text-muted-foreground mt-auto flex flex-wrap gap-2 pt-2 text-xs">
-                    {entry.data.tech.slice(0, 3).map((tech) => (
-                      <li class="border-border rounded-full border px-2 py-0.5">{tech}</li>
-                    ))}
-                  </ul>
-                )}
-              </Card>
-            </div>
-          ))
-        }
-        {
-          nextTalk && (
-            <div class="lg:col-span-2">
-              <Card href={`/${locale}/talks/${nextTalk.slug}`} class="flex h-full flex-col gap-2">
-                <h3 class={tileLabel}>
-                  {upcoming ? t('home.upcomingTalks') : t('home.latestTalk')}
-                </h3>
-                <p class="font-mono text-lg font-semibold tracking-tight">
-                  <time datetime={isoDate(nextTalk.entry.data.startDate)}>
-                    {formatDate(nextTalk.entry.data.startDate, locale)}
-                  </time>
-                </p>
-                <p class="font-semibold tracking-tight">{nextTalk.entry.data.title}</p>
-                {nextTalk.entry.data.location && (
-                  <p class="text-muted-foreground mt-auto pt-2 font-mono text-xs">
-                    {nextTalk.entry.data.location}
-                  </p>
-                )}
-              </Card>
-            </div>
-          )
-        }
-
-        <Card class="lg:col-span-2">
-          <dl class="grid h-full grid-cols-2 content-center gap-x-4 gap-y-5">
-            {
-              stats.map((s) => (
-                <div class="flex flex-col-reverse">
-                  <dt class="text-muted-foreground mt-0.5 text-xs font-semibold tracking-wide uppercase">
-                    {s.label}
-                  </dt>
-                  <dd class="font-mono text-2xl font-semibold tracking-tight tabular-nums">
-                    {s.value}
-                  </dd>
-                </div>
-              ))
-            }
-          </dl>
-        </Card>
-        <div class="lg:col-span-2">
-          <Card href={`/${locale}/photos`} class="group flex h-full flex-col overflow-hidden">
-            <Cover seed="photos" bare class="border-border h-20 rounded-md border" />
-            <p class="group-hover:text-primary mt-3 font-semibold tracking-tight transition-colors">
-              {t('talks.photosLink')}
-            </p>
-          </Card>
-        </div>
-        <div class="lg:col-span-2">
-          <Card
-            href={`/${locale}/contact`}
-            class="group flex h-full flex-col justify-between gap-3"
-          >
-            <h3 class={tileLabel}>{t('nav.contact')}</h3>
-            <p class="font-semibold tracking-tight text-pretty">{t('home.contactTeaser')}</p>
-            <p class:list={['group-hover:text-foreground', sectionLink]}>
-              {t('home.contactCta')} →
-            </p>
-          </Card>
-        </div>
-      </div>
-    </section>
+    {/* Learning paths lane — every series with its wave cover, the site's main asset. */}
+    {
+      seriesList.length > 0 && (
+        <section aria-labelledby="home-paths" class="mt-14">
+          <div class="flex items-baseline justify-between gap-4">
+            <h2 id="home-paths" class={laneLabel}>
+              {t('home.paths')}
+            </h2>
+            <a href={`/${locale}/blog`} class={sectionLink}>
+              {t('blog.allPosts')} →
+            </a>
+          </div>
+          <ul class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {seriesList.map((s) => (
+              <li>
+                <SeriesCard href={s.href} label={s.data.label} meta={metaOf(s)} slug={s.slug} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
 
     {/* Latest writing — compact strip; featured already leads the identity row. */}
     {
       recent.length > 0 && (
         <section aria-labelledby="home-latest" class="mt-14">
           <div class="flex items-baseline justify-between gap-4">
-            <h2 id="home-latest" class={tileLabel}>
+            <h2 id="home-latest" class={laneLabel}>
               {t('home.latestPosts')}
             </h2>
             <a href={`/${locale}/blog`} class={sectionLink}>
@@ -327,5 +235,87 @@ const sectionLink =
         </section>
       )
     }
+
+    {/* Highlights lane — OSS, appearances, proof points and invites as equal-height tiles. */}
+    <section aria-labelledby="home-highlights" class="mt-14">
+      <h2 id="home-highlights" class={laneLabel}>{t('home.highlights')}</h2>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
+        {
+          projects.map(({ slug, entry }) => (
+            <div class="lg:col-span-2">
+              <Card href={`/${locale}/projects/${slug}`} class="flex h-full flex-col gap-2">
+                <h3 class={laneLabel}>{t('home.projectTile')}</h3>
+                <p class="font-mono text-lg font-semibold tracking-tight">{entry.data.title}</p>
+                <p class="text-muted-foreground text-sm">{entry.data.description}</p>
+                {entry.data.tech.length > 0 && (
+                  <ul class="text-muted-foreground mt-auto flex flex-wrap gap-2 pt-2 text-xs">
+                    {entry.data.tech.slice(0, 3).map((tech) => (
+                      <li class="border-border rounded-full border px-2 py-0.5">{tech}</li>
+                    ))}
+                  </ul>
+                )}
+              </Card>
+            </div>
+          ))
+        }
+        {
+          upcoming && (
+            <div class="lg:col-span-2">
+              <Card href={`/${locale}/talks/${upcoming.slug}`} class="flex h-full flex-col gap-2">
+                <h3 class={laneLabel}>{t('home.upcomingTalks')}</h3>
+                <p class="font-mono text-lg font-semibold tracking-tight">
+                  <time datetime={isoDate(upcoming.entry.data.startDate)}>
+                    {formatDate(upcoming.entry.data.startDate, locale)}
+                  </time>
+                </p>
+                <p class="font-semibold tracking-tight">{upcoming.entry.data.title}</p>
+                {upcoming.entry.data.location && (
+                  <p class="text-muted-foreground mt-auto pt-2 font-mono text-xs">
+                    {upcoming.entry.data.location}
+                  </p>
+                )}
+              </Card>
+            </div>
+          )
+        }
+
+        <Card class="h-full lg:col-span-2">
+          <dl class="grid h-full grid-cols-2 content-center gap-x-4 gap-y-5">
+            {
+              stats.map((s) => (
+                <div class="flex flex-col-reverse">
+                  <dt class="text-muted-foreground mt-0.5 text-xs font-semibold tracking-wide uppercase">
+                    {s.label}
+                  </dt>
+                  <dd class="font-mono text-2xl font-semibold tracking-tight tabular-nums">
+                    {s.value}
+                  </dd>
+                </div>
+              ))
+            }
+          </dl>
+        </Card>
+        <div class="lg:col-span-2">
+          <Card href={`/${locale}/photos`} class="group flex h-full flex-col overflow-hidden">
+            <Cover seed="photos" bare class="border-border h-20 rounded-md border" />
+            <p class="group-hover:text-primary mt-3 font-semibold tracking-tight transition-colors">
+              {t('talks.photosLink')}
+            </p>
+          </Card>
+        </div>
+        <div class="lg:col-span-2">
+          <Card
+            href={`/${locale}/contact`}
+            class="group flex h-full flex-col justify-between gap-3"
+          >
+            <h3 class={laneLabel}>{t('nav.contact')}</h3>
+            <p class="font-semibold tracking-tight text-pretty">{t('home.contactTeaser')}</p>
+            <p class:list={['group-hover:text-foreground', sectionLink]}>
+              {t('home.contactCta')} →
+            </p>
+          </Card>
+        </div>
+      </div>
+    </section>
   </Container>
 </BaseLayout>

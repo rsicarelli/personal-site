@@ -38,8 +38,8 @@ describe('llms.txt', () => {
     expect(links.some((l) => l.includes('/pt-br/'))).toBe(true);
   });
 
-  it('surfaces the published post with its answer-first capsule', () => {
-    expect(txt).toContain('/en/blog/kotlin-multiplatform-in-production');
-    expect(txt).toContain('Kotlin Multiplatform is production-ready');
+  it('surfaces the featured post with its answer-first capsule', () => {
+    expect(txt).toContain('/en/blog/kmp-102-modularizacao-no-kmp');
+    expect(txt).toContain('In the last article we dug into the quirks');
   });
 });
