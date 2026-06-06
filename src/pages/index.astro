@@ -6,8 +6,9 @@
  *  1. It is a real, crawlable 200 page with static links to BOTH locales, so Googlebot (which
  *     crawls from US IPs with no Accept-Language) reaches `/en/` and `/pt-br/` from here. There
  *     is NO server redirect — `astro.config.mjs` sets `redirectToDefaultLocale: false`.
- *  2. The only client JS is a tiny inline soft-redirect that runs in real browsers to send a
- *     visitor to their best-guess locale. Crawlers that don't execute JS simply see the links.
+ *  2. The only client JS is a tiny inline soft-redirect that sends a visitor to their best-guess
+ *     locale. It lives in <head> so it runs BEFORE first paint — JS visitors never see this page
+ *     flash; crawlers and no-JS visitors get the styled fallback below with the static links.
  *
  * The gateway advertises both locales + x-default via reciprocal hreflang (#23) so search
  * engines discover the localized roots from `/` itself.
@@ -17,6 +18,7 @@ import { SITE, DEFAULT_LOCALE } from '@/config/site';
 import { buildSeoMeta } from '@/lib/seo';
 import { websiteLd, personLd } from '@/lib/jsonld';
 import { getLocalizedEntry } from '@/lib/content';
+import Cover from '@/components/content/Cover.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
 
 const canonical = new URL('/', Astro.site).href;
@@ -47,6 +49,11 @@ const siteGraph = [
     ? [personLd(cv.entry.data, { url: new URL(`/${DEFAULT_LOCALE}/about`, Astro.site).href })]
     : []),
 ];
+
+const localeLinks = [
+  { href: '/en/', label: 'English', hint: 'Read in English' },
+  { href: '/pt-br/', label: 'Português (Brasil)', hint: 'Ler em português' },
+];
 ---
 
 <!doctype html>
@@ -54,31 +61,11 @@ const siteGraph = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <title>rsicarelli.com</title>
-    <meta name="description" content={SITE.description} />
-    <link rel="canonical" href={canonical} />
-    {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
-    {seoMeta.map((m) => <meta property={m.property} name={m.name} content={m.content} />)}
-    <JsonLd schema={siteGraph} />
-  </head>
-  <body class="min-h-dvh antialiased">
-    <main class="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center px-6 py-16">
-      <h1 class="font-mono text-2xl font-semibold tracking-tight">rsicarelli.com</h1>
-      <p class="text-muted-foreground mt-2">Choose your language · Escolha seu idioma</p>
-      <ul class="mt-6 flex flex-col gap-2 text-lg">
-        <li>
-          <a href="/en/" class="underline-offset-4 hover:underline">English</a>
-        </li>
-        <li>
-          <a href="/pt-br/" class="underline-offset-4 hover:underline">Português (Brasil)</a>
-        </li>
-      </ul>
-    </main>
-
     {
-      /* Soft, client-only locale detection. `location.replace` avoids a back-button trap and is
-        NOT a server 301/302, so crawlers and the static links above are unaffected. */
+      /* Soft, client-only locale detection — parser-blocking in <head> so it runs BEFORE first
+        paint (no gateway flash). `location.replace` avoids a back-button trap and is NOT a server
+        301/302, so crawlers and the static links below are unaffected. Byte-identical to the CSP
+        hash pinned in public/_headers. */
     }
     <script is:inline>
       (function () {
@@ -91,5 +78,45 @@ const siteGraph = [
         }
       })();
     </script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>rsicarelli.com</title>
+    <meta name="description" content={SITE.description} />
+    <link rel="canonical" href={canonical} />
+    {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
+    {seoMeta.map((m) => <meta property={m.property} name={m.name} content={m.content} />)}
+    <JsonLd schema={siteGraph} />
+  </head>
+  <body class="bg-background text-foreground min-h-dvh antialiased">
+    <main class="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-6 py-16">
+      <div class="border-border bg-card overflow-hidden rounded-lg border">
+        <Cover seed="rsicarelli.com" bare class="border-border h-24 w-full border-b" />
+        <div class="p-6">
+          <p class="text-muted-foreground font-mono text-xs font-semibold tracking-tight">
+            rsicarelli.com
+          </p>
+          <h1 class="mt-2 font-serif text-2xl font-bold tracking-tight">
+            Choose your language <span class="text-muted-foreground font-sans font-normal">·</span>
+            Escolha seu idioma
+          </h1>
+          <ul class="mt-6 flex flex-col gap-2">
+            {
+              localeLinks.map((l) => (
+                <li>
+                  <a
+                    href={l.href}
+                    class="border-border hover:border-primary/50 hover:bg-secondary/40 group flex items-baseline justify-between gap-4 rounded-md border px-4 py-3 transition-colors"
+                  >
+                    <span class="group-hover:text-primary font-semibold tracking-tight transition-colors">
+                      {l.label}
+                    </span>
+                    <span class="text-muted-foreground font-mono text-xs">{l.hint} →</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </main>
   </body>
 </html>
