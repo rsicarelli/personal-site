@@ -1,19 +1,30 @@
 ---
 /**
- * Home hub (#29) — one localized route per locale (`/en/`, `/pt-br/`). Aggregates the content
- * collections through the spine: latest posts, featured projects and upcoming talks, each linking
- * to its section. Sections render only when they have content (draft-filtered in prod). Strings
- * come from the i18n dictionary; cards/layout adopt Epic 5's components as they land.
+ * Home hub (#29, redesigned as the editorial front page) — leads with the person (serif name,
+ * positioning line, credential strip) instead of repeating the site title the header already shows,
+ * then curates the site's best content like a magazine front: the featured deep-dive as a
+ * full-width cover banner, the series spotlight, the latest writing, OSS projects and the next
+ * appearance. The visual language (cover art, mono labels, pill tags) is the blog hub's, so home
+ * and hub read as one publication. Sections render only when they have content (draft-filtered in
+ * prod); the newsletter band already lives in the footer, so home doesn't duplicate it.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Card from '@/components/ui/Card.astro';
 import JsonLd from '@/components/content/JsonLd.astro';
+import PostCard from '@/components/content/PostCard.astro';
+import SeriesSpotlight from '@/components/content/SeriesSpotlight.astro';
 import { LOCALES, SITE, type Locale } from '@/config/site';
 import { useTranslations } from '@/i18n/utils';
 import { canonicalUrl } from '@/lib/seo';
 import { websiteLd, personLd } from '@/lib/jsonld';
-import { getLocalizedEntries, getLocalizedEntry } from '@/lib/content';
+import {
+  getLocalizedEntries,
+  getLocalizedEntry,
+  getSeriesWithCounts,
+  commonBlogTagSlugs,
+  readingTimeOf,
+} from '@/lib/content';
 import { formatDate, isoDate } from '@/lib/datetime';
 
 export function getStaticPaths() {
@@ -32,53 +43,125 @@ const siteGraph = [
   ...(cv ? [personLd(cv.entry.data, { url: canonicalUrl('/about', locale, Astro.site) })] : []),
 ];
 
-const posts = (await getLocalizedEntries('blog', locale)).slice(0, 3);
+// Curation mirrors the blog hub front: the top featured deep-dive leads, the recent feed excludes
+// featured posts so nothing is shown twice on one page.
+const allPosts = await getLocalizedEntries('blog', locale);
+const featured = allPosts
+  .filter((p) => p.entry.data.featured)
+  .sort(
+    (a, b) =>
+      (a.entry.data.featuredOrder ?? Number.MAX_SAFE_INTEGER) -
+      (b.entry.data.featuredOrder ?? Number.MAX_SAFE_INTEGER),
+  )[0];
+const recent = allPosts.filter((p) => !p.entry.data.featured).slice(0, 3);
+const tagPages = await commonBlogTagSlugs();
+const seriesList = await getSeriesWithCounts(locale);
+const seriesLabel = new Map(seriesList.map((s) => [s.slug, s.data.label]));
+const spotlight = seriesList.slice(0, 3);
+
 const projects = (await getLocalizedEntries('portfolio', locale))
   .filter((p) => p.entry.data.featured)
   .slice(0, 3);
+
+// One appearance, never an empty slot: the soonest upcoming talk, or the latest past one (which
+// usually carries slides/recording) when nothing is scheduled.
 const now = new Date();
-const upcoming = (await getLocalizedEntries('events', locale))
+const events = await getLocalizedEntries('events', locale);
+const upcoming = events
   .filter((e) => (e.entry.data.endDate ?? e.entry.data.startDate) >= now)
-  .sort((a, b) => a.entry.data.startDate.getTime() - b.entry.data.startDate.getTime())
-  .slice(0, 2);
+  .sort((a, b) => a.entry.data.startDate.getTime() - b.entry.data.startDate.getTime())[0];
+const nextTalk = upcoming ?? events[0];
+
+// Credential strip under the hero — the wayfinding version of the CV's proof points.
+const credentials = [
+  { label: t('home.credential.role'), href: `/${locale}/about` },
+  { label: t('home.credential.speaker'), href: `/${locale}/talks` },
+  { label: t('home.credential.oss'), href: `/${locale}/projects` },
+];
+
+const sectionLabel = 'text-muted-foreground text-xs font-semibold tracking-wide uppercase';
+const sectionLink =
+  'text-muted-foreground hover:text-foreground font-mono text-xs transition-colors';
 ---
 
 <BaseLayout title={t('site.title')} description={t('site.description')}>
   <JsonLd slot="head" schema={siteGraph} />
   <Container class="py-16">
-    <section>
-      <h1 class="text-4xl font-bold tracking-tight">{t('home.heading')}</h1>
-      <p class="text-muted-foreground mt-4 max-w-prose text-lg">{t('home.intro')}</p>
+    {/* Hero — the person, not the domain (the header already says rsicarelli.com). */}
+    <section class="max-w-3xl">
+      <h1 class="font-serif text-4xl font-bold tracking-tight text-balance sm:text-5xl">
+        {t('home.heading')}
+      </h1>
+      <p class="text-foreground/80 mt-4 max-w-prose text-lg text-pretty">{t('home.intro')}</p>
+      <p
+        class="text-muted-foreground mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs"
+      >
+        {
+          credentials.map((c, i) => (
+            <>
+              {i > 0 && <span aria-hidden="true">·</span>}
+              <a href={c.href} class="hover:text-foreground transition-colors">
+                {c.label}
+              </a>
+            </>
+          ))
+        }
+      </p>
     </section>
 
     {
-      posts.length > 0 && (
-        <section class="mt-16">
-          <div class="flex items-baseline justify-between gap-3">
-            <h2 class="text-xl font-semibold tracking-tight">{t('home.latestPosts')}</h2>
-            <a
-              href={`/${locale}/blog`}
-              class="text-muted-foreground hover:text-foreground font-mono text-xs"
-            >
+      featured && (
+        <section aria-labelledby="home-featured" class="mt-14">
+          <h2 id="home-featured" class={sectionLabel}>
+            {t('blog.featured')}
+          </h2>
+          <div class="mt-4">
+            <PostCard
+              locale={locale}
+              slug={featured.slug}
+              entry={featured.entry}
+              seriesLabel={
+                featured.entry.data.series ? seriesLabel.get(featured.entry.data.series) : undefined
+              }
+              tagPages={tagPages}
+              eager
+            />
+          </div>
+        </section>
+      )
+    }
+
+    <SeriesSpotlight locale={locale} series={spotlight} />
+
+    {
+      recent.length > 0 && (
+        <section aria-labelledby="home-latest" class="mt-14">
+          <div class="flex items-baseline justify-between gap-4">
+            <h2 id="home-latest" class={sectionLabel}>
+              {t('home.latestPosts')}
+            </h2>
+            <a href={`/${locale}/blog`} class={sectionLink}>
               {t('blog.allPosts')} →
             </a>
           </div>
-          <ul class="mt-6 space-y-6">
-            {posts.map(({ slug, entry }) => (
-              <li class="border-border border-b pb-6 last:border-0">
-                <h3 class="font-semibold tracking-tight">
-                  <a href={`/${locale}/blog/${slug}`} class="hover:text-primary transition-colors">
+          <ul class="mt-4">
+            {recent.map(({ slug, entry }) => (
+              <li class="border-border border-b last:border-0">
+                <a
+                  href={`/${locale}/blog/${slug}`}
+                  class="group flex flex-col gap-1 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+                >
+                  <span class="group-hover:text-primary font-semibold tracking-tight transition-colors">
                     {entry.data.title}
-                  </a>
-                </h3>
-                <p class="text-muted-foreground mt-1 font-mono text-xs">
-                  <time datetime={isoDate(entry.data.pubDate)}>
-                    {formatDate(entry.data.pubDate, locale, 'medium')}
-                  </time>
-                </p>
-                <p class="text-muted-foreground mt-2 max-w-prose text-sm">
-                  {entry.data.description}
-                </p>
+                  </span>
+                  <span class="text-muted-foreground shrink-0 font-mono text-xs">
+                    <time datetime={isoDate(entry.data.pubDate)}>
+                      {formatDate(entry.data.pubDate, locale)}
+                    </time>
+                    <span aria-hidden="true"> · </span>
+                    {readingTimeOf(entry)} {t('blog.minRead')}
+                  </span>
+                </a>
               </li>
             ))}
           </ul>
@@ -88,29 +171,30 @@ const upcoming = (await getLocalizedEntries('events', locale))
 
     {
       projects.length > 0 && (
-        <section class="mt-16">
-          <div class="flex items-baseline justify-between gap-3">
-            <h2 class="text-xl font-semibold tracking-tight">{t('home.featuredProjects')}</h2>
-            <a
-              href={`/${locale}/projects`}
-              class="text-muted-foreground hover:text-foreground font-mono text-xs"
-            >
+        <section aria-labelledby="home-projects" class="mt-14">
+          <div class="flex items-baseline justify-between gap-4">
+            <h2 id="home-projects" class={sectionLabel}>
+              {t('home.featuredProjects')}
+            </h2>
+            <a href={`/${locale}/projects`} class={sectionLink}>
               {t('projects.allProjects')} →
             </a>
           </div>
-          <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+          <ul class="mt-4 grid gap-4 sm:grid-cols-2">
             {projects.map(({ slug, entry }) => (
-              <Card as="li">
-                <h3 class="font-mono font-semibold tracking-tight">
-                  <a
-                    href={`/${locale}/projects/${slug}`}
-                    class="hover:text-primary transition-colors"
-                  >
-                    {entry.data.title}
-                  </a>
-                </h3>
-                <p class="text-muted-foreground mt-1 text-sm">{entry.data.description}</p>
-              </Card>
+              <li>
+                <Card href={`/${locale}/projects/${slug}`} class="flex h-full flex-col gap-2">
+                  <h3 class="font-mono font-semibold tracking-tight">{entry.data.title}</h3>
+                  <p class="text-muted-foreground text-sm">{entry.data.description}</p>
+                  {entry.data.tech.length > 0 && (
+                    <ul class="text-muted-foreground mt-auto flex flex-wrap gap-2 pt-2 text-xs">
+                      {entry.data.tech.slice(0, 3).map((tech) => (
+                        <li class="border-border rounded-full border px-2 py-0.5">{tech}</li>
+                      ))}
+                    </ul>
+                  )}
+                </Card>
+              </li>
             ))}
           </ul>
         </section>
@@ -118,34 +202,25 @@ const upcoming = (await getLocalizedEntries('events', locale))
     }
 
     {
-      upcoming.length > 0 && (
-        <section class="mt-16">
-          <div class="flex items-baseline justify-between gap-3">
-            <h2 class="text-xl font-semibold tracking-tight">{t('home.upcomingTalks')}</h2>
-            <a
-              href={`/${locale}/talks`}
-              class="text-muted-foreground hover:text-foreground font-mono text-xs"
-            >
+      nextTalk && (
+        <section aria-labelledby="home-talk" class="mt-14">
+          <div class="flex items-baseline justify-between gap-4">
+            <h2 id="home-talk" class={sectionLabel}>
+              {upcoming ? t('home.upcomingTalks') : t('home.latestTalk')}
+            </h2>
+            <a href={`/${locale}/talks`} class={sectionLink}>
               {t('talks.allTalks')} →
             </a>
           </div>
-          <ul class="mt-6 space-y-6">
-            {upcoming.map(({ slug, entry }) => (
-              <li class="border-border border-b pb-6 last:border-0">
-                <h3 class="font-semibold tracking-tight">
-                  <a href={`/${locale}/talks/${slug}`} class="hover:text-primary transition-colors">
-                    {entry.data.title}
-                  </a>
-                </h3>
-                <p class="text-muted-foreground mt-1 font-mono text-xs">
-                  <time datetime={isoDate(entry.data.startDate)}>
-                    {formatDate(entry.data.startDate, locale, 'medium')}
-                  </time>
-                  {entry.data.location && <span> · {entry.data.location}</span>}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <Card href={`/${locale}/talks/${nextTalk.slug}`} class="mt-4">
+            <p class="text-muted-foreground font-mono text-xs">
+              <time datetime={isoDate(nextTalk.entry.data.startDate)}>
+                {formatDate(nextTalk.entry.data.startDate, locale)}
+              </time>
+              {nextTalk.entry.data.location && <span> · {nextTalk.entry.data.location}</span>}
+            </p>
+            <h3 class="mt-1 font-semibold tracking-tight">{nextTalk.entry.data.title}</h3>
+          </Card>
         </section>
       )
     }
