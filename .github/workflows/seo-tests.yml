@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.2
       # Reuses the mise-pinned toolchain (Node/pnpm/go-task from mise.toml).
       - uses: ./.github/actions/setup
       - run: task build

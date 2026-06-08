@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.2
       - uses: actions/dependency-review-action@v5
         with:
           # Block PRs that add a dependency with a known high (or worse) severity advisory.

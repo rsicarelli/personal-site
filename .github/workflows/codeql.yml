@@ -32,15 +32,15 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.2
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4.36.0
         with:
           languages: javascript-typescript
           build-mode: none
           # Default + security-extended for broader coverage on a small, low-dependency codebase.
           queries: security-extended
       - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4.36.0
         with:
           category: '/language:javascript-typescript'
