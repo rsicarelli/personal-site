@@ -36,7 +36,7 @@ jobs:
       - run: pnpm exec lhci autorun --config=lighthouserc.prod.json
       - name: Upload Lighthouse reports
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: lighthouse-prod-reports
           path: ./.lighthouseci
