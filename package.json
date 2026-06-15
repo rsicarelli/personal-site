@@ -69,8 +69,8 @@
     "satori": "^0.26.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.60.0",
-    "vitest": "^4.1.7",
-    "wrangler": "^4.95.0"
+    "typescript-eslint": "^8.60.1",
+    "vitest": "^4.1.8",
+    "wrangler": "^4.98.0"
   }
 }
